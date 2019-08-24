@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSchemaParser", "GraphQLSchemaParser\GraphQLSchemaParser.csproj", "{C1F0543B-5C3A-4E78-8302-864A3B715DB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSchemaParser.Test", "GraphQLSchemaParser.Test\GraphQLSchemaParser.Test.csproj", "{065798C4-EBFE-42F9-82FC-FAA661016B3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQl.StarWarsSample", "GraphQl.StarWarsSample\GraphQl.StarWarsSample.csproj", "{A4F85118-8E51-4BE6-8020-2458C91C595F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlSchema", "GraphQlSchema\GraphQlSchema.csproj", "{11AB11C9-64F4-477D-A639-727416439495}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQl.StarWarsSample.Implementation", "GraphQl.StarWarsSample.Implementation\GraphQl.StarWarsSample.Implementation.csproj", "{F42A8251-6272-41B2-A482-E1089D315FFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlResolver.Test", "GraphQlResolver.Test\GraphQlResolver.Test.csproj", "{4207F68C-5660-4DC2-91F0-FA287E552081}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlResolver", "GraphQlResolver\GraphQlResolver.csproj", "{91D75D2A-DD67-41D7-913E-9DDEA63EA936}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1F0543B-5C3A-4E78-8302-864A3B715DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1F0543B-5C3A-4E78-8302-864A3B715DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1F0543B-5C3A-4E78-8302-864A3B715DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1F0543B-5C3A-4E78-8302-864A3B715DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F85118-8E51-4BE6-8020-2458C91C595F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F85118-8E51-4BE6-8020-2458C91C595F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F85118-8E51-4BE6-8020-2458C91C595F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F85118-8E51-4BE6-8020-2458C91C595F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11AB11C9-64F4-477D-A639-727416439495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11AB11C9-64F4-477D-A639-727416439495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11AB11C9-64F4-477D-A639-727416439495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11AB11C9-64F4-477D-A639-727416439495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F42A8251-6272-41B2-A482-E1089D315FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F42A8251-6272-41B2-A482-E1089D315FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F42A8251-6272-41B2-A482-E1089D315FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F42A8251-6272-41B2-A482-E1089D315FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4207F68C-5660-4DC2-91F0-FA287E552081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4207F68C-5660-4DC2-91F0-FA287E552081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4207F68C-5660-4DC2-91F0-FA287E552081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4207F68C-5660-4DC2-91F0-FA287E552081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B05A32A-DACC-4EAA-98CE-3462557D2258}
+	EndGlobalSection
+EndGlobal
