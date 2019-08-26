@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
+    <ProjectReference Include="..\GraphQlSchema\GraphQlSchema.csproj" />
   </ItemGroup>
 
 </Project>
