@@ -1,32 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace GraphQlResolver
 {
     public static class Resolve
     {
-        public static IResolutionStrategy<TResult> From<T, TResult>() where T : IResolutionFactory<TResult>
+        public static IQueryable<TResult> From<T, TResult>() where T : IResolutionFactory<TResult>
         {
-            return new SingleResolutionStrategy<T, TResult>();
+            throw new NotImplementedException();
+            //return new SingleResolutionStrategy<T, TResult>();
         }
 
-        public static IResolutionStrategy<TResult> FromMany<T, TResult>() where T : IResolutionFactory<IList<TResult>>
+        public static IQueryable<TResult> FromMany<T, TResult>() where T : IResolutionFactory<IList<TResult>>
         {
-            return new MultiResolutionStrategy<T, TResult>();
+            throw new NotImplementedException();
+            //return new MultiResolutionStrategy<T, TResult>();
         }
 
-        public static IResolutionStrategy<TResult> From<T, TResult, TKey>(IResolutionStrategy<TKey> keyStrategy) where T : IResolutionFactory<TResult, TKey>
+        public static IQueryable<TResult> From<T, TResult, TKey>(IQueryable<TKey> keyStrategy) where T : IResolutionFactory<TResult, TKey>
         {
-            return new SingleResolutionStrategy<T, TResult, TKey>(keyStrategy);
+            throw new NotImplementedException();
+            //return new SingleResolutionStrategy<T, TResult, TKey>(keyStrategy);
         }
-        public static IResolutionStrategy<TResult> FromMany<T, TResult, TKey>(IResolutionStrategy<TKey> keyStrategy) where T : IResolutionFactory<IList<TResult>, TKey>
+        public static IQueryable<TResult> FromMany<T, TResult, TKey>(IQueryable<TKey> keyStrategy) where T : IResolutionFactory<IList<TResult>, TKey>
         {
-            return new MultiResolutionStrategy<T, TResult, TKey>(keyStrategy);
+            throw new NotImplementedException();
+            //return new MultiResolutionStrategy<T, TResult, TKey>(keyStrategy);
         }
 
-        public static IResolutionStrategy<object> Combine(CombineOptions combineOptions)
+        public static IQueryable<object> Combine(CombineOptions combineOptions)
         {
-            return new CombinationStrategy(combineOptions);
+            throw new NotImplementedException();
+            //return new CombinationStrategy(combineOptions);
         }
     }
 }

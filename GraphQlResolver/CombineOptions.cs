@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace GraphQlResolver
 {
-    public class CombineOptions : Dictionary<string, IResolutionStrategy>
+    public class CombineOptions : Dictionary<string, IQueryable>
     {
     }
 }
