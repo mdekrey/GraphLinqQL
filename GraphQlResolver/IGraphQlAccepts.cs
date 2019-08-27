@@ -2,8 +2,13 @@
 
 namespace GraphQlResolver
 {
-    public interface IGraphQlAccepts<T>
+    public interface IGraphQlAccepts
     {
-        IQueryable<T> Original { get; set; }
+        IQueryable Original { set; }
+    }
+
+    public interface IGraphQlAccepts<T> : IGraphQlAccepts
+    {
+        new IQueryable<T> Original { get; set; }
     }
 }
