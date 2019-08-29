@@ -10,6 +10,14 @@ namespace GraphQlResolver.Test
 {
     public class ResolutionStrategyShould
     {
+        private class SimpleServiceProvider : IServiceProvider
+        {
+            public object GetService(Type serviceType)
+            {
+                return Activator.CreateInstance(serviceType);
+            }
+        }
+
         public static class Interfaces
         {
             //type Hero {
@@ -29,10 +37,10 @@ namespace GraphQlResolver.Test
 
             public interface Query : IGraphQlResolvable
             {
-                IGraphQlListResolver<Hero> Heroes();
-                IQueryable<double> Rand();
+                IGraphQlComplexListResult<Hero> Heroes();
+                IGraphQlResult<double> Rand();
 
-                object IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
+                IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
                     name switch
                     {
                         "heroes" => Heroes(),
@@ -43,14 +51,14 @@ namespace GraphQlResolver.Test
 
             public interface Hero : IGraphQlResolvable
             {
-                IQueryable<GraphQlId> Id();
-                IQueryable<string> Name();
-                IQueryable<double> Renown();
-                IQueryable<string> Faction();
-                IGraphQlListResolver<Hero> Friends();
-                IQueryable<string> Location(string date);
+                IGraphQlResult<GraphQlId> Id();
+                IGraphQlResult<string> Name();
+                IGraphQlResult<double> Renown();
+                IGraphQlResult<string> Faction();
+                IGraphQlComplexListResult<Hero> Friends();
+                IGraphQlResult<string> Location(string date);
 
-                object IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
+                IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
                     name switch
                     {
                         "id" => Id(),
@@ -68,75 +76,41 @@ namespace GraphQlResolver.Test
         {
             public class Query : Interfaces.Query, IGraphQlAccepts<GraphQlRoot>
             {
-                public IQueryable<GraphQlRoot> Original { get; set; }
-                IQueryable IGraphQlAccepts.Original { set => this.Original = (IQueryable<GraphQlRoot>)value; }
+                public IGraphQlResultFactory<GraphQlRoot> Original { get; set; }
 
-                public IQueryable<double> Rand() => from e in Original select 5.0;
+                public IGraphQlComplexListResult<Interfaces.Hero> Heroes() =>
+                    Original.ResolveList(root => Domain.heroes).As<Hero>();
 
-                public IGraphQlListResolver<Interfaces.Hero> Heroes() => Original.ViaMany<AllHeroesFactory, Hero, Domain.Hero>();
-
+                public IGraphQlResult<double> Rand() =>
+                    Original.Resolve(root => 5.0);
             }
 
             public class Hero : Interfaces.Hero, IGraphQlAccepts<Domain.Hero>
             {
-                public IQueryable<Domain.Hero> Original { get; set; }
-                IQueryable IGraphQlAccepts.Original { set => this.Original = (IQueryable<Domain.Hero>)value; }
+                public IGraphQlResultFactory<Domain.Hero> Original { get; set; }
 
-                public IQueryable<string> Faction() => Original
-                    .Select(hero => hero.Id)
-                    .Via<HeroReputationFactory, Domain.Reputation, string>()
-                    .Select(rep => rep.Faction);
+                private readonly GraphQlJoin<Domain.Hero, Domain.Reputation> reputation =
+                    GraphQlJoin.Join((IQueryable<Domain.Hero> heroes) => from hero in heroes
+                                                                         join reputation in Domain.heroReputation on hero.Id equals reputation.HeroId
+                                                                         select reputation);
+                private readonly GraphQlJoin<Domain.Hero, IEnumerable<Domain.Hero>> friends =
+                    GraphQlJoin.Join((IQueryable<Domain.Hero> heroes) => from hero in heroes
+                                                                         join friendIds in Domain.friends on hero.Id equals friendIds.Id1
+                                                                         join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
+                                                                         select friends);
 
-                public IGraphQlListResolver<Interfaces.Hero> Friends() =>
-                    Original.Select(hero => hero.Id)
-                            .ViaMany<HeroFriendsFactory, Hero, string, Domain.Hero>();
-
-                public IQueryable<GraphQlId> Id() => Original.Select(hero => new GraphQlId(hero.Id));
-
-                public IQueryable<string> Name() => Original.Select(hero => hero.Name);
-
-                public IQueryable<double> Renown() => Original.Select(hero => hero.Id).Via<HeroReputationFactory, Domain.Reputation, string>().Select(rep => (double)rep.Renown);
-
-                public IQueryable<string> Location(string date) =>
-                    from original in Original
-                    select "Unknown";
-
-            }
-
-
-
-            public class AllHeroesFactory : IResolutionFactory<IReadOnlyList<Domain.Hero>>
-            {
-                public Task<IReadOnlyList<Domain.Hero>> Resolve()
-                {
-                    return Task.FromResult(Domain.heroes);
-                }
-            }
-
-            public class HeroFriendsFactory : IResolutionFactory<IReadOnlyList<Domain.Hero>, string>
-            {
-                public Task<IReadOnlyList<Domain.Hero>> Resolve(string input)
-                {
-                    return Task.FromResult((IReadOnlyList<Domain.Hero>)Array.Empty<Domain.Hero>());
-                }
-
-                public Task<Func<string, IReadOnlyList<Domain.Hero>>> ResolveMany(IReadOnlyList<string> input)
-                {
-                    return Task.FromResult<Func<string, IReadOnlyList<Domain.Hero>>>(id => Array.Empty<Domain.Hero>());
-                }
-            }
-
-            public class HeroReputationFactory : IResolutionFactory<Domain.Reputation, string>
-            {
-                public Task<Domain.Reputation> Resolve(string input)
-                {
-                    return Task.FromResult(Domain.heroReputation.First(r => r.HeroId == input));
-                }
-
-                public Task<Func<string, Domain.Reputation>> ResolveMany(IReadOnlyList<string> input)
-                {
-                    return Task.FromResult<Func<string, Domain.Reputation>>(id => Domain.heroReputation.First(r => r.HeroId == id));
-                }
+                public IGraphQlResult<string> Faction() =>
+                    Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
+                public IGraphQlComplexListResult<Interfaces.Hero> Friends() =>
+                    Original.Join(friends).ResolveList((hero, friends) => friends).As<Hero>();
+                public IGraphQlResult<GraphQlId> Id() => 
+                    Original.Resolve(hero => new GraphQlId(hero.Id));
+                public IGraphQlResult<string> Location(string date) =>
+                    Original.Resolve(hero => "Unknown"); // TODO - use arguments
+                public IGraphQlResult<string> Name() => 
+                    Original.Resolve(hero => hero.Name);
+                public IGraphQlResult<double> Renown() =>
+                    Original.Join(reputation).Resolve((hero, reputation) => (double)reputation.Renown);
             }
         }
 
@@ -186,7 +160,7 @@ namespace GraphQlResolver.Test
             //     name
             //   }
             // }
-            var root = Resolve.Root<Implementations.Query>();
+            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
             var final = root.ResolveComplex()
                 .Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
                 .Add("rand")
@@ -201,17 +175,6 @@ namespace GraphQlResolver.Test
                                          name = hero.Name
                                      }
                         };
-
-            var strategy = new Dictionary<string, IQueryable>
-            {
-                { "heroes",  Resolve.FromMany<Implementations.AllHeroesFactory, Domain.Hero>()
-                                 .Combine(new CombineOptions<Domain.Hero>
-                                                       {
-                                                           { "id", baseStrategy => baseStrategy.Select(hero => hero.Id) },
-                                                           { "name", baseStrategy => baseStrategy.Select(hero => hero.Name) },
-                                                       })
-                }
-            };
         }
 
         [Fact]
@@ -228,7 +191,7 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var root = Resolve.Root<Implementations.Query>();
+            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
             var final = root.ResolveComplex()
                 .Add("heroes", q => q.Heroes().ResolveComplex()
                                               .Add("id")
@@ -255,24 +218,6 @@ namespace GraphQlResolver.Test
                                                    }
                                      }
                         };
-
-            var strategy = new Dictionary<string, IQueryable>
-            {
-                { "heroes", Resolve.FromMany<Implementations.AllHeroesFactory, Domain.Hero>()
-                                   .Combine(new CombineOptions<Domain.Hero>
-                                                       {
-                                                           { "id", baseStrategy => baseStrategy.Select(hero => hero.Id) },
-                                                           { "name", baseStrategy => baseStrategy.Select(hero => hero.Name) },
-                                                           { "friends", baseStrategy => Resolve.ViaMany<Implementations.HeroFriendsFactory, Domain.Hero, string>(baseStrategy.Select(hero => hero.Id))
-                                                                               .Combine(new CombineOptions<Domain.Hero>
-                                                                                                     {
-                                                                                                         { "id", baseStrategy => baseStrategy.Select(hero => hero.Id) },
-                                                                                                         { "name", baseStrategy => baseStrategy.Select(hero => hero.Name) },
-                                                                                                     })
-                                                           },
-                                                       })
-                }
-            };
         }
 
         [Fact]
@@ -287,7 +232,7 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var root = Resolve.Root<Implementations.Query>();
+            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
             var final = root.ResolveComplex()
                 .Add("heroes", q => q.Heroes().ResolveComplex()
                                               .Add("id")
@@ -310,23 +255,6 @@ namespace GraphQlResolver.Test
                                          faction = reputation.Value.Faction
                                      }
                         };
-
-            var strategy = new Dictionary<string, IQueryable>
-            {
-                { "heroes", Resolve.FromMany<Implementations.AllHeroesFactory, Domain.Hero>()
-                                   .Combine(new CombineOptions<Domain.Hero>
-                                     {
-                                        { "id", baseStrategy => baseStrategy.Select(hero => hero.Id) },
-                                        { "name", baseStrategy => baseStrategy.Select(hero => hero.Name) },
-                                        { "renown", baseStrategy => baseStrategy
-                                            .Select(hero => hero.Id).Via<Implementations.HeroReputationFactory, Domain.Reputation, string>()
-                                            .Select(rep => rep.Renown) },
-                                        { "faction", baseStrategy => baseStrategy
-                                            .Select(hero => hero.Id).Via<Implementations.HeroReputationFactory, Domain.Reputation, string>()
-                                            .Select(rep => rep.Faction) },
-                                     })
-                }
-            };
         }
 
     }
