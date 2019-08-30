@@ -31,7 +31,7 @@ namespace GraphQlResolver
         }
     }
 
-    internal class GraphQlResultResolving<TInput, TModel> : IGraphQlResultWithComplexFactory<TModel>, IGraphQlResultFromInput<TInput>
+    internal class GraphQlResultResolving<TInput, TModel> : IGraphQlResultWithComplexFactory<TModel>
     {
         private Expression<Func<TInput, TModel>> resolver;
         private readonly IServiceProvider serviceProvider;
@@ -47,9 +47,14 @@ namespace GraphQlResolver
             return new GraphQlComplexResult<TContract, TInput, TModel>(resolver, serviceProvider);
         }
 
-        Expression<Func<TInput, object>> IGraphQlResultFromInput<TInput>.Resolve()
+        public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return Expressions.ChangeReturnType<TInput, TModel, object>(resolver);
+            if (typeof(TInput1) != typeof(TInput))
+            {
+                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
+            }
+            // Yeah, this looks unchecked, but the if statement above fixes it
+            return Expressions.ChangeReturnType<TInput1, TModel, object>((Expression<Func<TInput1, TModel>>)(Expression)resolver);
         }
     }
 
@@ -63,6 +68,16 @@ namespace GraphQlResolver
         {
             this.resolver = resolver;
             this.serviceProvider = serviceProvider;
+        }
+
+        public Expression<Func<TInput1, object>> Resolve<TInput1>()
+        {
+            if (typeof(TInput1) != typeof(TInput))
+            {
+                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
+            }
+            // Yeah, this looks unchecked, but the if statement above fixes it
+            return Expressions.ChangeReturnType<TInput1, TModel, object>((Expression<Func<TInput1, TModel>>)(Expression)resolver);
         }
 
         IComplexResolverBuilder<TContract, IDictionary<string, object>> IGraphQlComplexResult<TContract>.ResolveComplex()
@@ -83,7 +98,7 @@ namespace GraphQlResolver
         }
     }
 
-    internal class GraphQlListResultResolving<TInput, TModel> : IGraphQlListResultWithComplexFactory<TModel>, IGraphQlResultFromInput<TInput>
+    internal class GraphQlListResultResolving<TInput, TModel> : IGraphQlListResultWithComplexFactory<TModel>
     {
         private readonly Expression<Func<TInput, IEnumerable<TModel>>> resolver;
         private readonly IServiceProvider serviceProvider;
@@ -99,9 +114,14 @@ namespace GraphQlResolver
             return new GraphQlComplexListResult<TContract, TInput, TModel>(resolver, serviceProvider);
         }
 
-        Expression<Func<TInput, object>> IGraphQlResultFromInput<TInput>.Resolve()
+        public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return Expressions.ChangeReturnType<TInput, IEnumerable<TModel>, object>(resolver);
+            if (typeof(TInput1) != typeof(TInput))
+            {
+                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
+            }
+            // Yeah, this looks unchecked, but the if statement above fixes it
+            return Expressions.ChangeReturnType<TInput1, IEnumerable<TModel>, object>((Expression<Func<TInput1, IEnumerable<TModel>>>)(Expression)resolver);
         }
     }
 
@@ -120,6 +140,16 @@ namespace GraphQlResolver
         {
             this.resolver = resolver;
             this.serviceProvider = serviceProvider;
+        }
+
+        public Expression<Func<TInput1, object>> Resolve<TInput1>()
+        {
+            if (typeof(TInput1) != typeof(TInput))
+            {
+                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
+            }
+            // Yeah, this looks unchecked, but the if statement above fixes it
+            return Expressions.ChangeReturnType<TInput1, IEnumerable<TModel>, object>((Expression<Func<TInput1, IEnumerable<TModel>>>)(Expression)resolver);
         }
 
         IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()

@@ -54,16 +54,9 @@ namespace GraphQlResolver
 
             var resultDictionary = Expression.ListInit(Expression.New(variable.Type), expressions.Select(result =>
             {
-                if (result.Value is IGraphQlResultFromInput<TModel> forInput)
-                {
-                    var inputResolver = forInput.Resolve();
-                    var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
-                    return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Expected IGraphQlResultFromInput, got {result.Value?.GetType()?.FullName ?? "null"} for {result.Key}");
-                }
+                var inputResolver = result.Value.Resolve<TModel>();
+                var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
+                return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody);
             }));
             var func = Expression.Lambda<Func<TModel, IDictionary<string, object>>>(resultDictionary, modelParameter);
 

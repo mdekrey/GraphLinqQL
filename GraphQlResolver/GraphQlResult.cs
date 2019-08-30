@@ -7,11 +7,7 @@ namespace GraphQlResolver
 {
     public interface IGraphQlResult
     {
-    }
-
-    public interface IGraphQlResultFromInput<TInput>
-    {
-        Expression<Func<TInput, object>> Resolve();
+        Expression<Func<TInput, object>> Resolve<TInput>();
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
