@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
 {
-    internal class GraphQlExpressionListResult<TInput, TReturnType> : IGraphQlListResult<TReturnType>, IGraphQlResultFromInput<TInput>
+    internal class GraphQlExpressionListResult<TInput, TReturnType> : IGraphQlResult<IEnumerable<TReturnType>>, IGraphQlResultFromInput<TInput>
     {
         private Expression<Func<TInput, IEnumerable<TReturnType>>> func;
         private readonly IServiceProvider serviceProvider;
@@ -39,12 +39,12 @@ namespace GraphQlResolver
         }
 
 
-        public IComplexResolverBuilder<TResolver, IGraphQlResult<IDictionary<string, object>>> As<TResolver>()
+        public IComplexResolverBuilder<TResolver, IDictionary<string, object>> As<TResolver>()
             where TResolver : IGraphQlAccepts<TReturnType>, IGraphQlResolvable
         {
             var resolver = serviceProvider.GetService<TResolver>();
             resolver.Original = new GraphQlResultFactory<TReturnType>(serviceProvider);
-            return new ComplexResolverBuilder<TResolver, IGraphQlResult<IDictionary<string, object>>, TReturnType>(
+            return new ComplexResolverBuilder<TResolver, IDictionary<string, object>, TReturnType>(
                 resolver,
                 _ => new GraphQlExpressionResult<TReturnType, IDictionary<string, object>>(_, serviceProvider)
             );

@@ -18,24 +18,16 @@ namespace GraphQlResolver
     {
     }
 
-    public interface IGraphQlListResult<out TReturnType> : IGraphQlResult
-    {
-    }
-
-    public interface IGraphQlComplexResult<out TReturnType> : IGraphQlResult
+    public interface IGraphQlComplexResult<out TReturnType> : IGraphQlResult<TReturnType>
         where TReturnType : IGraphQlResolvable
     {
-        IComplexResolverBuilder<TReturnType, IGraphQlResult<IDictionary<string, object>>> ResolveComplex();
+        IComplexResolverBuilder<TReturnType, IDictionary<string, object>> ResolveComplex();
     }
 
-    public interface IGraphQlComplexListResult<out TReturnType> : IGraphQlResult
+    public interface IGraphQlComplexListResult<out TReturnType> : IGraphQlResult<IEnumerable<TReturnType>>
         where TReturnType : IGraphQlResolvable
     {
-        IComplexResolverBuilder<TReturnType, IGraphQlListResult<IDictionary<string, object>>> ResolveComplex();
-    }
-
-    public interface IGraphQlResultFactory
-    {
+        IComplexResolverBuilder<TReturnType, IEnumerable<IDictionary<string, object>>> ResolveComplex();
     }
 
     public interface IGraphQlResultFactory<TInputType>
@@ -51,7 +43,7 @@ namespace GraphQlResolver
         IGraphQlResultWithComplexFactory<TDomainResult> Resolve<TDomainResult>(Expression<Func<TInputType, TJoinedType, TDomainResult>> resolver);
     }
 
-    public interface IGraphQlListResultWithComplexFactory<TModel> : IGraphQlListResult<TModel>
+    public interface IGraphQlListResultWithComplexFactory<TModel> : IGraphQlResult<IEnumerable<TModel>>
     {
         IGraphQlComplexListResult<TContract> As<TContract>()
             where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable;

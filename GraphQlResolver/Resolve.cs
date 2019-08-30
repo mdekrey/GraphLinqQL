@@ -15,12 +15,17 @@ namespace GraphQlResolver
             return new Query<T>(new GraphQlQueryProvider());
         }
 
-        public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, IGraphQlResult<object>>, IGraphQlResult> resolver)
+        public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, object>, IGraphQlResult<object>> resolver)
             where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         {
             var root = new GraphQlRoot();
             var resolved = resolver(new GraphQlExpressionResult<GraphQlRoot, GraphQlRoot>(a => a, serviceProvider).As<T>()) as IGraphQlResultFromInput<GraphQlRoot>;
             return resolved?.Resolve().Compile()(root);
+        }
+
+        public static IGraphQlResult<object> Box<T>(this IGraphQlResult<T> input)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -86,7 +86,7 @@ namespace GraphQlResolver
             this.serviceProvider = serviceProvider;
         }
 
-        IComplexResolverBuilder<TContract, IGraphQlListResult<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()
+        IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()
         {
             var enumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
                 .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
@@ -95,7 +95,7 @@ namespace GraphQlResolver
                 .Single();
             var resolver = serviceProvider.GetService<TContract>();
             resolver.Original = new GraphQlResultFactory<TModel>(serviceProvider);
-            return new ComplexResolverBuilder<TContract, IGraphQlListResult<IDictionary<string, object>>, TModel>(
+            return new ComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>, TModel>(
                 resolver,
                 results =>
                 {

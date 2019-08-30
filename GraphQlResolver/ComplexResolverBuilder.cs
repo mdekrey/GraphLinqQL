@@ -8,21 +8,20 @@ namespace GraphQlResolver
 {
     public class ComplexResolverBuilder<TContract, TFinal, TModel> : IComplexResolverBuilder<TContract, TFinal>
         where TContract : IGraphQlResolvable, IGraphQlAccepts<TModel>
-        where TFinal : IGraphQlResult
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod("Add");
         private readonly TContract contract;
-        private readonly Func<Expression<Func<TModel, IDictionary<string, object>>>, TFinal> resolve;
+        private readonly Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
 
-        public ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, TFinal> resolve)
+        public ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve)
         {
             this.contract = contract;
             this.resolve = resolve;
             this.expressions = ImmutableDictionary<string, IGraphQlResult>.Empty;
         }
 
-        protected ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, TFinal> resolve, ImmutableDictionary<string, IGraphQlResult> expressions)
+        protected ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve, ImmutableDictionary<string, IGraphQlResult> expressions)
             : this(contract, resolve)
         {
             this.expressions = expressions;
@@ -38,13 +37,13 @@ namespace GraphQlResolver
         }
 
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult> resolve)
+        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult<object>> resolve)
         {
             return new ComplexResolverBuilder<TContract, TFinal, TModel>(contract, this.resolve, expressions
                 .Add(displayName, resolve(contract)));
         }
 
-        public TFinal Build()
+        public IGraphQlResult<TFinal> Build()
         {
             var modelParameter = Expression.Parameter(typeof(TModel));
 
