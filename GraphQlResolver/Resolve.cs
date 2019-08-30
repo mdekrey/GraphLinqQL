@@ -22,10 +22,5 @@ namespace GraphQlResolver
             var resolved = resolver(resultFactory.Resolve(a => a).As<T>().ResolveComplex());
             return resolved?.Resolve<GraphQlRoot>().Compile()(new GraphQlRoot());
         }
-
-        public static IGraphQlResult<object> Box<T>(this IGraphQlResult<T> input)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
