@@ -49,7 +49,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return resolver.ChangeInputType<TInput, TInput1, TModel>().ChangeReturnType<TInput1, TModel, object>();
+            return resolver.ChangeInputType<TInput, TInput1, TModel>().BoxReturnValue();
         }
     }
 
@@ -67,7 +67,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return resolver.ChangeInputType<TInput, TInput1, TModel>().ChangeReturnType<TInput1, TModel, object>();
+            return resolver.ChangeInputType<TInput, TInput1, TModel>().BoxReturnValue();
         }
 
         IComplexResolverBuilder<TContract, IDictionary<string, object>> IGraphQlComplexResult<TContract>.ResolveComplex()
@@ -106,7 +106,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().ChangeReturnType<TInput1, IEnumerable<TModel>, object>();
+            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().BoxReturnValue();
         }
     }
 
@@ -129,7 +129,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().ChangeReturnType<TInput1, IEnumerable<TModel>, object>();
+            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().BoxReturnValue();
         }
 
         IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()

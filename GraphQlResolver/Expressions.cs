@@ -17,9 +17,9 @@ namespace GraphQlResolver
             return (Expression<Func<TNewInput, TReturn>>)(Expression)expression;
         }
 
-        public static Expression<Func<TInput, TNewReturn>> ChangeReturnType<TInput, TOldReturn, TNewReturn>(this Expression<Func<TInput, TOldReturn>> expression)
+        public static Expression<Func<TInput, object>> BoxReturnValue<TInput, TOldReturn>(this Expression<Func<TInput, TOldReturn>> expression)
         {
-            return Expression.Lambda<Func<TInput, TNewReturn>>(Expression.Convert(expression.Body, typeof(TNewReturn)), expression.Parameters);
+            return Expression.Lambda<Func<TInput, object>>(Expression.Convert(expression.Body, typeof(object)), expression.Parameters);
         }
 
         internal static Expression Replace(this Expression body, ParameterExpression from, ParameterExpression with)

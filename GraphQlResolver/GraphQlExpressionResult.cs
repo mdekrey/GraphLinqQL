@@ -20,7 +20,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            return func.ChangeInputType<TInput, TInput1, TReturnType>().ChangeReturnType<TInput1, TReturnType, object>();
+            return func.ChangeInputType<TInput, TInput1, TReturnType>().BoxReturnValue();
         }
     }
 
