@@ -49,12 +49,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            if (typeof(TInput1) != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
-            }
-            // Yeah, this looks unchecked, but the if statement above fixes it
-            return Expressions.ChangeReturnType<TInput1, TModel, object>((Expression<Func<TInput1, TModel>>)(Expression)resolver);
+            return resolver.ChangeInputType<TInput, TInput1, TModel>().ChangeReturnType<TInput1, TModel, object>();
         }
     }
 
@@ -72,12 +67,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            if (typeof(TInput1) != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
-            }
-            // Yeah, this looks unchecked, but the if statement above fixes it
-            return Expressions.ChangeReturnType<TInput1, TModel, object>((Expression<Func<TInput1, TModel>>)(Expression)resolver);
+            return resolver.ChangeInputType<TInput, TInput1, TModel>().ChangeReturnType<TInput1, TModel, object>();
         }
 
         IComplexResolverBuilder<TContract, IDictionary<string, object>> IGraphQlComplexResult<TContract>.ResolveComplex()
@@ -116,12 +106,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            if (typeof(TInput1) != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
-            }
-            // Yeah, this looks unchecked, but the if statement above fixes it
-            return Expressions.ChangeReturnType<TInput1, IEnumerable<TModel>, object>((Expression<Func<TInput1, IEnumerable<TModel>>>)(Expression)resolver);
+            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().ChangeReturnType<TInput1, IEnumerable<TModel>, object>();
         }
     }
 
@@ -144,12 +129,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            if (typeof(TInput1) != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
-            }
-            // Yeah, this looks unchecked, but the if statement above fixes it
-            return Expressions.ChangeReturnType<TInput1, IEnumerable<TModel>, object>((Expression<Func<TInput1, IEnumerable<TModel>>>)(Expression)resolver);
+            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().ChangeReturnType<TInput1, IEnumerable<TModel>, object>();
         }
 
         IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()

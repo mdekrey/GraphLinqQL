@@ -20,12 +20,7 @@ namespace GraphQlResolver
 
         public Expression<Func<TInput1, object>> Resolve<TInput1>()
         {
-            if (typeof(TInput1) != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected input type of {typeof(TInput).FullName}, got {typeof(TInput1).FullName}");
-            }
-            // Yeah, this looks unchecked, but the if statement above fixes it
-            return Expressions.ChangeReturnType<TInput1, TReturnType, object>((Expression<Func<TInput1, TReturnType>>)(Expression)func);
+            return func.ChangeInputType<TInput, TInput1, TReturnType>().ChangeReturnType<TInput1, TReturnType, object>();
         }
     }
 
