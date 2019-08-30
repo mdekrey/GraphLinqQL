@@ -18,9 +18,9 @@ namespace GraphQlResolver
         public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, object>, IGraphQlResult<object>> resolver)
             where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         {
-            var root = new GraphQlRoot();
-            var resolved = resolver(new GraphQlExpressionResult<GraphQlRoot, GraphQlRoot>(a => a, serviceProvider).As<T>()) as IGraphQlResultFromInput<GraphQlRoot>;
-            return resolved?.Resolve().Compile()(root);
+            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
+            var resolved = resolver(resultFactory.Resolve(a => a).As<T>().ResolveComplex()) as IGraphQlResultFromInput<GraphQlRoot>;
+            return resolved?.Resolve().Compile()(new GraphQlRoot());
         }
 
         public static IGraphQlResult<object> Box<T>(this IGraphQlResult<T> input)
