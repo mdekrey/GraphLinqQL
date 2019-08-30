@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
@@ -22,15 +24,21 @@ namespace GraphQlResolver
         }
 
 
-        public IComplexResolverBuilder<TResolver, IDictionary<string, object>> As<TResolver>()
-            where TResolver : IGraphQlAccepts<TReturnType>, IGraphQlResolvable
+        public IComplexResolverBuilder<TContract, IDictionary<string, object>> As<TContract>()
+            where TContract : IGraphQlAccepts<TReturnType>, IGraphQlResolvable
         {
-            var resolver = serviceProvider.GetService<TResolver>();
+            var resolver = serviceProvider.GetService<TContract>();
             resolver.Original = new GraphQlResultFactory<TReturnType>(serviceProvider);
-            return new ComplexResolverBuilder<TResolver, IDictionary<string, object>, TReturnType>(
+            return new ComplexResolverBuilder<TContract, IDictionary<string, object>, TReturnType>(
                 resolver,
-                _ => new GraphQlExpressionResult<TReturnType, IDictionary<string, object>>(_, serviceProvider)
+                ToResult
             );
         }
+
+        private IGraphQlResult<IDictionary<string, object>> ToResult(Expression<Func<TReturnType, IDictionary<string, object>>> expression)
+        {
+            return new GraphQlExpressionResult<TReturnType, IDictionary<string, object>>(expression, serviceProvider);
+        }
     }
+
 }

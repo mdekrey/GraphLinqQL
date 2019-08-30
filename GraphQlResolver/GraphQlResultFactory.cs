@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
@@ -65,7 +66,7 @@ namespace GraphQlResolver
 
         IGraphQlComplexListResult<TContract> IGraphQlListResultWithComplexFactory<TModel>.As<TContract>()
         {
-            return new GraphQlExpressionResult<TContract, TInput, TModel>(resolver, serviceProvider);
+            return new GraphQlExpressionListResult<TContract, TInput, TModel>(resolver, serviceProvider);
         }
 
         Expression<Func<TInput, object>> IGraphQlResultFromInput<TInput>.Resolve()
@@ -74,13 +75,18 @@ namespace GraphQlResolver
         }
     }
 
-    internal class GraphQlExpressionResult<TContract, TInput, TModel> : IGraphQlComplexListResult<TContract>
+    internal class GraphQlExpressionListResult<TContract, TInput, TModel> : IGraphQlComplexListResult<TContract>
         where TContract : IGraphQlResolvable, IGraphQlAccepts<TModel>
     {
+        private static MethodInfo enumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
+            .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
+            .Select(m => m.MakeGenericMethod(typeof(TModel), typeof(IDictionary<string, object>)))
+            .Where(m => m.GetParameters()[1].ParameterType == typeof(Func<TModel, IDictionary<string, object>>))
+            .Single();
         private readonly Expression<Func<TInput, IEnumerable<TModel>>> resolver;
         private readonly IServiceProvider serviceProvider;
 
-        public GraphQlExpressionResult(Expression<Func<TInput, IEnumerable<TModel>>> resolver, IServiceProvider serviceProvider)
+        public GraphQlExpressionListResult(Expression<Func<TInput, IEnumerable<TModel>>> resolver, IServiceProvider serviceProvider)
         {
             this.resolver = resolver;
             this.serviceProvider = serviceProvider;
@@ -88,26 +94,23 @@ namespace GraphQlResolver
 
         IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()
         {
-            var enumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
-                .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
-                .Select(m => m.MakeGenericMethod(typeof(TModel), typeof(IDictionary<string, object>)))
-                .Where(m => m.GetParameters()[1].ParameterType == typeof(Func<TModel, IDictionary<string, object>>))
-                .Single();
             var resolver = serviceProvider.GetService<TContract>();
             resolver.Original = new GraphQlResultFactory<TModel>(serviceProvider);
             return new ComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>, TModel>(
                 resolver,
-                results =>
-                {
-                    var inputParameter = Expression.Parameter(typeof(TInput));
-                    var getList = this.resolver.Body.Replace(this.resolver.Parameters[0], with: inputParameter);
-
-                    // TODO - enumerable vs queryable
-                    var func = Expression.Lambda<Func<TInput, IEnumerable<IDictionary<string, object>>>>(Expression.Call(enumerableSelect, getList, results), inputParameter);
-
-                    return new GraphQlExpressionResult<TInput, IEnumerable<IDictionary<string, object>>>(func, serviceProvider);
-                }
+                ToListResult
             );
+        }
+
+        private IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(Expression<Func<TModel, IDictionary<string, object>>> expression)
+        {
+            var inputParameter = Expression.Parameter(typeof(TInput));
+            var getList = this.resolver.Body.Replace(this.resolver.Parameters[0], with: inputParameter);
+
+            // TODO - enumerable vs queryable
+            var func = Expression.Lambda<Func<TInput, IEnumerable<IDictionary<string, object>>>>(Expression.Call(enumerableSelect, getList, expression), inputParameter);
+
+            return new GraphQlExpressionResult<TInput, IEnumerable<IDictionary<string, object>>>(func, serviceProvider);
         }
     }
 }
