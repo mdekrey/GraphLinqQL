@@ -1,5 +1,6 @@
 using GraphQlSchema;
 using MorseCode.ITask;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -184,7 +185,8 @@ namespace GraphQlResolver.Test
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"rand\":5,\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
-            Assert.Equal(expected, json);
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
         [Fact]
@@ -231,6 +233,7 @@ namespace GraphQlResolver.Test
 
             // TODO - assert
             Assert.False(true, "Not complete");
+            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
         [Fact]
@@ -269,6 +272,7 @@ namespace GraphQlResolver.Test
                     .Build());
             // TODO - assert
             Assert.False(true, "Not complete");
+            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
     }

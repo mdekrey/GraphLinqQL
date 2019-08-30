@@ -105,7 +105,7 @@ namespace GraphQlResolver
                     // TODO - enumerable vs queryable
                     var func = Expression.Lambda<Func<TInput, IEnumerable<IDictionary<string, object>>>>(Expression.Call(enumerableSelect, getList, results), inputParameter);
 
-                    return new GraphQlExpressionListResult<TInput, IDictionary<string, object>>(func, serviceProvider);
+                    return new GraphQlExpressionResult<TInput, IEnumerable<IDictionary<string, object>>>(func, serviceProvider);
                 }
             );
         }
