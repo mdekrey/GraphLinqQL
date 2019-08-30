@@ -15,34 +15,12 @@ namespace GraphQlResolver
             return new Query<T>(new GraphQlQueryProvider());
         }
 
-        public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IGraphQlComplexResult<T>, IGraphQlResult> resolver)
-            where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable, new() // TODO - don't require this new()
+        public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, IGraphQlResult<object>>, IGraphQlResult> resolver)
+            where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         {
             var root = new GraphQlRoot();
-            var resolved = resolver(new GraphQlConstantResult<GraphQlRoot, T>(root, serviceProvider)) as IGraphQlResultFromInput<GraphQlRoot>;
+            var resolved = resolver(new GraphQlExpressionResult<GraphQlRoot, GraphQlRoot>(a => a, serviceProvider).As<T>()) as IGraphQlResultFromInput<GraphQlRoot>;
             return resolved?.Resolve().Compile()(root);
-        }
-
-        public static IQueryable<TResult> FromMany<T, TResult>()
-            where T : IResolutionFactory<IReadOnlyList<TResult>>
-        {
-            throw new NotImplementedException();
-        }
-
-        public static IQueryable<TResult> AsGraphQl<T, TResult>(this IQueryable<T> original) where TResult : IGraphQlAccepts<T>
-        {
-            throw new NotImplementedException();
-        }
-
-        public static IQueryable<IReadOnlyList<TResult>> AsGraphQl<T, TResult>(this IQueryable<IReadOnlyList<T>> original) where TResult : IGraphQlAccepts<T>
-        {
-            throw new NotImplementedException();
-        }
-
-        public static IQueryable<IReadOnlyDictionary<string, object>> Combine<T>(this IQueryable<T> original, CombineOptions<T> combineOptions)
-        {
-            throw new NotImplementedException();
-            //return new CombinationStrategy(combineOptions);
         }
     }
 }

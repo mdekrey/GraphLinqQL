@@ -2,7 +2,7 @@
 
 namespace GraphQlResolver
 {
-    public interface IComplexResolverBuilder<out TContract, TFinal>
+    public interface IComplexResolverBuilder<out TContract, out TFinal>
         where TContract : IGraphQlResolvable
         where TFinal : IGraphQlResult
     {

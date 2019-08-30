@@ -10,6 +10,11 @@ namespace GraphQlResolver.Test
 {
     public class ResolutionStrategyShould
     {
+        private readonly System.Text.Json.JsonSerializerOptions JsonOptions = new System.Text.Json.JsonSerializerOptions()
+        {
+            WriteIndented = false
+        };
+
         private class SimpleServiceProvider : IServiceProvider
         {
             public object GetService(Type serviceType)
@@ -159,25 +164,27 @@ namespace GraphQlResolver.Test
             //     id
             //     name
             //   }
+            //   rand
             // }
             var query = from q in Resolve.Query<GraphQlRoot>()
-                        select new
+                        select new Dictionary<string, object>
                         {
-                            heroes = from hero in Domain.heroes
-                                     select new
-                                     {
-                                         id = hero.Id,
-                                         name = hero.Name
-                                     }
+                            { "heroes", from hero in Domain.heroes
+                                        select new Dictionary<string, object>
+                                        {
+                                            { "id", hero.Id },
+                                            { "name", hero.Name }
+                                        } },
+                            { "rand", 5.0 }
                         };
             var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.ResolveComplex()
-                    .Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
+                root.Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
 
-            // TODO - assert
-            Assert.False(true, "Not complete");
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"rand\":5,\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
+            Assert.Equal(expected, json);
         }
 
         [Fact]
@@ -194,21 +201,12 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.ResolveComplex()
-                    .Add("heroes", q => q.Heroes().ResolveComplex()
-                                                  .Add("id")
-                                                  .Add("name")
-                                                  .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
-                                                  .Build())
-                    .Build());
-
-
             var query = from q in Resolve.Query<GraphQlRoot>()
                         select new
                         {
                             heroes = from hero in Domain.heroes
-                                     join friendIds in Domain.friends on hero.Id equals friendIds.Id1 join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
+                                     join friendIds in Domain.friends on hero.Id equals friendIds.Id1
+                                     join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
                                      select new
                                      {
                                          id = hero.Id,
@@ -221,6 +219,16 @@ namespace GraphQlResolver.Test
                                                    }
                                      }
                         };
+
+            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
+                root.Add("heroes", q => q.Heroes().ResolveComplex()
+                                                  .Add("id")
+                                                  .Add("name")
+                                                  .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
+                                                  .Build())
+                    .Build());
+
+
             // TODO - assert
             Assert.False(true, "Not complete");
         }
@@ -252,8 +260,7 @@ namespace GraphQlResolver.Test
                         };
 
             var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.ResolveComplex()
-                    .Add("heroes", q => q.Heroes().ResolveComplex()
+                root.Add("heroes", q => q.Heroes().ResolveComplex()
                                                   .Add("id")
                                                   .Add("name")
                                                   .Add("renown")

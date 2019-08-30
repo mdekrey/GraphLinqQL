@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GraphQlResolver
@@ -47,35 +48,25 @@ namespace GraphQlResolver
         {
             var modelParameter = Expression.Parameter(typeof(TModel));
 
+
             var variable = Expression.Parameter(typeof(Dictionary<string, object>));
-            var statements = new List<Expression>()
-                    {
-                        Expression.Assign(variable, Expression.New(variable.Type)),
-                    };
 
             // TODO - all joins first, create a lookup of values based on join expression, then use that in the next foreach
 
-            foreach (var result in expressions)
+            var resultDictionary = Expression.ListInit(Expression.New(variable.Type), expressions.Select(result =>
             {
                 if (result.Value is IGraphQlResultFromInput<TModel> forInput)
                 {
                     var inputResolver = forInput.Resolve();
                     var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
-                    statements.Add(Expression.Call(variable, addMethod, Expression.Constant(result.Key), resolveBody));
+                    return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody);
                 }
                 else
                 {
                     throw new InvalidOperationException($"Expected IGraphQlResultFromInput, got {result.Value?.GetType()?.FullName ?? "null"} for {result.Key}");
                 }
-            }
-
-            statements.Add(Expression.Label(Expression.Label(variable.Type), variable));
-            var block = Expression.Block(
-                variable.Type,
-                new[] { variable },
-                statements
-            );
-            var func = Expression.Lambda<Func<TModel, IDictionary<string, object>>>(block, modelParameter);
+            }));
+            var func = Expression.Lambda<Func<TModel, IDictionary<string, object>>>(resultDictionary, modelParameter);
 
             return resolve(func);
         }

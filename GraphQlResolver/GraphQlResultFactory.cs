@@ -16,7 +16,7 @@ namespace GraphQlResolver
 
         IGraphQlResultJoinedFactory<TValue, TJoinedType> IGraphQlResultFactory<TValue>.Join<TJoinedType>(GraphQlJoin<TValue, TJoinedType> join)
         {
-            throw new System.NotImplementedException();
+            return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join);
         }
 
         IGraphQlResultWithComplexFactory<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
@@ -105,7 +105,7 @@ namespace GraphQlResolver
                     // TODO - enumerable vs queryable
                     var func = Expression.Lambda<Func<TInput, IEnumerable<IDictionary<string, object>>>>(Expression.Call(enumerableSelect, getList, results), inputParameter);
 
-                    return new GraphQlExpressionListResult<TInput, IDictionary<string, object>>(func);
+                    return new GraphQlExpressionListResult<TInput, IDictionary<string, object>>(func, serviceProvider);
                 }
             );
         }
