@@ -4,6 +4,7 @@ using System.Text;
 
 namespace GraphQlSchema
 {
+    [System.Text.Json.Serialization.JsonConverter(typeof(GraphQlIdConverter))]
     public class GraphQlId
     {
         public GraphQlId(string value) => Value = value;
