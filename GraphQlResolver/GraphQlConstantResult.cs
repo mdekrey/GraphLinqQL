@@ -37,7 +37,7 @@ namespace GraphQlResolver
             resolver.Original = new GraphQlResultFactory<TValue>(serviceProvider);
             return new ComplexResolverBuilder<TResolver, IGraphQlResult<IDictionary<string, object>>, TValue>(
                 resolver, 
-                _ => null // TODO
+                _ => new GraphQlExpressionResult<TValue, IDictionary<string, object>>(_)
             );
         }
     }

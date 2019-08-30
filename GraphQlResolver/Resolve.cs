@@ -15,12 +15,12 @@ namespace GraphQlResolver
             return new Query<T>(new GraphQlQueryProvider());
         }
 
-
-        public static IGraphQlComplexResult<T> GraphQlRoot<T>(this IServiceProvider serviceProvider)
+        public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IGraphQlComplexResult<T>, IGraphQlResult> resolver)
             where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable, new() // TODO - don't require this new()
         {
-            //return new GraphQlResolver<T>(new Query<GraphQlRoot>(new GraphQlQueryProvider()));
-            return new GraphQlConstantResult<GraphQlRoot, T>(new GraphQlRoot(), serviceProvider);
+            var root = new GraphQlRoot();
+            var resolved = resolver(new GraphQlConstantResult<GraphQlRoot, T>(root, serviceProvider)) as IGraphQlResultFromInput<GraphQlRoot>;
+            return resolved?.Resolve().Compile()(root);
         }
 
         public static IQueryable<TResult> FromMany<T, TResult>()

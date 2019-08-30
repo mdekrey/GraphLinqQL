@@ -9,6 +9,11 @@ namespace GraphQlResolver
     {
     }
 
+    public interface IGraphQlResultFromInput<TInput>
+    {
+        Expression<Func<TInput, object>> Resolve();
+    }
+
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
     {
     }

@@ -160,11 +160,6 @@ namespace GraphQlResolver.Test
             //     name
             //   }
             // }
-            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
-            var final = root.ResolveComplex()
-                .Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
-                .Add("rand")
-                .Build();
             var query = from q in Resolve.Query<GraphQlRoot>()
                         select new
                         {
@@ -175,6 +170,14 @@ namespace GraphQlResolver.Test
                                          name = hero.Name
                                      }
                         };
+            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
+                root.ResolveComplex()
+                    .Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
+                    .Add("rand")
+                    .Build());
+
+            // TODO - assert
+            Assert.False(true, "Not complete");
         }
 
         [Fact]
@@ -191,14 +194,14 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
-            var final = root.ResolveComplex()
-                .Add("heroes", q => q.Heroes().ResolveComplex()
-                                              .Add("id")
-                                              .Add("name")
-                                              .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
-                                              .Build())
-                .Build();
+            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
+                root.ResolveComplex()
+                    .Add("heroes", q => q.Heroes().ResolveComplex()
+                                                  .Add("id")
+                                                  .Add("name")
+                                                  .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
+                                                  .Build())
+                    .Build());
 
 
             var query = from q in Resolve.Query<GraphQlRoot>()
@@ -218,6 +221,8 @@ namespace GraphQlResolver.Test
                                                    }
                                      }
                         };
+            // TODO - assert
+            Assert.False(true, "Not complete");
         }
 
         [Fact]
@@ -232,16 +237,6 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var root = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>();
-            var final = root.ResolveComplex()
-                .Add("heroes", q => q.Heroes().ResolveComplex()
-                                              .Add("id")
-                                              .Add("name")
-                                              .Add("renown")
-                                              .Add("faction")
-                                              .Build())
-                .Build();
-
             var query = from q in Resolve.Query<GraphQlRoot>()
                         select new
                         {
@@ -255,6 +250,18 @@ namespace GraphQlResolver.Test
                                          faction = reputation.Value.Faction
                                      }
                         };
+
+            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
+                root.ResolveComplex()
+                    .Add("heroes", q => q.Heroes().ResolveComplex()
+                                                  .Add("id")
+                                                  .Add("name")
+                                                  .Add("renown")
+                                                  .Add("faction")
+                                                  .Build())
+                    .Build());
+            // TODO - assert
+            Assert.False(true, "Not complete");
         }
 
     }
