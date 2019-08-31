@@ -111,43 +111,27 @@ namespace GraphQlResolver
             return new ConvertableListResult<TModel>(target);
         }
 
-        public class ConvertableResult<TModel> : IGraphQlResult<TModel>
+        public class ConvertableResult<TModel> : GraphQlExpressionResult<TModel>
         {
-            private IGraphQlResult<TModel> target;
-
             public ConvertableResult(IGraphQlResult<TModel> target)
-            {
-                this.target = target;
-            }
-
-            public IServiceProvider ServiceProvider => target.ServiceProvider;
-
-            public LambdaExpression UntypedResolver => target.UntypedResolver;
+                : base(target.UntypedResolver, target.ServiceProvider) { }
 
             public IGraphQlResult<TContract> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
             {
-                return new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider);
+                return new GraphQlExpressionResult<TContract>(UntypedResolver, ServiceProvider);
             }
         }
 
-        public class ConvertableListResult<TModel> : IGraphQlResult<IEnumerable<TModel>>
+        public class ConvertableListResult<TModel> : GraphQlExpressionResult<IEnumerable<TModel>>
         {
-            private IGraphQlResult<IEnumerable<TModel>> target;
-
             public ConvertableListResult(IGraphQlResult<IEnumerable<TModel>> target)
-            {
-                this.target = target;
-            }
-
-            public IServiceProvider ServiceProvider => target.ServiceProvider;
-
-            public LambdaExpression UntypedResolver => target.UntypedResolver;
+                : base(target.UntypedResolver, target.ServiceProvider) { }
 
             public IGraphQlResult<IEnumerable<TContract>> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
             {
-                return new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider);
+                return new GraphQlExpressionResult<IEnumerable<TContract>>(UntypedResolver, ServiceProvider);
             }
         }
     }
