@@ -27,19 +27,4 @@ namespace GraphQlResolver
 
     }
 
-    // TODO - can this be removed?
-    internal class GraphQlComplexResult<TContract, TModel> : IGraphQlResult<TContract>
-    {
-        public GraphQlComplexResult(LambdaExpression resolver, IServiceProvider serviceProvider)
-        {
-            this.UntypedResolver = resolver;
-            this.ServiceProvider = serviceProvider;
-        }
-
-        public IServiceProvider ServiceProvider { get; }
-
-        public LambdaExpression UntypedResolver { get; }
-
-    }
-
 }

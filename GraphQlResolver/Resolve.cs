@@ -127,7 +127,7 @@ namespace GraphQlResolver
             public IGraphQlResult<TContract> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
             {
-                return new GraphQlComplexResult<TContract, TModel>(target.UntypedResolver, target.ServiceProvider);
+                return new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider);
             }
         }
 
@@ -147,7 +147,7 @@ namespace GraphQlResolver
             public IGraphQlResult<IEnumerable<TContract>> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
             {
-                return new GraphQlComplexResult<IEnumerable<TContract>, IEnumerable<TModel>>(target.UntypedResolver, target.ServiceProvider);
+                return new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider);
             }
         }
     }
