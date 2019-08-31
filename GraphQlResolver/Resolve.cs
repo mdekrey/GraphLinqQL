@@ -14,7 +14,7 @@ namespace GraphQlResolver
     {
         public static IQueryable<T> Query<T>() // TODO - this is a temp function for tests
         {
-            return new Query<T>(new GraphQlQueryProvider());
+            return Enumerable.Empty<T>().AsQueryable();
         }
 
         public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, object>, IGraphQlResult<object>> resolver)
@@ -23,8 +23,8 @@ namespace GraphQlResolver
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
             var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As<T>().ResolveComplex());
             var expression = resolved?.ResolveExpression<GraphQlRoot>();
-            var lambda = expression?.Compile();
-            return lambda == null ? null : lambda(new GraphQlRoot());
+            var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
+            return queryable.Single();
         }
 
 

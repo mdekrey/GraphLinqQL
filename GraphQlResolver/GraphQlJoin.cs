@@ -10,7 +10,7 @@ namespace GraphQlResolver
     {
         public static GraphQlJoin<TInput, TJoined> Join<TInput, TJoined>(Func<IQueryable<TInput>, IQueryable<TJoined>> func)
         {
-            var root = GraphQlQueryProvider.CreatePlaceholder<TInput>();
+            var root = Enumerable.Empty<TInput>().AsQueryable();
             return new GraphQlJoin<TInput, TJoined>(func(root), root);
         }
     }
