@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System.Collections.Immutable;
 
 namespace GraphQlResolver
 {
@@ -21,7 +22,9 @@ namespace GraphQlResolver
         {
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
             var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As<T>().ResolveComplex());
-            return resolved?.ResolveExpression<GraphQlRoot>().Compile()(new GraphQlRoot());
+            var expression = resolved?.ResolveExpression<GraphQlRoot>();
+            var lambda = expression?.Compile();
+            return lambda == null ? null : lambda(new GraphQlRoot());
         }
 
 
@@ -38,11 +41,11 @@ namespace GraphQlResolver
                 modelType
             );
 
-            IGraphQlResult<IDictionary<string, object>> ToResult(LambdaExpression expression)
+            IGraphQlResult<IDictionary<string, object>> ToResult(LambdaExpression expression, ImmutableHashSet<IGraphQlJoin> joins)
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
                 var func = Expression.Lambda(expression.Body.Replace(expression.Parameters[0], with: inputParameter), inputParameter);
-                return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider);
+                return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, joins);
             }
         }
 
@@ -55,10 +58,15 @@ namespace GraphQlResolver
             GetContract<TContract>(target, actualContractType, actualModelType, out var resolver, out var modelType);
 
             var genericArgs = new[] { modelType, typeof(IDictionary<string, object>) };
-            var enumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
-                .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
+            var expressionArg = typeof(Expression<>).MakeGenericType(typeof(Func<,>).MakeGenericType(genericArgs));
+            var enumerableSelect = typeof(System.Linq.Queryable).GetMethods()
+                .Where(m => m.Name == nameof(System.Linq.Queryable.Select))
                 .Select(m => m.MakeGenericMethod(genericArgs))
-                .Where(m => m.GetParameters()[1].ParameterType == typeof(Func<,>).MakeGenericType(genericArgs))
+                .Where(m => m.GetParameters()[1].ParameterType == expressionArg)
+                .Single();
+            var asQueryable = typeof(Queryable).GetMethods()
+                .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
+                .Select(m => m.MakeGenericMethod(modelType))
                 .Single();
 
             return new ComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>>(
@@ -67,13 +75,19 @@ namespace GraphQlResolver
                 modelType
             );
 
-            IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression expression)
+            IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression expression, ImmutableHashSet<IGraphQlJoin> joins)
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
                 var getList = target.UntypedResolver.Body.Replace(target.UntypedResolver.Parameters[0], with: inputParameter);
 
-                // TODO - enumerable vs queryable
-                var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, expression), inputParameter);
+                if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
+                {
+                    getList = Expression.Call(asQueryable, getList);
+                }
+
+                // TODO - joins
+
+                var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, Expression.Quote(expression)), inputParameter);
 
                 return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider);
             }

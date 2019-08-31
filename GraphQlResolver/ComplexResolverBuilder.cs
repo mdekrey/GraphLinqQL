@@ -11,11 +11,11 @@ namespace GraphQlResolver
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod("Add");
         private readonly TContract contract;
-        private readonly Func<LambdaExpression, IGraphQlResult<TFinal>> resolve;
+        private readonly Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult<TFinal>> resolve;
         private readonly Type modelType;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
 
-        public ComplexResolverBuilder(TContract contract, Func<LambdaExpression, IGraphQlResult<TFinal>> resolve, Type modelType)
+        public ComplexResolverBuilder(TContract contract, Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult<TFinal>> resolve, Type modelType)
         {
             this.contract = contract;
             this.resolve = resolve;
@@ -23,7 +23,7 @@ namespace GraphQlResolver
             this.expressions = ImmutableDictionary<string, IGraphQlResult>.Empty;
         }
 
-        protected ComplexResolverBuilder(TContract contract, Func<LambdaExpression, IGraphQlResult<TFinal>> resolve, ImmutableDictionary<string, IGraphQlResult> expressions, Type modelType)
+        protected ComplexResolverBuilder(TContract contract, Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult<TFinal>> resolve, ImmutableDictionary<string, IGraphQlResult> expressions, Type modelType)
             : this(contract, resolve, modelType)
         {
             this.expressions = expressions;
@@ -49,20 +49,17 @@ namespace GraphQlResolver
         {
             var modelParameter = Expression.Parameter(modelType);
 
+            var allJoins = expressions.SelectMany(e => e.Value.Joins).ToImmutableHashSet();
 
-            var variable = Expression.Parameter(typeof(Dictionary<string, object>));
-
-            // TODO - all joins first, create a lookup of values based on join expression, then use that in the next foreach
-
-            var resultDictionary = Expression.ListInit(Expression.New(variable.Type), expressions.Select(result =>
+            var resultDictionary = Expression.Convert(Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
             {
                 var inputResolver = result.Value.UntypedResolver;
                 var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
-            }));
+            })), typeof(IDictionary<string, object>));
             var func = Expression.Lambda(resultDictionary, modelParameter);
 
-            return resolve(func);
+            return resolve(func, allJoins);
         }
     }
 }

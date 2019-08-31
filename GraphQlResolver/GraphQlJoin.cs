@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace GraphQlResolver
@@ -9,20 +10,26 @@ namespace GraphQlResolver
     {
         public static GraphQlJoin<TInput, TJoined> Join<TInput, TJoined>(Func<IQueryable<TInput>, IQueryable<TJoined>> func)
         {
-            var root = Resolve.Query<TInput>();
+            var root = GraphQlQueryProvider.CreatePlaceholder<TInput>();
             return new GraphQlJoin<TInput, TJoined>(func(root), root);
         }
     }
 
-    public class GraphQlJoin<TFromDomain, TToDomain>
+    public class GraphQlJoin<TFromDomain, TToDomain> : IGraphQlJoin
     {
-        private IQueryable<TToDomain> queryable;
-        private IQueryable<TFromDomain> root;
+        public ParameterExpression Placeholder { get; } = Expression.Variable(typeof(TToDomain));
+
+        public IQueryable<TToDomain> Queryable { get; }
+        public IQueryable<TFromDomain> Root { get; }
+
+
+        IQueryable IGraphQlJoin.Queryable => Queryable;
+        IQueryable IGraphQlJoin.Root => Root;
 
         public GraphQlJoin(IQueryable<TToDomain> queryable, IQueryable<TFromDomain> root)
         {
-            this.queryable = queryable;
-            this.root = root;
+            this.Queryable = queryable;
+            this.Root = root;
         }
     }
 }

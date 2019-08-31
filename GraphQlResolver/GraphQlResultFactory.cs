@@ -17,7 +17,7 @@ namespace GraphQlResolver
 
         IGraphQlResultJoinedFactory<TValue, TJoinedType> IGraphQlResultFactory<TValue>.Join<TJoinedType>(GraphQlJoin<TValue, TJoinedType> join)
         {
-            return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join);
+            return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join, serviceProvider);
         }
 
         IGraphQlResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)

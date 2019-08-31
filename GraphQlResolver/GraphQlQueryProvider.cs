@@ -7,9 +7,16 @@ namespace GraphQlResolver
 {
     public class GraphQlQueryProvider : QueryProvider
     {
+        public static GraphQlQueryProvider Instance = new GraphQlQueryProvider();
+
         public override object Execute(Expression expression)
         {
             throw new NotImplementedException();
+        }
+
+        public static IQueryable<T> CreatePlaceholder<T>(Expression? expression = null)
+        {
+            return new Query<T>(Instance, expression ?? Expression.Constant(null, typeof(IQueryable<T>)));
         }
     }
 
