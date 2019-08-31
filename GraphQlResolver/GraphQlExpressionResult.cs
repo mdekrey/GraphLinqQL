@@ -7,20 +7,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
 {
-    internal class GraphQlExpressionResult<TInput, TReturnType> : IGraphQlResult<TReturnType>
+    internal class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
-        private Expression<Func<TInput, TReturnType>> func;
-        private readonly IServiceProvider serviceProvider;
+        public IServiceProvider ServiceProvider { get; }
 
-        public GraphQlExpressionResult(Expression<Func<TInput, TReturnType>> func, IServiceProvider serviceProvider)
+        public LambdaExpression UntypedResolver { get; }
+
+        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider)
         {
-            this.func = func;
-            this.serviceProvider = serviceProvider;
+            this.UntypedResolver = func;
+            this.ServiceProvider = serviceProvider;
         }
 
-        public Expression<Func<TInput1, object>> Resolve<TInput1>()
+        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(Expression<Func<TInput, TReturnType>> func, IServiceProvider serviceProvider)
         {
-            return func.ChangeInputType<TInput, TInput1, TReturnType>().BoxReturnValue();
+            return new GraphQlExpressionResult<TReturnType>(func, serviceProvider);
         }
     }
 

@@ -6,23 +6,25 @@ using System.Linq.Expressions;
 
 namespace GraphQlResolver
 {
-    public class ComplexResolverBuilder<TContract, TFinal, TModel> : IComplexResolverBuilder<TContract, TFinal>
-        where TContract : IGraphQlResolvable, IGraphQlAccepts<TModel>
+    public class ComplexResolverBuilder<TContract, TFinal> : IComplexResolverBuilder<TContract, TFinal>
+        where TContract : IGraphQlResolvable
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod("Add");
         private readonly TContract contract;
-        private readonly Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve;
+        private readonly Func<LambdaExpression, IGraphQlResult<TFinal>> resolve;
+        private readonly Type modelType;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
 
-        public ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve)
+        public ComplexResolverBuilder(TContract contract, Func<LambdaExpression, IGraphQlResult<TFinal>> resolve, Type modelType)
         {
             this.contract = contract;
             this.resolve = resolve;
+            this.modelType = modelType;
             this.expressions = ImmutableDictionary<string, IGraphQlResult>.Empty;
         }
 
-        protected ComplexResolverBuilder(TContract contract, Func<Expression<Func<TModel, IDictionary<string, object>>>, IGraphQlResult<TFinal>> resolve, ImmutableDictionary<string, IGraphQlResult> expressions)
-            : this(contract, resolve)
+        protected ComplexResolverBuilder(TContract contract, Func<LambdaExpression, IGraphQlResult<TFinal>> resolve, ImmutableDictionary<string, IGraphQlResult> expressions, Type modelType)
+            : this(contract, resolve, modelType)
         {
             this.expressions = expressions;
         }
@@ -32,20 +34,20 @@ namespace GraphQlResolver
         public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, params object[] parameters)
         {
             var result = contract.ResolveQuery(property, parameters: parameters);
-            return new ComplexResolverBuilder<TContract, TFinal, TModel>(contract, resolve, expressions
-                .Add(displayName, result));
+            return new ComplexResolverBuilder<TContract, TFinal>(contract, resolve, expressions
+                .Add(displayName, result), modelType);
         }
 
 
         public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult<object>> resolve)
         {
-            return new ComplexResolverBuilder<TContract, TFinal, TModel>(contract, this.resolve, expressions
-                .Add(displayName, resolve(contract)));
+            return new ComplexResolverBuilder<TContract, TFinal>(contract, this.resolve, expressions
+                .Add(displayName, resolve(contract)), modelType);
         }
 
         public IGraphQlResult<TFinal> Build()
         {
-            var modelParameter = Expression.Parameter(typeof(TModel));
+            var modelParameter = Expression.Parameter(modelType);
 
 
             var variable = Expression.Parameter(typeof(Dictionary<string, object>));
@@ -54,11 +56,11 @@ namespace GraphQlResolver
 
             var resultDictionary = Expression.ListInit(Expression.New(variable.Type), expressions.Select(result =>
             {
-                var inputResolver = result.Value.Resolve<TModel>();
+                var inputResolver = result.Value.UntypedResolver;
                 var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
-                return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody);
+                return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
             }));
-            var func = Expression.Lambda<Func<TModel, IDictionary<string, object>>>(resultDictionary, modelParameter);
+            var func = Expression.Lambda(resultDictionary, modelParameter);
 
             return resolve(func);
         }

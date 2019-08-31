@@ -43,7 +43,7 @@ namespace GraphQlResolver.Test
 
             public interface Query : IGraphQlResolvable
             {
-                IGraphQlComplexListResult<Hero> Heroes();
+                IGraphQlResult<IEnumerable<Hero>> Heroes();
                 IGraphQlResult<double> Rand();
 
                 IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
@@ -61,7 +61,7 @@ namespace GraphQlResolver.Test
                 IGraphQlResult<string> Name();
                 IGraphQlResult<double> Renown();
                 IGraphQlResult<string> Faction();
-                IGraphQlComplexListResult<Hero> Friends();
+                IGraphQlResult<IEnumerable<Hero>> Friends();
                 IGraphQlResult<string> Location(string date);
 
                 IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
@@ -84,8 +84,8 @@ namespace GraphQlResolver.Test
             {
                 public IGraphQlResultFactory<GraphQlRoot> Original { get; set; }
 
-                public IGraphQlComplexListResult<Interfaces.Hero> Heroes() =>
-                    Original.ResolveList(root => Domain.heroes).As<Hero>();
+                public IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
+                    Original.Resolve(root => Domain.heroes).ConvertableList().As<Hero>();
 
                 public IGraphQlResult<double> Rand() =>
                     Original.Resolve(root => 5.0);
@@ -107,8 +107,8 @@ namespace GraphQlResolver.Test
 
                 public IGraphQlResult<string> Faction() =>
                     Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
-                public IGraphQlComplexListResult<Interfaces.Hero> Friends() =>
-                    Original.Join(friends).ResolveList((hero, friends) => friends).As<Hero>();
+                public IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
+                    Original.Join(friends).Resolve((hero, friends) => friends).ConvertableList().As<Hero>();
                 public IGraphQlResult<GraphQlId> Id() => 
                     Original.Resolve(hero => new GraphQlId(hero.Id));
                 public IGraphQlResult<string> Location(string date) =>

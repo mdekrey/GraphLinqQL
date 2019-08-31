@@ -1,9 +1,19 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace GraphQlResolver
 {
-    public interface IGraphQlAccepts<T>
+    public interface IGraphQlAccepts
     {
-        IGraphQlResultFactory<T> Original { get; set; }
+        IGraphQlResultFactory Original { set; }
+        Type ModelType { get; }
+    }
+
+    public interface IGraphQlAccepts<T> : IGraphQlAccepts
+    {
+        new IGraphQlResultFactory<T> Original { set; }
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
     }
 }

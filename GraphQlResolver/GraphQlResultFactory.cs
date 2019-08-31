@@ -20,137 +20,26 @@ namespace GraphQlResolver
             return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join);
         }
 
-        IGraphQlResultWithComplexFactory<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
+        IGraphQlResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
         {
-            return new GraphQlResultResolving<TValue, TDomainResult>(serviceProvider, resolver);
+            return GraphQlExpressionResult<TDomainResult>.Construct<TValue>(resolver, serviceProvider);
         }
 
-        IGraphQlListResultWithComplexFactory<TModel> IGraphQlResultFactory<TValue>.ResolveList<TModel>(Expression<Func<TValue, IEnumerable<TModel>>> resolver)
-        {
-            return new GraphQlListResultResolving<TValue, TModel>(serviceProvider, resolver);
-        }
     }
 
-    internal class GraphQlResultResolving<TInput, TModel> : IGraphQlResultWithComplexFactory<TModel>
+    // TODO - can this be removed?
+    internal class GraphQlComplexResult<TContract, TModel> : IGraphQlResult<TContract>
     {
-        private Expression<Func<TInput, TModel>> resolver;
-        private readonly IServiceProvider serviceProvider;
-
-        public GraphQlResultResolving(IServiceProvider serviceProvider, Expression<Func<TInput, TModel>> resolver)
+        public GraphQlComplexResult(LambdaExpression resolver, IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
-            this.resolver = resolver;
+            this.UntypedResolver = resolver;
+            this.ServiceProvider = serviceProvider;
         }
 
-        IGraphQlComplexResult<TContract> IGraphQlResultWithComplexFactory<TModel>.As<TContract>()
-        {
-            return new GraphQlComplexResult<TContract, TInput, TModel>(resolver, serviceProvider);
-        }
+        public IServiceProvider ServiceProvider { get; }
 
-        public Expression<Func<TInput1, object>> Resolve<TInput1>()
-        {
-            return resolver.ChangeInputType<TInput, TInput1, TModel>().BoxReturnValue();
-        }
+        public LambdaExpression UntypedResolver { get; }
+
     }
 
-    internal class GraphQlComplexResult<TContract, TInput, TModel> : IGraphQlComplexResult<TContract>
-        where TContract : IGraphQlResolvable, IGraphQlAccepts<TModel>
-    {
-        private readonly Expression<Func<TInput, TModel>> resolver;
-        private readonly IServiceProvider serviceProvider;
-
-        public GraphQlComplexResult(Expression<Func<TInput, TModel>> resolver, IServiceProvider serviceProvider)
-        {
-            this.resolver = resolver;
-            this.serviceProvider = serviceProvider;
-        }
-
-        public Expression<Func<TInput1, object>> Resolve<TInput1>()
-        {
-            return resolver.ChangeInputType<TInput, TInput1, TModel>().BoxReturnValue();
-        }
-
-        IComplexResolverBuilder<TContract, IDictionary<string, object>> IGraphQlComplexResult<TContract>.ResolveComplex()
-        {
-            var resolver = serviceProvider.GetService<TContract>();
-            resolver.Original = new GraphQlResultFactory<TModel>(serviceProvider);
-            return new ComplexResolverBuilder<TContract, IDictionary<string, object>, TModel>(
-                resolver,
-                ToResult
-            );
-        }
-
-        private IGraphQlResult<IDictionary<string, object>> ToResult(Expression<Func<TModel, IDictionary<string, object>>> expression)
-        {
-            var inputParameter = this.resolver.Parameters[0];
-            var func = Expression.Lambda<Func<TInput, IDictionary<string, object>>>(expression.Body.Replace(expression.Parameters[0], with: inputParameter), inputParameter);
-            return new GraphQlExpressionResult<TInput, IDictionary<string, object>>(func, serviceProvider);
-        }
-    }
-
-    internal class GraphQlListResultResolving<TInput, TModel> : IGraphQlListResultWithComplexFactory<TModel>
-    {
-        private readonly Expression<Func<TInput, IEnumerable<TModel>>> resolver;
-        private readonly IServiceProvider serviceProvider;
-
-        public GraphQlListResultResolving(IServiceProvider serviceProvider, Expression<Func<TInput, IEnumerable<TModel>>> resolver)
-        {
-            this.serviceProvider = serviceProvider;
-            this.resolver = resolver;
-        }
-
-        IGraphQlComplexListResult<TContract> IGraphQlListResultWithComplexFactory<TModel>.As<TContract>()
-        {
-            return new GraphQlComplexListResult<TContract, TInput, TModel>(resolver, serviceProvider);
-        }
-
-        public Expression<Func<TInput1, object>> Resolve<TInput1>()
-        {
-            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().BoxReturnValue();
-        }
-    }
-
-    internal class GraphQlComplexListResult<TContract, TInput, TModel> : IGraphQlComplexListResult<TContract>
-        where TContract : IGraphQlResolvable, IGraphQlAccepts<TModel>
-    {
-        private static MethodInfo enumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
-            .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
-            .Select(m => m.MakeGenericMethod(typeof(TModel), typeof(IDictionary<string, object>)))
-            .Where(m => m.GetParameters()[1].ParameterType == typeof(Func<TModel, IDictionary<string, object>>))
-            .Single();
-        private readonly Expression<Func<TInput, IEnumerable<TModel>>> resolver;
-        private readonly IServiceProvider serviceProvider;
-
-        public GraphQlComplexListResult(Expression<Func<TInput, IEnumerable<TModel>>> resolver, IServiceProvider serviceProvider)
-        {
-            this.resolver = resolver;
-            this.serviceProvider = serviceProvider;
-        }
-
-        public Expression<Func<TInput1, object>> Resolve<TInput1>()
-        {
-            return resolver.ChangeInputType<TInput, TInput1, IEnumerable<TModel>>().BoxReturnValue();
-        }
-
-        IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> IGraphQlComplexListResult<TContract>.ResolveComplex()
-        {
-            var resolver = serviceProvider.GetService<TContract>();
-            resolver.Original = new GraphQlResultFactory<TModel>(serviceProvider);
-            return new ComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>, TModel>(
-                resolver,
-                ToListResult
-            );
-        }
-
-        private IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(Expression<Func<TModel, IDictionary<string, object>>> expression)
-        {
-            var inputParameter = Expression.Parameter(typeof(TInput));
-            var getList = this.resolver.Body.Replace(this.resolver.Parameters[0], with: inputParameter);
-
-            // TODO - enumerable vs queryable
-            var func = Expression.Lambda<Func<TInput, IEnumerable<IDictionary<string, object>>>>(Expression.Call(enumerableSelect, getList, expression), inputParameter);
-
-            return new GraphQlExpressionResult<TInput, IEnumerable<IDictionary<string, object>>>(func, serviceProvider);
-        }
-    }
 }

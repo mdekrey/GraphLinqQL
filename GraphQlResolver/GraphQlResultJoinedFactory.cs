@@ -1,4 +1,6 @@
-﻿namespace GraphQlResolver
+﻿using System;
+
+namespace GraphQlResolver
 {
     internal class GraphQlResultJoinedFactory<TValue, TJoinedType> : IGraphQlResultJoinedFactory<TValue, TJoinedType>
     {
@@ -9,14 +11,9 @@
             this.join = join;
         }
 
-        public IGraphQlResultWithComplexFactory<TDomainResult> Resolve<TDomainResult>(System.Linq.Expressions.Expression<System.Func<TValue, TJoinedType, TDomainResult>> resolver)
+        public IGraphQlResult<TDomainResult> Resolve<TDomainResult>(System.Linq.Expressions.Expression<System.Func<TValue, TJoinedType, TDomainResult>> resolver)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public IGraphQlListResultWithComplexFactory<TDomainResult> ResolveList<TDomainResult>(System.Linq.Expressions.Expression<System.Func<TValue, TJoinedType, System.Collections.Generic.IEnumerable<TDomainResult>>> resolver)
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
