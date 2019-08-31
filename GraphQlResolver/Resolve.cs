@@ -111,28 +111,24 @@ namespace GraphQlResolver
             return new ConvertableListResult<TModel>(target);
         }
 
-        public class ConvertableResult<TModel> : GraphQlExpressionResult<TModel>
+        public class ConvertableResult<TModel>
         {
-            public ConvertableResult(IGraphQlResult<TModel> target)
-                : base(target.UntypedResolver, target.ServiceProvider) { }
+            private readonly IGraphQlResult<TModel> target;
+            public ConvertableResult(IGraphQlResult<TModel> target) => this.target = target;
 
             public IGraphQlResult<TContract> As<TContract>()
-                where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
-            {
-                return new GraphQlExpressionResult<TContract>(UntypedResolver, ServiceProvider);
-            }
+                where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
+                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider);
         }
 
-        public class ConvertableListResult<TModel> : GraphQlExpressionResult<IEnumerable<TModel>>
+        public class ConvertableListResult<TModel>
         {
-            public ConvertableListResult(IGraphQlResult<IEnumerable<TModel>> target)
-                : base(target.UntypedResolver, target.ServiceProvider) { }
+            private readonly IGraphQlResult<IEnumerable<TModel>> target;
+            public ConvertableListResult(IGraphQlResult<IEnumerable<TModel>> target) => this.target = target;
 
             public IGraphQlResult<IEnumerable<TContract>> As<TContract>()
-                where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable
-            {
-                return new GraphQlExpressionResult<IEnumerable<TContract>>(UntypedResolver, ServiceProvider);
-            }
+                where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
+                new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider);
         }
     }
 }

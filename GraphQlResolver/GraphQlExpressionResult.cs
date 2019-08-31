@@ -7,13 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
 {
-    public class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
+    class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
         public IServiceProvider ServiceProvider { get; }
 
         public LambdaExpression UntypedResolver { get; }
 
-        protected internal GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider)
+        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider)
         {
             this.UntypedResolver = func;
             this.ServiceProvider = serviceProvider;
