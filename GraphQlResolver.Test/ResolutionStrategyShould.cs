@@ -101,8 +101,10 @@ namespace GraphQlResolver.Test
                                                                                      select GraphQlJoin.BuildPlaceholder(t, reputation));
                 private readonly GraphQlJoin<Domain.Hero, IEnumerable<Domain.Hero>> friends =
                     GraphQlJoin.Join<Domain.Hero, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
-                                                                                            join friendIds in Domain.friends on GraphQlJoin.FindOriginal(t).Id equals friendIds.Id1
-                                                                                            join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
+                                                                                            let friends = (from friendId in Domain.friends
+                                                                                                           where GraphQlJoin.FindOriginal(t).Id == friendId.Id1
+                                                                                                           join friend in Domain.heroes on friendId.Id2 equals friend.Id
+                                                                                                           select friend)
                                                                                             select GraphQlJoin.BuildPlaceholder(t, friends));
 
                 public IGraphQlResult<string> Faction() =>
@@ -203,12 +205,14 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var query = from q in Resolve.Query<GraphQlRoot>()
+            var query = from q in new[] { new GraphQlRoot() }
                         select new
                         {
                             heroes = from hero in Domain.heroes
-                                     join friendIds in Domain.friends on hero.Id equals friendIds.Id1
-                                     join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
+                                     let friends = (from friendId in Domain.friends
+                                                    where hero.Id == friendId.Id1
+                                                    join friend in Domain.heroes on friendId.Id2 equals friend.Id
+                                                    select friend)
                                      select new
                                      {
                                          id = hero.Id,
@@ -231,9 +235,10 @@ namespace GraphQlResolver.Test
                     .Build());
 
 
-            // TODO - assert
-            Assert.False(true, "Not complete");
-            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
         [Fact]
