@@ -32,4 +32,13 @@ namespace GraphQlResolver
         }
     }
 
+    static class GraphQlExpressionResult
+    {
+        
+        public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins)
+        {
+            var parameters = new object[] { func, serviceProvider, joins };
+            return (IGraphQlResult)typeof(GraphQlExpressionResult<>).MakeGenericType(returnType).GetConstructors().Single(c => c.GetParameters().Length == 3).Invoke(parameters);
+        }
+    }
 }

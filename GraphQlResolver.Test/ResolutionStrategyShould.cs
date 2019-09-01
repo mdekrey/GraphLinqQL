@@ -160,6 +160,27 @@ namespace GraphQlResolver.Test
         }
 
         [Fact]
+        public void BeAbleToRepresentUntypedSimpleStructures()
+        {
+            // {
+            //   heroes {
+            //     id
+            //     name
+            //   }
+            //   rand
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex().Add("id").Add("name").Build())
+                    .Add("rand")
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"rand\":5,\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentSimpleStructures()
         {
             // {
@@ -201,7 +222,7 @@ namespace GraphQlResolver.Test
                                                   .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
                                                   .Build())
                     .Build());
-            
+
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
 

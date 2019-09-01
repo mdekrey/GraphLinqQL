@@ -10,6 +10,15 @@ namespace GraphQlResolver
 {
     public static class Resolve
     {
+        public static object? GraphQlRoot(this IServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder<object>, IGraphQlResult<object>> resolver)
+        {
+            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
+            var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As(t).ResolveComplex());
+            var expression = resolved?.ResolveExpression<GraphQlRoot>();
+            var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
+            return queryable.Single();
+        }
+
         public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, object>, IGraphQlResult<object>> resolver)
             where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         {
@@ -20,6 +29,23 @@ namespace GraphQlResolver
             return queryable.Single();
         }
 
+        private static readonly IReadOnlyList<MethodInfo> complexResolvers = (from method in typeof(Resolve).GetMethods()
+                                                                              where method.Name == nameof(ResolveComplex) && method.IsGenericMethodDefinition
+                                                                              select method).ToArray();
+
+        public static IComplexResolverBuilder<object> ResolveComplex(this IGraphQlResult target)
+        {
+            var paramType = target.GetType();
+            var resultType = paramType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlResult<>)).Select(iface => iface.GetGenericArguments()[0]).First();
+            var conractType = TypeSystem.GetElementType(resultType) ?? resultType;
+
+            if (typeof(IGraphQlResolvable).IsAssignableFrom(conractType))
+            {
+                var method = complexResolvers.Select(m => m.MakeGenericMethod(conractType)).First(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(paramType));
+                return (IComplexResolverBuilder<object>)method.Invoke(null, new[] { target });
+            }
+            throw new ArgumentException("Not a resolvable complex type", nameof(target));
+        }
 
         public static IComplexResolverBuilder<TContract, IDictionary<string, object>> ResolveComplex<TContract>(this IGraphQlResult<TContract> target)
             where TContract : IGraphQlResolvable
@@ -141,6 +167,10 @@ namespace GraphQlResolver
         {
             private readonly IGraphQlResult<TModel> target;
             public ConvertableResult(IGraphQlResult<TModel> target) => this.target = target;
+
+
+            public IGraphQlResult As(Type contract) =>
+                GraphQlExpressionResult.Construct(contract, target.UntypedResolver, target.ServiceProvider, target.Joins);
 
             public IGraphQlResult<TContract> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>

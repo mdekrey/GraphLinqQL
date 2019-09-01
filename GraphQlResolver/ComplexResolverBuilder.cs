@@ -45,6 +45,12 @@ namespace GraphQlResolver
                 .Add(displayName, resolve(contract)), modelType);
         }
 
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)
+        {
+            return new ComplexResolverBuilder<TContract, TFinal>(contract, this.resolve, expressions
+                .Add(displayName, resolve(contract)), modelType);
+        }
+
         public IGraphQlResult<TFinal> Build()
         {
             var modelParameter = Expression.Parameter(modelType, "ComplexResolverBuilder " + modelType.FullName);
@@ -60,6 +66,16 @@ namespace GraphQlResolver
             var func = Expression.Lambda(resultDictionary, modelParameter);
 
             return resolve(func, allJoins);
+        }
+
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string property, params object[] parameters)
+        {
+            return Add(property, parameters);
+        }
+
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, params object[] parameters)
+        {
+            return Add(displayName, property, parameters);
         }
     }
 }
