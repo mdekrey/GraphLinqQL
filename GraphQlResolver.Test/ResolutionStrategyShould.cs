@@ -270,9 +270,11 @@ namespace GraphQlResolver.Test
                                                   .Add("faction")
                                                   .Build())
                     .Build());
-            // TODO - assert
-            Assert.False(true, "Not complete");
-            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
     }

@@ -59,11 +59,6 @@ namespace GraphQlResolver
 
             var genericArgs = new[] { modelType, typeof(IDictionary<string, object>) };
             var expressionArg = typeof(Expression<>).MakeGenericType(typeof(Func<,>).MakeGenericType(genericArgs));
-            var enumerableSelect = typeof(System.Linq.Queryable).GetMethods()
-                .Where(m => m.Name == nameof(System.Linq.Queryable.Select))
-                .Select(m => m.MakeGenericMethod(genericArgs))
-                .Where(m => m.GetParameters()[1].ParameterType == expressionArg)
-                .Single();
             var asQueryable = typeof(Queryable).GetMethods()
                 .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
                 .Select(m => m.MakeGenericMethod(modelType))
@@ -85,9 +80,28 @@ namespace GraphQlResolver
                     getList = Expression.Call(asQueryable, getList);
                 }
 
-                // TODO - joins
+                var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
+                var newParameter = originalParameter;
+                var parameters = new Dictionary<Expression, Expression>(joins.Count) { { originalParameter, originalParameter } };
+                foreach (var join in joins)
+                {
+                    getList = getList.MergeJoin(originalParameter, newParameter, join, parameters, out newParameter);
+                }
 
-                var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, Expression.Quote(expression)), inputParameter);
+                var mainBody = Expression.Lambda(
+                    parameters.Aggregate(
+                        expression.Body.Replace(expression.Parameters[0], parameters[originalParameter]), 
+                        (e, parameters) => e.Replace(parameters.Key, parameters.Value)
+                    ), 
+                    newParameter
+                );
+
+                var enumerableSelect = typeof(System.Linq.Queryable).GetMethods()
+                    .Where(m => m.Name == nameof(System.Linq.Queryable.Select))
+                    .Select(m => m.MakeGenericMethod(new[] { TypeSystem.GetElementType(getList.Type), typeof(IDictionary<string, object>) }))
+                    .Where(m => m.GetParameters()[1].ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>))
+                    .Single();
+                var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, Expression.Quote(mainBody)), inputParameter);
 
                 return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider);
             }

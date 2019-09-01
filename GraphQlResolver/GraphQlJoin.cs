@@ -17,7 +17,7 @@ namespace GraphQlResolver
 
     public class GraphQlJoin<TFromDomain, TToDomain> : IGraphQlJoin
     {
-        public ParameterExpression Placeholder { get; } = Expression.Variable(typeof(TToDomain));
+        public ParameterExpression Placeholder { get; } = Expression.Variable(typeof(TToDomain), "JoinPlaceholder " + typeof(TToDomain).FullName);
 
         public IQueryable<TToDomain> Queryable { get; }
         public IQueryable<TFromDomain> Root { get; }

@@ -47,7 +47,7 @@ namespace GraphQlResolver
 
         public IGraphQlResult<TFinal> Build()
         {
-            var modelParameter = Expression.Parameter(modelType);
+            var modelParameter = Expression.Parameter(modelType, "ComplexResolverBuilder " + modelType.FullName);
 
             var allJoins = expressions.SelectMany(e => e.Value.Joins).ToImmutableHashSet();
 
