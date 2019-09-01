@@ -18,7 +18,7 @@ namespace GraphQlResolver
             this.serviceProvider = serviceProvider;
         }
 
-        public object Execute(string query)
+        public object Execute(string query, IDictionary<string, object> arguments)
         {
             var lexer = new Lexer();
             var parser = new Parser(lexer);
@@ -39,16 +39,16 @@ namespace GraphQlResolver
 
             return serviceProvider.GraphQlRoot(operation, builder =>
             {
-                return Build(builder, ast, def.SelectionSet.Selections);
+                return Build(builder, ast, def.SelectionSet.Selections, arguments);
             });
         }
 
-        private IGraphQlResult<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, IEnumerable<ASTNode> selections)
+        private IGraphQlResult<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, IEnumerable<ASTNode> selections, IDictionary<string, object> arguments)
         {
-            return selections.Aggregate(builder, (b, node) => Build(b, ast, node)).Build();
+            return selections.Aggregate(builder, (b, node) => Build(b, ast, node, arguments)).Build();
         }
 
-        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, ASTNode node)
+        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, ASTNode node, IDictionary<string, object> arguments)
         {
             switch (node)
             {
@@ -57,38 +57,31 @@ namespace GraphQlResolver
                     {
                         return builder.Add(
                             field.Alias?.Value ?? field.Name.Value, 
-                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast)).ResolveComplex(), ast, field.SelectionSet.Selections)
+                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast, arguments)).ResolveComplex(), ast, field.SelectionSet.Selections, arguments)
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, ast));
+                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, ast, arguments));
                     }
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLDocument ast)
+        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLDocument ast, IDictionary<string, object> queryArguments)
         {
-            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, ast));
+            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, ast, queryArguments));
         }
 
-        private object ResolveValue(GraphQLValue value, GraphQLDocument ast)
+        private object ResolveValue(GraphQLValue value, GraphQLDocument ast, IDictionary<string, object> queryArguments)
         {
             return value switch
             {
                 GraphQLScalarValue scalar => scalar.Value,
+                GraphQLVariable variable => queryArguments[variable.Name.Value],
                 _ => throw new NotImplementedException()
             };
         }
-
-        //private Func<IGraphQlResolvable, IGraphQlResult> Resolve(GraphQLDocument ast, GraphQLFieldSelection field)
-        //{
-        //    return resolvable =>
-        //    {
-
-        //    };
-        //}
     }
 }
