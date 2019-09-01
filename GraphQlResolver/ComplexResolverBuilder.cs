@@ -34,8 +34,13 @@ namespace GraphQlResolver
         public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, params object[] parameters)
         {
             var result = contract.ResolveQuery(property, parameters: parameters);
+            // TODO - prevent non-primitives
+            //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
+            //{
+            //    throw new InvalidOperationException("Cannot use simple resolution for complex type");
+            //}
             return new ComplexResolverBuilder<TContract, TFinal>(contract, resolve, expressions
-                .Add(displayName, result), modelType);
+                .Add(displayName ?? property, result), modelType);
         }
 
 

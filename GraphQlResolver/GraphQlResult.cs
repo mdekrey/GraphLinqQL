@@ -11,6 +11,7 @@ namespace GraphQlResolver
         IServiceProvider ServiceProvider { get; }
         LambdaExpression UntypedResolver { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
+        Type ResultType => UntypedResolver.ReturnType;
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
