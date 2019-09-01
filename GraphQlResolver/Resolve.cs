@@ -103,7 +103,7 @@ namespace GraphQlResolver
                     .Single();
                 var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, Expression.Quote(mainBody)), inputParameter);
 
-                return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider);
+                return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider, target.Joins);
             }
 
         }
@@ -146,7 +146,7 @@ namespace GraphQlResolver
 
             public IGraphQlResult<TContract> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider);
+                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins);
         }
 
         public class ConvertableListResult<TModel>
@@ -156,7 +156,7 @@ namespace GraphQlResolver
 
             public IGraphQlResult<IEnumerable<TContract>> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider);
+                new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider, target.Joins);
         }
     }
 }

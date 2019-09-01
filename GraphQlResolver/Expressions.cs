@@ -36,7 +36,7 @@ namespace GraphQlResolver
                 if (callExpression.Method.Name == nameof(Queryable.Join))
                 {
                     var resultType = typeof(Tuple<,>).MakeGenericType(incomingType, outgoingType);
-                    nextParameter = Expression.Parameter(resultType, "Tuple " + resultType.FullName);
+                    nextParameter = Expression.Parameter(resultType, "JoinTuple " + resultType.FullName);
                     var newTypeArgs = new[] { incomingType, typeArgs[1], typeArgs[2], resultType };
                     var newMethod = callExpression.Method.GetGenericMethodDefinition().MakeGenericMethod(newTypeArgs);
                     var keySelector = (LambdaExpression)((UnaryExpression)callExpression.Arguments[2]).Operand;
@@ -58,15 +58,34 @@ namespace GraphQlResolver
 
                     return result;
                 }
-                else
+                else if (callExpression.Method.Name == nameof(Queryable.GroupJoin))
                 {
-                    throw new NotImplementedException();
+                    // TODO - this needs serious work
+                    var resultType = typeof(Tuple<,>).MakeGenericType(incomingType, outgoingType);
+                    nextParameter = Expression.Parameter(resultType, "GroupJoinTuple " + resultType.FullName);
+                    var newTypeArgs = new[] { incomingType, typeArgs[1], typeArgs[2], resultType };
+                    var newMethod = callExpression.Method.GetGenericMethodDefinition().MakeGenericMethod(newTypeArgs);
+                    var keySelector = (LambdaExpression)((UnaryExpression)callExpression.Arguments[2]).Operand;
+                    var newKeySelector = Expression.Lambda(keySelector.Body.Replace(keySelector.Parameters[0], parameters[firstInput]), newParameter);
+                    var resultSelector = (LambdaExpression)((UnaryExpression)callExpression.Arguments[4]).Operand;
+                    var newValueSelector = resultSelector.Replace(resultSelector.Parameters[0], parameters[firstInput]);
+                    var tupleConstructor = Expression.New(resultType.GetConstructor(new[] { incomingType, outgoingType }), newParameter, newValueSelector.Body);
+                    var newResultSelector = Expression.Lambda(tupleConstructor, newParameter, resultSelector.Parameters[1]);
+                    var args = callExpression.Arguments.ToArray();
+                    args[2] = Expression.Quote(newKeySelector);
+                    args[4] = Expression.Quote(newResultSelector);
+                    var result = Expression.Call(newMethod, args);
+                    var newPath = (Expression)Expression.Property(nextParameter, resultType.GetProperty(nameof(Tuple<object, object>.Item1)));
+                    foreach (var key in parameters.Keys.ToArray())
+                    {
+                        parameters[key] = parameters[key].Replace(newParameter, newPath);
+                    }
+                    parameters[join.Placeholder] = Expression.Property(nextParameter, resultType.GetProperty(nameof(Tuple<object, object>.Item2)));
+
+                    return result;
                 }
             }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
     }
 }
