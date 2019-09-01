@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using Implementations = GraphQlResolver.HandwrittenSamples.Implementations;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
+using GraphQlResolver.Execution;
 
-namespace GraphQlResolver
+namespace GraphQlResolver.Execution
 {
     public class GraphQlExecutorShould
     {

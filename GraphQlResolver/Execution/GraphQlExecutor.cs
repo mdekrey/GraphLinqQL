@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GraphQlResolver
+namespace GraphQlResolver.Execution
 {
     public class GraphQlExecutor<TQuery, TMutation>
         where TQuery : IGraphQlResolvable
@@ -23,6 +23,7 @@ namespace GraphQlResolver
             var lexer = new Lexer();
             var parser = new Parser(lexer);
             var ast = parser.Parse(new Source(query));
+            var context = new GraphQLExecutionContext(ast, arguments);
             var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
             if (def == null)
             {
@@ -39,16 +40,16 @@ namespace GraphQlResolver
 
             return serviceProvider.GraphQlRoot(operation, builder =>
             {
-                return Build(builder, ast, def.SelectionSet.Selections, arguments).Build();
+                return Build(builder, def.SelectionSet.Selections, context).Build();
             });
         }
 
-        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, IEnumerable<ASTNode> selections, IDictionary<string, object> arguments)
+        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, IEnumerable<ASTNode> selections, GraphQLExecutionContext context)
         {
-            return selections.Aggregate(builder, (b, node) => Build(b, ast, node, arguments));
+            return selections.Aggregate(builder, (b, node) => Build(b, node, context));
         }
 
-        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, ASTNode node, IDictionary<string, object> arguments)
+        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, ASTNode node, GraphQLExecutionContext context)
         {
             switch (node)
             {
@@ -57,33 +58,33 @@ namespace GraphQlResolver
                     {
                         return builder.Add(
                             field.Alias?.Value ?? field.Name.Value, 
-                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast, arguments)).ResolveComplex(), ast, field.SelectionSet.Selections, arguments).Build()
+                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, context)).ResolveComplex(), field.SelectionSet.Selections, context).Build()
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, ast, arguments));
+                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, context));
                     }
                 case GraphQLFragmentSpread fragmentSpread:
-                    return Build(builder, ast,
-                        ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
-                        arguments);
+                    return Build(builder,
+                        context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
+                        context);
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLDocument ast, IDictionary<string, object> queryArguments)
+        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
         {
-            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, ast, queryArguments));
+            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, context));
         }
 
-        private object ResolveValue(GraphQLValue value, GraphQLDocument ast, IDictionary<string, object> queryArguments)
+        private object ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
         {
             return value switch
             {
                 GraphQLScalarValue scalar => scalar.Value,
-                GraphQLVariable variable => queryArguments[variable.Name.Value],
+                GraphQLVariable variable => context.Arguments[variable.Name.Value],
                 _ => throw new NotImplementedException()
             };
         }
