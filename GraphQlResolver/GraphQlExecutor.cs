@@ -23,7 +23,7 @@ namespace GraphQlResolver
             var lexer = new Lexer();
             var parser = new Parser(lexer);
             var ast = parser.Parse(new Source(query));
-            var def = ast.Definitions.First() as GraphQLOperationDefinition;
+            var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
             if (def == null)
             {
                 throw new ArgumentException("Query did not contain a document", nameof(query));
@@ -39,13 +39,13 @@ namespace GraphQlResolver
 
             return serviceProvider.GraphQlRoot(operation, builder =>
             {
-                return Build(builder, ast, def.SelectionSet.Selections, arguments);
+                return Build(builder, ast, def.SelectionSet.Selections, arguments).Build();
             });
         }
 
-        private IGraphQlResult<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, IEnumerable<ASTNode> selections, IDictionary<string, object> arguments)
+        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, IEnumerable<ASTNode> selections, IDictionary<string, object> arguments)
         {
-            return selections.Aggregate(builder, (b, node) => Build(b, ast, node, arguments)).Build();
+            return selections.Aggregate(builder, (b, node) => Build(b, ast, node, arguments));
         }
 
         private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, GraphQLDocument ast, ASTNode node, IDictionary<string, object> arguments)
@@ -57,13 +57,17 @@ namespace GraphQlResolver
                     {
                         return builder.Add(
                             field.Alias?.Value ?? field.Name.Value, 
-                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast, arguments)).ResolveComplex(), ast, field.SelectionSet.Selections, arguments)
+                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast, arguments)).ResolveComplex(), ast, field.SelectionSet.Selections, arguments).Build()
                         );
                     }
                     else
                     {
                         return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, ast, arguments));
                     }
+                case GraphQLFragmentSpread fragmentSpread:
+                    return Build(builder, ast,
+                        ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
+                        arguments);
                 default:
                     throw new NotImplementedException();
             }

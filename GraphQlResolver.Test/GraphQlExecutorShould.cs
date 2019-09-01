@@ -72,6 +72,34 @@ namespace GraphQlResolver
         }
 
         [Fact]
+        public void BeAbleToUseStructureFragments()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+fragment HeroPrimary on Hero {
+  id
+  name
+}
+
+{
+  heroes {
+    ...HeroPrimary
+    friends {
+      ...HeroPrimary
+    }
+  }
+}
+", ImmutableDictionary<string, object>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentComplexStructures()
         {
             var serviceProvider = new SimpleServiceProvider();
