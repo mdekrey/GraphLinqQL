@@ -55,22 +55,39 @@ namespace GraphQlResolver
                 case GraphQLFieldSelection field:
                     if (field.SelectionSet != null)
                     {
-                        return builder.Add(field.Alias?.Value ?? field.Name.Value, b => Build(b.ResolveQuery(field.Name.Value).ResolveComplex(), ast, field.SelectionSet.Selections));
+                        return builder.Add(
+                            field.Alias?.Value ?? field.Name.Value, 
+                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, ast)).ResolveComplex(), ast, field.SelectionSet.Selections)
+                        );
                     }
                     else
                     {
-                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value);
+                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, ast));
                     }
                 default:
                     throw new NotImplementedException();
             }
         }
 
+        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLDocument ast)
+        {
+            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, ast));
+        }
+
+        private object ResolveValue(GraphQLValue value, GraphQLDocument ast)
+        {
+            return value switch
+            {
+                GraphQLScalarValue scalar => scalar.Value,
+                _ => throw new NotImplementedException()
+            };
+        }
+
         //private Func<IGraphQlResolvable, IGraphQlResult> Resolve(GraphQLDocument ast, GraphQLFieldSelection field)
         //{
         //    return resolvable =>
         //    {
-                
+
         //    };
         //}
     }

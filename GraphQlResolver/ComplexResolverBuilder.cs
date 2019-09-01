@@ -29,9 +29,9 @@ namespace GraphQlResolver
             this.expressions = expressions;
         }
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string property, params object[] parameters) => Add(property, property, parameters);
+        public IComplexResolverBuilder<TContract, TFinal> Add(string property, IDictionary<string, object>? parameters = null) => Add(property, property, parameters);
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, params object[] parameters)
+        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, IDictionary<string, object>? parameters = null)
         {
             var result = contract.ResolveQuery(property, parameters: parameters);
             // TODO - prevent non-primitives
@@ -73,14 +73,10 @@ namespace GraphQlResolver
             return resolve(func, allJoins);
         }
 
-        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string property, params object[] parameters)
-        {
-            return Add(property, parameters);
-        }
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string property, IDictionary<string, object>? parameters) => 
+            Add(property, parameters);
 
-        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, params object[] parameters)
-        {
-            return Add(displayName, property, parameters);
-        }
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, IDictionary<string, object>? parameters) => 
+            Add(displayName, property, parameters);
     }
 }

@@ -93,5 +93,28 @@ namespace GraphQlResolver
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
+        [Fact]
+        public void BeAbleToPassParameters()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+{
+  heroes {
+    id
+    name
+    location
+    oldLocation: location(date: ""2008-05-02"")
+  }
+}
+");
+            
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
     }
 }

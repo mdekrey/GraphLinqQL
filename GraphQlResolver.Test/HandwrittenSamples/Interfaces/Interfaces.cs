@@ -25,7 +25,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         IGraphQlResult<IEnumerable<Hero>> Heroes();
         IGraphQlResult<double> Rand();
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object>? parameters) =>
             name switch
             {
                 "heroes" => Heroes(),
@@ -43,7 +43,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         IGraphQlResult<IEnumerable<Hero>> Friends();
         IGraphQlResult<string> Location(string date);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, params object[] parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object>? parameters) =>
             name switch
             {
                 "id" => Id(),
@@ -51,7 +51,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "renown" => Renown(),
                 "faction" => Faction(),
                 "friends" => Friends(),
-                "location" => Location((string)parameters[0] ?? "2019-04-22"),
+                "location" => Location((parameters != null && parameters.TryGetValue("date", out var date) ? date as string : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
     }

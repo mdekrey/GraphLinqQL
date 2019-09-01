@@ -41,7 +41,7 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public IGraphQlResult<GraphQlId> Id() =>
             Original.Resolve(hero => new GraphQlId(hero.Id));
         public IGraphQlResult<string> Location(string date) =>
-            Original.Resolve(hero => "Unknown"); // TODO - use arguments
+            Original.Resolve(hero => $"Unknown ({date})");
         public IGraphQlResult<string> Name() =>
             Original.Resolve(hero => hero.Name);
         public IGraphQlResult<double> Renown() =>

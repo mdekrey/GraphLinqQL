@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 using Implementations = GraphQlResolver.HandwrittenSamples.Implementations;
 
@@ -113,6 +114,33 @@ namespace GraphQlResolver
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToPassParameters()
+        {
+            // {
+            //   heroes {
+            //     id
+            //     name
+            //     location
+            //     oldLocation: location(date: "2008-05-02")
+            //   }
+            // }
+
+            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
+                root.Add("heroes", q => q.Heroes().ResolveComplex()
+                                                  .Add("id")
+                                                  .Add("name")
+                                                  .Add("location")
+                                                  .Add("oldLocation", "location", new Dictionary<string, object> { { "date", "2008-05-02" } })
+                                                  .Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
