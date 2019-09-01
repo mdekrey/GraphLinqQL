@@ -6,6 +6,6 @@ namespace GraphQlResolver
 {
     public interface IGraphQlResolvable
     {
-        IGraphQlResult ResolveQuery(string name, IDictionary<string, object>? parameters = null);
+        IGraphQlResult ResolveQuery(string name, IDictionary<string, object> parameters);
     }
 }

@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Xunit;
 using Implementations = GraphQlResolver.HandwrittenSamples.Implementations;
 
@@ -17,7 +18,7 @@ namespace GraphQlResolver
         {
             public object GetService(Type serviceType)
             {
-                return Activator.CreateInstance(serviceType);
+                return Activator.CreateInstance(serviceType) ?? throw new NotSupportedException();
             }
         }
 
@@ -32,7 +33,7 @@ namespace GraphQlResolver
             //   rand
             // }
             var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex().Add("id").Add("name").Build())
+                root.Add("heroes", q => q.ResolveQuery("heroes", ImmutableDictionary<string, object>.Empty).ResolveComplex().Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
 

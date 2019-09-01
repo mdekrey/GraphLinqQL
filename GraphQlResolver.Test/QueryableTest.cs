@@ -17,8 +17,10 @@ namespace GraphQlResolver
         }
         public class EntityContext : Microsoft.EntityFrameworkCore.DbContext
         {
+#nullable disable
             public DbSet<EntityA> A { get; set; }
             public DbSet<EntityB> B { get; set; }
+#nullable restore
 
             protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {

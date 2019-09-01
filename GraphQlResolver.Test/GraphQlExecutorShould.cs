@@ -19,7 +19,7 @@ namespace GraphQlResolver
         {
             public object GetService(Type serviceType)
             {
-                return Activator.CreateInstance(serviceType);
+                return Activator.CreateInstance(serviceType) ?? throw new NotSupportedException();
             }
         }
 

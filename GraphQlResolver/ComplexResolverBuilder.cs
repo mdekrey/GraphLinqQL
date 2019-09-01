@@ -33,7 +33,7 @@ namespace GraphQlResolver
 
         public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, IDictionary<string, object>? parameters = null)
         {
-            var result = contract.ResolveQuery(property, parameters: parameters);
+            var result = contract.ResolveQuery(property, parameters: parameters ?? ImmutableDictionary<string, object>.Empty);
             // TODO - prevent non-primitives
             //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
             //{

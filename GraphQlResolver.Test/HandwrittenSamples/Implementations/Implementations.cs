@@ -9,7 +9,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
 
     public class Query : Interfaces.Query, IGraphQlAccepts<GraphQlRoot>
     {
+#nullable disable
         public IGraphQlResultFactory<GraphQlRoot> Original { get; set; }
+#nullable restore
 
         public IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
             Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>();
@@ -20,7 +22,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
 
     public class Hero : Interfaces.Hero, IGraphQlAccepts<Domain.Hero>
     {
+#nullable disable
         public IGraphQlResultFactory<Domain.Hero> Original { get; set; }
+#nullable restore
 
         private readonly GraphQlJoin<Domain.Hero, Domain.Reputation> reputation =
             GraphQlJoin.Join<Domain.Hero, Domain.Reputation>((originBase) => from t in originBase

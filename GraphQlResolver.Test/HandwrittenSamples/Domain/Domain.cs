@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 
+#nullable disable
+
 namespace GraphQlResolver.HandwrittenSamples.Domain
 {
     public class Hero
