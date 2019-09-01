@@ -96,24 +96,24 @@ namespace GraphQlResolver.Test
                 public IGraphQlResultFactory<Domain.Hero> Original { get; set; }
 
                 private readonly GraphQlJoin<Domain.Hero, Domain.Reputation> reputation =
-                    GraphQlJoin.Join((IQueryable<Domain.Hero> heroes) => from hero in heroes
-                                                                         join reputation in Domain.heroReputation on hero.Id equals reputation.HeroId
-                                                                         select reputation);
+                    GraphQlJoin.Join<Domain.Hero, Domain.Reputation>((originBase) => from t in originBase
+                                                                                     join reputation in Domain.heroReputation on GraphQlJoin.FindOriginal(t).Id equals reputation.HeroId
+                                                                                     select GraphQlJoin.BuildPlaceholder(t, reputation));
                 private readonly GraphQlJoin<Domain.Hero, IEnumerable<Domain.Hero>> friends =
-                    GraphQlJoin.Join((IQueryable<Domain.Hero> heroes) => from hero in heroes
-                                                                         join friendIds in Domain.friends on hero.Id equals friendIds.Id1
-                                                                         join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
-                                                                         select friends);
+                    GraphQlJoin.Join<Domain.Hero, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
+                                                                                            join friendIds in Domain.friends on GraphQlJoin.FindOriginal(t).Id equals friendIds.Id1
+                                                                                            join friend in Domain.heroes on friendIds.Id2 equals friend.Id into friends
+                                                                                            select GraphQlJoin.BuildPlaceholder(t, friends));
 
                 public IGraphQlResult<string> Faction() =>
                     Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
                 public IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
                     Original.Join(friends).Resolve((hero, friends) => friends).ConvertableList().As<Hero>();
-                public IGraphQlResult<GraphQlId> Id() => 
+                public IGraphQlResult<GraphQlId> Id() =>
                     Original.Resolve(hero => new GraphQlId(hero.Id));
                 public IGraphQlResult<string> Location(string date) =>
                     Original.Resolve(hero => "Unknown"); // TODO - use arguments
-                public IGraphQlResult<string> Name() => 
+                public IGraphQlResult<string> Name() =>
                     Original.Resolve(hero => hero.Name);
                 public IGraphQlResult<double> Renown() =>
                     Original.Join(reputation).Resolve((hero, reputation) => (double)reputation.Renown);
@@ -147,7 +147,7 @@ namespace GraphQlResolver.Test
                 new Hero { Id = "GUARDIANS-1", Name = "Starlord" },
                 new Hero { Id = "ASGUARD-3", Name = "Thor" },
             };
-            public static readonly IReadOnlyList<Reputation> heroReputation = new []
+            public static readonly IReadOnlyList<Reputation> heroReputation = new[]
             {
                 new Reputation { HeroId = "GUARDIANS-1", Renown = 5, Faction = "Guardians of the Galaxy" },
                 new Reputation { HeroId = "ASGUARD-3", Renown = 50, Faction = "Asgardians" },

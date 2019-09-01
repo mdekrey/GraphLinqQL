@@ -70,7 +70,7 @@ namespace GraphQlResolver
                 modelType
             );
 
-            IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression expression, ImmutableHashSet<IGraphQlJoin> joins)
+            IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
                 var getList = target.UntypedResolver.Body.Replace(target.UntypedResolver.Parameters[0], with: inputParameter);
@@ -81,27 +81,32 @@ namespace GraphQlResolver
                 }
 
                 var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
-                var newParameter = originalParameter;
                 var parameters = new Dictionary<Expression, Expression>(joins.Count) { { originalParameter, originalParameter } };
-                foreach (var join in joins)
+                var rootParameter = originalParameter;
+
+                if (joins.Count > 0)
                 {
-                    getList = getList.MergeJoin(originalParameter, newParameter, join, parameters, out newParameter);
+                    var placeholderType = typeof(JoinPlaceholder<>).MakeGenericType(actualModelType);
+                    rootParameter = Expression.Parameter(placeholderType, "JoinPlaceholder " + modelType.FullName);
+                    var originalConstructor = placeholderType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance).Where(c => c.GetParameters().Length == 1).Single();
+                    getList = Expressions.CallQueryableSelect(getList, Expression.Lambda(Expression.New(originalConstructor, originalParameter), originalParameter));
+                    parameters[originalParameter] = Expression.Property(rootParameter, nameof(JoinPlaceholder<object>.Original));
+
+                    foreach (var join in joins)
+                    {
+                        getList = getList.MergeJoin(rootParameter, join, parameters);
+                    }
                 }
 
                 var mainBody = Expression.Lambda(
                     parameters.Aggregate(
-                        expression.Body.Replace(expression.Parameters[0], parameters[originalParameter]), 
+                        resultSelector.Body.Replace(resultSelector.Parameters[0], parameters[originalParameter]), 
                         (e, parameters) => e.Replace(parameters.Key, parameters.Value)
                     ), 
-                    newParameter
+                    rootParameter
                 );
 
-                var enumerableSelect = typeof(System.Linq.Queryable).GetMethods()
-                    .Where(m => m.Name == nameof(System.Linq.Queryable.Select))
-                    .Select(m => m.MakeGenericMethod(new[] { TypeSystem.GetElementType(getList.Type), typeof(IDictionary<string, object>) }))
-                    .Where(m => m.GetParameters()[1].ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>))
-                    .Single();
-                var func = Expression.Lambda(Expression.Call(enumerableSelect, getList, Expression.Quote(mainBody)), inputParameter);
+                var func = Expression.Lambda(Expressions.CallQueryableSelect(getList, mainBody), inputParameter);
 
                 return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider, target.Joins);
             }

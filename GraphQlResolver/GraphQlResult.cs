@@ -20,8 +20,10 @@ namespace GraphQlResolver
     public interface IGraphQlJoin
     {
         ParameterExpression Placeholder { get; }
-        IQueryable Queryable { get; }
-        IQueryable Root { get; }
+        Expression Queryable { get; }
+        Expression Root { get; }
+        Expression Convert(ParameterExpression joinPlaceholderParameter);
+        Expression GetAccessor(ParameterExpression joinPlaceholderParameter);
     }
 
     public interface IGraphQlResultFactory { }
