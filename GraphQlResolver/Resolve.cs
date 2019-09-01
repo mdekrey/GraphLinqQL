@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Collections.Immutable;
 
@@ -12,11 +10,6 @@ namespace GraphQlResolver
 {
     public static class Resolve
     {
-        public static IQueryable<T> Query<T>() // TODO - this is a temp function for tests
-        {
-            return Enumerable.Empty<T>().AsQueryable();
-        }
-
         public static object? GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T, object>, IGraphQlResult<object>> resolver)
             where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         {

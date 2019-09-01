@@ -169,17 +169,6 @@ namespace GraphQlResolver.Test
             //   }
             //   rand
             // }
-            var query = from q in Resolve.Query<GraphQlRoot>()
-                        select new Dictionary<string, object>
-                        {
-                            { "heroes", from hero in Domain.heroes
-                                        select new Dictionary<string, object>
-                                        {
-                                            { "id", hero.Id },
-                                            { "name", hero.Name }
-                                        } },
-                            { "rand", 5.0 }
-                        };
             var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
                 root.Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
                     .Add("rand")
@@ -205,27 +194,6 @@ namespace GraphQlResolver.Test
             //   }
             // }
 
-            var query = from q in new[] { new GraphQlRoot() }
-                        select new
-                        {
-                            heroes = from hero in Domain.heroes
-                                     let friends = (from friendId in Domain.friends
-                                                    where hero.Id == friendId.Id1
-                                                    join friend in Domain.heroes on friendId.Id2 equals friend.Id
-                                                    select friend)
-                                     select new
-                                     {
-                                         id = hero.Id,
-                                         name = hero.Name,
-                                         friends = from friend in friends
-                                                   select new
-                                                   {
-                                                       id = hero.Id,
-                                                       name = hero.Name
-                                                   }
-                                     }
-                        };
-
             var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
                 root.Add("heroes", q => q.Heroes().ResolveComplex()
                                                   .Add("id")
@@ -233,8 +201,7 @@ namespace GraphQlResolver.Test
                                                   .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
                                                   .Build())
                     .Build());
-
-
+            
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
 
@@ -252,20 +219,6 @@ namespace GraphQlResolver.Test
             //     faction
             //   }
             // }
-
-            var query = from q in Resolve.Query<GraphQlRoot>()
-                        select new
-                        {
-                            heroes = from hero in Resolve.Query<Domain.Hero>()
-                                     join reputation in Resolve.Query<KeyValuePair<string, Domain.Reputation>>() on hero.Id equals reputation.Key
-                                     select new
-                                     {
-                                         id = hero.Id,
-                                         name = hero.Name,
-                                         renown = reputation.Value.Renown,
-                                         faction = reputation.Value.Faction
-                                     }
-                        };
 
             var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
                 root.Add("heroes", q => q.Heroes().ResolveComplex()
