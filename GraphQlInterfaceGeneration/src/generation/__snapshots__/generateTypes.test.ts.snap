@@ -278,7 +278,7 @@ public abstract class Review
     }
 }
 
-// TODO - SearchResult
+// Union: SearchResult
 
 /// <summary>
 /// A humanoid creature from the Star Wars universe
@@ -527,8 +527,40 @@ public abstract class Mutation
     }
 }
 
-// TODO - ReviewInput
-// TODO - ColorInput
+
+/// <summary>
+/// The input object sent when someone is creating a new review
+/// </summary>
+public class ReviewInput
+{
+    
+      /// <summary>
+      /// 0-5 stars
+      /// </summary>
+      public int stars { get; set; }
+    
+      /// <summary>
+      /// Comment about the movie, optional
+      /// </summary>
+      public string? commentary { get; set; }
+    
+      /// <summary>
+      /// Favorite color, optional
+      /// </summary>
+      public ColorInput? favorite_color { get; set; }
+}
+
+
+/// <summary>
+/// The input object sent when passing in a color
+/// </summary>
+public class ColorInput
+{
+    public int red { get; set; }
+    public int green { get; set; }
+    public int blue { get; set; }
+}
+
 
 /// <summary>
 /// The subscription type, represents all subscriptions we can make to our data

@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can generate input types from v3 1`] = `
+"
+/// <summary>
+/// The input object sent when someone is creating a new review
+/// </summary>
+public class ReviewInput
+{
+    
+      /// <summary>
+      /// 0-5 stars
+      /// </summary>
+      public int stars { get; set; }
+    
+      /// <summary>
+      /// Comment about the movie, optional
+      /// </summary>
+      public string? commentary { get; set; }
+    
+      /// <summary>
+      /// Favorite color, optional
+      /// </summary>
+      public ColorInput? favorite_color { get; set; }
+}
+"
+`;
