@@ -23,12 +23,16 @@ namespace GraphQlResolver.Execution
             }
         }
 
+        private static IGraphQlExecutor CreateExecutor()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            return new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+        }
+
         [Fact]
         public void BeAbleToRepresentUntypedSimpleStructures()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -48,9 +52,7 @@ namespace GraphQlResolver.Execution
         [Fact]
         public void BeAbleToRepresentNestedStructures()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -73,9 +75,7 @@ namespace GraphQlResolver.Execution
         [Fact]
         public void BeAbleToUseStructureFragments()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 fragment HeroPrimary on Hero {
   id
@@ -101,9 +101,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToRepresentComplexStructures()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -124,9 +122,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToPassParameters()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -147,9 +143,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToPassArguments()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 query Heroes($date: String!) {
   heroes {
@@ -169,9 +163,7 @@ query Heroes($date: String!) {
         [Fact(Skip = "GraphQL-Parse does not support query default parameters")]
         public void BeAbleToPassArgumentsWithDefaultValues()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
   heroes {
@@ -192,9 +184,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseDirectives()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -215,9 +205,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseInlineFragments()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -240,9 +228,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseInlineFragmentsWithTypeConditions()
         {
-            var serviceProvider = new SimpleServiceProvider();
-            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
-
+            var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {

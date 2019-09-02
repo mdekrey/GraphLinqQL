@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GraphQlResolver.Execution
 {
-    public class GraphQlExecutor<TQuery, TMutation>
+    public class GraphQlExecutor<TQuery, TMutation> : IGraphQlExecutor 
         where TQuery : IGraphQlResolvable
         where TMutation : IGraphQlResolvable
     {
