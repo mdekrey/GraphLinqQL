@@ -66,7 +66,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "renown" => Renown(),
                 "faction" => Faction(),
                 "friends" => Friends(),
-                "location" => Location((parameters.TryGetValue("date", out var date) ? date as string : null) ?? "2019-04-22"),
+                "location" => Location(date: (parameters.TryGetValue("date", out var date) ? date as string : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
 

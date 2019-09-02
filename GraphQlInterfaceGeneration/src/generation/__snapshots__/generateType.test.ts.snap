@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can generate simple types 1`] = `
+"
+public abstract class Film 
+{
+    private Film() { }
+    public abstract IGraphQlResult<string?> title();
+    public abstract IGraphQlResult<int?> episodeID();
+    public abstract IGraphQlResult<string?> openingCrawl();
+    public abstract IGraphQlResult<string?> director();
+    public abstract IGraphQlResult<IEnumerable<string?>?> producers();
+    public abstract IGraphQlResult<string?> releaseDate();
+    public abstract IGraphQlResult<FilmSpeciesConnection?> speciesConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmStarshipsConnection?> starshipConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmVehiclesConnection?> vehicleConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmPlanetsConnection?> planetConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<string?> created();
+    public abstract IGraphQlResult<string?> edited();
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"title\\" => title(),
+            \\"episodeID\\" => episodeID(),
+            \\"openingCrawl\\" => openingCrawl(),
+            \\"director\\" => director(),
+            \\"producers\\" => producers(),
+            \\"releaseDate\\" => releaseDate(),
+            \\"speciesConnection\\" => speciesConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"starshipConnection\\" => starshipConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"vehicleConnection\\" => vehicleConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"characterConnection\\" => characterConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"planetConnection\\" => planetConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Film\\";
+
+    public abstract class GraphQlContract<T> : Film, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+"
+`;
