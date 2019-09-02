@@ -6,7 +6,7 @@ import { generateType } from "./generateType";
 
 it("can generate simple types", async function() {
   const schema = await getSampleSchema();
-  const type = schema.getType("Film") as GraphQLObjectType;
+  const type = schema.getType("Person") as GraphQLObjectType;
   expect(generateType(type, defaultOptions)).toMatchSnapshot();
 });
 
