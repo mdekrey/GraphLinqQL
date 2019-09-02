@@ -133,8 +133,17 @@ function getInputTypeName(inputType: GraphQLInputType, options: Options, nullabl
 
 export function generateType(object: GraphQLObjectType, options: Options) {
   const typeName = getTypeName(object.name, options);
+
   const fields = object.getFields();
-  return `
+  return `${
+    object.description
+      ? `
+/// <summary>
+/// ${object.description.split("\n").join("\n/// ")}
+/// </summary>`
+      : `
+`
+  }
 public abstract class ${typeName} ${interfaceDeclaration(object, options)}
 {
     private ${typeName}() { }
@@ -178,7 +187,15 @@ function resultAbstractDeclaration(field: GraphQLField<any, any, { [key: string]
   const propertyName = getPropertyName(field.name, options);
   const typeName = getOutputTypeName(field.type, options);
   const args = field.args.map(arg => resultAbstractDeclarationArg(arg, options)).join(", ");
-  return `public abstract IGraphQlResult${typeName && `<${typeName}>`} ${propertyName}(${args});`;
+  return `${
+    field.description
+      ? `
+    /// <summary>
+    /// ${field.description.split("\n").join("\n    /// ")}
+    /// </summary>
+    `
+      : ``
+  }public abstract IGraphQlResult${typeName && `<${typeName}>`} ${propertyName}(${args});`;
 }
 
 function resultAbstractDeclarationArg(arg: GraphQLArgument, options: Options) {

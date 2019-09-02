@@ -2,22 +2,61 @@
 
 exports[`can generate simple types 1`] = `
 "
+/// <summary>
+/// A single film.
+/// </summary>
 public abstract class Film 
 {
     private Film() { }
+    
+    /// <summary>
+    /// The title of this film.
+    /// </summary>
     public abstract IGraphQlResult<string?> title();
+    
+    /// <summary>
+    /// The episode number of this film.
+    /// </summary>
     public abstract IGraphQlResult<int?> episodeID();
+    
+    /// <summary>
+    /// The opening paragraphs at the beginning of this film.
+    /// </summary>
     public abstract IGraphQlResult<string?> openingCrawl();
+    
+    /// <summary>
+    /// The name of the director of this film.
+    /// </summary>
     public abstract IGraphQlResult<string?> director();
+    
+    /// <summary>
+    /// The name(s) of the producer(s) of this film.
+    /// </summary>
     public abstract IGraphQlResult<IEnumerable<string?>?> producers();
+    
+    /// <summary>
+    /// The ISO 8601 date format of film release at original creator country.
+    /// </summary>
     public abstract IGraphQlResult<string?> releaseDate();
     public abstract IGraphQlResult<FilmSpeciesConnection?> speciesConnection(string? after, int? first, string? before, int? last);
     public abstract IGraphQlResult<FilmStarshipsConnection?> starshipConnection(string? after, int? first, string? before, int? last);
     public abstract IGraphQlResult<FilmVehiclesConnection?> vehicleConnection(string? after, int? first, string? before, int? last);
     public abstract IGraphQlResult<FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last);
     public abstract IGraphQlResult<FilmPlanetsConnection?> planetConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
     public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
     public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
     public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
