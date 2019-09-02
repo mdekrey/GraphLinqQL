@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`can generate simple types 1`] = `
+exports[`can generate v4 types 1`] = `
 "
 /// <summary>
 /// An individual person or character within the Star Wars universe.

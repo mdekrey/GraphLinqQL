@@ -1,0 +1,3112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can generate v4 types 1`] = `
+"
+
+public abstract class Root
+{
+    private Root() { }
+    public abstract IGraphQlResult<FilmsConnection?> allFilms(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Film?> film(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? filmID);
+    public abstract IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Person?> person(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? personID);
+    public abstract IGraphQlResult<PlanetsConnection?> allPlanets(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Planet?> planet(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? planetID);
+    public abstract IGraphQlResult<SpeciesConnection?> allSpecies(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Species?> species(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? speciesID);
+    public abstract IGraphQlResult<StarshipsConnection?> allStarships(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Starship?> starship(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? starshipID);
+    public abstract IGraphQlResult<VehiclesConnection?> allVehicles(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<Vehicle?> vehicle(GraphQlSchema.GraphQlId? id, GraphQlSchema.GraphQlId? vehicleID);
+    
+    /// <summary>
+    /// Fetches an object given its ID
+    /// </summary>
+    public abstract IGraphQlResult<Node?> node(GraphQlSchema.GraphQlId id);
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"allFilms\\" => allFilms(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"film\\" => film(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                filmID: (parameters.TryGetValue(\\"filmID\\", out var filmID) ? (GraphQlSchema.GraphQlId?)filmID : null)),
+            \\"allPeople\\" => allPeople(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"person\\" => person(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                personID: (parameters.TryGetValue(\\"personID\\", out var personID) ? (GraphQlSchema.GraphQlId?)personID : null)),
+            \\"allPlanets\\" => allPlanets(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"planet\\" => planet(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                planetID: (parameters.TryGetValue(\\"planetID\\", out var planetID) ? (GraphQlSchema.GraphQlId?)planetID : null)),
+            \\"allSpecies\\" => allSpecies(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"species\\" => species(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                speciesID: (parameters.TryGetValue(\\"speciesID\\", out var speciesID) ? (GraphQlSchema.GraphQlId?)speciesID : null)),
+            \\"allStarships\\" => allStarships(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"starship\\" => starship(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                starshipID: (parameters.TryGetValue(\\"starshipID\\", out var starshipID) ? (GraphQlSchema.GraphQlId?)starshipID : null)),
+            \\"allVehicles\\" => allVehicles(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"vehicle\\" => vehicle(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId?)id : null),
+                vehicleID: (parameters.TryGetValue(\\"vehicleID\\", out var vehicleID) ? (GraphQlSchema.GraphQlId?)vehicleID : null)),
+            \\"node\\" => node(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlSchema.GraphQlId)id : null)),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Root\\";
+
+    public abstract class GraphQlContract<T> : Root, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmsConnection
+{
+    private FilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// Information about pagination in a connection.
+/// </summary>
+public abstract class PageInfo
+{
+    private PageInfo() { }
+    
+    /// <summary>
+    /// When paginating forwards, are there more items?
+    /// </summary>
+    public abstract IGraphQlResult<bool> hasNextPage();
+    
+    /// <summary>
+    /// When paginating backwards, are there more items?
+    /// </summary>
+    public abstract IGraphQlResult<bool> hasPreviousPage();
+    
+    /// <summary>
+    /// When paginating backwards, the cursor to continue.
+    /// </summary>
+    public abstract IGraphQlResult<string?> startCursor();
+    
+    /// <summary>
+    /// When paginating forwards, the cursor to continue.
+    /// </summary>
+    public abstract IGraphQlResult<string?> endCursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"hasNextPage\\" => hasNextPage(),
+            \\"hasPreviousPage\\" => hasPreviousPage(),
+            \\"startCursor\\" => startCursor(),
+            \\"endCursor\\" => endCursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PageInfo\\";
+
+    public abstract class GraphQlContract<T> : PageInfo, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmsEdge
+{
+    private FilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A single film.
+/// </summary>
+public abstract class Film : Node
+{
+    private Film() { }
+    
+    /// <summary>
+    /// The title of this film.
+    /// </summary>
+    public abstract IGraphQlResult<string?> title();
+    
+    /// <summary>
+    /// The episode number of this film.
+    /// </summary>
+    public abstract IGraphQlResult<int?> episodeID();
+    
+    /// <summary>
+    /// The opening paragraphs at the beginning of this film.
+    /// </summary>
+    public abstract IGraphQlResult<string?> openingCrawl();
+    
+    /// <summary>
+    /// The name of the director of this film.
+    /// </summary>
+    public abstract IGraphQlResult<string?> director();
+    
+    /// <summary>
+    /// The name(s) of the producer(s) of this film.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> producers();
+    
+    /// <summary>
+    /// The ISO 8601 date format of film release at original creator country.
+    /// </summary>
+    public abstract IGraphQlResult<string?> releaseDate();
+    public abstract IGraphQlResult<FilmSpeciesConnection?> speciesConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmStarshipsConnection?> starshipConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmVehiclesConnection?> vehicleConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<FilmPlanetsConnection?> planetConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"title\\" => title(),
+            \\"episodeID\\" => episodeID(),
+            \\"openingCrawl\\" => openingCrawl(),
+            \\"director\\" => director(),
+            \\"producers\\" => producers(),
+            \\"releaseDate\\" => releaseDate(),
+            \\"speciesConnection\\" => speciesConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"starshipConnection\\" => starshipConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"vehicleConnection\\" => vehicleConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"characterConnection\\" => characterConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"planetConnection\\" => planetConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Film\\";
+
+    public abstract class GraphQlContract<T> : Film, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+  /// <summary>
+  /// An object with an ID
+  /// </summary>
+  public interface Node
+  {
+      
+      /// <summary>
+      /// The id of the object.
+      /// </summary>
+      IGraphQlResult<GraphQlSchema.GraphQlId> id();
+  }
+  
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmSpeciesConnection
+{
+    private FilmSpeciesConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmSpeciesEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Species?>?> species();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"species\\" => species(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmSpeciesConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmSpeciesConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmSpeciesEdge
+{
+    private FilmSpeciesEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Species?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmSpeciesEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmSpeciesEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A type of person or character within the Star Wars Universe.
+/// </summary>
+public abstract class Species : Node
+{
+    private Species() { }
+    
+    /// <summary>
+    /// The name of this species.
+    /// </summary>
+    public abstract IGraphQlResult<string?> name();
+    
+    /// <summary>
+    /// The classification of this species, such as \\"mammal\\" or \\"reptile\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> classification();
+    
+    /// <summary>
+    /// The designation of this species, such as \\"sentient\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> designation();
+    
+    /// <summary>
+    /// The average height of this species in centimeters.
+    /// </summary>
+    public abstract IGraphQlResult<double?> averageHeight();
+    
+    /// <summary>
+    /// The average lifespan of this species in years, null if unknown.
+    /// </summary>
+    public abstract IGraphQlResult<int?> averageLifespan();
+    
+    /// <summary>
+    /// Common eye colors for this species, null if this species does not typically
+    /// have eyes.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> eyeColors();
+    
+    /// <summary>
+    /// Common hair colors for this species, null if this species does not typically
+    /// have hair.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> hairColors();
+    
+    /// <summary>
+    /// Common skin colors for this species, null if this species does not typically
+    /// have skin.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> skinColors();
+    
+    /// <summary>
+    /// The language commonly spoken by this species.
+    /// </summary>
+    public abstract IGraphQlResult<string?> language();
+    
+    /// <summary>
+    /// A planet that this species originates from.
+    /// </summary>
+    public abstract IGraphQlResult<Planet?> homeworld();
+    public abstract IGraphQlResult<SpeciesPeopleConnection?> personConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<SpeciesFilmsConnection?> filmConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"name\\" => name(),
+            \\"classification\\" => classification(),
+            \\"designation\\" => designation(),
+            \\"averageHeight\\" => averageHeight(),
+            \\"averageLifespan\\" => averageLifespan(),
+            \\"eyeColors\\" => eyeColors(),
+            \\"hairColors\\" => hairColors(),
+            \\"skinColors\\" => skinColors(),
+            \\"language\\" => language(),
+            \\"homeworld\\" => homeworld(),
+            \\"personConnection\\" => personConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"filmConnection\\" => filmConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Species\\";
+
+    public abstract class GraphQlContract<T> : Species, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A large mass, planet or planetoid in the Star Wars Universe, at the time of
+/// 0 ABY.
+/// </summary>
+public abstract class Planet : Node
+{
+    private Planet() { }
+    
+    /// <summary>
+    /// The name of this planet.
+    /// </summary>
+    public abstract IGraphQlResult<string?> name();
+    
+    /// <summary>
+    /// The diameter of this planet in kilometers.
+    /// </summary>
+    public abstract IGraphQlResult<int?> diameter();
+    
+    /// <summary>
+    /// The number of standard hours it takes for this planet to complete a single
+    /// rotation on its axis.
+    /// </summary>
+    public abstract IGraphQlResult<int?> rotationPeriod();
+    
+    /// <summary>
+    /// The number of standard days it takes for this planet to complete a single orbit
+    /// of its local star.
+    /// </summary>
+    public abstract IGraphQlResult<int?> orbitalPeriod();
+    
+    /// <summary>
+    /// A number denoting the gravity of this planet, where \\"1\\" is normal or 1 standard
+    /// G. \\"2\\" is twice or 2 standard Gs. \\"0.5\\" is half or 0.5 standard Gs.
+    /// </summary>
+    public abstract IGraphQlResult<string?> gravity();
+    
+    /// <summary>
+    /// The average population of sentient beings inhabiting this planet.
+    /// </summary>
+    public abstract IGraphQlResult<double?> population();
+    
+    /// <summary>
+    /// The climates of this planet.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> climates();
+    
+    /// <summary>
+    /// The terrains of this planet.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> terrains();
+    
+    /// <summary>
+    /// The percentage of the planet surface that is naturally occuring water or bodies
+    /// of water.
+    /// </summary>
+    public abstract IGraphQlResult<double?> surfaceWater();
+    public abstract IGraphQlResult<PlanetResidentsConnection?> residentConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<PlanetFilmsConnection?> filmConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"name\\" => name(),
+            \\"diameter\\" => diameter(),
+            \\"rotationPeriod\\" => rotationPeriod(),
+            \\"orbitalPeriod\\" => orbitalPeriod(),
+            \\"gravity\\" => gravity(),
+            \\"population\\" => population(),
+            \\"climates\\" => climates(),
+            \\"terrains\\" => terrains(),
+            \\"surfaceWater\\" => surfaceWater(),
+            \\"residentConnection\\" => residentConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"filmConnection\\" => filmConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Planet\\";
+
+    public abstract class GraphQlContract<T> : Planet, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PlanetResidentsConnection
+{
+    private PlanetResidentsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PlanetResidentsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> residents();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"residents\\" => residents(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetResidentsConnection\\";
+
+    public abstract class GraphQlContract<T> : PlanetResidentsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PlanetResidentsEdge
+{
+    private PlanetResidentsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetResidentsEdge\\";
+
+    public abstract class GraphQlContract<T> : PlanetResidentsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An individual person or character within the Star Wars universe.
+/// </summary>
+public abstract class Person : Node
+{
+    private Person() { }
+    
+    /// <summary>
+    /// The name of this person.
+    /// </summary>
+    public abstract IGraphQlResult<string?> name();
+    
+    /// <summary>
+    /// The birth year of the person, using the in-universe standard of BBY or ABY -
+    /// Before the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is
+    /// a battle that occurs at the end of Star Wars episode IV: A New Hope.
+    /// </summary>
+    public abstract IGraphQlResult<string?> birthYear();
+    
+    /// <summary>
+    /// The eye color of this person. Will be \\"unknown\\" if not known or \\"n/a\\" if the
+    /// person does not have an eye.
+    /// </summary>
+    public abstract IGraphQlResult<string?> eyeColor();
+    
+    /// <summary>
+    /// The gender of this person. Either \\"Male\\", \\"Female\\" or \\"unknown\\",
+    /// \\"n/a\\" if the person does not have a gender.
+    /// </summary>
+    public abstract IGraphQlResult<string?> gender();
+    
+    /// <summary>
+    /// The hair color of this person. Will be \\"unknown\\" if not known or \\"n/a\\" if the
+    /// person does not have hair.
+    /// </summary>
+    public abstract IGraphQlResult<string?> hairColor();
+    
+    /// <summary>
+    /// The height of the person in centimeters.
+    /// </summary>
+    public abstract IGraphQlResult<int?> height();
+    
+    /// <summary>
+    /// The mass of the person in kilograms.
+    /// </summary>
+    public abstract IGraphQlResult<double?> mass();
+    
+    /// <summary>
+    /// The skin color of this person.
+    /// </summary>
+    public abstract IGraphQlResult<string?> skinColor();
+    
+    /// <summary>
+    /// A planet that this person was born on or inhabits.
+    /// </summary>
+    public abstract IGraphQlResult<Planet?> homeworld();
+    public abstract IGraphQlResult<PersonFilmsConnection?> filmConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The species that this person belongs to, or null if unknown.
+    /// </summary>
+    public abstract IGraphQlResult<Species?> species();
+    public abstract IGraphQlResult<PersonStarshipsConnection?> starshipConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<PersonVehiclesConnection?> vehicleConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"name\\" => name(),
+            \\"birthYear\\" => birthYear(),
+            \\"eyeColor\\" => eyeColor(),
+            \\"gender\\" => gender(),
+            \\"hairColor\\" => hairColor(),
+            \\"height\\" => height(),
+            \\"mass\\" => mass(),
+            \\"skinColor\\" => skinColor(),
+            \\"homeworld\\" => homeworld(),
+            \\"filmConnection\\" => filmConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"species\\" => species(),
+            \\"starshipConnection\\" => starshipConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"vehicleConnection\\" => vehicleConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Person\\";
+
+    public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PersonFilmsConnection
+{
+    private PersonFilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PersonFilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonFilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : PersonFilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PersonFilmsEdge
+{
+    private PersonFilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonFilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : PersonFilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PersonStarshipsConnection
+{
+    private PersonStarshipsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PersonStarshipsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"starships\\" => starships(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonStarshipsConnection\\";
+
+    public abstract class GraphQlContract<T> : PersonStarshipsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PersonStarshipsEdge
+{
+    private PersonStarshipsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Starship?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonStarshipsEdge\\";
+
+    public abstract class GraphQlContract<T> : PersonStarshipsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A single transport craft that has hyperdrive capability.
+/// </summary>
+public abstract class Starship : Node
+{
+    private Starship() { }
+    
+    /// <summary>
+    /// The name of this starship. The common name, such as \\"Death Star\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> name();
+    
+    /// <summary>
+    /// The model or official name of this starship. Such as \\"T-65 X-wing\\" or \\"DS-1
+    /// Orbital Battle Station\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> model();
+    
+    /// <summary>
+    /// The class of this starship, such as \\"Starfighter\\" or \\"Deep Space Mobile
+    /// Battlestation\\"
+    /// </summary>
+    public abstract IGraphQlResult<string?> starshipClass();
+    
+    /// <summary>
+    /// The manufacturers of this starship.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> manufacturers();
+    
+    /// <summary>
+    /// The cost of this starship new, in galactic credits.
+    /// </summary>
+    public abstract IGraphQlResult<double?> costInCredits();
+    
+    /// <summary>
+    /// The length of this starship in meters.
+    /// </summary>
+    public abstract IGraphQlResult<double?> length();
+    
+    /// <summary>
+    /// The number of personnel needed to run or pilot this starship.
+    /// </summary>
+    public abstract IGraphQlResult<string?> crew();
+    
+    /// <summary>
+    /// The number of non-essential people this starship can transport.
+    /// </summary>
+    public abstract IGraphQlResult<string?> passengers();
+    
+    /// <summary>
+    /// The maximum speed of this starship in atmosphere. null if this starship is
+    /// incapable of atmosphering flight.
+    /// </summary>
+    public abstract IGraphQlResult<int?> maxAtmospheringSpeed();
+    
+    /// <summary>
+    /// The class of this starships hyperdrive.
+    /// </summary>
+    public abstract IGraphQlResult<double?> hyperdriveRating();
+    
+    /// <summary>
+    /// The Maximum number of Megalights this starship can travel in a standard hour.
+    /// A \\"Megalight\\" is a standard unit of distance and has never been defined before
+    /// within the Star Wars universe. This figure is only really useful for measuring
+    /// the difference in speed of starships. We can assume it is similar to AU, the
+    /// distance between our Sun (Sol) and Earth.
+    /// </summary>
+    public abstract IGraphQlResult<int?> MGLT();
+    
+    /// <summary>
+    /// The maximum number of kilograms that this starship can transport.
+    /// </summary>
+    public abstract IGraphQlResult<double?> cargoCapacity();
+    
+    /// <summary>
+    /// The maximum length of time that this starship can provide consumables for its
+    /// entire crew without having to resupply.
+    /// </summary>
+    public abstract IGraphQlResult<string?> consumables();
+    public abstract IGraphQlResult<StarshipPilotsConnection?> pilotConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<StarshipFilmsConnection?> filmConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"name\\" => name(),
+            \\"model\\" => model(),
+            \\"starshipClass\\" => starshipClass(),
+            \\"manufacturers\\" => manufacturers(),
+            \\"costInCredits\\" => costInCredits(),
+            \\"length\\" => length(),
+            \\"crew\\" => crew(),
+            \\"passengers\\" => passengers(),
+            \\"maxAtmospheringSpeed\\" => maxAtmospheringSpeed(),
+            \\"hyperdriveRating\\" => hyperdriveRating(),
+            \\"MGLT\\" => MGLT(),
+            \\"cargoCapacity\\" => cargoCapacity(),
+            \\"consumables\\" => consumables(),
+            \\"pilotConnection\\" => pilotConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"filmConnection\\" => filmConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Starship\\";
+
+    public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class StarshipPilotsConnection
+{
+    private StarshipPilotsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<StarshipPilotsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"pilots\\" => pilots(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipPilotsConnection\\";
+
+    public abstract class GraphQlContract<T> : StarshipPilotsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class StarshipPilotsEdge
+{
+    private StarshipPilotsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipPilotsEdge\\";
+
+    public abstract class GraphQlContract<T> : StarshipPilotsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class StarshipFilmsConnection
+{
+    private StarshipFilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<StarshipFilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipFilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : StarshipFilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class StarshipFilmsEdge
+{
+    private StarshipFilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipFilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : StarshipFilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PersonVehiclesConnection
+{
+    private PersonVehiclesConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PersonVehiclesEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"vehicles\\" => vehicles(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonVehiclesConnection\\";
+
+    public abstract class GraphQlContract<T> : PersonVehiclesConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PersonVehiclesEdge
+{
+    private PersonVehiclesEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Vehicle?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PersonVehiclesEdge\\";
+
+    public abstract class GraphQlContract<T> : PersonVehiclesEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A single transport craft that does not have hyperdrive capability
+/// </summary>
+public abstract class Vehicle : Node
+{
+    private Vehicle() { }
+    
+    /// <summary>
+    /// The name of this vehicle. The common name, such as \\"Sand Crawler\\" or \\"Speeder
+    /// bike\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> name();
+    
+    /// <summary>
+    /// The model or official name of this vehicle. Such as \\"All-Terrain Attack
+    /// Transport\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> model();
+    
+    /// <summary>
+    /// The class of this vehicle, such as \\"Wheeled\\" or \\"Repulsorcraft\\".
+    /// </summary>
+    public abstract IGraphQlResult<string?> vehicleClass();
+    
+    /// <summary>
+    /// The manufacturers of this vehicle.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<string?>?> manufacturers();
+    
+    /// <summary>
+    /// The cost of this vehicle new, in Galactic Credits.
+    /// </summary>
+    public abstract IGraphQlResult<double?> costInCredits();
+    
+    /// <summary>
+    /// The length of this vehicle in meters.
+    /// </summary>
+    public abstract IGraphQlResult<double?> length();
+    
+    /// <summary>
+    /// The number of personnel needed to run or pilot this vehicle.
+    /// </summary>
+    public abstract IGraphQlResult<string?> crew();
+    
+    /// <summary>
+    /// The number of non-essential people this vehicle can transport.
+    /// </summary>
+    public abstract IGraphQlResult<string?> passengers();
+    
+    /// <summary>
+    /// The maximum speed of this vehicle in atmosphere.
+    /// </summary>
+    public abstract IGraphQlResult<int?> maxAtmospheringSpeed();
+    
+    /// <summary>
+    /// The maximum number of kilograms that this vehicle can transport.
+    /// </summary>
+    public abstract IGraphQlResult<double?> cargoCapacity();
+    
+    /// <summary>
+    /// The maximum length of time that this vehicle can provide consumables for its
+    /// entire crew without having to resupply.
+    /// </summary>
+    public abstract IGraphQlResult<string?> consumables();
+    public abstract IGraphQlResult<VehiclePilotsConnection?> pilotConnection(string? after, int? first, string? before, int? last);
+    public abstract IGraphQlResult<VehicleFilmsConnection?> filmConnection(string? after, int? first, string? before, int? last);
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was created.
+    /// </summary>
+    public abstract IGraphQlResult<string?> created();
+    
+    /// <summary>
+    /// The ISO 8601 date format of the time that this resource was edited.
+    /// </summary>
+    public abstract IGraphQlResult<string?> edited();
+    
+    /// <summary>
+    /// The ID of an object
+    /// </summary>
+    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"name\\" => name(),
+            \\"model\\" => model(),
+            \\"vehicleClass\\" => vehicleClass(),
+            \\"manufacturers\\" => manufacturers(),
+            \\"costInCredits\\" => costInCredits(),
+            \\"length\\" => length(),
+            \\"crew\\" => crew(),
+            \\"passengers\\" => passengers(),
+            \\"maxAtmospheringSpeed\\" => maxAtmospheringSpeed(),
+            \\"cargoCapacity\\" => cargoCapacity(),
+            \\"consumables\\" => consumables(),
+            \\"pilotConnection\\" => pilotConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"filmConnection\\" => filmConnection(
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
+                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
+                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
+                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+            \\"created\\" => created(),
+            \\"edited\\" => edited(),
+            \\"id\\" => id(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Vehicle\\";
+
+    public abstract class GraphQlContract<T> : Vehicle, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class VehiclePilotsConnection
+{
+    private VehiclePilotsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<VehiclePilotsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"pilots\\" => pilots(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehiclePilotsConnection\\";
+
+    public abstract class GraphQlContract<T> : VehiclePilotsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class VehiclePilotsEdge
+{
+    private VehiclePilotsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehiclePilotsEdge\\";
+
+    public abstract class GraphQlContract<T> : VehiclePilotsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class VehicleFilmsConnection
+{
+    private VehicleFilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<VehicleFilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehicleFilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : VehicleFilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class VehicleFilmsEdge
+{
+    private VehicleFilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehicleFilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : VehicleFilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PlanetFilmsConnection
+{
+    private PlanetFilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PlanetFilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetFilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : PlanetFilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PlanetFilmsEdge
+{
+    private PlanetFilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetFilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : PlanetFilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class SpeciesPeopleConnection
+{
+    private SpeciesPeopleConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<SpeciesPeopleEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> people();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"people\\" => people(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesPeopleConnection\\";
+
+    public abstract class GraphQlContract<T> : SpeciesPeopleConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class SpeciesPeopleEdge
+{
+    private SpeciesPeopleEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesPeopleEdge\\";
+
+    public abstract class GraphQlContract<T> : SpeciesPeopleEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class SpeciesFilmsConnection
+{
+    private SpeciesFilmsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<SpeciesFilmsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Film?>?> films();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"films\\" => films(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesFilmsConnection\\";
+
+    public abstract class GraphQlContract<T> : SpeciesFilmsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class SpeciesFilmsEdge
+{
+    private SpeciesFilmsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Film?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesFilmsEdge\\";
+
+    public abstract class GraphQlContract<T> : SpeciesFilmsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmStarshipsConnection
+{
+    private FilmStarshipsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmStarshipsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"starships\\" => starships(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmStarshipsConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmStarshipsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmStarshipsEdge
+{
+    private FilmStarshipsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Starship?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmStarshipsEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmStarshipsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmVehiclesConnection
+{
+    private FilmVehiclesConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmVehiclesEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"vehicles\\" => vehicles(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmVehiclesConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmVehiclesConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmVehiclesEdge
+{
+    private FilmVehiclesEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Vehicle?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmVehiclesEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmVehiclesEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmCharactersConnection
+{
+    private FilmCharactersConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmCharactersEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> characters();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"characters\\" => characters(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmCharactersConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmCharactersConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmCharactersEdge
+{
+    private FilmCharactersEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmCharactersEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmCharactersEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class FilmPlanetsConnection
+{
+    private FilmPlanetsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FilmPlanetsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"planets\\" => planets(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmPlanetsConnection\\";
+
+    public abstract class GraphQlContract<T> : FilmPlanetsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class FilmPlanetsEdge
+{
+    private FilmPlanetsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Planet?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FilmPlanetsEdge\\";
+
+    public abstract class GraphQlContract<T> : FilmPlanetsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PeopleConnection
+{
+    private PeopleConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PeopleEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Person?>?> people();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"people\\" => people(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PeopleConnection\\";
+
+    public abstract class GraphQlContract<T> : PeopleConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PeopleEdge
+{
+    private PeopleEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Person?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PeopleEdge\\";
+
+    public abstract class GraphQlContract<T> : PeopleEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class PlanetsConnection
+{
+    private PlanetsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<PlanetsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"planets\\" => planets(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetsConnection\\";
+
+    public abstract class GraphQlContract<T> : PlanetsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class PlanetsEdge
+{
+    private PlanetsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Planet?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PlanetsEdge\\";
+
+    public abstract class GraphQlContract<T> : PlanetsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class SpeciesConnection
+{
+    private SpeciesConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<SpeciesEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Species?>?> species();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"species\\" => species(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesConnection\\";
+
+    public abstract class GraphQlContract<T> : SpeciesConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class SpeciesEdge
+{
+    private SpeciesEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Species?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"SpeciesEdge\\";
+
+    public abstract class GraphQlContract<T> : SpeciesEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class StarshipsConnection
+{
+    private StarshipsConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<StarshipsEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"starships\\" => starships(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipsConnection\\";
+
+    public abstract class GraphQlContract<T> : StarshipsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class StarshipsEdge
+{
+    private StarshipsEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Starship?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"StarshipsEdge\\";
+
+    public abstract class GraphQlContract<T> : StarshipsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// A connection to a list of items.
+/// </summary>
+public abstract class VehiclesConnection
+{
+    private VehiclesConnection() { }
+    
+    /// <summary>
+    /// Information to aid in pagination.
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+    
+    /// <summary>
+    /// A list of edges.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<VehiclesEdge?>?> edges();
+    
+    /// <summary>
+    /// A count of the total number of objects in this connection, ignoring pagination.
+    /// This allows a client to fetch the first five objects by passing \\"5\\" as the
+    /// argument to \\"first\\", then fetch the total count so it could display \\"5 of 83\\",
+    /// for example.
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// A list of all of the objects returned in the connection. This is a convenience
+    /// field provided for quickly exploring the API; rather than querying for
+    /// \\"{ edges { node } }\\" when no edge data is needed, this field can be be used
+    /// instead. Note that when clients like Relay need to fetch the \\"cursor\\" field on
+    /// the edge to enable efficient pagination, this shortcut cannot be used, and the
+    /// full \\"{ edges { node } }\\" version should be used instead.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"pageInfo\\" => pageInfo(),
+            \\"edges\\" => edges(),
+            \\"totalCount\\" => totalCount(),
+            \\"vehicles\\" => vehicles(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehiclesConnection\\";
+
+    public abstract class GraphQlContract<T> : VehiclesConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge in a connection.
+/// </summary>
+public abstract class VehiclesEdge
+{
+    private VehiclesEdge() { }
+    
+    /// <summary>
+    /// The item at the end of the edge
+    /// </summary>
+    public abstract IGraphQlResult<Vehicle?> node();
+    
+    /// <summary>
+    /// A cursor for use in pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"node\\" => node(),
+            \\"cursor\\" => cursor(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"VehiclesEdge\\";
+
+    public abstract class GraphQlContract<T> : VehiclesEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+"
+`;
