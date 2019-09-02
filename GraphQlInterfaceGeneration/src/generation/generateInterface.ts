@@ -13,20 +13,20 @@ export function generateInterface(object: GraphQLInterfaceType, options: Options
   return `${
     object.description
       ? `
-  /// <summary>
-  /// ${object.description.split("\n").join("\n/// ")}
-  /// </summary>`
+/// <summary>
+/// ${object.description.split("\n").join("\n/// ")}
+/// </summary>`
       : `
-  `
+`
   }
-  public interface ${typeName}
-  {
-      ${Object.keys(fields)
-        .map(fieldName => fields[fieldName])
-        .map(field => resultAbstractDeclaration(field, options)).join(`
-      `)}
-  }
-  `;
+public interface ${typeName}
+{
+    ${Object.keys(fields)
+      .map(fieldName => fields[fieldName])
+      .map(field => resultAbstractDeclaration(field, options)).join(`
+    `)}
+}
+`;
 }
 
 function resultAbstractDeclaration(field: GraphQLField<any, any, { [key: string]: any }>, options: Options) {

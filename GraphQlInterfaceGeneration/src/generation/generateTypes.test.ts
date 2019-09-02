@@ -1,7 +1,12 @@
 import { parseToSchema } from "../parseToSchema";
-import { getStarWarsGraphQlSchemaV4 } from "../resources.test";
+import { getStarWarsGraphQlSchemaV4, getStarWarsGraphQlSchemaV3 } from "../resources.test";
 import { defaultOptions } from "./defaultOptions";
 import { generateTypes } from "./generateTypes";
+
+it("can generate v3 types", async function() {
+  const schema = await getSampleSchema(getStarWarsGraphQlSchemaV3);
+  expect(generateTypes(schema, defaultOptions)).toMatchSnapshot();
+});
 
 it("can generate v4 types", async function() {
   const schema = await getSampleSchema(getStarWarsGraphQlSchemaV4);
