@@ -51,13 +51,20 @@ namespace GraphQlResolver.Execution
 
         private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, ASTNode node, GraphQLExecutionContext context)
         {
-            switch (node)
+            var resultNode = (node is IHasDirectivesNode directives)
+                ? directives.Directives.Aggregate((ASTNode?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
+                : node;
+            if (resultNode == null)
+            {
+                return builder;
+            }
+            switch (resultNode)
             {
                 case GraphQLFieldSelection field:
                     if (field.SelectionSet != null)
                     {
                         return builder.Add(
-                            field.Alias?.Value ?? field.Name.Value, 
+                            field.Alias?.Value ?? field.Name.Value,
                             b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, context)).ResolveComplex(), field.SelectionSet.Selections, context).Build()
                         );
                     }
@@ -69,9 +76,28 @@ namespace GraphQlResolver.Execution
                     return Build(builder,
                         context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
                         context);
+                case GraphQLInlineFragment inlineFragment:
+                    if (inlineFragment.TypeCondition != null)
+                    {
+                        // TODO - type conditiono
+                    }
+                    return Build(builder,
+                        inlineFragment.SelectionSet.Selections,
+                        context);
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private ASTNode? HandleDirective(GraphQLDirective directive, ASTNode node, GraphQLExecutionContext context)
+        {
+            var arguments = ResolveArguments(directive.Arguments, context);
+            return directive.Name.Value switch
+            {
+                "include" => Convert.ToBoolean(arguments["if"]) == true ? node : null,
+                "skip" => Convert.ToBoolean(arguments["if"]) == false ? node : null,
+                _ => node
+            };
         }
 
         private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)

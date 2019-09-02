@@ -166,5 +166,104 @@ query Heroes($date: String!) {
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
+        [Fact(Skip = "GraphQL-Parse does not support query default parameters")]
+        public void BeAbleToPassArgumentsWithDefaultValues()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
+  heroes {
+    id
+    name
+    location(date: $date)
+    avengersLocation: location(date: $date2)
+  }
+}
+", new Dictionary<string, object> { { "date", "2008-05-02" } });
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            //var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
+
+            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToUseDirectives()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+{
+  heroes {
+    id
+    name
+    renown @include(if: false)
+    faction @skip(if: true)
+  }
+}
+", ImmutableDictionary<string, object>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToUseInlineFragments()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+{
+  heroes {
+    id
+    name
+    ... {
+      renown
+      faction
+    }
+  }
+}
+", ImmutableDictionary<string, object>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact(Skip = "Need to support type conditions")]
+        public void BeAbleToUseInlineFragmentsWithTypeConditions()
+        {
+            var serviceProvider = new SimpleServiceProvider();
+            var executor = new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+
+            var result = executor.Execute(@"
+{
+  heroes {
+    id
+    name
+    ... on Hero {
+      renown
+      faction
+    }
+    ... on NonHero {
+      crash
+    }
+  }
+}
+", ImmutableDictionary<string, object>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
     }
 }
