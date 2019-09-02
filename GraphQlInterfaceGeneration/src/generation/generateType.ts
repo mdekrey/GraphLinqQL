@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLField, isNonNullType, assertOutputType, GraphQLArgument } from "graphql";
+import { GraphQLObjectType, GraphQLField, isNonNullType, GraphQLArgument } from "graphql";
 import { Options } from "./options";
 import { getTypeName } from "./getTypeName";
 import { getPropertyName } from "./getPropertyName";

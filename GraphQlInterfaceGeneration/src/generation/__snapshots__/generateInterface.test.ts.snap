@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can generate simple interfaces 1`] = `
+"
+  /// <summary>
+  /// An object with an ID
+  /// </summary>
+  public interface Node
+  {
+      
+      /// <summary>
+      /// The id of the object.
+      /// </summary>
+      IGraphQlResult<GraphQlSchema.GraphQlId> id();
+  }
+  "
+`;
+
+exports[`can generate simple interfaces from v3 1`] = `
+"
+  /// <summary>
+  /// A character from the Star Wars universe
+  /// </summary>
+  public interface Character
+  {
+      
+      /// <summary>
+      /// The ID of the character
+      /// </summary>
+      IGraphQlResult<GraphQlSchema.GraphQlId> id();
+      
+      /// <summary>
+      /// The name of the character
+      /// </summary>
+      IGraphQlResult<string> name();
+      
+      /// <summary>
+      /// The friends of the character, or an empty list if they have none
+      /// </summary>
+      IGraphQlResult<IEnumerable<Character?>?> friends();
+      
+      /// <summary>
+      /// The friends of the character exposed as a connection with edges
+      /// </summary>
+      IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlSchema.GraphQlId? after);
+      
+      /// <summary>
+      /// The movies this character appears in
+      /// </summary>
+      IGraphQlResult<IEnumerable<Episode?>> appearsIn();
+  }
+  "
+`;
