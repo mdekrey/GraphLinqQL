@@ -77,9 +77,9 @@ namespace GraphQlResolver.Execution
                         context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
                         context);
                 case GraphQLInlineFragment inlineFragment:
-                    if (inlineFragment.TypeCondition != null)
+                    if (inlineFragment.TypeCondition != null && !builder.IsType(inlineFragment.TypeCondition.Name.Value))
                     {
-                        // TODO - type conditiono
+                        return builder;
                     }
                     return Build(builder,
                         inlineFragment.SelectionSet.Selections,

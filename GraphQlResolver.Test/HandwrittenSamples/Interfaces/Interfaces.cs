@@ -32,6 +32,9 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "rand" => Rand(),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
+
+        bool IGraphQlResolvable.IsType(string value) =>
+            value == "Query";
     }
 
     public interface Hero : IGraphQlResolvable
@@ -54,5 +57,8 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "location" => Location((parameters.TryGetValue("date", out var date) ? date as string : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
+
+        bool IGraphQlResolvable.IsType(string value) =>
+            value == "Hero";
     }
 }

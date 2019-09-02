@@ -78,5 +78,9 @@ namespace GraphQlResolver
 
         IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, IDictionary<string, object>? parameters) => 
             Add(displayName, property, parameters);
+
+        public bool IsType(string value) =>
+            contract.IsType(value);
+
     }
 }

@@ -9,6 +9,7 @@ namespace GraphQlResolver
         IComplexResolverBuilder<TFinal> Add(string property, IDictionary<string, object>? parameters = null);
         IComplexResolverBuilder<TFinal> Add(string displayName, string property, IDictionary<string, object>? parameters = null);
         IGraphQlResult<TFinal> Build();
+        bool IsType(string value);
     }
 
     public interface IComplexResolverBuilder<out TContract, out TFinal> : IComplexResolverBuilder<TFinal>

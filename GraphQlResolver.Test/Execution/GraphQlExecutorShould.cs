@@ -237,7 +237,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
-        [Fact(Skip = "Need to support type conditions")]
+        [Fact]
         public void BeAbleToUseInlineFragmentsWithTypeConditions()
         {
             var serviceProvider = new SimpleServiceProvider();
