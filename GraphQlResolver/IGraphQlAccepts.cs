@@ -13,7 +13,5 @@ namespace GraphQlResolver
     {
         new IGraphQlResultFactory<T> Original { set; }
 
-        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
     }
 }

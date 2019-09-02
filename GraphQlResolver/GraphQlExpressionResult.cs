@@ -30,6 +30,9 @@ namespace GraphQlResolver
         {
             return new GraphQlExpressionResult<TReturnType>(func, serviceProvider);
         }
+
+        public Type ResultType => UntypedResolver.ReturnType;
+
     }
 
     static class GraphQlExpressionResult

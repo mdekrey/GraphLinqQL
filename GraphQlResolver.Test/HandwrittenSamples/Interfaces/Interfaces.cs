@@ -20,10 +20,11 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     //  query: Query
     //}
 
-    public interface Query : IGraphQlResolvable
+    public abstract class Query : IGraphQlResolvable
     {
-        IGraphQlResult<IEnumerable<Hero>> Heroes();
-        IGraphQlResult<double> Rand();
+        private Query() { }
+        public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
+        public abstract IGraphQlResult<double> Rand();
 
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
             name switch
@@ -35,16 +36,27 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
 
         bool IGraphQlResolvable.IsType(string value) =>
             value == "Query";
+
+        public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
+        {
+#nullable disable
+            public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+            IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+            Type IGraphQlAccepts.ModelType => typeof(T);
+        }
     }
 
-    public interface Hero : IGraphQlResolvable
+    public abstract class Hero : IGraphQlResolvable
     {
-        IGraphQlResult<GraphQlId> Id();
-        IGraphQlResult<string> Name();
-        IGraphQlResult<double> Renown();
-        IGraphQlResult<string> Faction();
-        IGraphQlResult<IEnumerable<Hero>> Friends();
-        IGraphQlResult<string> Location(string date);
+        internal Hero() { }
+        public abstract IGraphQlResult<GraphQlId> Id();
+        public abstract IGraphQlResult<string> Name();
+        public abstract IGraphQlResult<double> Renown();
+        public abstract IGraphQlResult<string> Faction();
+        public abstract IGraphQlResult<IEnumerable<Hero>> Friends();
+        public abstract IGraphQlResult<string> Location(string date);
 
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
             name switch
@@ -60,5 +72,15 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
 
         bool IGraphQlResolvable.IsType(string value) =>
             value == "Hero";
+
+        public abstract class GraphQlContract<T> : Hero, IGraphQlAccepts<T>
+        {
+#nullable disable
+            public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+            IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+            Type IGraphQlAccepts.ModelType => typeof(T);
+        }
     }
 }
