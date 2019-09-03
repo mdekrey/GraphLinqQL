@@ -9,6 +9,6 @@ export const defaultOptions: Options = {
     String: { csharpNullable: true, csharpType: "string" },
     Boolean: { csharpNullable: false, csharpType: "bool" }
   },
-  using: ["GraphQlResolver", "System", "System.Collections.Generic"],
+  using: ["GraphQlResolver", "System", "System.Collections", "System.Collections.Generic"],
   deserializer: "System.Text.Json.JsonSerializer.Deserialize"
 };

@@ -14,8 +14,6 @@ import { getOutputTypeName } from "./getOutputTypeName";
 import { getScalarTypeName } from "./getScalarTypeName";
 import { getListTypeName } from "./getListTypeName";
 import { getEnumTypeName } from "./getEnumTypeName";
-import { getInterfaceTypeName } from "./getInterfaceTypeName";
-import { getUnionTypeName } from "./getUnionTypeName";
 import { getInputObjectTypeName } from "./getInputObjectTypeName";
 
 export function getInputTypeName(inputType: GraphQLInputType, options: Options, nullable: boolean = true): string {
@@ -32,10 +30,6 @@ export function getInputTypeName(inputType: GraphQLInputType, options: Options, 
     return getListTypeName(inputType, options, nullable, getInputTypeName);
   } else if (isEnumType(inputType)) {
     return getEnumTypeName(inputType, options, nullable);
-  } else if (isInterfaceType(inputType)) {
-    return getInterfaceTypeName(inputType, options, nullable);
-  } else if (isUnionType(inputType)) {
-    return getUnionTypeName(inputType, options, nullable);
   } else if (isInputObjectType(inputType)) {
     return getInputObjectTypeName(inputType, options, nullable);
   } else {

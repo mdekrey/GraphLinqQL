@@ -8,10 +8,10 @@ exports[`can generate v3 types 1`] = `
 public abstract class Query : IGraphQlResolvable
 {
     private Query() { }
-    public abstract IGraphQlResult<Character?> hero(Episode? episode);
+    public abstract IGraphQlResult hero(Episode? episode);
     public abstract IGraphQlResult<IEnumerable<Review?>?> reviews(Episode episode);
     public abstract IGraphQlResult search(string? text);
-    public abstract IGraphQlResult<Character?> character(string id);
+    public abstract IGraphQlResult character(string id);
     public abstract IGraphQlResult<Droid?> droid(string id);
     public abstract IGraphQlResult<Human?> human(string id);
     public abstract IGraphQlResult<Starship?> starship(string id);
@@ -93,7 +93,7 @@ public interface Character
       /// <summary>
       /// The friends of the character, or an empty list if they have none
       /// </summary>
-      IGraphQlResult<IEnumerable<Character?>?> friends();
+      IGraphQlResult friends();
     
       /// <summary>
       /// The friends of the character exposed as a connection with edges
@@ -106,7 +106,6 @@ public interface Character
       IGraphQlResult<IEnumerable<Episode?>> appearsIn();
 }
 
-// Scalar: ID
 
 /// <summary>
 /// A connection object for a character's friends
@@ -128,7 +127,7 @@ public abstract class FriendsConnection : IGraphQlResolvable
     /// <summary>
     /// A list of the friends, as a convenience when edges are not needed.
     /// </summary>
-    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    public abstract IGraphQlResult friends();
     
     /// <summary>
     /// Information for paginating this connection
@@ -175,7 +174,7 @@ public abstract class FriendsEdge : IGraphQlResolvable
     /// <summary>
     /// The character represented by this friendship edge
     /// </summary>
-    public abstract IGraphQlResult<Character?> node();
+    public abstract IGraphQlResult node();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -316,7 +315,7 @@ public abstract class Human : IGraphQlResolvable, Character
     /// <summary>
     /// This human's friends, or an empty list if they have none
     /// </summary>
-    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    public abstract IGraphQlResult friends();
     
     /// <summary>
     /// The friends of the human exposed as a connection with edges
@@ -451,7 +450,7 @@ public abstract class Droid : IGraphQlResolvable, Character
     /// <summary>
     /// This droid's friends, or an empty list if they have none
     /// </summary>
-    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    public abstract IGraphQlResult friends();
     
     /// <summary>
     /// The friends of the droid exposed as a connection with edges
@@ -617,7 +616,7 @@ public abstract class Root : IGraphQlResolvable
     /// <summary>
     /// Fetches an object given its ID
     /// </summary>
-    public abstract IGraphQlResult<Node?> node(string id);
+    public abstract IGraphQlResult node(string id);
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -966,7 +965,6 @@ public interface Node
       IGraphQlResult<string> id();
 }
 
-// Scalar: ID
 
 /// <summary>
 /// A connection to a list of items.
