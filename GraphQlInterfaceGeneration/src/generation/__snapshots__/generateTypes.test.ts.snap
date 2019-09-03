@@ -11,10 +11,10 @@ public abstract class Query
     public abstract IGraphQlResult<Character?> hero(Episode? episode);
     public abstract IGraphQlResult<IEnumerable<Review?>?> reviews(Episode episode);
     public abstract IGraphQlResult search(string? text);
-    public abstract IGraphQlResult<Character?> character(GraphQlResolver.CommonTypes.GraphQlId id);
-    public abstract IGraphQlResult<Droid?> droid(GraphQlResolver.CommonTypes.GraphQlId id);
-    public abstract IGraphQlResult<Human?> human(GraphQlResolver.CommonTypes.GraphQlId id);
-    public abstract IGraphQlResult<Starship?> starship(GraphQlResolver.CommonTypes.GraphQlId id);
+    public abstract IGraphQlResult<Character?> character(string id);
+    public abstract IGraphQlResult<Droid?> droid(string id);
+    public abstract IGraphQlResult<Human?> human(string id);
+    public abstract IGraphQlResult<Starship?> starship(string id);
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -26,13 +26,13 @@ public abstract class Query
             \\"search\\" => search(
                 text: (parameters.TryGetValue(\\"text\\", out var text) ? (string?)text : null)),
             \\"character\\" => character(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId)id : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
             \\"droid\\" => droid(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId)id : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
             \\"human\\" => human(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId)id : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
             \\"starship\\" => starship(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId)id : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -83,7 +83,7 @@ public interface Character
       /// <summary>
       /// The ID of the character
       /// </summary>
-      IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+      IGraphQlResult<string> id();
     
       /// <summary>
       /// The name of the character
@@ -98,7 +98,7 @@ public interface Character
       /// <summary>
       /// The friends of the character exposed as a connection with edges
       /// </summary>
-      IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlResolver.CommonTypes.GraphQlId? after);
+      IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
     
       /// <summary>
       /// The movies this character appears in
@@ -106,6 +106,7 @@ public interface Character
       IGraphQlResult<IEnumerable<Episode?>> appearsIn();
 }
 
+// Scalar: ID
 
 /// <summary>
 /// A connection object for a character's friends
@@ -169,7 +170,7 @@ public abstract class FriendsEdge
     /// <summary>
     /// A cursor used for pagination
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> cursor();
+    public abstract IGraphQlResult<string> cursor();
     
     /// <summary>
     /// The character represented by this friendship edge
@@ -205,8 +206,8 @@ public abstract class FriendsEdge
 public abstract class PageInfo
 {
     private PageInfo() { }
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId?> startCursor();
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId?> endCursor();
+    public abstract IGraphQlResult<string?> startCursor();
+    public abstract IGraphQlResult<string?> endCursor();
     public abstract IGraphQlResult<bool> hasNextPage();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
@@ -290,7 +291,7 @@ public abstract class Human : Character
     /// <summary>
     /// The ID of the human
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
     
     /// <summary>
     /// What this human calls themselves
@@ -320,7 +321,7 @@ public abstract class Human : Character
     /// <summary>
     /// The friends of the human exposed as a connection with edges
     /// </summary>
-    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlResolver.CommonTypes.GraphQlId? after);
+    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
     
     /// <summary>
     /// The movies this human appears in
@@ -344,7 +345,7 @@ public abstract class Human : Character
             \\"friends\\" => friends(),
             \\"friendsConnection\\" => friendsConnection(
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (GraphQlResolver.CommonTypes.GraphQlId?)after : null)),
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
             \\"appearsIn\\" => appearsIn(),
             \\"starships\\" => starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -391,7 +392,7 @@ public abstract class Starship
     /// <summary>
     /// The ID of the starship
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
     
     /// <summary>
     /// The name of the starship
@@ -440,7 +441,7 @@ public abstract class Droid : Character
     /// <summary>
     /// The ID of the droid
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
     
     /// <summary>
     /// What others call this droid
@@ -455,7 +456,7 @@ public abstract class Droid : Character
     /// <summary>
     /// The friends of the droid exposed as a connection with edges
     /// </summary>
-    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlResolver.CommonTypes.GraphQlId? after);
+    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
     
     /// <summary>
     /// The movies this droid appears in
@@ -475,7 +476,7 @@ public abstract class Droid : Character
             \\"friends\\" => friends(),
             \\"friendsConnection\\" => friendsConnection(
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (GraphQlResolver.CommonTypes.GraphQlId?)after : null)),
+                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
             \\"appearsIn\\" => appearsIn(),
             \\"primaryFunction\\" => primaryFunction(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -601,22 +602,22 @@ public abstract class Root
 {
     private Root() { }
     public abstract IGraphQlResult<FilmsConnection?> allFilms(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Film?> film(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? filmID);
+    public abstract IGraphQlResult<Film?> film(string? id, string? filmID);
     public abstract IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Person?> person(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? personID);
+    public abstract IGraphQlResult<Person?> person(string? id, string? personID);
     public abstract IGraphQlResult<PlanetsConnection?> allPlanets(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Planet?> planet(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? planetID);
+    public abstract IGraphQlResult<Planet?> planet(string? id, string? planetID);
     public abstract IGraphQlResult<SpeciesConnection?> allSpecies(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Species?> species(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? speciesID);
+    public abstract IGraphQlResult<Species?> species(string? id, string? speciesID);
     public abstract IGraphQlResult<StarshipsConnection?> allStarships(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Starship?> starship(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? starshipID);
+    public abstract IGraphQlResult<Starship?> starship(string? id, string? starshipID);
     public abstract IGraphQlResult<VehiclesConnection?> allVehicles(string? after, int? first, string? before, int? last);
-    public abstract IGraphQlResult<Vehicle?> vehicle(GraphQlResolver.CommonTypes.GraphQlId? id, GraphQlResolver.CommonTypes.GraphQlId? vehicleID);
+    public abstract IGraphQlResult<Vehicle?> vehicle(string? id, string? vehicleID);
     
     /// <summary>
     /// Fetches an object given its ID
     /// </summary>
-    public abstract IGraphQlResult<Node?> node(GraphQlResolver.CommonTypes.GraphQlId id);
+    public abstract IGraphQlResult<Node?> node(string id);
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -627,50 +628,50 @@ public abstract class Root
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"film\\" => film(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                filmID: (parameters.TryGetValue(\\"filmID\\", out var filmID) ? (GraphQlResolver.CommonTypes.GraphQlId?)filmID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                filmID: (parameters.TryGetValue(\\"filmID\\", out var filmID) ? (string?)filmID : null)),
             \\"allPeople\\" => allPeople(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"person\\" => person(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                personID: (parameters.TryGetValue(\\"personID\\", out var personID) ? (GraphQlResolver.CommonTypes.GraphQlId?)personID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                personID: (parameters.TryGetValue(\\"personID\\", out var personID) ? (string?)personID : null)),
             \\"allPlanets\\" => allPlanets(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"planet\\" => planet(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                planetID: (parameters.TryGetValue(\\"planetID\\", out var planetID) ? (GraphQlResolver.CommonTypes.GraphQlId?)planetID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                planetID: (parameters.TryGetValue(\\"planetID\\", out var planetID) ? (string?)planetID : null)),
             \\"allSpecies\\" => allSpecies(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"species\\" => species(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                speciesID: (parameters.TryGetValue(\\"speciesID\\", out var speciesID) ? (GraphQlResolver.CommonTypes.GraphQlId?)speciesID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                speciesID: (parameters.TryGetValue(\\"speciesID\\", out var speciesID) ? (string?)speciesID : null)),
             \\"allStarships\\" => allStarships(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"starship\\" => starship(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                starshipID: (parameters.TryGetValue(\\"starshipID\\", out var starshipID) ? (GraphQlResolver.CommonTypes.GraphQlId?)starshipID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                starshipID: (parameters.TryGetValue(\\"starshipID\\", out var starshipID) ? (string?)starshipID : null)),
             \\"allVehicles\\" => allVehicles(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
             \\"vehicle\\" => vehicle(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId?)id : null),
-                vehicleID: (parameters.TryGetValue(\\"vehicleID\\", out var vehicleID) ? (GraphQlResolver.CommonTypes.GraphQlId?)vehicleID : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
+                vehicleID: (parameters.TryGetValue(\\"vehicleID\\", out var vehicleID) ? (string?)vehicleID : null)),
             \\"node\\" => node(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (GraphQlResolver.CommonTypes.GraphQlId)id : null)),
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -896,7 +897,7 @@ public abstract class Film : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -962,9 +963,10 @@ public interface Node
       /// <summary>
       /// The id of the object.
       /// </summary>
-      IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+      IGraphQlResult<string> id();
 }
 
+// Scalar: ID
 
 /// <summary>
 /// A connection to a list of items.
@@ -1141,7 +1143,7 @@ public abstract class Species : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -1259,7 +1261,7 @@ public abstract class Planet : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -1482,7 +1484,7 @@ public abstract class Person : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -1828,7 +1830,7 @@ public abstract class Starship : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
@@ -2257,7 +2259,7 @@ public abstract class Vehicle : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
+    public abstract IGraphQlResult<string> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
