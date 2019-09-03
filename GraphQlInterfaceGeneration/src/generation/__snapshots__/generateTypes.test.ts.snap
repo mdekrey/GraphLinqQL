@@ -43,7 +43,7 @@ public abstract class Query : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -152,7 +152,7 @@ public abstract class FriendsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -192,7 +192,7 @@ public abstract class FriendsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -226,7 +226,7 @@ public abstract class PageInfo : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -272,7 +272,7 @@ public abstract class Review : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -340,7 +340,7 @@ public abstract class Human : IGraphQlResolvable, Character
             \\"name\\" => this.name(),
             \\"homePlanet\\" => this.homePlanet(),
             \\"height\\" => this.height(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? METER),
+                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? LengthUnit.METER),
             \\"mass\\" => this.mass(),
             \\"friends\\" => this.friends(),
             \\"friendsConnection\\" => this.friendsConnection(
@@ -358,7 +358,7 @@ public abstract class Human : IGraphQlResolvable, Character
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -411,7 +411,7 @@ public abstract class Starship : IGraphQlResolvable
             \\"id\\" => this.id(),
             \\"name\\" => this.name(),
             \\"length\\" => this.length(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? METER),
+                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? LengthUnit.METER),
             \\"coordinates\\" => this.coordinates(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
@@ -423,7 +423,7 @@ public abstract class Starship : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -489,7 +489,7 @@ public abstract class Droid : IGraphQlResolvable, Character
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -521,7 +521,7 @@ public abstract class Mutation : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -586,7 +586,7 @@ public abstract class Subscription : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -682,7 +682,7 @@ public abstract class Root : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -742,7 +742,7 @@ public abstract class FilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -794,7 +794,7 @@ public abstract class PageInfo : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -834,7 +834,7 @@ public abstract class FilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -946,7 +946,7 @@ public abstract class Film : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1020,7 +1020,7 @@ public abstract class FilmSpeciesConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1060,7 +1060,7 @@ public abstract class FilmSpeciesEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1181,7 +1181,7 @@ public abstract class Species : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1298,7 +1298,7 @@ public abstract class Planet : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1358,7 +1358,7 @@ public abstract class PlanetResidentsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1398,7 +1398,7 @@ public abstract class PlanetResidentsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1527,7 +1527,7 @@ public abstract class Person : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1587,7 +1587,7 @@ public abstract class PersonFilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1627,7 +1627,7 @@ public abstract class PersonFilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1687,7 +1687,7 @@ public abstract class PersonStarshipsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1727,7 +1727,7 @@ public abstract class PersonStarshipsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1871,7 +1871,7 @@ public abstract class Starship : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1931,7 +1931,7 @@ public abstract class StarshipPilotsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -1971,7 +1971,7 @@ public abstract class StarshipPilotsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2031,7 +2031,7 @@ public abstract class StarshipFilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2071,7 +2071,7 @@ public abstract class StarshipFilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2131,7 +2131,7 @@ public abstract class PersonVehiclesConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2171,7 +2171,7 @@ public abstract class PersonVehiclesEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2298,7 +2298,7 @@ public abstract class Vehicle : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2358,7 +2358,7 @@ public abstract class VehiclePilotsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2398,7 +2398,7 @@ public abstract class VehiclePilotsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2458,7 +2458,7 @@ public abstract class VehicleFilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2498,7 +2498,7 @@ public abstract class VehicleFilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2558,7 +2558,7 @@ public abstract class PlanetFilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2598,7 +2598,7 @@ public abstract class PlanetFilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2658,7 +2658,7 @@ public abstract class SpeciesPeopleConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2698,7 +2698,7 @@ public abstract class SpeciesPeopleEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2758,7 +2758,7 @@ public abstract class SpeciesFilmsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2798,7 +2798,7 @@ public abstract class SpeciesFilmsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2858,7 +2858,7 @@ public abstract class FilmStarshipsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2898,7 +2898,7 @@ public abstract class FilmStarshipsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2958,7 +2958,7 @@ public abstract class FilmVehiclesConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -2998,7 +2998,7 @@ public abstract class FilmVehiclesEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3058,7 +3058,7 @@ public abstract class FilmCharactersConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3098,7 +3098,7 @@ public abstract class FilmCharactersEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3158,7 +3158,7 @@ public abstract class FilmPlanetsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3198,7 +3198,7 @@ public abstract class FilmPlanetsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3258,7 +3258,7 @@ public abstract class PeopleConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3298,7 +3298,7 @@ public abstract class PeopleEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3358,7 +3358,7 @@ public abstract class PlanetsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3398,7 +3398,7 @@ public abstract class PlanetsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3458,7 +3458,7 @@ public abstract class SpeciesConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3498,7 +3498,7 @@ public abstract class SpeciesEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3558,7 +3558,7 @@ public abstract class StarshipsConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3598,7 +3598,7 @@ public abstract class StarshipsEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3658,7 +3658,7 @@ public abstract class VehiclesConnection : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
@@ -3698,7 +3698,7 @@ public abstract class VehiclesEdge : IGraphQlResolvable
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);

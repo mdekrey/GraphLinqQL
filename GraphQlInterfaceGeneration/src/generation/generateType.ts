@@ -1,10 +1,19 @@
-import { GraphQLObjectType, GraphQLField, isNonNullType, GraphQLArgument } from "graphql";
+import {
+  GraphQLObjectType,
+  GraphQLField,
+  isNonNullType,
+  GraphQLArgument,
+  GraphQLInputType,
+  isScalarType,
+  isEnumType
+} from "graphql";
 import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 import { getPropertyName } from "./getPropertyName";
 import { getFieldName } from "./getFieldName";
 import { getOutputTypeName } from "./getOutputTypeName";
 import { getInputTypeName } from "./getInputTypeName";
+import { getEnumValueName } from "./getEnumValueName";
 
 export function generateType(object: GraphQLObjectType, options: Options) {
   const typeName = getTypeName(object.name, options);
@@ -50,7 +59,7 @@ ${
 }        public IGraphQlResultFactory<T> Original { get; set; }
 ${
   options.useNullabilityIndicator
-    ? `#nullable restore
+    ? `#nullable enable
 `
     : ""
 }
@@ -116,8 +125,19 @@ function fieldResolveQueryCaseArg(arg: GraphQLArgument, options: Options) {
   const getValue = nullable
     ? `(parameters.TryGetValue("${arg.name}", out var ${fieldName}) ? (${inputTypeName})${fieldName} : null)`
     : `(${inputTypeName})parameters["${arg.name}"]`;
-  const defaultValueExpression = defaultValue ? ` ?? ${defaultValue}` : "";
-
-  // TODO - other type conversions
+  const defaultValueExpression = defaultValue ? ` ?? ${toCsharpValue(arg.defaultValue, arg.type, options)}` : "";
   return `${fieldName}: ${getValue}${defaultValueExpression}`;
+}
+
+function toCsharpValue(value: any, type: GraphQLInputType, options: Options) {
+  type = isNonNullType(type) ? type.ofType : type;
+  if (isScalarType(type)) {
+    if (type.name === "String") {
+      `"${(value.toString() as string).replace(/[\\"]/g, "$1")}"`;
+    }
+  } else if (isEnumType(type)) {
+    return `${getTypeName(type.name, options)}.${getEnumValueName(value, options)}`;
+  }
+
+  return `TODO`;
 }

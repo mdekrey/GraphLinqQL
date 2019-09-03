@@ -1,6 +1,7 @@
 import { GraphQLEnumType, GraphQLEnumValue } from "graphql";
 import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
+import { getEnumValueName } from "./getEnumValueName";
 
 export function generateEnum(object: GraphQLEnumType, options: Options) {
   const typeName = getTypeName(object.name, options);
@@ -29,6 +30,6 @@ function generateEnumValue(value: GraphQLEnumValue, options: Options) {
     /// <summary>
     /// ${value.description.split("\n").join("\n    /// ")}
     /// </summary>
-    `) + value.name
+    `) + getEnumValueName(value.name, options)
   );
 }

@@ -123,7 +123,7 @@ public abstract class Person : IGraphQlResolvable, Node
     {
 #nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
+#nullable enable
 
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
