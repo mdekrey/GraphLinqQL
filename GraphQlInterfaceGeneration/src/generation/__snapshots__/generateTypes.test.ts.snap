@@ -5,7 +5,7 @@ exports[`can generate v3 types 1`] = `
 /// <summary>
 /// The query type, represents all of the entry points into our object graph
 /// </summary>
-public abstract class Query
+public abstract class Query : IGraphQlResolvable
 {
     private Query() { }
     public abstract IGraphQlResult<Character?> hero(Episode? episode);
@@ -19,20 +19,20 @@ public abstract class Query
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"hero\\" => hero(
+            \\"hero\\" => this.hero(
                 episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null)),
-            \\"reviews\\" => reviews(
-                episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode)episode : null)),
-            \\"search\\" => search(
+            \\"reviews\\" => this.reviews(
+                episode: (Episode)parameters[\\"episode\\"]),
+            \\"search\\" => this.search(
                 text: (parameters.TryGetValue(\\"text\\", out var text) ? (string?)text : null)),
-            \\"character\\" => character(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
-            \\"droid\\" => droid(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
-            \\"human\\" => human(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
-            \\"starship\\" => starship(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
+            \\"character\\" => this.character(
+                id: (string)parameters[\\"id\\"]),
+            \\"droid\\" => this.droid(
+                id: (string)parameters[\\"id\\"]),
+            \\"human\\" => this.human(
+                id: (string)parameters[\\"id\\"]),
+            \\"starship\\" => this.starship(
+                id: (string)parameters[\\"id\\"]),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -111,7 +111,7 @@ public interface Character
 /// <summary>
 /// A connection object for a character's friends
 /// </summary>
-public abstract class FriendsConnection
+public abstract class FriendsConnection : IGraphQlResolvable
 {
     private FriendsConnection() { }
     
@@ -138,10 +138,10 @@ public abstract class FriendsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"totalCount\\" => totalCount(),
-            \\"edges\\" => edges(),
-            \\"friends\\" => friends(),
-            \\"pageInfo\\" => pageInfo(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"edges\\" => this.edges(),
+            \\"friends\\" => this.friends(),
+            \\"pageInfo\\" => this.pageInfo(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -163,7 +163,7 @@ public abstract class FriendsConnection
 /// <summary>
 /// An edge object for a character's friends
 /// </summary>
-public abstract class FriendsEdge
+public abstract class FriendsEdge : IGraphQlResolvable
 {
     private FriendsEdge() { }
     
@@ -180,8 +180,8 @@ public abstract class FriendsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"cursor\\" => cursor(),
-            \\"node\\" => node(),
+            \\"cursor\\" => this.cursor(),
+            \\"node\\" => this.node(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -203,7 +203,7 @@ public abstract class FriendsEdge
 /// <summary>
 /// Information for paginating this connection
 /// </summary>
-public abstract class PageInfo
+public abstract class PageInfo : IGraphQlResolvable
 {
     private PageInfo() { }
     public abstract IGraphQlResult<string?> startCursor();
@@ -213,9 +213,9 @@ public abstract class PageInfo
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"startCursor\\" => startCursor(),
-            \\"endCursor\\" => endCursor(),
-            \\"hasNextPage\\" => hasNextPage(),
+            \\"startCursor\\" => this.startCursor(),
+            \\"endCursor\\" => this.endCursor(),
+            \\"hasNextPage\\" => this.hasNextPage(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -237,7 +237,7 @@ public abstract class PageInfo
 /// <summary>
 /// Represents a review for a movie
 /// </summary>
-public abstract class Review
+public abstract class Review : IGraphQlResolvable
 {
     private Review() { }
     
@@ -259,9 +259,9 @@ public abstract class Review
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"episode\\" => episode(),
-            \\"stars\\" => stars(),
-            \\"commentary\\" => commentary(),
+            \\"episode\\" => this.episode(),
+            \\"stars\\" => this.stars(),
+            \\"commentary\\" => this.commentary(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -284,7 +284,7 @@ public abstract class Review
 /// <summary>
 /// A humanoid creature from the Star Wars universe
 /// </summary>
-public abstract class Human : Character
+public abstract class Human : IGraphQlResolvable, Character
 {
     private Human() { }
     
@@ -336,18 +336,18 @@ public abstract class Human : Character
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"id\\" => id(),
-            \\"name\\" => name(),
-            \\"homePlanet\\" => homePlanet(),
-            \\"height\\" => height(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null)),
-            \\"mass\\" => mass(),
-            \\"friends\\" => friends(),
-            \\"friendsConnection\\" => friendsConnection(
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"homePlanet\\" => this.homePlanet(),
+            \\"height\\" => this.height(
+                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? METER),
+            \\"mass\\" => this.mass(),
+            \\"friends\\" => this.friends(),
+            \\"friendsConnection\\" => this.friendsConnection(
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
-            \\"appearsIn\\" => appearsIn(),
-            \\"starships\\" => starships(),
+            \\"appearsIn\\" => this.appearsIn(),
+            \\"starships\\" => this.starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -385,7 +385,7 @@ public enum LengthUnit
 
 
 
-public abstract class Starship
+public abstract class Starship : IGraphQlResolvable
 {
     private Starship() { }
     
@@ -408,11 +408,11 @@ public abstract class Starship
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"id\\" => id(),
-            \\"name\\" => name(),
-            \\"length\\" => length(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null)),
-            \\"coordinates\\" => coordinates(),
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"length\\" => this.length(
+                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? METER),
+            \\"coordinates\\" => this.coordinates(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -434,7 +434,7 @@ public abstract class Starship
 /// <summary>
 /// An autonomous mechanical character in the Star Wars universe
 /// </summary>
-public abstract class Droid : Character
+public abstract class Droid : IGraphQlResolvable, Character
 {
     private Droid() { }
     
@@ -471,14 +471,14 @@ public abstract class Droid : Character
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"id\\" => id(),
-            \\"name\\" => name(),
-            \\"friends\\" => friends(),
-            \\"friendsConnection\\" => friendsConnection(
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"friends\\" => this.friends(),
+            \\"friendsConnection\\" => this.friendsConnection(
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
-            \\"appearsIn\\" => appearsIn(),
-            \\"primaryFunction\\" => primaryFunction(),
+            \\"appearsIn\\" => this.appearsIn(),
+            \\"primaryFunction\\" => this.primaryFunction(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -500,7 +500,7 @@ public abstract class Droid : Character
 /// <summary>
 /// The mutation type, represents all updates we can make to our data
 /// </summary>
-public abstract class Mutation
+public abstract class Mutation : IGraphQlResolvable
 {
     private Mutation() { }
     public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
@@ -508,9 +508,9 @@ public abstract class Mutation
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"createReview\\" => createReview(
+            \\"createReview\\" => this.createReview(
                 episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null),
-                review: (parameters.TryGetValue(\\"review\\", out var review) ? (ReviewInput)review : null)),
+                review: (ReviewInput)parameters[\\"review\\"]),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -566,7 +566,7 @@ public class ColorInput
 /// <summary>
 /// The subscription type, represents all subscriptions we can make to our data
 /// </summary>
-public abstract class Subscription
+public abstract class Subscription : IGraphQlResolvable
 {
     private Subscription() { }
     public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
@@ -574,7 +574,7 @@ public abstract class Subscription
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"reviewAdded\\" => reviewAdded(
+            \\"reviewAdded\\" => this.reviewAdded(
                 episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null)),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
@@ -598,7 +598,7 @@ public abstract class Subscription
 exports[`can generate v4 types 1`] = `
 "
 
-public abstract class Root
+public abstract class Root : IGraphQlResolvable
 {
     private Root() { }
     public abstract IGraphQlResult<FilmsConnection?> allFilms(string? after, int? first, string? before, int? last);
@@ -622,56 +622,56 @@ public abstract class Root
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"allFilms\\" => allFilms(
+            \\"allFilms\\" => this.allFilms(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"film\\" => film(
+            \\"film\\" => this.film(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 filmID: (parameters.TryGetValue(\\"filmID\\", out var filmID) ? (string?)filmID : null)),
-            \\"allPeople\\" => allPeople(
+            \\"allPeople\\" => this.allPeople(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"person\\" => person(
+            \\"person\\" => this.person(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 personID: (parameters.TryGetValue(\\"personID\\", out var personID) ? (string?)personID : null)),
-            \\"allPlanets\\" => allPlanets(
+            \\"allPlanets\\" => this.allPlanets(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"planet\\" => planet(
+            \\"planet\\" => this.planet(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 planetID: (parameters.TryGetValue(\\"planetID\\", out var planetID) ? (string?)planetID : null)),
-            \\"allSpecies\\" => allSpecies(
+            \\"allSpecies\\" => this.allSpecies(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"species\\" => species(
+            \\"species\\" => this.species(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 speciesID: (parameters.TryGetValue(\\"speciesID\\", out var speciesID) ? (string?)speciesID : null)),
-            \\"allStarships\\" => allStarships(
+            \\"allStarships\\" => this.allStarships(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"starship\\" => starship(
+            \\"starship\\" => this.starship(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 starshipID: (parameters.TryGetValue(\\"starshipID\\", out var starshipID) ? (string?)starshipID : null)),
-            \\"allVehicles\\" => allVehicles(
+            \\"allVehicles\\" => this.allVehicles(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"vehicle\\" => vehicle(
+            \\"vehicle\\" => this.vehicle(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
                 vehicleID: (parameters.TryGetValue(\\"vehicleID\\", out var vehicleID) ? (string?)vehicleID : null)),
-            \\"node\\" => node(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string)id : null)),
+            \\"node\\" => this.node(
+                id: (string)parameters[\\"id\\"]),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -693,7 +693,7 @@ public abstract class Root
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmsConnection
+public abstract class FilmsConnection : IGraphQlResolvable
 {
     private FilmsConnection() { }
     
@@ -728,10 +728,10 @@ public abstract class FilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -753,7 +753,7 @@ public abstract class FilmsConnection
 /// <summary>
 /// Information about pagination in a connection.
 /// </summary>
-public abstract class PageInfo
+public abstract class PageInfo : IGraphQlResolvable
 {
     private PageInfo() { }
     
@@ -780,10 +780,10 @@ public abstract class PageInfo
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"hasNextPage\\" => hasNextPage(),
-            \\"hasPreviousPage\\" => hasPreviousPage(),
-            \\"startCursor\\" => startCursor(),
-            \\"endCursor\\" => endCursor(),
+            \\"hasNextPage\\" => this.hasNextPage(),
+            \\"hasPreviousPage\\" => this.hasPreviousPage(),
+            \\"startCursor\\" => this.startCursor(),
+            \\"endCursor\\" => this.endCursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -805,7 +805,7 @@ public abstract class PageInfo
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmsEdge
+public abstract class FilmsEdge : IGraphQlResolvable
 {
     private FilmsEdge() { }
     
@@ -822,8 +822,8 @@ public abstract class FilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -845,7 +845,7 @@ public abstract class FilmsEdge
 /// <summary>
 /// A single film.
 /// </summary>
-public abstract class Film : Node
+public abstract class Film : IGraphQlResolvable, Node
 {
     private Film() { }
     
@@ -902,40 +902,40 @@ public abstract class Film : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"title\\" => title(),
-            \\"episodeID\\" => episodeID(),
-            \\"openingCrawl\\" => openingCrawl(),
-            \\"director\\" => director(),
-            \\"producers\\" => producers(),
-            \\"releaseDate\\" => releaseDate(),
-            \\"speciesConnection\\" => speciesConnection(
+            \\"title\\" => this.title(),
+            \\"episodeID\\" => this.episodeID(),
+            \\"openingCrawl\\" => this.openingCrawl(),
+            \\"director\\" => this.director(),
+            \\"producers\\" => this.producers(),
+            \\"releaseDate\\" => this.releaseDate(),
+            \\"speciesConnection\\" => this.speciesConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"starshipConnection\\" => starshipConnection(
+            \\"starshipConnection\\" => this.starshipConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"vehicleConnection\\" => vehicleConnection(
+            \\"vehicleConnection\\" => this.vehicleConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"characterConnection\\" => characterConnection(
+            \\"characterConnection\\" => this.characterConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"planetConnection\\" => planetConnection(
+            \\"planetConnection\\" => this.planetConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -971,7 +971,7 @@ public interface Node
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmSpeciesConnection
+public abstract class FilmSpeciesConnection : IGraphQlResolvable
 {
     private FilmSpeciesConnection() { }
     
@@ -1006,10 +1006,10 @@ public abstract class FilmSpeciesConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"species\\" => species(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"species\\" => this.species(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1031,7 +1031,7 @@ public abstract class FilmSpeciesConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmSpeciesEdge
+public abstract class FilmSpeciesEdge : IGraphQlResolvable
 {
     private FilmSpeciesEdge() { }
     
@@ -1048,8 +1048,8 @@ public abstract class FilmSpeciesEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1071,7 +1071,7 @@ public abstract class FilmSpeciesEdge
 /// <summary>
 /// A type of person or character within the Star Wars Universe.
 /// </summary>
-public abstract class Species : Node
+public abstract class Species : IGraphQlResolvable, Node
 {
     private Species() { }
     
@@ -1148,29 +1148,29 @@ public abstract class Species : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"classification\\" => classification(),
-            \\"designation\\" => designation(),
-            \\"averageHeight\\" => averageHeight(),
-            \\"averageLifespan\\" => averageLifespan(),
-            \\"eyeColors\\" => eyeColors(),
-            \\"hairColors\\" => hairColors(),
-            \\"skinColors\\" => skinColors(),
-            \\"language\\" => language(),
-            \\"homeworld\\" => homeworld(),
-            \\"personConnection\\" => personConnection(
+            \\"name\\" => this.name(),
+            \\"classification\\" => this.classification(),
+            \\"designation\\" => this.designation(),
+            \\"averageHeight\\" => this.averageHeight(),
+            \\"averageLifespan\\" => this.averageLifespan(),
+            \\"eyeColors\\" => this.eyeColors(),
+            \\"hairColors\\" => this.hairColors(),
+            \\"skinColors\\" => this.skinColors(),
+            \\"language\\" => this.language(),
+            \\"homeworld\\" => this.homeworld(),
+            \\"personConnection\\" => this.personConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"filmConnection\\" => filmConnection(
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1193,7 +1193,7 @@ public abstract class Species : Node
 /// A large mass, planet or planetoid in the Star Wars Universe, at the time of
 /// 0 ABY.
 /// </summary>
-public abstract class Planet : Node
+public abstract class Planet : IGraphQlResolvable, Node
 {
     private Planet() { }
     
@@ -1266,28 +1266,28 @@ public abstract class Planet : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"diameter\\" => diameter(),
-            \\"rotationPeriod\\" => rotationPeriod(),
-            \\"orbitalPeriod\\" => orbitalPeriod(),
-            \\"gravity\\" => gravity(),
-            \\"population\\" => population(),
-            \\"climates\\" => climates(),
-            \\"terrains\\" => terrains(),
-            \\"surfaceWater\\" => surfaceWater(),
-            \\"residentConnection\\" => residentConnection(
+            \\"name\\" => this.name(),
+            \\"diameter\\" => this.diameter(),
+            \\"rotationPeriod\\" => this.rotationPeriod(),
+            \\"orbitalPeriod\\" => this.orbitalPeriod(),
+            \\"gravity\\" => this.gravity(),
+            \\"population\\" => this.population(),
+            \\"climates\\" => this.climates(),
+            \\"terrains\\" => this.terrains(),
+            \\"surfaceWater\\" => this.surfaceWater(),
+            \\"residentConnection\\" => this.residentConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"filmConnection\\" => filmConnection(
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1309,7 +1309,7 @@ public abstract class Planet : Node
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PlanetResidentsConnection
+public abstract class PlanetResidentsConnection : IGraphQlResolvable
 {
     private PlanetResidentsConnection() { }
     
@@ -1344,10 +1344,10 @@ public abstract class PlanetResidentsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"residents\\" => residents(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"residents\\" => this.residents(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1369,7 +1369,7 @@ public abstract class PlanetResidentsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PlanetResidentsEdge
+public abstract class PlanetResidentsEdge : IGraphQlResolvable
 {
     private PlanetResidentsEdge() { }
     
@@ -1386,8 +1386,8 @@ public abstract class PlanetResidentsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1409,7 +1409,7 @@ public abstract class PlanetResidentsEdge
 /// <summary>
 /// An individual person or character within the Star Wars universe.
 /// </summary>
-public abstract class Person : Node
+public abstract class Person : IGraphQlResolvable, Node
 {
     private Person() { }
     
@@ -1489,34 +1489,34 @@ public abstract class Person : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"birthYear\\" => birthYear(),
-            \\"eyeColor\\" => eyeColor(),
-            \\"gender\\" => gender(),
-            \\"hairColor\\" => hairColor(),
-            \\"height\\" => height(),
-            \\"mass\\" => mass(),
-            \\"skinColor\\" => skinColor(),
-            \\"homeworld\\" => homeworld(),
-            \\"filmConnection\\" => filmConnection(
+            \\"name\\" => this.name(),
+            \\"birthYear\\" => this.birthYear(),
+            \\"eyeColor\\" => this.eyeColor(),
+            \\"gender\\" => this.gender(),
+            \\"hairColor\\" => this.hairColor(),
+            \\"height\\" => this.height(),
+            \\"mass\\" => this.mass(),
+            \\"skinColor\\" => this.skinColor(),
+            \\"homeworld\\" => this.homeworld(),
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"species\\" => species(),
-            \\"starshipConnection\\" => starshipConnection(
+            \\"species\\" => this.species(),
+            \\"starshipConnection\\" => this.starshipConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"vehicleConnection\\" => vehicleConnection(
+            \\"vehicleConnection\\" => this.vehicleConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1538,7 +1538,7 @@ public abstract class Person : Node
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PersonFilmsConnection
+public abstract class PersonFilmsConnection : IGraphQlResolvable
 {
     private PersonFilmsConnection() { }
     
@@ -1573,10 +1573,10 @@ public abstract class PersonFilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1598,7 +1598,7 @@ public abstract class PersonFilmsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PersonFilmsEdge
+public abstract class PersonFilmsEdge : IGraphQlResolvable
 {
     private PersonFilmsEdge() { }
     
@@ -1615,8 +1615,8 @@ public abstract class PersonFilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1638,7 +1638,7 @@ public abstract class PersonFilmsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PersonStarshipsConnection
+public abstract class PersonStarshipsConnection : IGraphQlResolvable
 {
     private PersonStarshipsConnection() { }
     
@@ -1673,10 +1673,10 @@ public abstract class PersonStarshipsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"starships\\" => starships(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"starships\\" => this.starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1698,7 +1698,7 @@ public abstract class PersonStarshipsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PersonStarshipsEdge
+public abstract class PersonStarshipsEdge : IGraphQlResolvable
 {
     private PersonStarshipsEdge() { }
     
@@ -1715,8 +1715,8 @@ public abstract class PersonStarshipsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1738,7 +1738,7 @@ public abstract class PersonStarshipsEdge
 /// <summary>
 /// A single transport craft that has hyperdrive capability.
 /// </summary>
-public abstract class Starship : Node
+public abstract class Starship : IGraphQlResolvable, Node
 {
     private Starship() { }
     
@@ -1835,32 +1835,32 @@ public abstract class Starship : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"model\\" => model(),
-            \\"starshipClass\\" => starshipClass(),
-            \\"manufacturers\\" => manufacturers(),
-            \\"costInCredits\\" => costInCredits(),
-            \\"length\\" => length(),
-            \\"crew\\" => crew(),
-            \\"passengers\\" => passengers(),
-            \\"maxAtmospheringSpeed\\" => maxAtmospheringSpeed(),
-            \\"hyperdriveRating\\" => hyperdriveRating(),
-            \\"MGLT\\" => MGLT(),
-            \\"cargoCapacity\\" => cargoCapacity(),
-            \\"consumables\\" => consumables(),
-            \\"pilotConnection\\" => pilotConnection(
+            \\"name\\" => this.name(),
+            \\"model\\" => this.model(),
+            \\"starshipClass\\" => this.starshipClass(),
+            \\"manufacturers\\" => this.manufacturers(),
+            \\"costInCredits\\" => this.costInCredits(),
+            \\"length\\" => this.length(),
+            \\"crew\\" => this.crew(),
+            \\"passengers\\" => this.passengers(),
+            \\"maxAtmospheringSpeed\\" => this.maxAtmospheringSpeed(),
+            \\"hyperdriveRating\\" => this.hyperdriveRating(),
+            \\"MGLT\\" => this.MGLT(),
+            \\"cargoCapacity\\" => this.cargoCapacity(),
+            \\"consumables\\" => this.consumables(),
+            \\"pilotConnection\\" => this.pilotConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"filmConnection\\" => filmConnection(
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1882,7 +1882,7 @@ public abstract class Starship : Node
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class StarshipPilotsConnection
+public abstract class StarshipPilotsConnection : IGraphQlResolvable
 {
     private StarshipPilotsConnection() { }
     
@@ -1917,10 +1917,10 @@ public abstract class StarshipPilotsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"pilots\\" => pilots(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"pilots\\" => this.pilots(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1942,7 +1942,7 @@ public abstract class StarshipPilotsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class StarshipPilotsEdge
+public abstract class StarshipPilotsEdge : IGraphQlResolvable
 {
     private StarshipPilotsEdge() { }
     
@@ -1959,8 +1959,8 @@ public abstract class StarshipPilotsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -1982,7 +1982,7 @@ public abstract class StarshipPilotsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class StarshipFilmsConnection
+public abstract class StarshipFilmsConnection : IGraphQlResolvable
 {
     private StarshipFilmsConnection() { }
     
@@ -2017,10 +2017,10 @@ public abstract class StarshipFilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2042,7 +2042,7 @@ public abstract class StarshipFilmsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class StarshipFilmsEdge
+public abstract class StarshipFilmsEdge : IGraphQlResolvable
 {
     private StarshipFilmsEdge() { }
     
@@ -2059,8 +2059,8 @@ public abstract class StarshipFilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2082,7 +2082,7 @@ public abstract class StarshipFilmsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PersonVehiclesConnection
+public abstract class PersonVehiclesConnection : IGraphQlResolvable
 {
     private PersonVehiclesConnection() { }
     
@@ -2117,10 +2117,10 @@ public abstract class PersonVehiclesConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"vehicles\\" => vehicles(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"vehicles\\" => this.vehicles(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2142,7 +2142,7 @@ public abstract class PersonVehiclesConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PersonVehiclesEdge
+public abstract class PersonVehiclesEdge : IGraphQlResolvable
 {
     private PersonVehiclesEdge() { }
     
@@ -2159,8 +2159,8 @@ public abstract class PersonVehiclesEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2182,7 +2182,7 @@ public abstract class PersonVehiclesEdge
 /// <summary>
 /// A single transport craft that does not have hyperdrive capability
 /// </summary>
-public abstract class Vehicle : Node
+public abstract class Vehicle : IGraphQlResolvable, Node
 {
     private Vehicle() { }
     
@@ -2264,30 +2264,30 @@ public abstract class Vehicle : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"model\\" => model(),
-            \\"vehicleClass\\" => vehicleClass(),
-            \\"manufacturers\\" => manufacturers(),
-            \\"costInCredits\\" => costInCredits(),
-            \\"length\\" => length(),
-            \\"crew\\" => crew(),
-            \\"passengers\\" => passengers(),
-            \\"maxAtmospheringSpeed\\" => maxAtmospheringSpeed(),
-            \\"cargoCapacity\\" => cargoCapacity(),
-            \\"consumables\\" => consumables(),
-            \\"pilotConnection\\" => pilotConnection(
+            \\"name\\" => this.name(),
+            \\"model\\" => this.model(),
+            \\"vehicleClass\\" => this.vehicleClass(),
+            \\"manufacturers\\" => this.manufacturers(),
+            \\"costInCredits\\" => this.costInCredits(),
+            \\"length\\" => this.length(),
+            \\"crew\\" => this.crew(),
+            \\"passengers\\" => this.passengers(),
+            \\"maxAtmospheringSpeed\\" => this.maxAtmospheringSpeed(),
+            \\"cargoCapacity\\" => this.cargoCapacity(),
+            \\"consumables\\" => this.consumables(),
+            \\"pilotConnection\\" => this.pilotConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"filmConnection\\" => filmConnection(
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2309,7 +2309,7 @@ public abstract class Vehicle : Node
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class VehiclePilotsConnection
+public abstract class VehiclePilotsConnection : IGraphQlResolvable
 {
     private VehiclePilotsConnection() { }
     
@@ -2344,10 +2344,10 @@ public abstract class VehiclePilotsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"pilots\\" => pilots(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"pilots\\" => this.pilots(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2369,7 +2369,7 @@ public abstract class VehiclePilotsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class VehiclePilotsEdge
+public abstract class VehiclePilotsEdge : IGraphQlResolvable
 {
     private VehiclePilotsEdge() { }
     
@@ -2386,8 +2386,8 @@ public abstract class VehiclePilotsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2409,7 +2409,7 @@ public abstract class VehiclePilotsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class VehicleFilmsConnection
+public abstract class VehicleFilmsConnection : IGraphQlResolvable
 {
     private VehicleFilmsConnection() { }
     
@@ -2444,10 +2444,10 @@ public abstract class VehicleFilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2469,7 +2469,7 @@ public abstract class VehicleFilmsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class VehicleFilmsEdge
+public abstract class VehicleFilmsEdge : IGraphQlResolvable
 {
     private VehicleFilmsEdge() { }
     
@@ -2486,8 +2486,8 @@ public abstract class VehicleFilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2509,7 +2509,7 @@ public abstract class VehicleFilmsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PlanetFilmsConnection
+public abstract class PlanetFilmsConnection : IGraphQlResolvable
 {
     private PlanetFilmsConnection() { }
     
@@ -2544,10 +2544,10 @@ public abstract class PlanetFilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2569,7 +2569,7 @@ public abstract class PlanetFilmsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PlanetFilmsEdge
+public abstract class PlanetFilmsEdge : IGraphQlResolvable
 {
     private PlanetFilmsEdge() { }
     
@@ -2586,8 +2586,8 @@ public abstract class PlanetFilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2609,7 +2609,7 @@ public abstract class PlanetFilmsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class SpeciesPeopleConnection
+public abstract class SpeciesPeopleConnection : IGraphQlResolvable
 {
     private SpeciesPeopleConnection() { }
     
@@ -2644,10 +2644,10 @@ public abstract class SpeciesPeopleConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"people\\" => people(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"people\\" => this.people(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2669,7 +2669,7 @@ public abstract class SpeciesPeopleConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class SpeciesPeopleEdge
+public abstract class SpeciesPeopleEdge : IGraphQlResolvable
 {
     private SpeciesPeopleEdge() { }
     
@@ -2686,8 +2686,8 @@ public abstract class SpeciesPeopleEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2709,7 +2709,7 @@ public abstract class SpeciesPeopleEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class SpeciesFilmsConnection
+public abstract class SpeciesFilmsConnection : IGraphQlResolvable
 {
     private SpeciesFilmsConnection() { }
     
@@ -2744,10 +2744,10 @@ public abstract class SpeciesFilmsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"films\\" => films(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"films\\" => this.films(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2769,7 +2769,7 @@ public abstract class SpeciesFilmsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class SpeciesFilmsEdge
+public abstract class SpeciesFilmsEdge : IGraphQlResolvable
 {
     private SpeciesFilmsEdge() { }
     
@@ -2786,8 +2786,8 @@ public abstract class SpeciesFilmsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2809,7 +2809,7 @@ public abstract class SpeciesFilmsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmStarshipsConnection
+public abstract class FilmStarshipsConnection : IGraphQlResolvable
 {
     private FilmStarshipsConnection() { }
     
@@ -2844,10 +2844,10 @@ public abstract class FilmStarshipsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"starships\\" => starships(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"starships\\" => this.starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2869,7 +2869,7 @@ public abstract class FilmStarshipsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmStarshipsEdge
+public abstract class FilmStarshipsEdge : IGraphQlResolvable
 {
     private FilmStarshipsEdge() { }
     
@@ -2886,8 +2886,8 @@ public abstract class FilmStarshipsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2909,7 +2909,7 @@ public abstract class FilmStarshipsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmVehiclesConnection
+public abstract class FilmVehiclesConnection : IGraphQlResolvable
 {
     private FilmVehiclesConnection() { }
     
@@ -2944,10 +2944,10 @@ public abstract class FilmVehiclesConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"vehicles\\" => vehicles(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"vehicles\\" => this.vehicles(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -2969,7 +2969,7 @@ public abstract class FilmVehiclesConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmVehiclesEdge
+public abstract class FilmVehiclesEdge : IGraphQlResolvable
 {
     private FilmVehiclesEdge() { }
     
@@ -2986,8 +2986,8 @@ public abstract class FilmVehiclesEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3009,7 +3009,7 @@ public abstract class FilmVehiclesEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmCharactersConnection
+public abstract class FilmCharactersConnection : IGraphQlResolvable
 {
     private FilmCharactersConnection() { }
     
@@ -3044,10 +3044,10 @@ public abstract class FilmCharactersConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"characters\\" => characters(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"characters\\" => this.characters(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3069,7 +3069,7 @@ public abstract class FilmCharactersConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmCharactersEdge
+public abstract class FilmCharactersEdge : IGraphQlResolvable
 {
     private FilmCharactersEdge() { }
     
@@ -3086,8 +3086,8 @@ public abstract class FilmCharactersEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3109,7 +3109,7 @@ public abstract class FilmCharactersEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class FilmPlanetsConnection
+public abstract class FilmPlanetsConnection : IGraphQlResolvable
 {
     private FilmPlanetsConnection() { }
     
@@ -3144,10 +3144,10 @@ public abstract class FilmPlanetsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"planets\\" => planets(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"planets\\" => this.planets(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3169,7 +3169,7 @@ public abstract class FilmPlanetsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class FilmPlanetsEdge
+public abstract class FilmPlanetsEdge : IGraphQlResolvable
 {
     private FilmPlanetsEdge() { }
     
@@ -3186,8 +3186,8 @@ public abstract class FilmPlanetsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3209,7 +3209,7 @@ public abstract class FilmPlanetsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PeopleConnection
+public abstract class PeopleConnection : IGraphQlResolvable
 {
     private PeopleConnection() { }
     
@@ -3244,10 +3244,10 @@ public abstract class PeopleConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"people\\" => people(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"people\\" => this.people(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3269,7 +3269,7 @@ public abstract class PeopleConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PeopleEdge
+public abstract class PeopleEdge : IGraphQlResolvable
 {
     private PeopleEdge() { }
     
@@ -3286,8 +3286,8 @@ public abstract class PeopleEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3309,7 +3309,7 @@ public abstract class PeopleEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class PlanetsConnection
+public abstract class PlanetsConnection : IGraphQlResolvable
 {
     private PlanetsConnection() { }
     
@@ -3344,10 +3344,10 @@ public abstract class PlanetsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"planets\\" => planets(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"planets\\" => this.planets(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3369,7 +3369,7 @@ public abstract class PlanetsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class PlanetsEdge
+public abstract class PlanetsEdge : IGraphQlResolvable
 {
     private PlanetsEdge() { }
     
@@ -3386,8 +3386,8 @@ public abstract class PlanetsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3409,7 +3409,7 @@ public abstract class PlanetsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class SpeciesConnection
+public abstract class SpeciesConnection : IGraphQlResolvable
 {
     private SpeciesConnection() { }
     
@@ -3444,10 +3444,10 @@ public abstract class SpeciesConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"species\\" => species(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"species\\" => this.species(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3469,7 +3469,7 @@ public abstract class SpeciesConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class SpeciesEdge
+public abstract class SpeciesEdge : IGraphQlResolvable
 {
     private SpeciesEdge() { }
     
@@ -3486,8 +3486,8 @@ public abstract class SpeciesEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3509,7 +3509,7 @@ public abstract class SpeciesEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class StarshipsConnection
+public abstract class StarshipsConnection : IGraphQlResolvable
 {
     private StarshipsConnection() { }
     
@@ -3544,10 +3544,10 @@ public abstract class StarshipsConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"starships\\" => starships(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"starships\\" => this.starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3569,7 +3569,7 @@ public abstract class StarshipsConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class StarshipsEdge
+public abstract class StarshipsEdge : IGraphQlResolvable
 {
     private StarshipsEdge() { }
     
@@ -3586,8 +3586,8 @@ public abstract class StarshipsEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3609,7 +3609,7 @@ public abstract class StarshipsEdge
 /// <summary>
 /// A connection to a list of items.
 /// </summary>
-public abstract class VehiclesConnection
+public abstract class VehiclesConnection : IGraphQlResolvable
 {
     private VehiclesConnection() { }
     
@@ -3644,10 +3644,10 @@ public abstract class VehiclesConnection
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"pageInfo\\" => pageInfo(),
-            \\"edges\\" => edges(),
-            \\"totalCount\\" => totalCount(),
-            \\"vehicles\\" => vehicles(),
+            \\"pageInfo\\" => this.pageInfo(),
+            \\"edges\\" => this.edges(),
+            \\"totalCount\\" => this.totalCount(),
+            \\"vehicles\\" => this.vehicles(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -3669,7 +3669,7 @@ public abstract class VehiclesConnection
 /// <summary>
 /// An edge in a connection.
 /// </summary>
-public abstract class VehiclesEdge
+public abstract class VehiclesEdge : IGraphQlResolvable
 {
     private VehiclesEdge() { }
     
@@ -3686,8 +3686,8 @@ public abstract class VehiclesEdge
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"node\\" => node(),
-            \\"cursor\\" => cursor(),
+            \\"node\\" => this.node(),
+            \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 

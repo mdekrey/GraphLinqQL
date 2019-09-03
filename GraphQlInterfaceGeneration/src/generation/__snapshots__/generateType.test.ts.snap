@@ -5,7 +5,7 @@ exports[`can generate v4 types 1`] = `
 /// <summary>
 /// An individual person or character within the Star Wars universe.
 /// </summary>
-public abstract class Person : Node
+public abstract class Person : IGraphQlResolvable, Node
 {
     private Person() { }
     
@@ -85,34 +85,34 @@ public abstract class Person : Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch
         {
-            \\"name\\" => name(),
-            \\"birthYear\\" => birthYear(),
-            \\"eyeColor\\" => eyeColor(),
-            \\"gender\\" => gender(),
-            \\"hairColor\\" => hairColor(),
-            \\"height\\" => height(),
-            \\"mass\\" => mass(),
-            \\"skinColor\\" => skinColor(),
-            \\"homeworld\\" => homeworld(),
-            \\"filmConnection\\" => filmConnection(
+            \\"name\\" => this.name(),
+            \\"birthYear\\" => this.birthYear(),
+            \\"eyeColor\\" => this.eyeColor(),
+            \\"gender\\" => this.gender(),
+            \\"hairColor\\" => this.hairColor(),
+            \\"height\\" => this.height(),
+            \\"mass\\" => this.mass(),
+            \\"skinColor\\" => this.skinColor(),
+            \\"homeworld\\" => this.homeworld(),
+            \\"filmConnection\\" => this.filmConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"species\\" => species(),
-            \\"starshipConnection\\" => starshipConnection(
+            \\"species\\" => this.species(),
+            \\"starshipConnection\\" => this.starshipConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"vehicleConnection\\" => vehicleConnection(
+            \\"vehicleConnection\\" => this.vehicleConnection(
                 after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
                 first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
                 before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
                 last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
-            \\"created\\" => created(),
-            \\"edited\\" => edited(),
-            \\"id\\" => id(),
+            \\"created\\" => this.created(),
+            \\"edited\\" => this.edited(),
+            \\"id\\" => this.id(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 

@@ -98,7 +98,7 @@ function resultAbstractDeclarationArg(arg: GraphQLArgument, options: Options) {
 function fieldResolveQueryCase(field: GraphQLField<any, any, { [key: string]: any }>, options: Options) {
   const propertyName = getPropertyName(field.name, options);
   const args = field.args.map(arg => fieldResolveQueryCaseArg(arg, options));
-  return `"${field.name}" => ${propertyName}(${
+  return `"${field.name}" => this.${propertyName}(${
     args.length
       ? `
                 ${args.join(`,
@@ -113,6 +113,11 @@ function fieldResolveQueryCaseArg(arg: GraphQLArgument, options: Options) {
   const nullable = arg.defaultValue || !isNonNullType(arg.type);
   const defaultValue = arg.defaultValue;
 
+  const getValue = nullable
+    ? `(parameters.TryGetValue("${arg.name}", out var ${fieldName}) ? (${inputTypeName})${fieldName} : null)`
+    : `(${inputTypeName})parameters["${arg.name}"]`;
+  const defaultValueExpression = defaultValue ? ` ?? ${defaultValue}` : "";
+
   // TODO - other type conversions
-  return `${fieldName}: (parameters.TryGetValue("${arg.name}", out var ${fieldName}) ? (${inputTypeName})${fieldName} : null)`;
+  return `${fieldName}: ${getValue}${defaultValueExpression}`;
 }
