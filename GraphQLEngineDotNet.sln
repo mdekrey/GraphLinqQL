@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29209.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLSchemaParser.Test", "GraphQLSchemaParser.Test\GraphQLSchemaParser.Test.csproj", "{065798C4-EBFE-42F9-82FC-FAA661016B3D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQlSchema", "GraphQlSchema\GraphQlSchema.csproj", "{11AB11C9-64F4-477D-A639-727416439495}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQlResolver.Test", "GraphQlResolver.Test\GraphQlResolver.Test.csproj", "{4207F68C-5660-4DC2-91F0-FA287E552081}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQlResolver", "GraphQlResolver\GraphQlResolver.csproj", "{91D75D2A-DD67-41D7-913E-9DDEA63EA936}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlResolver.CommonTypes", "GraphQlResolver.CommonTypes\GraphQlResolver.CommonTypes.csproj", "{82E2EEB2-EA8F-4470-B197-A97D172D97DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{065798C4-EBFE-42F9-82FC-FAA661016B3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11AB11C9-64F4-477D-A639-727416439495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11AB11C9-64F4-477D-A639-727416439495}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11AB11C9-64F4-477D-A639-727416439495}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11AB11C9-64F4-477D-A639-727416439495}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4207F68C-5660-4DC2-91F0-FA287E552081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4207F68C-5660-4DC2-91F0-FA287E552081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4207F68C-5660-4DC2-91F0-FA287E552081}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +23,10 @@ Global
 		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91D75D2A-DD67-41D7-913E-9DDEA63EA936}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82E2EEB2-EA8F-4470-B197-A97D172D97DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E2EEB2-EA8F-4470-B197-A97D172D97DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E2EEB2-EA8F-4470-B197-A97D172D97DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E2EEB2-EA8F-4470-B197-A97D172D97DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

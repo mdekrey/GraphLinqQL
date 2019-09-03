@@ -11,7 +11,7 @@ public interface Node
       /// <summary>
       /// The id of the object.
       /// </summary>
-      IGraphQlResult<GraphQlSchema.GraphQlId> id();
+      IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
 }
 "
 `;
@@ -27,7 +27,7 @@ public interface Character
       /// <summary>
       /// The ID of the character
       /// </summary>
-      IGraphQlResult<GraphQlSchema.GraphQlId> id();
+      IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
     
       /// <summary>
       /// The name of the character
@@ -42,7 +42,7 @@ public interface Character
       /// <summary>
       /// The friends of the character exposed as a connection with edges
       /// </summary>
-      IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlSchema.GraphQlId? after);
+      IGraphQlResult<FriendsConnection> friendsConnection(int? first, GraphQlResolver.CommonTypes.GraphQlId? after);
     
       /// <summary>
       /// The movies this character appears in

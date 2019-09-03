@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GraphQlSchema
+namespace GraphQlResolver.CommonTypes
 {
     [System.Text.Json.Serialization.JsonConverter(typeof(GraphQlIdConverter))]
     public class GraphQlId

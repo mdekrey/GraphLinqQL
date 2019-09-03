@@ -80,7 +80,7 @@ public abstract class Person : Node
     /// <summary>
     /// The ID of an object
     /// </summary>
-    public abstract IGraphQlResult<GraphQlSchema.GraphQlId> id();
+    public abstract IGraphQlResult<GraphQlResolver.CommonTypes.GraphQlId> id();
 
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
         name switch

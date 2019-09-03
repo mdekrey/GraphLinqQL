@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace GraphQlSchema
+namespace GraphQlResolver.CommonTypes
 {
     internal class GraphQlIdConverter : System.Text.Json.Serialization.JsonConverter<GraphQlId>
     {
