@@ -5,4 +5,5 @@ export interface Options {
   scalarTypes: ScalarTypeMapping;
   namespace: string;
   using: string[];
+  deserializer: string;
 }

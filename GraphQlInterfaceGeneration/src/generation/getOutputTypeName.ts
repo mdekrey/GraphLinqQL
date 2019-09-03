@@ -17,7 +17,6 @@ import { getEnumTypeName } from "./getEnumTypeName";
 import { getListTypeName } from "./getListTypeName";
 import { getScalarTypeName } from "./getScalarTypeName";
 export function getOutputTypeName(outputType: GraphQLOutputType, options: Options, nullable: boolean = true): string {
-  // TODO - this must be imported
   // This is a bit awkward, as C# assumes not-nullable and GraphQL assumes nullable
   if (isNonNullType(outputType)) {
     if (!nullable) {

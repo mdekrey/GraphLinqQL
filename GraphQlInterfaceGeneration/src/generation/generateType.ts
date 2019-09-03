@@ -130,14 +130,18 @@ function fieldResolveQueryCaseArg(arg: GraphQLArgument, options: Options) {
 }
 
 function toCsharpValue(value: any, type: GraphQLInputType, options: Options) {
+  const inputTypeName = getInputTypeName(type, options);
+  // whether null or not-null, the default value when provided is not-null
   type = isNonNullType(type) ? type.ofType : type;
+
+  const stringified = JSON.stringify(value);
   if (isScalarType(type)) {
-    if (type.name === "String") {
-      `"${(value.toString() as string).replace(/[\\"]/g, "$1")}"`;
+    if (type.name === "String" || type.name === "Int" || type.name === "Float" || type.name === "Boolean") {
+      return stringified;
     }
   } else if (isEnumType(type)) {
     return `${getTypeName(type.name, options)}.${getEnumValueName(value, options)}`;
   }
 
-  return `TODO`;
+  return `${options.deserializer}<${inputTypeName}>(${JSON.stringify(stringified)})`;
 }

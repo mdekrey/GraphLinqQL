@@ -131,3 +131,42 @@ public abstract class Person : IGraphQlResolvable, Node
 }
 "
 `;
+
+exports[`can generate various default values 1`] = `
+"
+
+public abstract class Query : IGraphQlResolvable
+{
+    private Query() { }
+    public abstract IGraphQlResult<string?> randomTest(string? id, int? i, double? f, bool? b, IEnumerable<int>? l, string? s, ColorInput? o, ColorInput? n);
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        name switch
+        {
+            \\"randomTest\\" => this.randomTest(
+                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null) ?? System.Text.Json.JsonSerializer.Deserialize<string?>(\\"\\\\\\"foo\\\\\\"\\"),
+                i: (parameters.TryGetValue(\\"i\\", out var i) ? (int?)i : null) ?? 15,
+                f: (parameters.TryGetValue(\\"f\\", out var f) ? (double?)f : null) ?? 2.5,
+                b: (parameters.TryGetValue(\\"b\\", out var b) ? (bool?)b : null) ?? true,
+                l: (parameters.TryGetValue(\\"l\\", out var l) ? (IEnumerable<int>?)l : null) ?? System.Text.Json.JsonSerializer.Deserialize<IEnumerable<int>?>(\\"[5,4,3]\\"),
+                s: (parameters.TryGetValue(\\"s\\", out var s) ? (string?)s : null) ?? \\"evil\\\\\\"\\\\\\\\\\\\\\"string\\\\\\\\\\",
+                o: (parameters.TryGetValue(\\"o\\", out var o) ? (ColorInput?)o : null) ?? System.Text.Json.JsonSerializer.Deserialize<ColorInput?>(\\"{\\\\\\"red\\\\\\":255,\\\\\\"green\\\\\\":255,\\\\\\"blue\\\\\\":255}\\"),
+                n: (parameters.TryGetValue(\\"n\\", out var n) ? (ColorInput?)n : null)),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Query\\";
+
+    public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+"
+`;
