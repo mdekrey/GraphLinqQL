@@ -8,7 +8,7 @@ export const defaultOptions: Options = {
     Float: { csharpNullable: false, csharpType: "double" },
     String: { csharpNullable: true, csharpType: "string" },
     Boolean: { csharpNullable: false, csharpType: "bool" },
-    ID: { csharpNullable: false, csharpType: "GraphQlSchema.GraphQlId" }
+    ID: { csharpNullable: true, csharpType: "GraphQlSchema.GraphQlId" }
   },
-  using: ["GraphQlSchema"]
+  using: ["GraphQlSchema", "System", "System.Collections.Generic"]
 };

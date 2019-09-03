@@ -7,5 +7,9 @@ export function getListTypeName<T extends GraphQLOutputType | GraphQLInputType>(
   typeNameFunction: (type: T, options: Options) => string
 ): string {
   const nullabilityIndicator = nullable && options.useNullabilityIndicator ? "?" : "";
-  return `IEnumerable<${typeNameFunction(outputType.ofType, options)}>${nullabilityIndicator}`;
+  const genericType = typeNameFunction(outputType.ofType, options);
+  if (!genericType) {
+    return "";
+  }
+  return `IEnumerable<${genericType}>${nullabilityIndicator}`;
 }

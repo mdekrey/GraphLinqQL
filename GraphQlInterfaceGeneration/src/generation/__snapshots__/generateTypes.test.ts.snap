@@ -10,7 +10,7 @@ public abstract class Query
     private Query() { }
     public abstract IGraphQlResult<Character?> hero(Episode? episode);
     public abstract IGraphQlResult<IEnumerable<Review?>?> reviews(Episode episode);
-    public abstract IGraphQlResult<IEnumerable<>?> search(string? text);
+    public abstract IGraphQlResult search(string? text);
     public abstract IGraphQlResult<Character?> character(GraphQlSchema.GraphQlId id);
     public abstract IGraphQlResult<Droid?> droid(GraphQlSchema.GraphQlId id);
     public abstract IGraphQlResult<Human?> human(GraphQlSchema.GraphQlId id);
