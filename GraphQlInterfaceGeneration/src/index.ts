@@ -17,12 +17,12 @@ interface Switches {
 program
   .option("-i, --input-file <input>", "Specify input file", program.STRING, null, true)
   .option("-o, --output-file <output>", "Specify output file", program.STRING, null, true)
-  .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, "GraphQlSchema", false)
+  .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, "GraphQlResolver.Interfaces", false)
   .option("--no-nullability", "disable nullability flags (which requires C# 8)", program.BOOLEAN, false, false)
   .option("-u, --using", "additional using statements", program.ARRAY, [], false)
   .action(function(_, switches, logger) {
-    const inputPath = join(process.cwd(), switches.inputFile);
-    const outputPath = join(process.cwd(), switches.outputFile);
+    const inputPath = switches.inputFile;
+    const outputPath = switches.outputFile;
     const graphqlSchema = readFileSync(inputPath).toString();
     const parsed = parseToSchema(graphqlSchema);
     const output = generateFullFile(parsed, buildOptions(switches as Switches));

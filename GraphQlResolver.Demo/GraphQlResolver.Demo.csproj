@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GraphQlResolver</RootNamespace>
+    <LangVersion>8.0</LangVersion>
+
+    <ToolsRoot>../GraphQlInterfaceGeneration/</ToolsRoot>
+    <InputSchema>$(MSBuildProjectDirectory)/StarWarsV3/sw-schema.3.graphql</InputSchema>
+    <OutputFile>$(MSBuildProjectDirectory)/StarWarsV3/interfaces.generated.cs</OutputFile>
+  </PropertyGroup>
+
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(ToolsRoot)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(ToolsRoot)" Command="npm install" />
+  </Target>
+
+  <Target Name="DebugEnsureInterfaces" BeforeTargets="Build" AfterTargets="DebugEnsureNodeEnv" Inputs="$(InputSchema)" Outputs="$(OutputFile)">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Rebuilding schema" />
+    <Exec WorkingDirectory="$(ToolsRoot)" Command="npm start -- -i &quot;$(InputSchema)&quot; -o &quot;$(OutputFile)&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
+  </ItemGroup>
+
+</Project>

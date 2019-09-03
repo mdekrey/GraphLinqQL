@@ -19,7 +19,7 @@ export function generateType(object: GraphQLObjectType, options: Options) {
       : `
 `
   }
-public abstract class ${typeName}${interfaceDeclaration(object, options)}
+public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(object, options)}
 {
     private ${typeName}() { }
     ${Object.keys(fields)
@@ -64,7 +64,7 @@ ${
 function interfaceDeclaration(object: GraphQLObjectType, options: Options) {
   if (object.getInterfaces().length) {
     return (
-      " : " +
+      ", " +
       object
         .getInterfaces()
         .map(iface => getTypeName(iface.name, options))
