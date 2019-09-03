@@ -3,6 +3,7 @@ import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 import { getPropertyName } from "./getPropertyName";
 import { getInputTypeName } from "./getInputTypeName";
+import { toCsharpValue } from "./toCsharpValue";
 
 export function generateInputType(object: GraphQLInputObjectType, options: Options) {
   const typeName = getTypeName(object.name, options);
@@ -30,7 +31,7 @@ public class ${typeName}
 function propertyDeclaration(field: GraphQLInputField, options: Options) {
   const propertyName = getPropertyName(field.name, options);
   const typeName = getInputTypeName(field.type, options);
-  // TODO - defaultValue
+  const defaultValuePart = field.defaultValue ? ` = ${toCsharpValue(field.defaultValue, field.type, options)};` : "";
   return `${
     field.description
       ? `
@@ -39,5 +40,5 @@ function propertyDeclaration(field: GraphQLInputField, options: Options) {
       /// </summary>
       `
       : ``
-  }public ${typeName || "object"} ${propertyName} { get; set; }`;
+  }public ${typeName || "object"} ${propertyName} { get; set; }${defaultValuePart}`;
 }
