@@ -3,4 +3,6 @@ export type ScalarTypeMapping = Record<string, { csharpNullable: boolean; csharp
 export interface Options {
   useNullabilityIndicator: boolean;
   scalarTypes: ScalarTypeMapping;
+  namespace: string;
+  using: string[];
 }

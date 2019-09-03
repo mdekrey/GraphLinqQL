@@ -8,7 +8,7 @@ import {
   GraphQLInputType,
   isInputObjectType
 } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { neverEver } from "../utils/neverEver";
 import { getOutputTypeName } from "./getOutputTypeName";
 import { getScalarTypeName } from "./getScalarTypeName";

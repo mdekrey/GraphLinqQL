@@ -1,5 +1,5 @@
 import { GraphQLObjectType, GraphQLField, isNonNullType, GraphQLArgument } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 import { getPropertyName } from "./getPropertyName";
 import { getFieldName } from "./getFieldName";
@@ -42,10 +42,18 @@ public abstract class ${typeName}${interfaceDeclaration(object, options)}
 
     public abstract class GraphQlContract<T> : ${typeName}, IGraphQlAccepts<T>
     {
-#nullable disable
-        public IGraphQlResultFactory<T> Original { get; set; }
-#nullable restore
-
+${
+  options.useNullabilityIndicator
+    ? `#nullable disable
+`
+    : ""
+}        public IGraphQlResultFactory<T> Original { get; set; }
+${
+  options.useNullabilityIndicator
+    ? `#nullable restore
+`
+    : ""
+}
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
     }

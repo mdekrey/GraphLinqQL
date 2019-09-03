@@ -8,7 +8,7 @@ import {
   isObjectType,
   isListType
 } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { neverEver } from "../utils/neverEver";
 import { getObjectTypeName } from "./getObjectTypeName";
 import { getUnionTypeName } from "./getUnionTypeName";

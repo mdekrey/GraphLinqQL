@@ -1,5 +1,5 @@
 import { GraphQLOutputType, GraphQLList, GraphQLInputType } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 export function getListTypeName<T extends GraphQLOutputType | GraphQLInputType>(
   outputType: GraphQLList<any>,
   options: Options,

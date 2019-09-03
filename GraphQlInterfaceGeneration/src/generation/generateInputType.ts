@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType, GraphQLInputField } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 import { getPropertyName } from "./getPropertyName";
 import { getInputTypeName } from "./getInputTypeName";

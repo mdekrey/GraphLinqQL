@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 export function getObjectTypeName(outputType: GraphQLObjectType, options: Options, nullable: boolean): string {
   const nullabilityIndicator = nullable && options.useNullabilityIndicator ? "?" : "";

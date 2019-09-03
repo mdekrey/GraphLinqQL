@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 export function getInputObjectTypeName(
   outputType: GraphQLInputObjectType,

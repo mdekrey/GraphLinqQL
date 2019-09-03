@@ -1,5 +1,5 @@
 import { GraphQLEnumType, GraphQLEnumValue } from "graphql";
-import { Options } from "./options";
+import { Options } from "./Options";
 import { getTypeName } from "./getTypeName";
 
 export function generateEnum(object: GraphQLEnumType, options: Options) {
