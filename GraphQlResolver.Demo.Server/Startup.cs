@@ -56,19 +56,18 @@ namespace GraphQlResolver.Demo.Server
                 {
                     var executor = context.RequestServices.GetRequiredService<GraphQlExecutor<Query, Query, StarWarsV3.Interfaces.TypeResolver>>();
 
-                    string query;
-                    JsonElement? variables;
+                    object executionResult;
                     using (var body = await JsonDocument.ParseAsync(context.Request.Body))
                     {
-                        query = body.RootElement.GetProperty("query").GetString();
-                        variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
+                        var query = body.RootElement.GetProperty("query").GetString();
+                        var variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
+
+                        context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
+
+                        executionResult = executor.Execute(query, types =>
+                            types.ToDictionary(kvp => kvp.Key, kvp => (object?)JsonSerializer.Deserialize(variables?.GetProperty(kvp.Key).GetRawText(), kvp.Value))
+                        );
                     }
-
-                    context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
-
-                    var executionResult = executor.Execute(query, types =>
-                        types.ToDictionary(kvp => kvp.Key, kvp => (object?)variables?.GetProperty(kvp.Key))
-                    );
                     await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult);
                 });
             });
