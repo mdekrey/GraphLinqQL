@@ -20,6 +20,28 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     //  query: Query
     //}
 
+    public class TypeResolver : IGraphQlTypeResolver
+    {
+        public Type Resolve(string name)
+        {
+            switch (name)
+            {
+                case "ID":
+                    return typeof(int?);
+                case "Int":
+                    return typeof(int?);
+                case "Float":
+                    return typeof(double?);
+                case "String":
+                    return typeof(string);
+                case "Boolean":
+                    return typeof(bool?);
+                default:
+                    throw new ArgumentException("Unknown type " + name, nameof(name));
+            }
+        }
+    }
+
     public abstract class Query : IGraphQlResolvable
     {
         private Query() { }

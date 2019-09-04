@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQlResolver.CommonTypes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlResolver.Demo", "GraphQlResolver.Demo\GraphQlResolver.Demo.csproj", "{EF55CACA-FC01-48BE-B680-192769C334EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQlResolver.Demo.Server", "GraphQlResolver.Demo.Server\GraphQlResolver.Demo.Server.csproj", "{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{EF55CACA-FC01-48BE-B680-192769C334EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF55CACA-FC01-48BE-B680-192769C334EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF55CACA-FC01-48BE-B680-192769C334EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

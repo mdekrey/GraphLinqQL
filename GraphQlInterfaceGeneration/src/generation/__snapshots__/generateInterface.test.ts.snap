@@ -37,7 +37,7 @@ public interface Character
       /// <summary>
       /// The friends of the character, or an empty list if they have none
       /// </summary>
-      IGraphQlResult friends();
+      IGraphQlResult<IEnumerable<Character?>?> friends();
     
       /// <summary>
       /// The friends of the character exposed as a connection with edges

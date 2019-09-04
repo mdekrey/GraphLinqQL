@@ -6,7 +6,7 @@ using GraphQlResolver.StarWarsV3.Interfaces;
 
 namespace GraphQlResolver.StarWarsV3.Resolvers
 {
-    class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
+    public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
         public override IGraphQlResult<Character?> character(string id) =>
             Domain.Data.humanLookup.TryGetValue(id, out var human) ? Original.Resolve(_ => human).Convertable().As<Human>()

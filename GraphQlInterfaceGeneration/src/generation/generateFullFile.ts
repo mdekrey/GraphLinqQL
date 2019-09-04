@@ -1,6 +1,7 @@
 import { Options } from "./Options";
 import { GraphQLSchema } from "graphql";
 import { generateTypes } from "./generateTypes";
+import { generateTypeResolver } from "./generateTypeResolver";
 
 export function generateFullFile(schema: GraphQLSchema, options: Options): string {
   const types = generateTypes(schema, options);
@@ -14,6 +15,7 @@ export function generateFullFile(schema: GraphQLSchema, options: Options): strin
 
 namespace ${options.namespace}
 {
+    ${generateTypeResolver(schema, options)}
     ${types.split("\n").join(`
     `)}
 }

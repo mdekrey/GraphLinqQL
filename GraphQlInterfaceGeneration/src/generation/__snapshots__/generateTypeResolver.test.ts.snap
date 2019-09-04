@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can generate v3 types 1`] = `
+"
+public class TypeResolver : IGraphQlTypeResolver
+{
+    public Type Resolve(string name)
+    {
+        switch (name)
+        {
+            case \\"ID\\":
+                return typeof(string);
+            case \\"Int\\":
+                return typeof(int?);
+            case \\"Float\\":
+                return typeof(double?);
+            case \\"String\\":
+                return typeof(string);
+            case \\"Boolean\\":
+                return typeof(bool?);
+            case \\"ReviewInput\\":
+                return typeof(ReviewInput);
+            case \\"ColorInput\\":
+                return typeof(ColorInput);
+            default:
+                throw new ArgumentException(\\"Unknown type \\" + name, nameof(name));
+        }
+    }
+}"
+`;

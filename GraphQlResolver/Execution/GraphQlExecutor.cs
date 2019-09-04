@@ -2,34 +2,81 @@
 using GraphQLParser.AST;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
 namespace GraphQlResolver.Execution
 {
-    public class GraphQlExecutor<TQuery, TMutation> : IGraphQlExecutor 
+    public class GraphQlExecutor<TQuery, TMutation, TGraphQlTypeResolver> : IGraphQlExecutor 
         where TQuery : IGraphQlResolvable
         where TMutation : IGraphQlResolvable
+        where TGraphQlTypeResolver : IGraphQlTypeResolver
     {
         private IServiceProvider serviceProvider;
+        private readonly TGraphQlTypeResolver typeResolver;
 
-        public GraphQlExecutor(IServiceProvider serviceProvider)
+        public GraphQlExecutor(IServiceProvider serviceProvider, TGraphQlTypeResolver typeResolver)
         {
             this.serviceProvider = serviceProvider;
+            this.typeResolver = typeResolver;
         }
 
-        public object Execute(string query, IDictionary<string, object> arguments)
+        //public object Execute(string query, IDictionary<string, object> arguments)
+        //{
+        //    var lexer = new Lexer();
+        //    var parser = new Parser(lexer);
+        //    var ast = parser.Parse(new Source(query));
+        //    var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
+        //    if (def == null)
+        //    {
+        //        throw new ArgumentException("Query did not contain a document", nameof(query));
+        //    }
+        //    return Execute(ast, def, arguments);
+        //}
+
+        public object Execute(string query, GraphQlArgumentsSupplier argumentsSupplier)
         {
             var lexer = new Lexer();
             var parser = new Parser(lexer);
             var ast = parser.Parse(new Source(query));
-            var context = new GraphQLExecutionContext(ast, arguments);
             var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
             if (def == null)
             {
                 throw new ArgumentException("Query did not contain a document", nameof(query));
             }
 
+            var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
+                ?? ImmutableDictionary<string, Type>.Empty;
+
+            return Execute(ast, def, argumentsSupplier(variableDefinitions));
+        }
+
+        private Type GetTypeFromGraphQlType(GraphQLType arg)
+        {
+            if (arg is GraphQLNonNullType nonNullType)
+            {
+                var t = GetTypeFromGraphQlType(nonNullType.Type);
+                if (t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    return t.GetGenericArguments()[0];
+                }
+                return t;
+            }
+            if (arg is GraphQLListType listType)
+            {
+                var t = GetTypeFromGraphQlType(listType.Type);
+                return typeof(IEnumerable<>).MakeGenericType(t);
+            }
+            if (arg is GraphQLNamedType namedType)
+            {
+                return typeResolver.Resolve(namedType.Name.Value);
+            }
+            throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
+        }
+
+        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, object> arguments)
+        {
             var operation = def.Operation switch
             {
                 OperationType.Query => typeof(TQuery),
@@ -38,6 +85,7 @@ namespace GraphQlResolver.Execution
                 _ => throw new NotImplementedException()
             };
 
+            var context = new GraphQLExecutionContext(ast, arguments);
             return serviceProvider.GraphQlRoot(operation, builder =>
             {
                 return Build(builder, def.SelectionSet.Selections, context).Build();

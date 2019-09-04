@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver
 {
@@ -133,7 +134,7 @@ namespace GraphQlResolver
 
         private static void GetContract<TContract>(IGraphQlResult target, Type actualContractType, Type actualModelType, out TContract resolver, out Type modelType) where TContract : IGraphQlResolvable
         {
-            resolver = (TContract)target.ServiceProvider.GetService(actualContractType);
+            resolver = (TContract)ActivatorUtilities.GetServiceOrCreateInstance(target.ServiceProvider, actualContractType);
             var accepts = (resolver as IGraphQlAccepts);
             if (accepts == null)
             {

@@ -6,7 +6,6 @@ using System.Text;
 
 namespace GraphQlResolver.HandwrittenSamples.Implementations
 {
-
     public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>

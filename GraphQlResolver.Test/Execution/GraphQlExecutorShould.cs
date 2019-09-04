@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using Interfaces = GraphQlResolver.HandwrittenSamples.Interfaces;
 using Implementations = GraphQlResolver.HandwrittenSamples.Implementations;
 using System.Collections.Immutable;
 using GraphQlResolver.Execution;
@@ -23,10 +24,10 @@ namespace GraphQlResolver.Execution
             }
         }
 
-        private static IGraphQlExecutor CreateExecutor()
+        private static GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver> CreateExecutor()
         {
             var serviceProvider = new SimpleServiceProvider();
-            return new GraphQlExecutor<Implementations.Query, Implementations.Query>(serviceProvider);
+            return new GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver>(serviceProvider, new Interfaces.TypeResolver());
         }
 
         [Fact]
@@ -41,7 +42,7 @@ namespace GraphQlResolver.Execution
   }
   rand
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"rand\":5,\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
@@ -64,7 +65,7 @@ namespace GraphQlResolver.Execution
     }
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
@@ -90,7 +91,7 @@ fragment HeroPrimary on Hero {
     }
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[],\"id\":\"ASGUARD-3\"}]}";
@@ -111,7 +112,7 @@ fragment HeroPrimary on Hero {
     faction
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
@@ -132,7 +133,7 @@ fragment HeroPrimary on Hero {
     oldLocation: location(date: ""2008-05-02"")
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
             
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
@@ -152,7 +153,7 @@ query Heroes($date: String!) {
     location(date: $date)
   }
 }
-", new Dictionary<string, object> { { "date", "2008-05-02" } });
+", _ => new Dictionary<string, object> { { "date", "2008-05-02" } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
@@ -173,7 +174,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     avengersLocation: location(date: $date2)
   }
 }
-", new Dictionary<string, object> { { "date", "2008-05-02" } });
+", _ => new Dictionary<string, object> { { "date", "2008-05-02" } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             //var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
@@ -194,7 +195,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     faction @skip(if: true)
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}]}";
@@ -217,7 +218,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     }
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
@@ -243,7 +244,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     }
   }
 }
-", ImmutableDictionary<string, object>.Empty);
+", _ => ImmutableDictionary<string, object>.Empty);
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"faction\":\"Guardians of the Galaxy\",\"renown\":5,\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\"},{\"faction\":\"Asgardians\",\"renown\":50,\"id\":\"ASGUARD-3\",\"name\":\"Thor\"}]}";
