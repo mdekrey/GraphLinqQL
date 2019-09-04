@@ -63,7 +63,7 @@ namespace GraphQlResolver
             IGraphQlResult<IDictionary<string, object>> ToResult(LambdaExpression expression, ImmutableHashSet<IGraphQlJoin> joins)
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
-                var func = Expression.Lambda(expression.Body.Replace(expression.Parameters[0], with: inputParameter), inputParameter);
+                var func = Expression.Lambda(expression.Body.Replace(expression.Parameters[0], with: target.UntypedResolver.Body), inputParameter);
                 return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, joins);
             }
         }

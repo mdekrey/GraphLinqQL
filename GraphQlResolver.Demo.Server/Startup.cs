@@ -69,7 +69,7 @@ namespace GraphQlResolver.Demo.Server
                     var executionResult = executor.Execute(query, types =>
                         types.ToDictionary(kvp => kvp.Key, kvp => (object?)variables?.GetProperty(kvp.Key))
                     );
-                    await JsonSerializer.SerializeAsync(context.Response.Body, executionResult);
+                    await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult);
                 });
             });
         }

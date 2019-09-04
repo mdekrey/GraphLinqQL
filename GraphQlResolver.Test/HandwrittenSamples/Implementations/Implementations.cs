@@ -11,6 +11,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
             Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>();
 
+        public override IGraphQlResult<Interfaces.Hero> Hero() =>
+            Original.Resolve(root => Domain.Data.heroes.First()).Convertable().As<Hero>();
+
         public override IGraphQlResult<double> Rand() =>
             Original.Resolve(root => 5.0);
     }

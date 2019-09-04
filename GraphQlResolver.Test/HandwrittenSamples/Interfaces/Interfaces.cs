@@ -15,6 +15,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     //}
     //type Query {
     //  heroes: [Hero!]!
+    //  hero: Hero!
     //}
     //schema {
     //  query: Query
@@ -46,12 +47,14 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     {
         private Query() { }
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
+        public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<double> Rand();
 
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
             name switch
             {
                 "heroes" => Heroes(),
+                "hero" => Hero(),
                 "rand" => Rand(),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
