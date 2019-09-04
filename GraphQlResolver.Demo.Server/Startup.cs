@@ -21,18 +21,7 @@ namespace GraphQlResolver.Demo.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            AddGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>(services);
-        }
-
-        private static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(IServiceCollection services)
-        where TQuery : class, IGraphQlResolvable
-        where TMutation : class, IGraphQlResolvable
-        where TGraphQlTypeResolver : class, IGraphQlTypeResolver
-        {
-            services.AddTransient<GraphQlExecutor<TQuery, TMutation, TGraphQlTypeResolver>>();
-            services.AddTransient<TQuery>();
-            services.AddTransient<TMutation>();
-            services.AddTransient<TGraphQlTypeResolver>();
+            services.AddGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,24 +41,7 @@ namespace GraphQlResolver.Demo.Server
                     await context.Response.WriteAsync("Hello World!");
                 });
 
-                endpoints.MapPost("/star-wars-v3/graphql", async context =>
-                {
-                    var executor = context.RequestServices.GetRequiredService<GraphQlExecutor<Query, Query, StarWarsV3.Interfaces.TypeResolver>>();
-
-                    object executionResult;
-                    using (var body = await JsonDocument.ParseAsync(context.Request.Body))
-                    {
-                        var query = body.RootElement.GetProperty("query").GetString();
-                        var variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
-
-                        context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
-
-                        executionResult = executor.Execute(query, types =>
-                            types.ToDictionary(kvp => kvp.Key, kvp => (object?)JsonSerializer.Deserialize(variables?.GetProperty(kvp.Key).GetRawText(), kvp.Value))
-                        );
-                    }
-                    await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult);
-                });
+                endpoints.UseGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>("/star-wars-v3/graphql");
             });
         }
     }
