@@ -16,7 +16,7 @@ public abstract class Query : IGraphQlResolvable
     public abstract IGraphQlResult<Human?> human(string id);
     public abstract IGraphQlResult<Starship?> starship(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"hero\\" => this.hero(
@@ -134,7 +134,7 @@ public abstract class FriendsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<PageInfo> pageInfo();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"totalCount\\" => this.totalCount(),
@@ -176,7 +176,7 @@ public abstract class FriendsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Character?> node();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"cursor\\" => this.cursor(),
@@ -209,7 +209,7 @@ public abstract class PageInfo : IGraphQlResolvable
     public abstract IGraphQlResult<string?> endCursor();
     public abstract IGraphQlResult<bool> hasNextPage();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"startCursor\\" => this.startCursor(),
@@ -255,7 +255,7 @@ public abstract class Review : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> commentary();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"episode\\" => this.episode(),
@@ -332,7 +332,7 @@ public abstract class Human : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"id\\" => this.id(),
@@ -404,7 +404,7 @@ public abstract class Starship : IGraphQlResolvable
     public abstract IGraphQlResult<double?> length(LengthUnit? unit);
     public abstract IGraphQlResult<IEnumerable<IEnumerable<double>>?> coordinates();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"id\\" => this.id(),
@@ -467,7 +467,7 @@ public abstract class Droid : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<string?> primaryFunction();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"id\\" => this.id(),
@@ -504,7 +504,7 @@ public abstract class Mutation : IGraphQlResolvable
     private Mutation() { }
     public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"createReview\\" => this.createReview(
@@ -570,7 +570,7 @@ public abstract class Subscription : IGraphQlResolvable
     private Subscription() { }
     public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"reviewAdded\\" => this.reviewAdded(
@@ -618,7 +618,7 @@ public abstract class Root : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Node?> node(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"allFilms\\" => this.allFilms(
@@ -724,7 +724,7 @@ public abstract class FilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -776,7 +776,7 @@ public abstract class PageInfo : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> endCursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"hasNextPage\\" => this.hasNextPage(),
@@ -818,7 +818,7 @@ public abstract class FilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -898,7 +898,7 @@ public abstract class Film : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"title\\" => this.title(),
@@ -1001,7 +1001,7 @@ public abstract class FilmSpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -1043,7 +1043,7 @@ public abstract class FilmSpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -1143,7 +1143,7 @@ public abstract class Species : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -1261,7 +1261,7 @@ public abstract class Planet : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -1339,7 +1339,7 @@ public abstract class PlanetResidentsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> residents();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -1381,7 +1381,7 @@ public abstract class PlanetResidentsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -1484,7 +1484,7 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -1568,7 +1568,7 @@ public abstract class PersonFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -1610,7 +1610,7 @@ public abstract class PersonFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -1668,7 +1668,7 @@ public abstract class PersonStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -1710,7 +1710,7 @@ public abstract class PersonStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -1830,7 +1830,7 @@ public abstract class Starship : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -1912,7 +1912,7 @@ public abstract class StarshipPilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -1954,7 +1954,7 @@ public abstract class StarshipPilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2012,7 +2012,7 @@ public abstract class StarshipFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2054,7 +2054,7 @@ public abstract class StarshipFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2112,7 +2112,7 @@ public abstract class PersonVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2154,7 +2154,7 @@ public abstract class PersonVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2259,7 +2259,7 @@ public abstract class Vehicle : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -2339,7 +2339,7 @@ public abstract class VehiclePilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2381,7 +2381,7 @@ public abstract class VehiclePilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2439,7 +2439,7 @@ public abstract class VehicleFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2481,7 +2481,7 @@ public abstract class VehicleFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2539,7 +2539,7 @@ public abstract class PlanetFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2581,7 +2581,7 @@ public abstract class PlanetFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2639,7 +2639,7 @@ public abstract class SpeciesPeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2681,7 +2681,7 @@ public abstract class SpeciesPeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2739,7 +2739,7 @@ public abstract class SpeciesFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2781,7 +2781,7 @@ public abstract class SpeciesFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2839,7 +2839,7 @@ public abstract class FilmStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2881,7 +2881,7 @@ public abstract class FilmStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -2939,7 +2939,7 @@ public abstract class FilmVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -2981,7 +2981,7 @@ public abstract class FilmVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3039,7 +3039,7 @@ public abstract class FilmCharactersConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> characters();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3081,7 +3081,7 @@ public abstract class FilmCharactersEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3139,7 +3139,7 @@ public abstract class FilmPlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3181,7 +3181,7 @@ public abstract class FilmPlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3239,7 +3239,7 @@ public abstract class PeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3281,7 +3281,7 @@ public abstract class PeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3339,7 +3339,7 @@ public abstract class PlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3381,7 +3381,7 @@ public abstract class PlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3439,7 +3439,7 @@ public abstract class SpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3481,7 +3481,7 @@ public abstract class SpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3539,7 +3539,7 @@ public abstract class StarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3581,7 +3581,7 @@ public abstract class StarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),
@@ -3639,7 +3639,7 @@ public abstract class VehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"pageInfo\\" => this.pageInfo(),
@@ -3681,7 +3681,7 @@ public abstract class VehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"node\\" => this.node(),

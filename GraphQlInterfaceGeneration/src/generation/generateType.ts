@@ -28,7 +28,7 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
       .map(field => resultAbstractDeclaration(field, options)).join(`
     `)}
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             ${Object.keys(fields)

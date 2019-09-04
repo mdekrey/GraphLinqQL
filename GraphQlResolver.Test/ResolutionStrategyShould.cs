@@ -33,7 +33,7 @@ namespace GraphQlResolver
             //   rand
             // }
             var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("heroes", q => q.ResolveQuery("heroes", ImmutableDictionary<string, object>.Empty).ResolveComplex().Add("id").Add("name").Build())
+                root.Add("heroes", q => q.ResolveQuery("heroes", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
 
@@ -136,7 +136,7 @@ namespace GraphQlResolver
                                                   .Add("id")
                                                   .Add("name")
                                                   .Add("location")
-                                                  .Add("oldLocation", "location", new Dictionary<string, object> { { "date", "2008-05-02" } })
+                                                  .Add("oldLocation", "location", new Dictionary<string, object?> { { "date", "2008-05-02" } })
                                                   .Build())
                     .Build());
 

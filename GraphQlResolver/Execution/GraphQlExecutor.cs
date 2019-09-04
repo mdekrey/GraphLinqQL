@@ -75,7 +75,7 @@ namespace GraphQlResolver.Execution
             throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
         }
 
-        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, object> arguments)
+        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, object?> arguments)
         {
             var operation = def.Operation switch
             {
@@ -148,12 +148,12 @@ namespace GraphQlResolver.Execution
             };
         }
 
-        private IDictionary<string, object> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
+        private IDictionary<string, object?> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
         {
             return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, context));
         }
 
-        private object ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
+        private object? ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
         {
             return value switch
             {

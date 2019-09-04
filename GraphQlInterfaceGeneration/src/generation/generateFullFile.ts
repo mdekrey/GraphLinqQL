@@ -12,6 +12,9 @@ export function generateFullFile(schema: GraphQLSchema, options: Options): strin
 #nullable enable`
       : ""
   }
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8605 // Unboxing a possibly null value.
 
 namespace ${options.namespace}
 {

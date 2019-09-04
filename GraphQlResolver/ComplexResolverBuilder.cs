@@ -29,11 +29,11 @@ namespace GraphQlResolver
             this.expressions = expressions;
         }
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string property, IDictionary<string, object>? parameters = null) => Add(property, property, parameters);
+        public IComplexResolverBuilder<TContract, TFinal> Add(string property, IDictionary<string, object?>? parameters = null) => Add(property, property, parameters);
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, IDictionary<string, object>? parameters = null)
+        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, IDictionary<string, object?>? parameters = null)
         {
-            var result = contract.ResolveQuery(property, parameters: parameters ?? ImmutableDictionary<string, object>.Empty);
+            var result = contract.ResolveQuery(property, parameters: parameters ?? ImmutableDictionary<string, object?>.Empty);
             // TODO - prevent non-primitives from being final return after adding. If this result is a non-primitive, client will be getting raw domain value!
             //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
             //{
@@ -44,7 +44,7 @@ namespace GraphQlResolver
         }
 
 
-        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult<object>> resolve)
+        public IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult<object?>> resolve)
         {
             return new ComplexResolverBuilder<TContract, TFinal>(contract, this.resolve, expressions
                 .Add(displayName, resolve(contract)), modelType);
@@ -73,10 +73,10 @@ namespace GraphQlResolver
             return resolve(func, allJoins);
         }
 
-        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string property, IDictionary<string, object>? parameters) => 
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string property, IDictionary<string, object?>? parameters) => 
             Add(property, parameters);
 
-        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, IDictionary<string, object>? parameters) => 
+        IComplexResolverBuilder<TFinal> IComplexResolverBuilder<TFinal>.Add(string displayName, string property, IDictionary<string, object?>? parameters) => 
             Add(displayName, property, parameters);
 
         public bool IsType(string value) =>

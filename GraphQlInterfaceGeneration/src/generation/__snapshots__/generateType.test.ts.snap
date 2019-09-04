@@ -82,7 +82,7 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"name\\" => this.name(),
@@ -140,7 +140,7 @@ public abstract class Query : IGraphQlResolvable
     private Query() { }
     public abstract IGraphQlResult<string?> randomTest(string? id, int? i, double? f, bool? b, IEnumerable<int>? l, string? s, ColorInput? o, ColorInput? n);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
             \\"randomTest\\" => this.randomTest(

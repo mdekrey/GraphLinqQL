@@ -50,7 +50,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<double> Rand();
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
                 "heroes" => Heroes(),
@@ -83,7 +83,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<IEnumerable<Hero>> Friends();
         public abstract IGraphQlResult<string> Location(string date);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object> parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
                 "id" => Id(),
