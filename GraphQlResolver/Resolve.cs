@@ -135,7 +135,7 @@ namespace GraphQlResolver
         private static void GetContract<TContract>(IGraphQlResult target, Type actualContractType, Type actualModelType, out TContract resolver, out Type modelType) where TContract : IGraphQlResolvable
         {
             resolver = (TContract)ActivatorUtilities.GetServiceOrCreateInstance(target.ServiceProvider, actualContractType);
-            var accepts = (resolver as IGraphQlAccepts);
+            var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
             {
                 throw new ArgumentException("Contract does not accept an input type");
