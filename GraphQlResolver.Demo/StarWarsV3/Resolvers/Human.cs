@@ -23,28 +23,21 @@ namespace GraphQlResolver.StarWarsV3.Resolvers
 
         public override IGraphQlResult<double?> height(LengthUnit? unit)
         {
-            throw new System.NotImplementedException();
+            var unitFactor = (unit ?? LengthUnit.METER) == LengthUnit.METER ? 1 : 3.28084;
+            return Original.Resolve<double?>(human => human.Height * unitFactor);
         }
 
-        public override IGraphQlResult<string?> homePlanet()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<string?> homePlanet() =>
+            Original.Resolve(human => human.HomePlanet);
 
-        public override IGraphQlResult<string> id()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<string> id() =>
+            Original.Resolve(human => human.Id);
 
-        public override IGraphQlResult<double?> mass()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<double?> mass() =>
+            Original.Resolve<double?>(human => human.Mass);
 
-        public override IGraphQlResult<string> name()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<string> name() =>
+            Original.Resolve(human => human.Name);
 
         public override IGraphQlResult<IEnumerable<Interfaces.Starship?>?> starships()
         {

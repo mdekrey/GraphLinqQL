@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using GraphQlResolver.StarWarsV3.Interfaces;
 
@@ -21,25 +22,24 @@ namespace GraphQlResolver.StarWarsV3.Resolvers
                 ? character("1000")
                 : character("2001");
 
-        public override IGraphQlResult<Interfaces.Human?> human(string id)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<Interfaces.Human?> human(string id) =>
+            Original.Resolve(_ => Domain.Data.humanLookup[id]).Convertable().As<Human>();
 
         public override IGraphQlResult<IEnumerable<Interfaces.Review?>?> reviews(Interfaces.Episode episode)
         {
-            throw new NotImplementedException();
+            var domainEpisode = InterfaceToDomain.ConvertEpisode(episode);
+            return Original.Resolve(_ => Domain.Data.reviews[domainEpisode]).ConvertableList().As<Review>();
         }
 
         public override IGraphQlResult<IEnumerable?> search(string? text)
         {
-            throw new NotImplementedException();
+            return Original.Resolve(_ => Domain.Data.humans.Where(v => v.Name.Contains(text))).ConvertableList().As<Human>()
+                .Union(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).ConvertableList().As<Droid>())
+                .Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).ConvertableList().As<Starship>());
         }
 
-        public override IGraphQlResult<Interfaces.Starship?> starship(string id)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<Interfaces.Starship?> starship(string id) =>
+            Original.Resolve(_ => Domain.Data.starshipLookup[id]).Convertable().As<Starship>();
     }
 
 }

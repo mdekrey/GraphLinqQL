@@ -163,6 +163,18 @@ namespace GraphQlResolver
             return new ConvertableListResult<TModel>(target);
         }
 
+        public static IGraphQlResult<System.Collections.IEnumerable> Union(this IGraphQlResult<System.Collections.IEnumerable> graphQlResult, IGraphQlResult<System.Collections.IEnumerable> graphQlResult2)
+        {
+            // TODO
+            return graphQlResult;
+        }
+
+        public static IGraphQlResult<object> Union(this IGraphQlResult<object> graphQlResult, IGraphQlResult<object> graphQlResult2)
+        {
+            // TODO
+            return graphQlResult;
+        }
+
         public class ConvertableResult<TModel>
         {
             private readonly IGraphQlResult<TModel> target;
