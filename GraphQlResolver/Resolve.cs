@@ -37,11 +37,11 @@ namespace GraphQlResolver
         {
             var paramType = target.GetType();
             var resultType = paramType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlResult<>)).Select(iface => iface.GetGenericArguments()[0]).First();
-            var conractType = TypeSystem.GetElementType(resultType) ?? resultType;
+            var contractType = TypeSystem.GetElementType(resultType) ?? resultType;
 
-            if (typeof(IGraphQlResolvable).IsAssignableFrom(conractType))
+            if (typeof(IGraphQlResolvable).IsAssignableFrom(contractType))
             {
-                var method = complexResolvers.Select(m => m.MakeGenericMethod(conractType)).First(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(paramType));
+                var method = complexResolvers.Select(m => m.MakeGenericMethod(contractType)).First(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(paramType));
                 return (IComplexResolverBuilder<object>)method.Invoke(null, new[] { target });
             }
             throw new ArgumentException("Not a resolvable complex type", nameof(target));
@@ -72,6 +72,14 @@ namespace GraphQlResolver
         public static IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>> ResolveComplex<TContract>(this IGraphQlResult<IEnumerable<TContract>> target)
             where TContract : IGraphQlResolvable
         {
+            if (target is IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult)
+            {
+                if (typeof(TContract) != typeof(IGraphQlResolvable))
+                {
+                    throw new InvalidOperationException($"Union types can only handle {typeof(IGraphQlResolvable).FullName}");
+                }
+                return (IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>>)new UnionResolverBuilder(unionResult);
+            }
             var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
             var actualModelType = TypeSystem.GetElementType(target.UntypedResolver.ReturnType);
             GetContract<TContract>(target, actualContractType, actualModelType, out var resolver, out var modelType);
@@ -163,16 +171,28 @@ namespace GraphQlResolver
             return new ConvertableListResult<TModel>(target);
         }
 
-        public static IGraphQlResult<System.Collections.IEnumerable> Union(this IGraphQlResult<System.Collections.IEnumerable> graphQlResult, IGraphQlResult<System.Collections.IEnumerable> graphQlResult2)
+        public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
+            where T : IEnumerable<IGraphQlResolvable?>?
         {
-            // TODO
-            return graphQlResult;
-        }
+            var allResults = new List<IGraphQlResult<T>>();
+            if (graphQlResult is IUnionGraphQlResult<T> union)
+            {
+                allResults.AddRange(union.Results);
+            }
+            else
+            {
+                allResults.Add(graphQlResult);
+            }
+            if (graphQlResult2 is IUnionGraphQlResult<T> union2)
+            {
+                allResults.AddRange(union2.Results);
+            }
+            else
+            {
+                allResults.Add(graphQlResult2);
+            }
 
-        public static IGraphQlResult<object> Union(this IGraphQlResult<object> graphQlResult, IGraphQlResult<object> graphQlResult2)
-        {
-            // TODO
-            return graphQlResult;
+            return new GraphQlUnionResult<T>(allResults);
         }
 
         public class ConvertableResult<TModel>

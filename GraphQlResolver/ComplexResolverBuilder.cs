@@ -82,5 +82,13 @@ namespace GraphQlResolver
         public bool IsType(string value) =>
             contract.IsType(value);
 
+        public IComplexResolverBuilder<TFinal> IfType(string value, Func<IComplexResolverBuilder<object>, IComplexResolverBuilder<object>> typedBuilder)
+        {
+            if (contract.IsType(value))
+            {
+                return (IComplexResolverBuilder<TFinal>)typedBuilder((IComplexResolverBuilder<object>)this);
+            }
+            return this;
+        }
     }
 }

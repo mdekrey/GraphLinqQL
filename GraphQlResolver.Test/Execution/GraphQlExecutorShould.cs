@@ -154,7 +154,7 @@ fragment HeroPrimary on Hero {
   }
 }
 ", _ => ImmutableDictionary<string, object?>.Empty);
-            
+
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
 
@@ -272,5 +272,32 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
+
+        [Fact]
+        public void BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
+        {
+            var executor = CreateExecutor();
+            var result = executor.Execute(@"
+{
+  characters {
+    id
+    name
+    ... on Hero {
+      renown
+      faction
     }
+    ... on Villain {
+      goal
+    }
+  }
+}
+", _ => ImmutableDictionary<string, object?>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"characters\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\",\"renown\":50,\"faction\":\"Asgardians\"},{\"name\":\"Thanos\",\"id\":\"THANOS\",\"goal\":\"Snap\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+    }
+
 }

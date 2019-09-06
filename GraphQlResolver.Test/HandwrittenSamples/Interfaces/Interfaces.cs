@@ -1,10 +1,16 @@
 ﻿using GraphQlResolver.CommonTypes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GraphQlResolver.HandwrittenSamples.Interfaces
 {
+    //type Villain {
+    //  id: ID!
+    //  name: String!
+    //  goal: String!
+    //}
     //type Hero {
     //  id: ID!
     //  name: String!
@@ -13,9 +19,12 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     //  friends: [Hero!]!
     //  location(date: String = "2019-04-22"): String!;
     //}
+    //union Character = Hero | Villain
     //type Query {
+    //  characters: [Character!]!
     //  heroes: [Hero!]!
     //  hero: Hero!
+    //  rand: Float!
     //}
     //schema {
     //  query: Query
@@ -49,10 +58,12 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
         public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<double> Rand();
+        public abstract IGraphQlResult<IEnumerable?> Characters();
 
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
+                "characters" => Characters(),
                 "heroes" => Heroes(),
                 "hero" => Hero(),
                 "rand" => Rand(),
@@ -99,6 +110,37 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
             value == "Hero";
 
         public abstract class GraphQlContract<T> : Hero, IGraphQlAccepts<T>
+        {
+#nullable disable
+            public IGraphQlResultFactory<T> Original { get; set; }
+#nullable restore
+
+            IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+            Type IGraphQlAccepts.ModelType => typeof(T);
+        }
+    }
+
+
+    public abstract class Villain : IGraphQlResolvable
+    {
+        internal Villain() { }
+        public abstract IGraphQlResult<GraphQlId> Id();
+        public abstract IGraphQlResult<string> Name();
+        public abstract IGraphQlResult<string> Goal();
+
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+            name switch
+            {
+                "id" => Id(),
+                "name" => Name(),
+                "goal" => Goal(),
+                _ => throw new ArgumentException("Unknown property " + name, nameof(name))
+            };
+
+        bool IGraphQlResolvable.IsType(string value) =>
+            value == "Villain";
+
+        public abstract class GraphQlContract<T> : Villain, IGraphQlAccepts<T>
         {
 #nullable disable
             public IGraphQlResultFactory<T> Original { get; set; }

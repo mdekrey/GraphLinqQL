@@ -34,7 +34,7 @@ namespace GraphQlResolver.StarWarsV3.Resolvers
         public override IGraphQlResult<IEnumerable?> search(string? text)
         {
             return Original.Resolve(_ => Domain.Data.humans.Where(v => v.Name.Contains(text))).ConvertableList().As<Human>()
-                .Union(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).ConvertableList().As<Droid>())
+                .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).ConvertableList().As<Droid>())
                 .Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).ConvertableList().As<Starship>());
         }
 

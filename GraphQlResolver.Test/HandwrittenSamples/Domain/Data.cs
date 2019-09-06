@@ -5,6 +5,11 @@ namespace GraphQlResolver.HandwrittenSamples.Domain
     public static class Data
     {
 
+        public static readonly IReadOnlyList<Villain> villains = new[]
+        {
+            new Villain { Id = "THANOS", Name = "Thanos", Goal = "Snap" }
+        };
+
         public static readonly IReadOnlyList<Hero> heroes = new[]
         {
             new Hero { Id = "GUARDIANS-1", Name = "Starlord" },

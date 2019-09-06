@@ -125,13 +125,21 @@ namespace GraphQlResolver.Execution
                         context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
                         context);
                 case GraphQLInlineFragment inlineFragment:
-                    if (inlineFragment.TypeCondition != null && !builder.IsType(inlineFragment.TypeCondition.Name.Value))
+                    IComplexResolverBuilder<object> DoBuild(IComplexResolverBuilder<object> builder)
                     {
-                        return builder;
+                        return Build(builder,
+                            inlineFragment.SelectionSet.Selections,
+                            context);
                     }
-                    return Build(builder,
-                        inlineFragment.SelectionSet.Selections,
-                        context);
+
+                    if (inlineFragment.TypeCondition != null)
+                    {
+                        return builder.IfType(inlineFragment.TypeCondition.Name.Value, DoBuild);
+                    }
+                    else
+                    {
+                        return DoBuild(builder);
+                    }
                 default:
                     throw new NotImplementedException();
             }

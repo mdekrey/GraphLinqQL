@@ -1,5 +1,7 @@
 ﻿using GraphQlResolver.CommonTypes;
+using GraphQlResolver.HandwrittenSamples.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +18,10 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
 
         public override IGraphQlResult<double> Rand() =>
             Original.Resolve(root => 5.0);
+
+        public override IGraphQlResult<IEnumerable?> Characters() =>
+            Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>()
+            .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.villains).ConvertableList().As<Villain>());
     }
 
     public class Hero : Interfaces.Hero.GraphQlContract<Domain.Hero>
@@ -44,5 +50,17 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
             Original.Resolve(hero => hero.Name);
         public override IGraphQlResult<double> Renown() =>
             Original.Join(reputation).Resolve((hero, reputation) => (double)reputation.Renown);
+    }
+
+    public class Villain : Interfaces.Villain.GraphQlContract<Domain.Villain>
+    {
+        public override IGraphQlResult<string> Goal() =>
+            Original.Resolve(villain => villain.Goal);
+
+        public override IGraphQlResult<GraphQlId> Id() =>
+            Original.Resolve(villain => new GraphQlId(villain.Id));
+
+        public override IGraphQlResult<string> Name() =>
+            Original.Resolve(villain => villain.Name);
     }
 }
