@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GraphQlResolver.StarWarsV3.Interfaces;
 
 namespace GraphQlResolver.StarWarsV3.Resolvers
@@ -11,10 +12,9 @@ namespace GraphQlResolver.StarWarsV3.Resolvers
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<IEnumerable<Character?>?> friends()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<IEnumerable<Character?>?> friends() =>
+            Original.Resolve(human => human.Friends.Where(id => Domain.Data.humanLookup.ContainsKey(id)).Select(id => Domain.Data.humanLookup[id])).ConvertableList().As<Human>()
+                .Union<IEnumerable<Character?>?>(Original.Resolve(human => human.Friends.Where(id => Domain.Data.droidLookup.ContainsKey(id)).Select(id => Domain.Data.droidLookup[id])).ConvertableList().As<Droid>());
 
         public override IGraphQlResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
         {

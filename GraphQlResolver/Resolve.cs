@@ -74,11 +74,11 @@ namespace GraphQlResolver
         {
             if (target is IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult)
             {
-                if (typeof(TContract) != typeof(IGraphQlResolvable))
+                if (!typeof(IGraphQlResolvable).IsAssignableFrom(typeof(TContract)))
                 {
                     throw new InvalidOperationException($"Union types can only handle {typeof(IGraphQlResolvable).FullName}");
                 }
-                return (IComplexResolverBuilder<TContract, IEnumerable<IDictionary<string, object>>>)new UnionResolverBuilder(unionResult);
+                return new UnionResolverBuilder<TContract>(unionResult);
             }
             var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
             var actualModelType = TypeSystem.GetElementType(target.UntypedResolver.ReturnType);

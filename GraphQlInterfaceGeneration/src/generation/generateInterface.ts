@@ -19,7 +19,7 @@ export function generateInterface(object: GraphQLInterfaceType, options: Options
       : `
 `
   }
-public interface ${typeName}
+public interface ${typeName} : IGraphQlResolvable
 {
     ${Object.keys(fields)
       .map(fieldName => fields[fieldName])
