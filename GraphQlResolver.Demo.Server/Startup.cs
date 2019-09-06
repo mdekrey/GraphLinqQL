@@ -41,7 +41,7 @@ namespace GraphQlResolver.Demo.Server
                     await context.Response.WriteAsync("Hello World!");
                 });
 
-                endpoints.UseGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>("/star-wars-v3/graphql");
+                endpoints.UseGraphQl("/star-wars-v3/graphql");
             });
         }
     }

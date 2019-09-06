@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,16 @@ namespace GraphQlResolver
 {
     public static class EndpointRouteBuilderExtensions
     {
+        public static IEndpointConventionBuilder UseGraphQl(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern)
+        {
+            return endpoints.UseGraphQl(pattern, Options.DefaultName);
+        }
 
-        public static IEndpointConventionBuilder UseGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern)
-            where TQuery : class, IGraphQlResolvable
-            where TMutation : class, IGraphQlResolvable
-            where TGraphQlTypeResolver : class, IGraphQlTypeResolver
+        public static IEndpointConventionBuilder UseGraphQl(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern, string name)
         {
             return endpoints.MapPost(pattern, async context =>
             {
-                var executor = context.RequestServices.GetRequiredService<GraphQlExecutor<TQuery, TMutation, TGraphQlTypeResolver>>();
+                var executor = context.RequestServices.GetRequiredService<IGraphQlExecutorFactory>().Create(name);
 
                 object executionResult;
                 using (var body = await JsonDocument.ParseAsync(context.Request.Body))

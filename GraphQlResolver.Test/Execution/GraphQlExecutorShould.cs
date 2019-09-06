@@ -24,10 +24,23 @@ namespace GraphQlResolver.Execution
             }
         }
 
-        private static GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver> CreateExecutor()
+        private class GraphQlExecutionOptions : IGraphQlExecutionOptions
+        {
+            public Type? Query => typeof(Implementations.Query);
+
+            public Type? Mutation => null;
+
+            public Type? Subscription => null;
+
+            public IReadOnlyList<IGraphQlDirective> Directives { get; } = new IGraphQlDirective[] { new Directives.SkipDirective(), new Directives.IncludeDirective() };
+
+            public IGraphQlTypeResolver TypeResolver { get; } = new Interfaces.TypeResolver();
+        }
+
+        private static IGraphQlExecutor CreateExecutor()
         {
             var serviceProvider = new SimpleServiceProvider();
-            return new GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver>(serviceProvider, new Interfaces.TypeResolver(), new IGraphQlDirective[] { new Directives.SkipDirective(), new Directives.IncludeDirective() });
+            return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions());
         }
 
         [Fact]

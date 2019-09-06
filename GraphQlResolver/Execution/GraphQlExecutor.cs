@@ -8,34 +8,16 @@ using System.Text;
 
 namespace GraphQlResolver.Execution
 {
-    public class GraphQlExecutor<TQuery, TMutation, TGraphQlTypeResolver> : IGraphQlExecutor 
-        where TQuery : IGraphQlResolvable
-        where TMutation : IGraphQlResolvable
-        where TGraphQlTypeResolver : IGraphQlTypeResolver
+    public class GraphQlExecutor : IGraphQlExecutor
     {
         private IServiceProvider serviceProvider;
-        private readonly TGraphQlTypeResolver typeResolver;
-        private readonly IEnumerable<IGraphQlDirective> directives;
+        private readonly IGraphQlExecutionOptions options;
 
-        public GraphQlExecutor(IServiceProvider serviceProvider, TGraphQlTypeResolver typeResolver, IEnumerable<IGraphQlDirective> directives)
+        public GraphQlExecutor(IServiceProvider serviceProvider, IGraphQlExecutionOptions options)
         {
             this.serviceProvider = serviceProvider;
-            this.typeResolver = typeResolver;
-            this.directives = directives;
+            this.options = options;
         }
-
-        //public object Execute(string query, IDictionary<string, object> arguments)
-        //{
-        //    var lexer = new Lexer();
-        //    var parser = new Parser(lexer);
-        //    var ast = parser.Parse(new Source(query));
-        //    var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
-        //    if (def == null)
-        //    {
-        //        throw new ArgumentException("Query did not contain a document", nameof(query));
-        //    }
-        //    return Execute(ast, def, arguments);
-        //}
 
         public object Execute(string query, GraphQlArgumentsSupplier argumentsSupplier)
         {
@@ -72,7 +54,7 @@ namespace GraphQlResolver.Execution
             }
             if (arg is GraphQLNamedType namedType)
             {
-                return typeResolver.Resolve(namedType.Name.Value);
+                return options.TypeResolver.Resolve(namedType.Name.Value);
             }
             throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
         }
@@ -81,11 +63,11 @@ namespace GraphQlResolver.Execution
         {
             var operation = def.Operation switch
             {
-                OperationType.Query => typeof(TQuery),
-                OperationType.Mutation => typeof(TMutation),
-                OperationType.Subscription => throw new NotImplementedException(),
+                OperationType.Query => options.Query,
+                OperationType.Mutation => options.Mutation,
+                OperationType.Subscription => options.Subscription,
                 _ => throw new NotImplementedException()
-            };
+            } ?? throw new NotSupportedException();
 
             var context = new GraphQLExecutionContext(ast, arguments);
             return serviceProvider.GraphQlRoot(operation, builder =>
@@ -150,7 +132,7 @@ namespace GraphQlResolver.Execution
         private ASTNode? HandleDirective(GraphQLDirective directive, ASTNode node, GraphQLExecutionContext context)
         {
             var arguments = ResolveArguments(directive.Arguments, context);
-            var actualDirective = directives.FirstOrDefault(d => d.Name == directive.Name.Value);
+            var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name.Value);
             return actualDirective == null
                 ? node
                 : actualDirective.HandleDirective(node, arguments, context);
