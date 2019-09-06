@@ -1,4 +1,5 @@
-﻿using GraphQlResolver.Execution;
+﻿using GraphQlResolver.Directives;
+using GraphQlResolver.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace GraphQlResolver
             services.AddTransient<TQuery>();
             services.AddTransient<TMutation>();
             services.AddTransient<TGraphQlTypeResolver>();
+            // TODO - make this function return a builder to make it easy to add directives
+            services.AddTransient<IGraphQlDirective, SkipDirective>();
+            services.AddTransient<IGraphQlDirective, IncludeDirective>();
         }
 
     }

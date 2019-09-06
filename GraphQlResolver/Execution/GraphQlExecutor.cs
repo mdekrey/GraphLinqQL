@@ -15,11 +15,13 @@ namespace GraphQlResolver.Execution
     {
         private IServiceProvider serviceProvider;
         private readonly TGraphQlTypeResolver typeResolver;
+        private readonly IEnumerable<IGraphQlDirective> directives;
 
-        public GraphQlExecutor(IServiceProvider serviceProvider, TGraphQlTypeResolver typeResolver)
+        public GraphQlExecutor(IServiceProvider serviceProvider, TGraphQlTypeResolver typeResolver, IEnumerable<IGraphQlDirective> directives)
         {
             this.serviceProvider = serviceProvider;
             this.typeResolver = typeResolver;
+            this.directives = directives;
         }
 
         //public object Execute(string query, IDictionary<string, object> arguments)
@@ -148,12 +150,10 @@ namespace GraphQlResolver.Execution
         private ASTNode? HandleDirective(GraphQLDirective directive, ASTNode node, GraphQLExecutionContext context)
         {
             var arguments = ResolveArguments(directive.Arguments, context);
-            return directive.Name.Value switch
-            {
-                "include" => Convert.ToBoolean(arguments["if"]) == true ? node : null,
-                "skip" => Convert.ToBoolean(arguments["if"]) == false ? node : null,
-                _ => node
-            };
+            var actualDirective = directives.FirstOrDefault(d => d.Name == directive.Name.Value);
+            return actualDirective == null
+                ? node
+                : actualDirective.HandleDirective(node, arguments, context);
         }
 
         private IDictionary<string, object?> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)

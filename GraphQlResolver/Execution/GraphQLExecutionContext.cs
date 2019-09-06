@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using GraphQLParser.AST;
 
 namespace GraphQlResolver.Execution
 {
-    internal class GraphQLExecutionContext
+    public class GraphQLExecutionContext
     {
-        public GraphQLDocument Ast { get; set; }
-        public IDictionary<string, object?> Arguments { get; set; }
+        public GraphQLDocument Ast { get; }
+        public IReadOnlyDictionary<string, object?> Arguments { get; }
 
         public GraphQLExecutionContext(GraphQLDocument ast, IDictionary<string, object?> arguments)
         {
             this.Ast = ast;
-            this.Arguments = arguments;
+            Arguments = arguments.ToImmutableDictionary();
         }
     }
 }

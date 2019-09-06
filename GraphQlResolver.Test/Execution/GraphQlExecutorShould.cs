@@ -27,7 +27,7 @@ namespace GraphQlResolver.Execution
         private static GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver> CreateExecutor()
         {
             var serviceProvider = new SimpleServiceProvider();
-            return new GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver>(serviceProvider, new Interfaces.TypeResolver());
+            return new GraphQlExecutor<Implementations.Query, Implementations.Query, Interfaces.TypeResolver>(serviceProvider, new Interfaces.TypeResolver(), new IGraphQlDirective[] { new Directives.SkipDirective(), new Directives.IncludeDirective() });
         }
 
         [Fact]
