@@ -85,6 +85,7 @@ public abstract class Person : IGraphQlResolvable, Node
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
+            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Person\\"),
             \\"name\\" => this.name(),
             \\"birthYear\\" => this.birthYear(),
             \\"eyeColor\\" => this.eyeColor(),
@@ -143,6 +144,7 @@ public abstract class Query : IGraphQlResolvable
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
+            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Query\\"),
             \\"randomTest\\" => this.randomTest(
                 id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null) ?? System.Text.Json.JsonSerializer.Deserialize<string?>(\\"\\\\\\"foo\\\\\\"\\"),
                 i: (parameters.TryGetValue(\\"i\\", out var i) ? (int?)i : null) ?? 15,

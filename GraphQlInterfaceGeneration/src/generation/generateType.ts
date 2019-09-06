@@ -31,6 +31,7 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
     IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
         name switch
         {
+            "__typename" => new GraphQlConstantResult<string>("${object.name}"),
             ${Object.keys(fields)
               .map(fieldName => fields[fieldName])
               .map(field => fieldResolveQueryCase(field, options)).join(`

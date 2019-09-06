@@ -298,6 +298,26 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
+
+        [Fact]
+        public void BeAbleToGetTypenames()
+        {
+            var executor = CreateExecutor();
+            var result = executor.Execute(@"
+{
+  characters {
+    id
+    name
+    __typename
+  }
+}
+", _ => ImmutableDictionary<string, object?>.Empty);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"characters\":[{\"__typename\":\"Hero\",\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"__typename\":\"Hero\",\"name\":\"Thor\",\"id\":\"ASGUARD-3\"},{\"__typename\":\"Villain\",\"name\":\"Thanos\",\"id\":\"THANOS\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
     }
 
 }
