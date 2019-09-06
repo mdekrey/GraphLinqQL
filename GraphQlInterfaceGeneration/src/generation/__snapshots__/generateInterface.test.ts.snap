@@ -5,7 +5,7 @@ exports[`can generate simple interfaces 1`] = `
 /// <summary>
 /// An object with an ID
 /// </summary>
-public interface Node
+public interface Node : IGraphQlResolvable
 {
     
       /// <summary>
@@ -21,7 +21,7 @@ exports[`can generate simple interfaces from v3 1`] = `
 /// <summary>
 /// A character from the Star Wars universe
 /// </summary>
-public interface Character
+public interface Character : IGraphQlResolvable
 {
     
       /// <summary>

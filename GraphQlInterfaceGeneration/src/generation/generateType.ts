@@ -39,7 +39,10 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == "${object.name /* Yes, the actual type name goes here */}";
+      ${[object.name]
+        .concat(object.getInterfaces().map(iface => iface.name))
+        .map(n => `value == "${n}"`)
+        .join(" || ")};
 
     public abstract class GraphQlContract<T> : ${typeName}, IGraphQlAccepts<T>
     {

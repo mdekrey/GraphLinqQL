@@ -77,7 +77,7 @@ public enum Episode
 /// <summary>
 /// A character from the Star Wars universe
 /// </summary>
-public interface Character
+public interface Character : IGraphQlResolvable
 {
     
       /// <summary>
@@ -351,7 +351,7 @@ public abstract class Human : IGraphQlResolvable, Character
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Human\\";
+      value == \\"Human\\" || value == \\"Character\\";
 
     public abstract class GraphQlContract<T> : Human, IGraphQlAccepts<T>
     {
@@ -482,7 +482,7 @@ public abstract class Droid : IGraphQlResolvable, Character
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Droid\\";
+      value == \\"Droid\\" || value == \\"Character\\";
 
     public abstract class GraphQlContract<T> : Droid, IGraphQlAccepts<T>
     {
@@ -939,7 +939,7 @@ public abstract class Film : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Film\\";
+      value == \\"Film\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Film, IGraphQlAccepts<T>
     {
@@ -956,7 +956,7 @@ public abstract class Film : IGraphQlResolvable, Node
 /// <summary>
 /// An object with an ID
 /// </summary>
-public interface Node
+public interface Node : IGraphQlResolvable
 {
     
       /// <summary>
@@ -1173,7 +1173,7 @@ public abstract class Species : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Species\\";
+      value == \\"Species\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Species, IGraphQlAccepts<T>
     {
@@ -1290,7 +1290,7 @@ public abstract class Planet : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Planet\\";
+      value == \\"Planet\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Planet, IGraphQlAccepts<T>
     {
@@ -1519,7 +1519,7 @@ public abstract class Person : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Person\\";
+      value == \\"Person\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
     {
@@ -1863,7 +1863,7 @@ public abstract class Starship : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Starship\\";
+      value == \\"Starship\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
     {
@@ -2290,7 +2290,7 @@ public abstract class Vehicle : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Vehicle\\";
+      value == \\"Vehicle\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Vehicle, IGraphQlAccepts<T>
     {

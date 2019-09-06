@@ -117,7 +117,7 @@ public abstract class Person : IGraphQlResolvable, Node
         };
 
     bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Person\\";
+      value == \\"Person\\" || value == \\"Node\\";
 
     public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
     {
