@@ -24,11 +24,11 @@ namespace GraphQlResolver.Introspection
         IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
         public bool IsType(string value) => originalQuery.IsType(value);
 
-        public IGraphQlResult<Schema> schema() =>
+        internal IGraphQlResult<Schema> schema() =>
             original!.Resolve(_ => typeListing).Convertable().As<Schema>();
 
-        public IGraphQlResult<GraphQlType> type(string name) =>
-            throw new NotImplementedException();
+        internal IGraphQlResult<GraphQlType> type(string name) =>
+            original!.Resolve(_ => typeListing.Type(name)).Convertable().As<GraphQlType>();
 
         public IGraphQlResult ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch

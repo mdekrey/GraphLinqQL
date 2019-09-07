@@ -5,7 +5,7 @@ using GraphQlResolver.Introspection.Interfaces;
 
 namespace GraphQlResolver.Introspection
 {
-    public class GraphQlType : Interfaces.__Type.GraphQlContract<Type>
+    class GraphQlType : Interfaces.__Type.GraphQlContract<Type>
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -23,20 +23,14 @@ namespace GraphQlResolver.Introspection
         public override IGraphQlResult<string?> description() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Description);
 
-        public override IGraphQlResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated) =>
+            Original.Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).ConvertableList().As<EnumValue>();
 
-        public override IGraphQlResult<IEnumerable<__Field>?> fields(bool? includeDeprecated)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<IEnumerable<__Field>?> fields(bool? includeDeprecated) =>
+            Original.Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).ConvertableList().As<GraphQlField>();
 
-        public override IGraphQlResult<IEnumerable<__InputValue>?> inputFields()
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<IEnumerable<__InputValue>?> inputFields() =>
+            Original.Join(typeInformation).Resolve((_, info) => info.InputFields).ConvertableList().As<GraphQlInputField>();
 
         public override IGraphQlResult<IEnumerable<__Type>?> interfaces() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).ConvertableList().As<GraphQlType>();

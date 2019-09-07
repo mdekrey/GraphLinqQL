@@ -11,5 +11,7 @@ namespace GraphQlResolver.Introspection
         Type? Subscription { get; }
 
         IReadOnlyList<Type> TypeInformation { get; }
+
+        Type? Type(string name);
     }
 }

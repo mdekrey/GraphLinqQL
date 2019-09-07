@@ -78,6 +78,9 @@ public class ${getTypeName(type.name, options)} : IGraphQlTypeInformation
     public IReadOnlyList<Type>? Interfaces => ${typeSwitch(type, options, interfacesList, () => "null")};
     public IReadOnlyList<Type>? PossibleTypes => ${typeSwitch(type, options, possibleTypesList, () => "null")};
 
+    public IReadOnlyList<GraphQlInputFieldInformation> InputFields => throw new NotImplementedException();
+    public IReadOnlyList<GraphQlEnumValueInformation> EnumValues(bool? includeDeprecated) => throw new NotImplementedException();
+    public IReadOnlyList<GraphQlFieldInformation> Fields(bool? includeDeprecated) => throw new NotImplementedException();
 }`;
 }
 

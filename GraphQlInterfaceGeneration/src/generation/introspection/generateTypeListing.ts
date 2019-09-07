@@ -27,6 +27,8 @@ public class TypeListing : IGraphQlTypeListing
               .map(maybeRenderIntrospectionType).join(`,
             `)}
         }.ToImmutableList();
+
+    public Type? Type(string name) => throw new NotImplementedException();
 }`;
   function getTypeForIntrospection(t: GraphQLNamedType) {
     return getTypeName(t.name, options);

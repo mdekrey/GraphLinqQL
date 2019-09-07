@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlResolver.Introspection
 {
-    public class Schema : Interfaces.__Schema.GraphQlContract<IGraphQlTypeListing>
+    class Schema : Interfaces.__Schema.GraphQlContract<IGraphQlTypeListing>
     {
         private static readonly Type[] introspectionTypes = 
                 new []

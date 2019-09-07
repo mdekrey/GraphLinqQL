@@ -11,5 +11,8 @@ namespace GraphQlResolver.Introspection
         Type? OfType { get; }
         IReadOnlyList<Type>? Interfaces { get; }
         IReadOnlyList<Type>? PossibleTypes { get; }
+        IReadOnlyList<GraphQlEnumValueInformation> EnumValues(bool? includeDeprecated);
+        IReadOnlyList<GraphQlFieldInformation> Fields(bool? includeDeprecated);
+        IReadOnlyList<GraphQlInputFieldInformation> InputFields { get; }
     }
 }
