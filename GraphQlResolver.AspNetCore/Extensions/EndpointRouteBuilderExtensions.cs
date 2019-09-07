@@ -10,11 +10,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GraphQlResolver
 {
     public static class EndpointRouteBuilderExtensions
     {
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
+
         public static IEndpointConventionBuilder UseGraphQl(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern)
         {
             return endpoints.UseGraphQl(pattern, Options.DefaultName);
@@ -38,7 +44,7 @@ namespace GraphQlResolver
                         types.ToDictionary(kvp => kvp.Key, kvp => (object?)JsonSerializer.Deserialize(variables?.GetProperty(kvp.Key).GetRawText(), kvp.Value))
                     );
                 }
-                await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult);
+                await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions);
             });
         }
     }

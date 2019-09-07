@@ -41,10 +41,8 @@ namespace GraphQlResolver.Introspection
         public override IGraphQlResult<IEnumerable<__Type>?> interfaces() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).ConvertableList().As<GraphQlType>();
 
-        public override IGraphQlResult<__TypeKind> kind()
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<__TypeKind> kind() =>
+            Original.Join(typeInformation).Resolve((_, info) => ToInterfaceKind(info.Kind));
 
         public override IGraphQlResult<string?> name() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Name);
@@ -54,5 +52,31 @@ namespace GraphQlResolver.Introspection
 
         public override IGraphQlResult<IEnumerable<__Type>?> possibleTypes() =>
             Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).ConvertableList().As<GraphQlType>();
+
+        private __TypeKind ToInterfaceKind(TypeKind kind)
+        {
+            switch (kind)
+            {
+                case TypeKind.Scalar:
+                    return __TypeKind.SCALAR;
+                case TypeKind.Object:
+                    return __TypeKind.OBJECT;
+                case TypeKind.Interface:
+                    return __TypeKind.INTERFACE;
+                case TypeKind.Union:
+                    return __TypeKind.UNION;
+                case TypeKind.Enum:
+                    return __TypeKind.ENUM;
+                case TypeKind.InputObject:
+                    return __TypeKind.INPUT_OBJECT;
+                case TypeKind.List:
+                    return __TypeKind.LIST;
+                case TypeKind.NonNull:
+                    return __TypeKind.NON_NULL;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
     }
 }
