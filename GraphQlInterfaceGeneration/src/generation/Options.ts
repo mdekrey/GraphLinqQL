@@ -6,4 +6,5 @@ export interface Options {
   namespace: string;
   using: string[];
   deserializer: string;
+  introspection: boolean;
 }

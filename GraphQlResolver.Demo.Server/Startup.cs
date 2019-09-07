@@ -21,7 +21,10 @@ namespace GraphQlResolver.Demo.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>();
+            services.AddGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>(options =>
+            {
+                options.Query = typeof(Introspection.IntrospectionQuery<,>).MakeGenericType(options.Query!, typeof(StarWarsV3.Interfaces.Introspection.TypeListing));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

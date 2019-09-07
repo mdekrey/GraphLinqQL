@@ -12,6 +12,7 @@ interface Switches {
   namespace: string;
   noNullability: boolean;
   using: string[];
+  introspection: boolean;
 }
 
 program
@@ -20,6 +21,7 @@ program
   .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, "GraphQlResolver.Interfaces", false)
   .option("--no-nullability", "disable nullability flags (which requires C# 8)", program.BOOLEAN, false, false)
   .option("-u, --using", "additional using statements", program.ARRAY, [], false)
+  .option("-_, --introspection", "include introspection properties", program.BOOLEAN, false, false)
   .action(function(_, switches, logger) {
     const inputPath = switches.inputFile;
     const outputPath = switches.outputFile;
@@ -36,7 +38,8 @@ function buildOptions(switches: Switches): Options {
     ...defaultOptions,
     namespace: switches.namespace,
     useNullabilityIndicator: !switches.noNullability,
-    using: [...defaultOptions.using, ...switches.using]
+    using: [...defaultOptions.using, ...switches.using],
+    introspection: switches.introspection
   };
   return result;
 }

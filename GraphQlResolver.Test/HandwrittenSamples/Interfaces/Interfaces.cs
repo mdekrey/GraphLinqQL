@@ -1,8 +1,10 @@
 ﻿using GraphQlResolver.CommonTypes;
+using GraphQlResolver.Introspection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace GraphQlResolver.HandwrittenSamples.Interfaces
 {
@@ -37,7 +39,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
             switch (name)
             {
                 case "ID":
-                    return typeof(int?);
+                    return typeof(string);
                 case "Int":
                     return typeof(int?);
                 case "Float":

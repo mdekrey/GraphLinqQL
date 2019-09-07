@@ -2,6 +2,7 @@ import { Options } from "./Options";
 import { GraphQLSchema } from "graphql";
 import { generateTypes } from "./generateTypes";
 import { generateTypeResolver } from "./generateTypeResolver";
+import { generateIntrospectionNamespace } from "./introspection/generateIntrospectionNamespace";
 
 export function generateFullFile(schema: GraphQLSchema, options: Options): string {
   const types = generateTypes(schema, options);
@@ -18,8 +19,11 @@ export function generateFullFile(schema: GraphQLSchema, options: Options): strin
 
 namespace ${options.namespace}
 {
-    ${generateTypeResolver(schema, options)}
+    ${generateTypeResolver(schema, options).split("\n").join(`
+    `)}
     ${types.split("\n").join(`
+    `)}
+    ${generateIntrospectionNamespace(schema, options).split("\n").join(`
     `)}
 }
 `;

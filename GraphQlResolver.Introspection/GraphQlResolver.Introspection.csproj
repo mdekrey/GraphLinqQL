@@ -7,9 +7,13 @@
     <Nullable>enable</Nullable>
 
     <ToolsRoot>../GraphQlInterfaceGeneration/</ToolsRoot>
-    <InputSchemaV3>$(MSBuildProjectDirectory)/StarWarsV3/sw-schema.3.graphql</InputSchemaV3>
-    <OutputFileV3>$(MSBuildProjectDirectory)/StarWarsV3/interfaces.generated.cs</OutputFileV3>
+    <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
+    <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
+  </ItemGroup>
 
 
   <Target Name="EnsureNodeEnv" BeforeTargets="CoreCompile" Condition=" !Exists('$(ToolsRoot)node_modules') ">
@@ -22,18 +26,14 @@
     <Exec WorkingDirectory="$(ToolsRoot)" Command="npm install" />
   </Target>
 
-  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchemaV3);$(ToolsRoot)/src/**/*;$(ToolsRoot)/src/package*" Outputs="$(OutputFileV3)">
+  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchema);$(ToolsRoot)/src/**/*;$(ToolsRoot)/src/package*" Outputs="$(OutputFile)">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="$(ToolsRoot)" Command="npm start -- -i &quot;$(InputSchemaV3)&quot; -o &quot;$(OutputFileV3)&quot; -n GraphQlResolver.StarWarsV3.Interfaces" />
+    <Exec WorkingDirectory="$(ToolsRoot)" Command="npm start -- -i &quot;$(InputSchema)&quot; -o &quot;$(OutputFile)&quot; --introspection -n GraphQlResolver.Introspection.Interfaces" />
   </Target>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
-  </ItemGroup>
 
 </Project>

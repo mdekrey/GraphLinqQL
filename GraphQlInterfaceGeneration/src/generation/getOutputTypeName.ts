@@ -33,7 +33,7 @@ export function getOutputTypeName(outputType: GraphQLOutputType, options: Option
   } else if (isInterfaceType(outputType)) {
     return getInterfaceTypeName(outputType, options, nullable);
   } else if (isUnionType(outputType)) {
-    return getUnionTypeName(outputType, options, nullable);
+    return ""; // TODO - if Unions are supported for output types, use it here //getUnionTypeName(outputType, options, nullable);
   } else if (isObjectType(outputType)) {
     return getObjectTypeName(outputType, options, nullable);
   } else {

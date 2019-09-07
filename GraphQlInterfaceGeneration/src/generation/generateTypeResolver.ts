@@ -14,8 +14,8 @@ public class TypeResolver : IGraphQlTypeResolver
     {
         switch (name)
         {
-            ${hasId ? "" : scalarType("ID", "String")}
-            ${Object.keys(options.scalarTypes).map(t => scalarType(t, t)).join(`
+            ${hasId ? "" : scalarTypeCase("ID", "String")}
+            ${Object.keys(options.scalarTypes).map(t => scalarTypeCase(t, t)).join(`
             `)}
             ${inputObjectTypes.map(
               input => `case "${input.name}":
@@ -27,10 +27,15 @@ public class TypeResolver : IGraphQlTypeResolver
         }
     }
 }`;
-  function scalarType(label: string, t: string) {
+  function scalarTypeCase(label: string, t: string) {
     return `case "${label}":
-                return typeof(${`${options.scalarTypes[t].csharpType}${
-                  options.scalarTypes[t].csharpNullable ? "" : "?"
-                }`});`;
+                return typeof(${scalarType(t)});`;
+  }
+
+  function scalarType(t: string): string {
+    if (t == "ID" && !options.scalarTypes[t]) {
+      return scalarType("String");
+    }
+    return `${options.scalarTypes[t].csharpType}${options.scalarTypes[t].csharpNullable ? "" : "?"}`;
   }
 }

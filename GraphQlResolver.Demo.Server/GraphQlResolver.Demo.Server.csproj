@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GraphQlResolver.AspNetCore\GraphQlResolver.AspNetCore.csproj" />
     <ProjectReference Include="..\GraphQlResolver.Demo\GraphQlResolver.Demo.csproj" />
+    <ProjectReference Include="..\GraphQlResolver.Introspection\GraphQlResolver.Introspection.csproj" />
     <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
   </ItemGroup>
 
