@@ -14,7 +14,8 @@ export const defaultOptions: Options = {
     "GraphQlResolver.Introspection",
     "System",
     "System.Collections",
-    "System.Collections.Generic"
+    "System.Collections.Generic",
+    "System.Collections.Immutable"
   ],
   deserializer: "System.Text.Json.JsonSerializer.Deserialize",
   introspection: false

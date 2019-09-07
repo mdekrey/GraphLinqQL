@@ -18,7 +18,7 @@ public class TypeListing : IGraphQlTypeListing
     public Type? Mutation => ${maybeRenderIntrospectionType(schema.getMutationType())};
     public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
 
-    public IReadOnlyList<Type> TypeInformation =>
+    public IReadOnlyList<Type> TypeInformation { get; } =
         new []
         {
             ${Object.keys(schema.getTypeMap())
@@ -26,7 +26,7 @@ public class TypeListing : IGraphQlTypeListing
               .filter(t => shouldGenerate(t!, options) || isScalarType(t!))
               .map(maybeRenderIntrospectionType).join(`,
             `)}
-        };
+        }.ToImmutableList();
 }`;
   function getTypeForIntrospection(t: GraphQLNamedType) {
     return getTypeName(t.name, options);

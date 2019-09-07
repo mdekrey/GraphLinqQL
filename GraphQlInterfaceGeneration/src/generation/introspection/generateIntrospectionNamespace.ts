@@ -1,7 +1,7 @@
 import { Options } from "../Options";
-import { GraphQLSchema, GraphQLNamedType } from "graphql";
+import { GraphQLSchema } from "graphql";
 import { generateTypeListing } from "./generateTypeListing";
-import { getTypeName } from "../getTypeName";
+import { generateTypeInfo } from "./generateTypeInfo";
 
 export function generateIntrospectionNamespace(schema: GraphQLSchema, options: Options): string {
   return `
@@ -16,12 +16,4 @@ namespace Introspection
     `)}
 }
 `;
-}
-
-export function generateTypeInfo(type: GraphQLNamedType, options: Options) {
-  return `
-public class ${getTypeName(type.name, options)} : IGraphQlTypeInformation
-{
-    public string Name => "${type.name}";
-}`;
 }
