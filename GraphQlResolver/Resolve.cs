@@ -161,14 +161,28 @@ namespace GraphQlResolver
             return result.UntypedResolver.CastAndBoxSingleInput<TInput>();
         }
 
-        public static ConvertableResult<TModel> Convertable<TModel>(this IGraphQlResult<TModel> target)
+        public static ConvertableResult<TModel> ConvertableValue<TModel>(this IGraphQlResult<TModel> target)
+            where TModel : struct
         {
             return new ConvertableResult<TModel>(target);
         }
 
-        public static ConvertableListResult<TModel> ConvertableList<TModel>(this IGraphQlResult<IEnumerable<TModel>> target)
+        public static ConvertableListResult<TModel> ConvertableValueList<TModel>(this IGraphQlResult<IEnumerable<TModel>?> target)
+            where TModel : struct
         {
-            return new ConvertableListResult<TModel>(target);
+            return new ConvertableListResult<TModel>(target!);
+        }
+
+        public static ConvertableResult<TModel> Convertable<TModel>(this IGraphQlResult<TModel?> target)
+            where TModel : class
+        {
+            return new ConvertableResult<TModel>(target!);
+        }
+
+        public static ConvertableListResult<TModel> ConvertableList<TModel>(this IGraphQlResult<IEnumerable<TModel?>?> target)
+            where TModel : class
+        {
+            return new ConvertableListResult<TModel>(target!);
         }
 
         public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
