@@ -17,7 +17,8 @@ namespace GraphQlResolver.Introspection
 
         private IGraphQlTypeInformation? MaybeInstantiate(Type? t)
         {
-            return t == null ? null
+            return t == null
+                ? null
                 : (IGraphQlTypeInformation)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, t);
         }
 

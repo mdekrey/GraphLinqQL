@@ -23,6 +23,44 @@ namespace GraphQlResolver
         }
 
         [Fact]
+        public void BeAbleToHandlePlainObjects()
+        {
+            // {
+            //   hero {
+            //     id
+            //     name
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("hero", q => q.ResolveQuery("hero", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"hero\":{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"}}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToHandleNulls()
+        {
+            // {
+            //   nohero {
+            //     id
+            //     name
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("nohero", q => q.ResolveQuery("nohero", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"nohero\":null}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentUntypedSimpleStructures()
         {
             // {

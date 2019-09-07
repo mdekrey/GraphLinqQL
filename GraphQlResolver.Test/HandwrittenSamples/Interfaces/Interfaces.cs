@@ -59,6 +59,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         private Query() { }
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
         public abstract IGraphQlResult<Hero> Hero();
+        public abstract IGraphQlResult<Hero?> NoHero();
         public abstract IGraphQlResult<double> Rand();
         public abstract IGraphQlResult<IEnumerable?> Characters();
 
@@ -68,6 +69,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "__typename" => new GraphQlConstantResult<string>("Query"),
                 "characters" => Characters(),
                 "heroes" => Heroes(),
+                "nohero" => NoHero(),
                 "hero" => Hero(),
                 "rand" => Rand(),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
