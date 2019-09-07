@@ -8,6 +8,18 @@ namespace GraphQlResolver.Introspection
 {
     public class Schema : Interfaces.__Schema.GraphQlContract<IGraphQlTypeListing>
     {
+        private static readonly Type[] introspectionTypes = 
+                new []
+                {
+                    typeof(Introspection.Interfaces.Introspection.__Schema),
+                    typeof(Introspection.Interfaces.Introspection.__Type),
+                    typeof(Introspection.Interfaces.Introspection.__TypeKind),
+                    typeof(Introspection.Interfaces.Introspection.__Field),
+                    typeof(Introspection.Interfaces.Introspection.__InputValue),
+                    typeof(Introspection.Interfaces.Introspection.__EnumValue),
+                    typeof(Introspection.Interfaces.Introspection.__Directive),
+                    typeof(Introspection.Interfaces.Introspection.__DirectiveLocation),
+                };
         private readonly IServiceProvider serviceProvider;
 
         public Schema(IServiceProvider serviceProvider)
