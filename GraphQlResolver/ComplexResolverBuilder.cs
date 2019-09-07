@@ -68,7 +68,8 @@ namespace GraphQlResolver
                 var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
             })), typeof(IDictionary<string, object>));
-            var func = Expression.Lambda(resultDictionary, modelParameter);
+            var returnResult = Expression.Condition(Expression.ReferenceEqual(modelParameter, Expression.Constant(null)), Expression.Constant(null, typeof(IDictionary<string, object>)), resultDictionary);
+            var func = Expression.Lambda(returnResult, modelParameter);
 
             return resolve(func, allJoins);
         }
