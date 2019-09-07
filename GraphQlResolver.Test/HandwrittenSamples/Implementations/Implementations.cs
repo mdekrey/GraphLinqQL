@@ -13,6 +13,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
             Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>();
 
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Nulls() =>
+            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).ConvertableList().As<Hero>();
+
         public override IGraphQlResult<Interfaces.Hero?> NoHero() =>
             Original.Resolve(root => (Domain.Hero?)null).Convertable().As<Hero>();
 

@@ -61,6 +61,25 @@ namespace GraphQlResolver
         }
 
         [Fact]
+        public void BeAbleToHandleNullLists()
+        {
+            // {
+            //   nulls {
+            //     id
+            //     name
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("nulls", q => q.ResolveQuery("nulls", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"nulls\":null}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentUntypedSimpleStructures()
         {
             // {

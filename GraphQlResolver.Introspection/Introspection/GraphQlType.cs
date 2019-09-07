@@ -5,17 +5,23 @@ using GraphQlResolver.Introspection.Interfaces;
 
 namespace GraphQlResolver.Introspection
 {
-    public class GraphQlType : Interfaces.__Type.GraphQlContract<IGraphQlTypeInformation>
+    public class GraphQlType : Interfaces.__Type.GraphQlContract<Type>
     {
         private readonly IServiceProvider serviceProvider;
 
         public GraphQlType(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
+            typeInformation = GraphQlJoin.Join<Type, IGraphQlTypeInformation>((originBase) => from t in originBase
+                                                                                              let typeInfo = serviceProvider.Instantiate(GraphQlJoin.FindOriginal(t))
+                                                                                              select GraphQlJoin.BuildPlaceholder(t, typeInfo));
         }
 
+        private readonly GraphQlJoin<Type, IGraphQlTypeInformation> typeInformation; 
+
+
         public override IGraphQlResult<string?> description() =>
-            Original.Resolve(info => info.Description);
+            Original.Join(typeInformation).Resolve((_, info) => info.Description);
 
         public override IGraphQlResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated)
         {
@@ -33,7 +39,7 @@ namespace GraphQlResolver.Introspection
         }
 
         public override IGraphQlResult<IEnumerable<__Type>?> interfaces() =>
-            Original.Resolve(info => info.Interfaces.Select(serviceProvider.Instantiate)).ConvertableList().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).ConvertableList().As<GraphQlType>();
 
         public override IGraphQlResult<__TypeKind> kind()
         {
@@ -41,12 +47,12 @@ namespace GraphQlResolver.Introspection
         }
 
         public override IGraphQlResult<string?> name() =>
-            Original.Resolve(info => info.Name);
+            Original.Join(typeInformation).Resolve((_, info) => info.Name);
 
         public override IGraphQlResult<__Type?> ofType() =>
-            Original.Resolve(info => serviceProvider.MaybeInstantiate(info.OfType)).Convertable().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.OfType).Convertable().As<GraphQlType>();
 
         public override IGraphQlResult<IEnumerable<__Type>?> possibleTypes() =>
-            Original.Resolve(info => info.PossibleTypes.Select(serviceProvider.Instantiate)).ConvertableList().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).ConvertableList().As<GraphQlType>();
     }
 }

@@ -58,6 +58,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     {
         private Query() { }
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
+        public abstract IGraphQlResult<IEnumerable<Hero>> Nulls();
         public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<Hero?> NoHero();
         public abstract IGraphQlResult<double> Rand();
@@ -69,6 +70,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "__typename" => new GraphQlConstantResult<string>("Query"),
                 "characters" => Characters(),
                 "heroes" => Heroes(),
+                "nulls" => Nulls(),
                 "nohero" => NoHero(),
                 "hero" => Hero(),
                 "rand" => Rand(),

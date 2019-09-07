@@ -33,17 +33,17 @@ namespace GraphQlResolver.Introspection
         }
 
         public override IGraphQlResult<__Type?> mutationType() =>
-            Original.Resolve(types => serviceProvider.MaybeInstantiate(types.Mutation)).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Mutation).Convertable().As<GraphQlType>();
 
         public override IGraphQlResult<__Type> queryType() =>
-            Original.Resolve(types => serviceProvider.MaybeInstantiate(types.Query)).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Query).Convertable().As<GraphQlType>();
 
         public override IGraphQlResult<__Type?> subscriptionType() =>
-            Original.Resolve(types => serviceProvider.MaybeInstantiate(types.Subscription)).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Subscription).Convertable().As<GraphQlType>();
 
         public override IGraphQlResult<IEnumerable<__Type>> types() =>
             // TODO - include introspection types
-            Original.Resolve(types => types.TypeInformation.Select(serviceProvider.Instantiate)).ConvertableList().As<GraphQlType>();
+            Original.Resolve(types => types.TypeInformation).ConvertableList().As<GraphQlType>();
 
     }
 }

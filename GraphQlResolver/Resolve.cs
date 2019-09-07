@@ -100,7 +100,8 @@ namespace GraphQlResolver
             IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
-                var getList = target.UntypedResolver.Body.Replace(target.UntypedResolver.Parameters[0], with: inputParameter);
+                var originalGetList = target.UntypedResolver.Body.Replace(target.UntypedResolver.Parameters[0], with: inputParameter);
+                var getList = originalGetList;
 
                 if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
                 {
@@ -132,8 +133,10 @@ namespace GraphQlResolver
                     ), 
                     rootParameter
                 );
+                var selected = Expressions.CallQueryableSelect(getList, mainBody);
+                var returnResult = Expression.Condition(Expression.ReferenceEqual(originalGetList, Expression.Constant(null)), Expression.Constant(null, selected.Type), selected);
 
-                var func = Expression.Lambda(Expressions.CallQueryableSelect(getList, mainBody), inputParameter);
+                var func = Expression.Lambda(returnResult, inputParameter);
 
                 return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider, target.Joins);
             }
