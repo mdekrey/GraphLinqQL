@@ -49,12 +49,16 @@ namespace GraphQlResolver
 
         public Expression Convert(ParameterExpression joinPlaceholderParameter)
         {
+            System.Diagnostics.Debug.Assert(joinPlaceholderParameter.Type == typeof(JoinPlaceholder<TFromDomain>));
+
             var result = new RefactorExpression(joinPlaceholderParameter, this).Visit(this.Queryable);
             return Expression.Convert(result, typeof(IQueryable<JoinPlaceholder<TFromDomain>>));
         }
 
         public Expression GetAccessor(ParameterExpression joinPlaceholderParameter)
         {
+            System.Diagnostics.Debug.Assert(joinPlaceholderParameter.Type == typeof(JoinPlaceholder<TFromDomain>));
+         
             return Expression.Call(joinPlaceholderParameter, getJoinValue, Expression.Constant(this));
         }
 
