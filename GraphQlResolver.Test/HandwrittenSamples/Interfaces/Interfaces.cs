@@ -60,6 +60,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
         public abstract IGraphQlResult<IEnumerable<Hero>> Nulls();
         public abstract IGraphQlResult<Hero> Hero();
+        public abstract IGraphQlResult<Hero> HeroById(string id);
         public abstract IGraphQlResult<Hero?> NoHero();
         public abstract IGraphQlResult<double> Rand();
         public abstract IGraphQlResult<IEnumerable?> Characters();
@@ -73,6 +74,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "nulls" => Nulls(),
                 "nohero" => NoHero(),
                 "hero" => Hero(),
+                "heroById" => HeroById((string)parameters["id"]!),
                 "rand" => Rand(),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };

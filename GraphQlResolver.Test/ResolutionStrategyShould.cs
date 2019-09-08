@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 using Implementations = GraphQlResolver.HandwrittenSamples.Implementations;
 
@@ -34,6 +35,39 @@ namespace GraphQlResolver
             var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
                 root.Add("hero", q => q.ResolveQuery("hero", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Build())
                     .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"hero\":{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"}}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToHandlePlainObjectsWithJoin()
+        {
+            // {
+            //   hero {
+            //     id
+            //     name
+            //     renown
+            //     faction
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("hero", q => q.ResolveQuery("hero", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Add("renown").Add("faction").Build())
+                    .Build());
+
+            //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
+            //            let hero = HandwrittenSamples.Domain.Data.heroes.First()
+            //            join reputation in HandwrittenSamples.Domain.Data.heroReputation on hero.Id equals reputation.HeroId
+            //            select new Dictionary<string, object?>
+            //            {
+            //                { "id", hero.Id },
+            //                { "name", hero.Name },
+            //                { "renown", reputation.Renown },
+            //                { "faction", reputation.Faction },
+            //            };
+
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"hero\":{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"}}";
@@ -199,6 +233,25 @@ namespace GraphQlResolver
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public void BeAbleToHandleFirstLevelmplementationJoin()
+        {
+            // {
+            //   heroById(id: "GUARDIANS-1") {
+            //     id
+            //     name
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroById", q => q.ResolveQuery("heroById", new Dictionary<string, object?>() { { "id", "GUARDIANS-1" } }.ToImmutableDictionary()).ResolveComplex().Add("id").Add("name").Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroById\":{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"}}";
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }

@@ -22,6 +22,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<Interfaces.Hero> Hero() =>
             Original.Resolve(root => Domain.Data.heroes.First()).Convertable().As<Hero>();
 
+        public override IGraphQlResult<Interfaces.Hero> HeroById(string id) =>
+            Original.Resolve(root => id).Convertable().As<HeroById>();
+
         public override IGraphQlResult<double> Rand() =>
             Original.Resolve(root => 5.0);
 
@@ -54,6 +57,38 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
             Original.Resolve(hero => $"Unknown ({date})");
         public override IGraphQlResult<string> Name() =>
             Original.Resolve(hero => hero.Name);
+        public override IGraphQlResult<double> Renown() =>
+            Original.Join(reputation).Resolve((hero, reputation) => (double)reputation.Renown);
+    }
+
+    public class HeroById : Interfaces.Hero.GraphQlContract<string>
+    {
+        private readonly GraphQlJoin<string, Domain.Hero> hero =
+            GraphQlJoin.Join<string, Domain.Hero>((originBase) => from t in originBase
+                                                                  join hero in Domain.Data.heroes on GraphQlJoin.FindOriginal(t) equals hero.Id
+                                                                  select GraphQlJoin.BuildPlaceholder(t, hero));
+        private readonly GraphQlJoin<string, Domain.Reputation> reputation =
+            GraphQlJoin.Join<string, Domain.Reputation>((originBase) => from t in originBase
+                                                                        join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t) equals reputation.HeroId
+                                                                        select GraphQlJoin.BuildPlaceholder(t, reputation));
+        private readonly GraphQlJoin<string, IEnumerable<Domain.Hero>> friends =
+            GraphQlJoin.Join<string, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
+                                                                               let friends = (from friendId in Domain.Data.friends
+                                                                                              where GraphQlJoin.FindOriginal(t) == friendId.Id1
+                                                                                              join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
+                                                                                              select friend)
+                                                                               select GraphQlJoin.BuildPlaceholder(t, friends));
+
+        public override IGraphQlResult<string> Faction() =>
+            Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
+            Original.Join(friends).Resolve((hero, friends) => friends).ConvertableList().As<Hero>();
+        public override IGraphQlResult<GraphQlId> Id() =>
+            Original.Join(hero).Resolve((_, hero) => new GraphQlId(hero.Id));
+        public override IGraphQlResult<string> Location(string date) =>
+            Original.Resolve(hero => $"Unknown ({date})");
+        public override IGraphQlResult<string> Name() =>
+            Original.Join(hero).Resolve((_, hero) => hero.Name);
         public override IGraphQlResult<double> Renown() =>
             Original.Join(reputation).Resolve((hero, reputation) => (double)reputation.Renown);
     }

@@ -33,6 +33,8 @@ namespace GraphQlResolver
 
         public static Expression MergeJoin(this Expression newRoot, ParameterExpression joinPlaceholderParameter, IGraphQlJoin join, IDictionary<Expression, Expression> parameters)
         {
+            System.Diagnostics.Debug.Assert(newRoot.Type == typeof(IQueryable<>).MakeGenericType(joinPlaceholderParameter.Type));
+
             parameters[join.Placeholder] = join.GetAccessor(joinPlaceholderParameter);
             return join.Convert(joinPlaceholderParameter).Replace(join.Root, with: newRoot);
         }

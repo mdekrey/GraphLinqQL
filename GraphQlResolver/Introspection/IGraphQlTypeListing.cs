@@ -10,7 +10,7 @@ namespace GraphQlResolver.Introspection
         Type? Mutation { get; }
         Type? Subscription { get; }
 
-        IReadOnlyList<Type> TypeInformation { get; }
+        IEnumerable<Type> TypeInformation { get; }
 
         Type? Type(string name);
     }

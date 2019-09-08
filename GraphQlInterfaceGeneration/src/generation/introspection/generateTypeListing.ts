@@ -7,6 +7,14 @@ export function generateTypeListing(schema: GraphQLSchema, options: Options) {
   return `
 public class TypeListing : IGraphQlTypeListing
 {
+    private static readonly ImmutableDictionary<string, Type> types = new Dictionary<string, Type>
+    {
+        ${Object.keys(schema.getTypeMap())
+          .map(typeName => schema.getType(typeName))
+          .filter(t => shouldGenerate(t!, options) || isScalarType(t!))
+          .map(t => `{ "${t!.name}", ${maybeRenderIntrospectionType(t)} }`).join(`,
+        `)}
+    }.ToImmutableDictionary();
     private readonly IServiceProvider serviceProvider;
 
     public TypeListing(IServiceProvider serviceProvider)
@@ -18,17 +26,9 @@ public class TypeListing : IGraphQlTypeListing
     public Type? Mutation => ${maybeRenderIntrospectionType(schema.getMutationType())};
     public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
 
-    public IReadOnlyList<Type> TypeInformation { get; } =
-        new []
-        {
-            ${Object.keys(schema.getTypeMap())
-              .map(typeName => schema.getType(typeName))
-              .filter(t => shouldGenerate(t!, options) || isScalarType(t!))
-              .map(maybeRenderIntrospectionType).join(`,
-            `)}
-        }.ToImmutableList();
+    public IEnumerable<Type> TypeInformation => types.Values;
 
-    public Type? Type(string name) => throw new NotImplementedException();
+    public Type? Type(string name) => types.TryGetValue(name, out var type) ? type : null;
 }`;
   function getTypeForIntrospection(t: GraphQLNamedType) {
     return getTypeName(t.name, options);
