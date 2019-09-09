@@ -23,7 +23,7 @@ namespace GraphQlResolver.Demo.Server
         {
             services.AddGraphQl<Query, Query, StarWarsV3.Interfaces.TypeResolver>(options =>
             {
-                options.Query = typeof(Introspection.IntrospectionQuery<,>).MakeGenericType(options.Query!, typeof(StarWarsV3.Interfaces.Introspection.TypeListing));
+                options.AddIntrospection<StarWarsV3.Interfaces.Introspection.TypeListing>();
             });
         }
 

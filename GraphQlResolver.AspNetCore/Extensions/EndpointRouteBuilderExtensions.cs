@@ -1,18 +1,15 @@
 ﻿using GraphQlResolver.Execution;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GraphQlResolver
+namespace Microsoft.AspNetCore.Builder
 {
     public static class EndpointRouteBuilderExtensions
     {
@@ -21,12 +18,12 @@ namespace GraphQlResolver
             Converters = { new JsonStringEnumConverter() }
         };
 
-        public static IEndpointConventionBuilder UseGraphQl(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern)
+        public static IEndpointConventionBuilder UseGraphQl(this IEndpointRouteBuilder endpoints, string pattern)
         {
             return endpoints.UseGraphQl(pattern, Options.DefaultName);
         }
 
-        public static IEndpointConventionBuilder UseGraphQl(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern, string name)
+        public static IEndpointConventionBuilder UseGraphQl(this IEndpointRouteBuilder endpoints, string pattern, string name)
         {
             return endpoints.MapPost(pattern, async context =>
             {

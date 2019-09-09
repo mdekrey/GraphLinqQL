@@ -1,19 +1,17 @@
-﻿using GraphQlResolver.Directives;
+﻿using GraphQlResolver;
 using GraphQlResolver.Execution;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GraphQlResolver
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
         public static void AddGraphQl(this IServiceCollection services, Action<GraphQlOptions> optionFactory)
         {
-            services.AddGraphQl(Options.DefaultName, optionFactory);
+            services.AddGraphQl(Microsoft.Extensions.Options.Options.DefaultName, optionFactory);
         }
 
         public static void AddGraphQl(this IServiceCollection services, string optionsName, Action<GraphQlOptions> optionFactory)
@@ -24,7 +22,7 @@ namespace GraphQlResolver
 
         public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, Action<GraphQlOptions>? optionFactory = null)
         {
-            services.AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(Options.DefaultName, optionFactory);
+            services.AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(Microsoft.Extensions.Options.Options.DefaultName, optionFactory);
         }
 
         public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, string optionsName, Action<GraphQlOptions>? optionFactory = null)

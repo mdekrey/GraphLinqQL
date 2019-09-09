@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GraphQlResolver.Introspection\GraphQlResolver.Introspection.csproj" />
     <ProjectReference Include="..\GraphQlResolver\GraphQlResolver.csproj" />
   </ItemGroup>
 
