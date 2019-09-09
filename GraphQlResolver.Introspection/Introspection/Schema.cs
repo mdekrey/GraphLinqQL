@@ -40,7 +40,6 @@ namespace GraphQlResolver.Introspection
             Original.Resolve(types => types.Subscription).Convertable().As<GraphQlType>();
 
         public override IGraphQlResult<IEnumerable<__Type>> types() =>
-            // TODO - include introspection types
             Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).ConvertableList().As<GraphQlType>();
 
     }

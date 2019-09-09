@@ -23,7 +23,6 @@ expressions and code generation from a schema to create
 
 # Remaining work
 
-- [ ] Introspection API
 - [ ] Fix naming/reorganization
 - [ ] Support versions of C# prior to 8
 - [ ] Determine dependencies to generate code
