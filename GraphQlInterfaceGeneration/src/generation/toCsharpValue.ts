@@ -13,7 +13,7 @@ export function toCsharpValue(value: any, type: GraphQLInputType, options: Optio
       return stringified;
     }
   } else if (isEnumType(type)) {
-    return `${getTypeName(type.name, options)}.${getEnumValueName(value, options)}`;
+    return `${options.namespace}.${getTypeName(type.name, options)}.${getEnumValueName(value, options)}`;
   }
   return `${options.deserializer}<${inputTypeName}>(${JSON.stringify(stringified)})`;
 }

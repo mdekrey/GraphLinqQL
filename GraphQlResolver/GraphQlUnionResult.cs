@@ -20,7 +20,7 @@ namespace GraphQlResolver
 
         public IServiceProvider ServiceProvider => Results[0].ServiceProvider;
 
-        public LambdaExpression UntypedResolver => throw new NotImplementedException();
+        public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 

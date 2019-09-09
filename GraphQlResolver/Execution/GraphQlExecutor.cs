@@ -66,7 +66,7 @@ namespace GraphQlResolver.Execution
                 OperationType.Query => options.Query,
                 OperationType.Mutation => options.Mutation,
                 OperationType.Subscription => options.Subscription,
-                _ => throw new NotImplementedException()
+                _ => throw new NotSupportedException()
             } ?? throw new NotSupportedException();
 
             var context = new GraphQLExecutionContext(ast, arguments);
@@ -149,7 +149,7 @@ namespace GraphQlResolver.Execution
             {
                 GraphQLScalarValue scalar => scalar.Value,
                 GraphQLVariable variable => context.Arguments[variable.Name.Value],
-                _ => throw new NotImplementedException()
+                _ => throw new NotSupportedException()
             };
         }
     }

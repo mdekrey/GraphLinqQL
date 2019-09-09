@@ -15,7 +15,8 @@ export const defaultOptions: Options = {
     "System",
     "System.Collections",
     "System.Collections.Generic",
-    "System.Collections.Immutable"
+    "System.Collections.Immutable",
+    "System.Linq"
   ],
   deserializer: "System.Text.Json.JsonSerializer.Deserialize",
   introspection: false

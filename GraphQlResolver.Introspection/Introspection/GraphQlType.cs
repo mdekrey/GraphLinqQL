@@ -13,7 +13,7 @@ namespace GraphQlResolver.Introspection
         {
             this.serviceProvider = serviceProvider;
             typeInformation = GraphQlJoin.Join<Type, IGraphQlTypeInformation>((originBase) => from t in originBase
-                                                                                              let typeInfo = serviceProvider.Instantiate(GraphQlJoin.FindOriginal(t))
+                                                                                              let typeInfo = serviceProvider.MaybeInstantiate(GraphQlJoin.FindOriginal(t))
                                                                                               select GraphQlJoin.BuildPlaceholder(t, typeInfo));
         }
 
@@ -68,7 +68,7 @@ namespace GraphQlResolver.Introspection
                 case TypeKind.NonNull:
                     return __TypeKind.NON_NULL;
                 default:
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
             }
         }
 
