@@ -125,7 +125,7 @@ namespace GraphQlResolver.Execution
                         return DoBuild(builder);
                     }
                 default:
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
             }
         }
 

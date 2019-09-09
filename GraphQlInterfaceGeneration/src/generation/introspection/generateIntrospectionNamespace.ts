@@ -2,6 +2,7 @@ import { Options } from "../Options";
 import { GraphQLSchema } from "graphql";
 import { generateTypeListing } from "./generateTypeListing";
 import { generateTypeInfo } from "./generateTypeInfo";
+import { generateDirectiveInfo } from "./generateDirectiveInfo";
 
 export function generateIntrospectionNamespace(schema: GraphQLSchema, options: Options): string {
   return `

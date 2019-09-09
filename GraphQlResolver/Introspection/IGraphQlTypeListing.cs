@@ -11,6 +11,7 @@ namespace GraphQlResolver.Introspection
         Type? Subscription { get; }
 
         IEnumerable<Type> TypeInformation { get; }
+        IEnumerable<DirectiveInformation> DirectiveInformation { get; }
 
         Type? Type(string name);
     }

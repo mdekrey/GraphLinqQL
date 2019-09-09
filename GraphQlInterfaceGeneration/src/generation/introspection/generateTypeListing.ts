@@ -2,6 +2,7 @@ import { Options } from "../Options";
 import { GraphQLSchema, GraphQLNamedType, isScalarType } from "graphql";
 import { shouldGenerate } from "../shouldGenerate";
 import { getTypeName } from "../getTypeName";
+import { generateDirectiveInfo } from "./generateDirectiveInfo";
 
 export function generateTypeListing(schema: GraphQLSchema, options: Options) {
   return `
@@ -15,6 +16,15 @@ public class TypeListing : IGraphQlTypeListing
           .map(t => `{ "${t!.name}", ${maybeRenderIntrospectionType(t)} }`).join(`,
         `)}
     }.ToImmutableDictionary();
+    private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
+      ${schema
+        .getDirectives()
+        .map(directive => generateDirectiveInfo(directive, options))
+        .join(",\n")
+        .split("\n").join(`
+        `)}
+    };
+
     private readonly IServiceProvider serviceProvider;
 
     public TypeListing(IServiceProvider serviceProvider)
@@ -27,6 +37,7 @@ public class TypeListing : IGraphQlTypeListing
     public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
 
     public IEnumerable<Type> TypeInformation => types.Values;
+    public IEnumerable<DirectiveInformation> DirectiveInformation => directives;
 
     public Type? Type(string name) => types.TryGetValue(name, out var type) ? type : null;
 }`;

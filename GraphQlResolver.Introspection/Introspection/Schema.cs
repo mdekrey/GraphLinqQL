@@ -27,10 +27,8 @@ namespace GraphQlResolver.Introspection
             this.serviceProvider = serviceProvider;
         }
 
-        public override IGraphQlResult<IEnumerable<__Directive>> directives()
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<IEnumerable<__Directive>> directives() =>
+            Original.Resolve(types => types.DirectiveInformation).ConvertableList().As<DirectiveDefinition>();
 
         public override IGraphQlResult<__Type?> mutationType() =>
             Original.Resolve(types => types.Mutation).Convertable().As<GraphQlType>();
@@ -43,7 +41,7 @@ namespace GraphQlResolver.Introspection
 
         public override IGraphQlResult<IEnumerable<__Type>> types() =>
             // TODO - include introspection types
-            Original.Resolve(types => types.TypeInformation).ConvertableList().As<GraphQlType>();
+            Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).ConvertableList().As<GraphQlType>();
 
     }
 }

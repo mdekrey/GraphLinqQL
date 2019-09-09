@@ -12,17 +12,14 @@ import {
   GraphQLInterfaceType,
   GraphQLUnionType,
   GraphQLEnumType,
-  GraphQLInputObjectType,
-  GraphQLOutputType,
-  GraphQLInputType,
-  GraphQLInputField,
-  GraphQLArgument,
-  isListType,
-  isNonNullType
+  GraphQLInputObjectType
 } from "graphql";
 import { getTypeName } from "../getTypeName";
 import { neverEver } from "../../utils/neverEver";
 import { toCsharpValue } from "../toCsharpValue";
+import { multilineString } from "./multilineString";
+import { toIntrospectionType } from "./toIntrospectionType";
+import { toInputObjectInfoArray } from "./toInputObjectInfoArray";
 
 type TypeKindMap = {
   Scalar: GraphQLScalarType;
@@ -167,34 +164,4 @@ function typeSwitch<T>(
   } else {
     return otherwise(type);
   }
-}
-
-function multilineString(string: string | null | undefined) {
-  return string === null || string === undefined ? null : `@"${string.replace(/"/g, '""')}"`;
-}
-
-function toIntrospectionType(type: GraphQLInputType | GraphQLOutputType, options: Options): string {
-  if (isListType(type)) {
-    return `ListTypeInformation<${toIntrospectionType(type.ofType, options)}>`;
-  } else if (isNonNullType(type)) {
-    return `NonNullTypeInformation<${toIntrospectionType(type.ofType, options)}>`;
-  } else {
-    return getTypeName(type.name, options);
-  }
-}
-
-function toInputObjectInfo(f: GraphQLInputField | GraphQLArgument, options: Options) {
-  return `new GraphQlInputFieldInformation(name: "${f.name}", type: typeof(${toIntrospectionType(
-    f.type,
-    options
-  )}), description: ${multilineString(f.description)}${
-    f.defaultValue === undefined ? "" : `, defaultValue: ${multilineString("" + f.defaultValue)}`
-  })`;
-}
-
-function toInputObjectInfoArray(f: (GraphQLInputField | GraphQLArgument)[], options: Options) {
-  return `new GraphQlInputFieldInformation[] {
-                ${f.map(field => toInputObjectInfo(field, options)).join(`,
-                `)}
-            }`;
 }
