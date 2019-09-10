@@ -8,15 +8,22 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 {
     class Film : Interfaces.Film.GraphQlContract<Domain.Film>
     {
-        //private static readonly GraphQlJoin<Domain.Film, IEnumerable<Domain.FilmCharacter>> charactersJoin =
-        //    GraphQlJoin.Join<Domain.Film, IEnumerable<Domain.FilmCharacter>>((originBase) => from t in originBase
-        //                                                                              let characters = GraphQlJoin.FindOriginal(t).FilmCharacters
-        //                                                                              select GraphQlJoin.BuildPlaceholder(t, characters));
+        private readonly GraphQlJoin<Domain.Film, IEnumerable<Domain.FilmCharacter>> charactersJoin;
+
+        public Film(Domain.StarWarsContext starWarsContext)
+        {
+            charactersJoin = GraphQlJoin.Join<Domain.Film, IEnumerable<Domain.FilmCharacter>>((originBase) =>
+                from t in originBase
+                let characters = from filmCharacter in starWarsContext.FilmCharacters 
+                                 where filmCharacter.PersonId == GraphQlJoin.FindOriginal(t).EpisodeId
+                                 select filmCharacter
+                select GraphQlJoin.BuildPlaceholder(t, (IEnumerable<Domain.FilmCharacter>)characters));
+        }
 
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
             // TODO - use parameters
-            return Original.Resolve(film => film.FilmCharacters).Convertable().As<FilmCharactersConnection>();
+            return Original.Join(charactersJoin).Resolve((film, filmCharacters) => filmCharacters).Convertable().As<FilmCharactersConnection>();
         }
 
         public override IGraphQlResult<string?> created()

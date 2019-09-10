@@ -14,6 +14,7 @@ namespace GraphQlResolver.StarWarsV4.Domain
 
 #nullable disable
         public DbSet<Film> Films { get; set; }
+        public DbSet<FilmCharacter> FilmCharacters { get; set; }
         public DbSet<Person> Characters { get; set; }
 #nullable restore
 

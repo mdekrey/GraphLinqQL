@@ -71,7 +71,8 @@ namespace GraphQlResolver
 
                 if (joins.Count > 0)
                 {
-                    var actualModelType = TypeSystem.GetElementType(target.UntypedResolver.ReturnType);
+                    var actualModelType = typeof(TContract).GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).Single()
+                        .GetGenericArguments()[0];
 
                     var repeat = typeof(Enumerable).GetMethod(nameof(Enumerable.Repeat)).MakeGenericMethod(target.UntypedResolver.ReturnType);
                     var single = typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Single) && m.GetParameters().Length == 1)
@@ -82,7 +83,7 @@ namespace GraphQlResolver
                         Expression.Lambda(Expression.Call(null, convert, Expression.Call(null, repeat, target.UntypedResolver.Body, Expression.Constant(1))), inputParameter), resultSelector, joins, actualModelType);
                     var resultFunc = Expression.Lambda(Expression.Call(null, single, func.Body), func.Parameters);
 
-                    return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, ImmutableList<IGraphQlJoin>.Empty);
+                    return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
                 }
                 else
                 {
