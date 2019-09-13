@@ -33,7 +33,8 @@ namespace GraphQlResolver.Execution
             var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
                 ?? ImmutableDictionary<string, Type>.Empty;
 
-            return Execute(ast, def, argumentsSupplier(variableDefinitions));
+            var executionResult = Execute(ast, def, argumentsSupplier(variableDefinitions));
+            return executionResult;
         }
 
         private Type GetTypeFromGraphQlType(GraphQLType arg)

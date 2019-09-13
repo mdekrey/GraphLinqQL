@@ -89,7 +89,7 @@ namespace GraphQlResolver
                 {
 
                     var func = Expression.Lambda(resultSelector.Body.Replace(resultSelector.Parameters[0], with: target.UntypedResolver.Body), inputParameter);
-                    return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, joins);
+                    return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, target.Joins);
                 }
             }
         }
