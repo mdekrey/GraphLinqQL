@@ -22,7 +22,7 @@
     <Exec WorkingDirectory="$(ToolsRoot)" Command="npm install" />
   </Target>
 
-  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchemaV3);$(ToolsRoot)/src/**/*;$(ToolsRoot)/src/package*" Outputs="$(OutputFileV3)">
+  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchemaV3)" Outputs="$(OutputFileV3)">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
