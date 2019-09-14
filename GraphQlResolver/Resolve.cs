@@ -69,7 +69,7 @@ namespace GraphQlResolver
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
 
-                if (joins.Count > 0)
+                //if (joins.Count > 0)
                 {
                     var actualModelType = typeof(TContract).GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).Single()
                         .GetGenericArguments()[0];
@@ -85,12 +85,12 @@ namespace GraphQlResolver
 
                     return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
                 }
-                else
-                {
+                //else
+                //{
 
-                    var func = Expression.Lambda(resultSelector.Body.Replace(resultSelector.Parameters[0], with: target.UntypedResolver.Body), inputParameter);
-                    return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, target.Joins);
-                }
+                //    var func = Expression.Lambda(resultSelector.Body.Replace(resultSelector.Parameters[0], with: target.UntypedResolver.Body), inputParameter);
+                //    return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, target.Joins);
+                //}
             }
         }
 
@@ -141,7 +141,7 @@ namespace GraphQlResolver
             var parameters = new Dictionary<Expression, Expression>(joins.Count) { { originalParameter, originalParameter } };
             var rootParameter = originalParameter;
 
-            if (joins.Count > 0)
+            //if (joins.Count > 0)
             {
                 var placeholderType = typeof(JoinPlaceholder<>).MakeGenericType(actualModelType);
                 rootParameter = Expression.Parameter(placeholderType, "JoinPlaceholder " + modelType.FullName);
@@ -164,7 +164,7 @@ namespace GraphQlResolver
                 rootParameter
             );
             var selected = Expressions.CallQueryableSelect(getList, mainBody);
-            var returnResult = Expression.Condition(Expression.ReferenceEqual(originalGetList, Expression.Constant(null)), Expression.Constant(null, selected.Type), selected);
+            var returnResult = Expression.TryCatch(selected, Expression.Catch(Expression.Parameter(typeof(Exception)), Expression.Constant(null, selected.Type)));
 
             var func = Expression.Lambda(returnResult, inputParameter);
             return func;

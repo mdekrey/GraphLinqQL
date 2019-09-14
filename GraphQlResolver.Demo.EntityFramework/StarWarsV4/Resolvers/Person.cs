@@ -48,10 +48,8 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string> id()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IGraphQlResult<string> id() =>
+            Original.Resolve(p => p.Id.ToString());
 
         public override IGraphQlResult<double?> mass()
         {
