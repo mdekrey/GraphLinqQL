@@ -14,9 +14,9 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
         {
             charactersJoin = GraphQlJoin.Join<Domain.Film, IEnumerable<Domain.Person>>((originBase) =>
                 from t in originBase
-                let characters = from character in starWarsContext.FilmCharacters
-                                 where GraphQlJoin.FindOriginal(t).EpisodeId == character.EpisodeId
-                                 select character.Character
+                let characters = (from character in starWarsContext.FilmCharacters
+                                  where GraphQlJoin.FindOriginal(t).EpisodeId == character.EpisodeId
+                                  select character.Character).ToArray()
                 select GraphQlJoin.BuildPlaceholder(t, (IEnumerable<Domain.Person>)characters));
         }
 
