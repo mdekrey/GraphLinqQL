@@ -10,7 +10,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
     {
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
-            return Original.Resolve(film => new FilmCharactersConnectionFromFilm.ConnectionData(film, after, first, before, last)).Convertable().As<FilmCharactersConnectionFromFilm>();
+            return Original.Resolve(film => new FilmCharactersConnectionFromFilm.ConnectionData(film.EpisodeId, after, first, before, last)).Convertable().As<FilmCharactersConnectionFromFilm>();
         }
 
         public override IGraphQlResult<string?> created()

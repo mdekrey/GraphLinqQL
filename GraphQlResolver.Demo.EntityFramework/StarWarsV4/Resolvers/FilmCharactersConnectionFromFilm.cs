@@ -10,15 +10,15 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
     {
         public class ConnectionData
         {
-            public readonly Domain.Film film;
+            public readonly int episodeId;
             public readonly string? after;
             public readonly int? first;
             public readonly string? before;
             public readonly int? last;
 
-            public ConnectionData(Domain.Film film, string? after, int? first, string? before, int? last)
+            public ConnectionData(int episodeId, string? after, int? first, string? before, int? last)
             {
-                this.film = film;
+                this.episodeId = episodeId;
                 this.after = after;
                 this.first = first;
                 this.before = before;
@@ -33,7 +33,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
         {
             charactersJoin = GraphQlJoin.JoinList<ConnectionData, Domain.Person>(film =>
                 from character in dbContext.FilmCharacters
-                where film.film.EpisodeId == character.EpisodeId
+                where film.episodeId == character.EpisodeId
                 select character.Character);
             this.dbContext = dbContext;
         }
