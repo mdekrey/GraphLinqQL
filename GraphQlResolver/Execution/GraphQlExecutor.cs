@@ -77,12 +77,12 @@ namespace GraphQlResolver.Execution
             });
         }
 
-        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, IEnumerable<ASTNode> selections, GraphQLExecutionContext context)
+        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, IEnumerable<ASTNode> selections, GraphQLExecutionContext context)
         {
             return selections.Aggregate(builder, (b, node) => Build(b, node, context));
         }
 
-        private IComplexResolverBuilder<object> Build(IComplexResolverBuilder<object> builder, ASTNode node, GraphQLExecutionContext context)
+        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, ASTNode node, GraphQLExecutionContext context)
         {
             var resultNode = (node is IHasDirectivesNode directives)
                 ? directives.Directives.Aggregate((ASTNode?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
@@ -110,7 +110,7 @@ namespace GraphQlResolver.Execution
                         context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
                         context);
                 case GraphQLInlineFragment inlineFragment:
-                    IComplexResolverBuilder<object> DoBuild(IComplexResolverBuilder<object> builder)
+                    IComplexResolverBuilder DoBuild(IComplexResolverBuilder builder)
                     {
                         return Build(builder,
                             inlineFragment.SelectionSet.Selections,

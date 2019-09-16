@@ -22,6 +22,9 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<Interfaces.Hero> Hero() =>
             Original.Resolve(root => Domain.Data.heroes.First()).Convertable().As<Hero>();
 
+        public override IGraphQlResult<Interfaces.Hero> HeroFinalized() =>
+            Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>(heroes => heroes.First());
+
         public override IGraphQlResult<Interfaces.Hero> HeroById(string id) =>
             Original.Resolve(root => id).Convertable().As<HeroById>();
 

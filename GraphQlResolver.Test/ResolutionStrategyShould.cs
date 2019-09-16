@@ -76,6 +76,39 @@ namespace GraphQlResolver
         }
 
         [Fact]
+        public void BeAbleToHandlePlainObjectsWithFinalizerAndJoin()
+        {
+            // {
+            //   hero {
+            //     id
+            //     name
+            //     renown
+            //     faction
+            //   }
+            // }
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("hero", q => q.ResolveQuery("heroFinalized", ImmutableDictionary<string, object?>.Empty).ResolveComplex().Add("id").Add("name").Add("renown").Add("faction").Build())
+                    .Build());
+
+            //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
+            //            let hero = HandwrittenSamples.Domain.Data.heroes.First()
+            //            join reputation in HandwrittenSamples.Domain.Data.heroReputation on hero.Id equals reputation.HeroId
+            //            select new Dictionary<string, object?>
+            //            {
+            //                { "id", hero.Id },
+            //                { "name", hero.Name },
+            //                { "renown", reputation.Renown },
+            //                { "faction", reputation.Faction },
+            //            };
+
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"hero\":{\"faction\":\"Guardians of the Galaxy\",\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\",\"renown\":5}}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToHandleNulls()
         {
             // {

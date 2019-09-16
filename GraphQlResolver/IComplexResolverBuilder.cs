@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace GraphQlResolver
 {
-    public interface IComplexResolverBuilder<out TFinal>
+    public interface IComplexResolverBuilder
     {
-        IComplexResolverBuilder<TFinal> Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve);
-        IComplexResolverBuilder<TFinal> Add(string property, IDictionary<string, object?>? parameters = null);
-        IComplexResolverBuilder<TFinal> Add(string displayName, string property, IDictionary<string, object?>? parameters = null);
-        IGraphQlResult<TFinal> Build();
-        IComplexResolverBuilder<TFinal> IfType(string value, System.Func<IComplexResolverBuilder<object>, IComplexResolverBuilder<object>> typedBuilder);
+        IComplexResolverBuilder Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve);
+        IComplexResolverBuilder Add(string property, IDictionary<string, object?>? parameters = null);
+        IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, object?>? parameters = null);
+        IGraphQlResult Build();
+        IComplexResolverBuilder IfType(string value, System.Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder);
     }
 
-    public interface IComplexResolverBuilder<out TContract, out TFinal> : IComplexResolverBuilder<TFinal>
+    public interface IComplexResolverBuilder<out TContract> : IComplexResolverBuilder
         where TContract : IGraphQlResolvable
     {
-        IComplexResolverBuilder<TContract, TFinal> Add(string displayName, Func<TContract, IGraphQlResult<object?>> resolve);
-        new IComplexResolverBuilder<TContract, TFinal> Add(string property, IDictionary<string, object?>? parameters = null);
-        new IComplexResolverBuilder<TContract, TFinal> Add(string displayName, string property, IDictionary<string, object?>? parameters = null);
+        IComplexResolverBuilder<TContract> Add(string displayName, Func<TContract, IGraphQlResult> resolve);
+        new IComplexResolverBuilder<TContract> Add(string property, IDictionary<string, object?>? parameters = null);
+        new IComplexResolverBuilder<TContract> Add(string displayName, string property, IDictionary<string, object?>? parameters = null);
     }
 }
