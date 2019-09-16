@@ -8,10 +8,6 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 {
     class Film : Interfaces.Film.GraphQlContract<Domain.Film>
     {
-        public Film(Domain.StarWarsContext starWarsContext)
-        {
-        }
-
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
             return Original.Resolve(film => new FilmCharactersConnectionFromFilm.ConnectionData(film, after, first, before, last)).Convertable().As<FilmCharactersConnectionFromFilm>();

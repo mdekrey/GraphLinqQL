@@ -78,8 +78,8 @@ namespace GraphQlResolver
                 var convert = Resolve.asQueryable.MakeGenericMethod(target.UntypedResolver.ReturnType);
 
                 var func = BuildListLambdaWithJoins(
-                    Expression.Lambda(Expression.Call(null, convert, Expression.Call(null, repeat, target.UntypedResolver.Body, Expression.Constant(1))), inputParameter), resultSelector, joins, actualModelType);
-                var resultFunc = Expression.Lambda(Expression.Call(null, single, func.Body), func.Parameters);
+                    Expression.Lambda(Expression.Call(convert, Expression.Call(repeat, target.UntypedResolver.Body, Expression.Constant(1))), inputParameter), resultSelector, joins, actualModelType);
+                var resultFunc = Expression.Lambda(Expression.Call(single, func.Body), func.Parameters);
 
                 return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
             }
