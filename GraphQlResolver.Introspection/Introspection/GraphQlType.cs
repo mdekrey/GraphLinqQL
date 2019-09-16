@@ -12,9 +12,7 @@ namespace GraphQlResolver.Introspection
         public GraphQlType(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            typeInformation = GraphQlJoin.Join<Type, IGraphQlTypeInformation>((originBase) => from t in originBase
-                                                                                              let typeInfo = serviceProvider.MaybeInstantiate(GraphQlJoin.FindOriginal(t))
-                                                                                              select GraphQlJoin.BuildPlaceholder(t, typeInfo));
+            typeInformation = GraphQlJoin.JoinSingle<Type, IGraphQlTypeInformation>((type) => serviceProvider.MaybeInstantiate(type)!);
         }
 
         private readonly GraphQlJoin<Type, IGraphQlTypeInformation> typeInformation; 

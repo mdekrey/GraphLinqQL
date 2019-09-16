@@ -14,9 +14,8 @@ namespace GraphQlResolver
                     .Where(m => m.GetParameters()[1].ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>))
                     .Single();
 
-        internal static T Replace<T, U>(this T body, U from, U with)
+        internal static T Replace<T>(this T body, Expression from, Expression with)
             where T : Expression
-            where U : Expression
         {
             return (T)new ReplaceConstantExpression(from, with).Visit(body);
         }
@@ -34,9 +33,19 @@ namespace GraphQlResolver
         public static Expression MergeJoin(this Expression newRoot, ParameterExpression joinPlaceholderParameter, IGraphQlJoin join, IDictionary<Expression, Expression> parameters)
         {
             System.Diagnostics.Debug.Assert(newRoot.Type == typeof(IQueryable<>).MakeGenericType(joinPlaceholderParameter.Type));
+            System.Diagnostics.Debug.Assert(joinPlaceholderParameter.Type == typeof(JoinPlaceholder<>).MakeGenericType(join.Conversion.Parameters[0].Type));
 
-            parameters[join.Placeholder] = join.GetAccessor(joinPlaceholderParameter);
-            return join.Convert(joinPlaceholderParameter).Replace(join.Root, with: newRoot);
+            var joinConstant = Expression.Constant(join);
+            var selectRemaining = join.Conversion.Body.Replace(join.Conversion.Parameters[0], with: Expression.Property(joinPlaceholderParameter, nameof(JoinPlaceholder<object>.Original)));
+
+            var addMethod = joinPlaceholderParameter.Type.GetMethod(nameof(JoinPlaceholder<object>.Add)).MakeGenericMethod(join.Conversion.ReturnType);
+            var getMethod = joinPlaceholderParameter.Type.GetMethod(nameof(JoinPlaceholder<object>.Get)).MakeGenericMethod(join.Conversion.ReturnType);
+            var selectMethod = GenericQueryableSelect.MakeGenericMethod(joinPlaceholderParameter.Type, joinPlaceholderParameter.Type);
+            var selectBody = Expression.Call(joinPlaceholderParameter, addMethod, joinConstant, selectRemaining);
+            var result = Expression.Call(selectMethod, newRoot, Expression.Quote(Expression.Lambda(selectBody, joinPlaceholderParameter)));
+
+            parameters[join.Placeholder] = Expression.Call(joinPlaceholderParameter, getMethod, joinConstant);
+            return result;
         }
 
         internal static MethodCallExpression CallQueryableSelect(Expression list, LambdaExpression selector)

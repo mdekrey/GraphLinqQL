@@ -6,18 +6,36 @@ using GraphQlResolver.StarWarsV4.Interfaces;
 
 namespace GraphQlResolver.StarWarsV4.Resolvers
 {
-    public class FilmCharactersConnectionFromFilm : Interfaces.FilmCharactersConnection.GraphQlContract<Domain.Film>
+    public class FilmCharactersConnectionFromFilm : Interfaces.FilmCharactersConnection.GraphQlContract<FilmCharactersConnectionFromFilm.ConnectionData>
     {
-        private readonly GraphQlJoin<Domain.Film, IEnumerable<Domain.Person>> charactersJoin;
-
-        public FilmCharactersConnectionFromFilm(Domain.StarWarsContext starWarsContext)
+        public class ConnectionData
         {
-            charactersJoin = GraphQlJoin.Join<Domain.Film, IEnumerable<Domain.Person>>((originBase) =>
-                from t in originBase
-                let characters = (from character in starWarsContext.FilmCharacters
-                                  where GraphQlJoin.FindOriginal(t).EpisodeId == character.EpisodeId
-                                  select character.Character).ToArray()
-                select GraphQlJoin.BuildPlaceholder(t, (IEnumerable<Domain.Person>)characters));
+            public readonly Domain.Film film;
+            public readonly string? after;
+            public readonly int? first;
+            public readonly string? before;
+            public readonly int? last;
+
+            public ConnectionData(Domain.Film film, string? after, int? first, string? before, int? last)
+            {
+                this.film = film;
+                this.after = after;
+                this.first = first;
+                this.before = before;
+                this.last = last;
+            }
+        }
+
+        private readonly GraphQlJoin<ConnectionData, IQueryable<Domain.Person>> charactersJoin;
+        private readonly Domain.StarWarsContext dbContext;
+
+        public FilmCharactersConnectionFromFilm(Domain.StarWarsContext dbContext)
+        {
+            charactersJoin = GraphQlJoin.JoinList<ConnectionData, Domain.Person>(film =>
+                from character in dbContext.FilmCharacters
+                where film.film.EpisodeId == character.EpisodeId
+                select character.Character);
+            this.dbContext = dbContext;
         }
 
         public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters() =>

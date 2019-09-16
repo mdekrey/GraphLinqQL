@@ -47,5 +47,18 @@ namespace GraphQlResolver
                 
             }
         }
+
+        [Fact] 
+        public void ExamineLetQuery()
+        {
+
+            using (var ctx = new EntityContext())
+            {
+                var temp = from a in ctx.A
+                           let b = ctx.B
+                           select new { a, b };
+
+            }
+        }
     }
 }

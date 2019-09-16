@@ -29,7 +29,7 @@ namespace GraphQlResolver
 #nullable restore
         }
 
-        public JoinPlaceholder<TOriginal, TNewValue> Add<TNewValue>(GraphQlJoin<TOriginal, TNewValue> join, TNewValue newValue)
+        public JoinPlaceholder<TOriginal> Add<TNewValue>(GraphQlJoin<TOriginal, TNewValue> join, TNewValue newValue)
         {
             return new JoinPlaceholder<TOriginal, TNewValue>(Original, Joins.Add(join, newValue));
         }

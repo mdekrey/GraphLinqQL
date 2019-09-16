@@ -21,10 +21,7 @@ namespace GraphQlResolver
     public interface IGraphQlJoin
     {
         ParameterExpression Placeholder { get; }
-        Expression Queryable { get; }
-        Expression Root { get; }
-        Expression Convert(ParameterExpression joinPlaceholderParameter);
-        Expression GetAccessor(ParameterExpression joinPlaceholderParameter);
+        LambdaExpression Conversion { get; }
     }
 
     public interface IGraphQlResultFactory { }

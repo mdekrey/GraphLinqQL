@@ -36,16 +36,21 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
     public class Hero : Interfaces.Hero.GraphQlContract<Domain.Hero>
     {
         private readonly GraphQlJoin<Domain.Hero, Domain.Reputation> reputation =
-            GraphQlJoin.Join<Domain.Hero, Domain.Reputation>((originBase) => from t in originBase
-                                                                             join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t).Id equals reputation.HeroId
-                                                                             select GraphQlJoin.BuildPlaceholder(t, reputation));
+            GraphQlJoin.JoinSingle<Domain.Hero, Domain.Reputation>(hero => Domain.Data.heroReputation.Where(rep => rep.HeroId == hero.Id).First());
+        //GraphQlJoin.Join<Domain.Hero, Domain.Reputation>((originBase) => from t in originBase
+        //                                                                 join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t).Id equals reputation.HeroId
+        //                                                                 select GraphQlJoin.BuildPlaceholder(t, reputation));
         private readonly GraphQlJoin<Domain.Hero, IEnumerable<Domain.Hero>> friends =
-            GraphQlJoin.Join<Domain.Hero, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
-                                                                                    let friends = (from friendId in Domain.Data.friends
-                                                                                                   where GraphQlJoin.FindOriginal(t).Id == friendId.Id1
-                                                                                                   join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
-                                                                                                   select friend)
-                                                                                    select GraphQlJoin.BuildPlaceholder(t, friends));
+            GraphQlJoin.JoinList<Domain.Hero, Domain.Hero>((original) => from friendId in Domain.Data.friends
+                                                                         where original.Id == friendId.Id1
+                                                                         join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
+                                                                         select friend);
+        //GraphQlJoin.Join<Domain.Hero, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
+        //                                                                        let friends = (from friendId in Domain.Data.friends
+        //                                                                                       where GraphQlJoin.FindOriginal(t).Id == friendId.Id1
+        //                                                                                       join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
+        //                                                                                       select friend)
+        //                                                                        select GraphQlJoin.BuildPlaceholder(t, friends));
 
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
@@ -64,20 +69,26 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
     public class HeroById : Interfaces.Hero.GraphQlContract<string>
     {
         private readonly GraphQlJoin<string, Domain.Hero> hero =
-            GraphQlJoin.Join<string, Domain.Hero>((originBase) => from t in originBase
-                                                                  join hero in Domain.Data.heroes on GraphQlJoin.FindOriginal(t) equals hero.Id
-                                                                  select GraphQlJoin.BuildPlaceholder(t, hero));
+            GraphQlJoin.JoinSingle<string, Domain.Hero>(id => Domain.Data.heroes.Single(hero => id == hero.Id));
+        //GraphQlJoin.Join<string, Domain.Hero>((originBase) => from t in originBase
+        //                                                      join hero in Domain.Data.heroes on GraphQlJoin.FindOriginal(t) equals hero.Id
+        //                                                      select GraphQlJoin.BuildPlaceholder(t, hero));
         private readonly GraphQlJoin<string, Domain.Reputation> reputation =
-            GraphQlJoin.Join<string, Domain.Reputation>((originBase) => from t in originBase
-                                                                        join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t) equals reputation.HeroId
-                                                                        select GraphQlJoin.BuildPlaceholder(t, reputation));
+            GraphQlJoin.JoinSingle<string, Domain.Reputation>(id => Domain.Data.heroReputation.Where(rep => rep.HeroId == id).First());
+        //GraphQlJoin.Join<string, Domain.Reputation>((originBase) => from t in originBase
+        //                                                                join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t) equals reputation.HeroId
+        //                                                                select GraphQlJoin.BuildPlaceholder(t, reputation));
         private readonly GraphQlJoin<string, IEnumerable<Domain.Hero>> friends =
-            GraphQlJoin.Join<string, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
-                                                                               let friends = (from friendId in Domain.Data.friends
-                                                                                              where GraphQlJoin.FindOriginal(t) == friendId.Id1
-                                                                                              join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
-                                                                                              select friend)
-                                                                               select GraphQlJoin.BuildPlaceholder(t, friends));
+            GraphQlJoin.JoinList<string, Domain.Hero>((id) => from friendId in Domain.Data.friends
+                                                              where id == friendId.Id1
+                                                              join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
+                                                              select friend);
+        //GraphQlJoin.Join<string, IEnumerable<Domain.Hero>>((originBase) => from t in originBase
+        //                                                                   let friends = (from friendId in Domain.Data.friends
+        //                                                                                  where GraphQlJoin.FindOriginal(t) == friendId.Id1
+        //                                                                                  join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
+        //                                                                                  select friend)
+        //                                                                   select GraphQlJoin.BuildPlaceholder(t, friends));
 
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);

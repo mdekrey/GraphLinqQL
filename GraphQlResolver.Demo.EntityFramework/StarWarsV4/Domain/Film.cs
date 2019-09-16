@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GraphQlResolver.StarWarsV4.Domain
 {
@@ -9,6 +10,6 @@ namespace GraphQlResolver.StarWarsV4.Domain
 
         public string Title { get; set; }
 
-        public IEnumerable<FilmCharacter> FilmCharacters { get; set; }
+        public IQueryable<FilmCharacter> FilmCharacters { get; set; }
     }
 }

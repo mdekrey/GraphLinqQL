@@ -141,7 +141,7 @@ namespace GraphQlResolver
             var parameters = new Dictionary<Expression, Expression>(joins.Count) { { originalParameter, originalParameter } };
             var rootParameter = originalParameter;
 
-            //if (joins.Count > 0)
+            if (joins.Count > 0)
             {
                 var placeholderType = typeof(JoinPlaceholder<>).MakeGenericType(actualModelType);
                 rootParameter = Expression.Parameter(placeholderType, "JoinPlaceholder " + modelType.FullName);
