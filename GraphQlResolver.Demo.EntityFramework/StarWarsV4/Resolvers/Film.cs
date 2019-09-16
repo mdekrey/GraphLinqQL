@@ -8,9 +8,18 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 {
     class Film : Interfaces.Film.GraphQlContract<Domain.Film>
     {
+        private readonly Domain.StarWarsContext dbContext;
+
+        public Film(Domain.StarWarsContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
-            return Original.Resolve(film => new FilmCharactersConnectionFromFilm.ConnectionData(film.EpisodeId, after, first, before, last)).Convertable().As<FilmCharactersConnectionFromFilm>();
+            return Original.Resolve(film => new FilmCharactersConnection.ConnectionData(from character in dbContext.FilmCharacters
+                                                                                        where film.EpisodeId == character.EpisodeId
+                                                                                        select character.Character, "cursor-data")).Convertable().As<FilmCharactersConnection>();
         }
 
         public override IGraphQlResult<string?> created()
