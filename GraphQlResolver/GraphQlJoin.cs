@@ -36,12 +36,5 @@ namespace GraphQlResolver
         {
             Conversion = conversion;
         }
-
-        public Expression GetAccessor(ParameterExpression joinPlaceholderParameter)
-        {
-            System.Diagnostics.Debug.Assert(joinPlaceholderParameter.Type == typeof(JoinPlaceholder<TFromDomain>));
-
-            return Expression.Call(joinPlaceholderParameter, getJoinValue, Expression.Constant(this));
-        }
     }
 }

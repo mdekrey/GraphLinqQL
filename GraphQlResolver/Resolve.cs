@@ -69,28 +69,19 @@ namespace GraphQlResolver
             {
                 var inputParameter = target.UntypedResolver.Parameters[0];
 
-                //if (joins.Count > 0)
-                {
-                    var actualModelType = typeof(TContract).GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).Single()
-                        .GetGenericArguments()[0];
+                var actualModelType = typeof(TContract).GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).Single()
+                    .GetGenericArguments()[0];
 
-                    var repeat = typeof(Enumerable).GetMethod(nameof(Enumerable.Repeat)).MakeGenericMethod(target.UntypedResolver.ReturnType);
-                    var single = typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Single) && m.GetParameters().Length == 1)
-                        .MakeGenericMethod(typeof(IDictionary<string, object>));
-                    var convert = Resolve.asQueryable.MakeGenericMethod(target.UntypedResolver.ReturnType);
+                var repeat = typeof(Enumerable).GetMethod(nameof(Enumerable.Repeat)).MakeGenericMethod(target.UntypedResolver.ReturnType);
+                var single = typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Single) && m.GetParameters().Length == 1)
+                    .MakeGenericMethod(typeof(IDictionary<string, object>));
+                var convert = Resolve.asQueryable.MakeGenericMethod(target.UntypedResolver.ReturnType);
 
-                    var func = BuildListLambdaWithJoins(
-                        Expression.Lambda(Expression.Call(null, convert, Expression.Call(null, repeat, target.UntypedResolver.Body, Expression.Constant(1))), inputParameter), resultSelector, joins, actualModelType);
-                    var resultFunc = Expression.Lambda(Expression.Call(null, single, func.Body), func.Parameters);
+                var func = BuildListLambdaWithJoins(
+                    Expression.Lambda(Expression.Call(null, convert, Expression.Call(null, repeat, target.UntypedResolver.Body, Expression.Constant(1))), inputParameter), resultSelector, joins, actualModelType);
+                var resultFunc = Expression.Lambda(Expression.Call(null, single, func.Body), func.Parameters);
 
-                    return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
-                }
-                //else
-                //{
-
-                //    var func = Expression.Lambda(resultSelector.Body.Replace(resultSelector.Parameters[0], with: target.UntypedResolver.Body), inputParameter);
-                //    return new GraphQlExpressionResult<IDictionary<string, object>>(func, target.ServiceProvider, target.Joins);
-                //}
+                return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
             }
         }
 
@@ -138,31 +129,17 @@ namespace GraphQlResolver
             }
 
             var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
-            var parameters = new Dictionary<Expression, Expression>(joins.Count) { { originalParameter, originalParameter } };
-            var rootParameter = originalParameter;
 
-            if (joins.Count > 0)
+            var next = resultSelector.Body.Replace(resultSelector.Parameters[0], originalParameter);
+            var last = next;
+            // TODO - could do this all simultaneously with a specialized visitor
+            do
             {
-                var placeholderType = typeof(JoinPlaceholder<>).MakeGenericType(actualModelType);
-                rootParameter = Expression.Parameter(placeholderType, "JoinPlaceholder " + modelType.FullName);
-                var originalConstructor = placeholderType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance).Where(c => c.GetParameters().Length == 1).Single();
-                getList = Expressions.CallQueryableSelect(getList, Expression.Lambda(Expression.New(originalConstructor, originalParameter), originalParameter));
-                parameters[originalParameter] = Expression.Property(rootParameter, nameof(JoinPlaceholder<object>.Original));
+                last = next;
+                next = joins.Aggregate(next, (current, join) => current.Replace(join.Placeholder, join.Conversion.Body.Replace(join.Conversion.Parameters[0], originalParameter)));
+            } while (last != next);
+            var mainBody = Expression.Lambda(next, originalParameter);
 
-                // TODO - could do this all simultaneously with a specialized visitor
-                foreach (var join in joins)
-                {
-                    getList = getList.MergeJoin(rootParameter, join, parameters);
-                }
-            }
-
-            var mainBody = Expression.Lambda(
-                parameters.Aggregate(
-                    resultSelector.Body.Replace(resultSelector.Parameters[0], parameters[originalParameter]),
-                    (e, parameters) => e.Replace(parameters.Key, parameters.Value)
-                ),
-                rootParameter
-            );
             var selected = Expressions.CallQueryableSelect(getList, mainBody);
             var returnResult = Expression.TryCatch(selected, Expression.Catch(Expression.Parameter(typeof(Exception)), Expression.Constant(null, selected.Type)));
 

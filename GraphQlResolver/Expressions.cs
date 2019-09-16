@@ -30,24 +30,6 @@ namespace GraphQlResolver
             return Expression.Lambda<Func<TInput, object>>(Expression.Convert(expression.Body, typeof(object)), expression.Parameters);
         }
 
-        public static Expression MergeJoin(this Expression newRoot, ParameterExpression joinPlaceholderParameter, IGraphQlJoin join, IDictionary<Expression, Expression> parameters)
-        {
-            System.Diagnostics.Debug.Assert(newRoot.Type == typeof(IQueryable<>).MakeGenericType(joinPlaceholderParameter.Type));
-            System.Diagnostics.Debug.Assert(joinPlaceholderParameter.Type == typeof(JoinPlaceholder<>).MakeGenericType(join.Conversion.Parameters[0].Type));
-
-            var joinConstant = Expression.Constant(join);
-            var selectRemaining = join.Conversion.Body.Replace(join.Conversion.Parameters[0], with: Expression.Property(joinPlaceholderParameter, nameof(JoinPlaceholder<object>.Original)));
-
-            var addMethod = joinPlaceholderParameter.Type.GetMethod(nameof(JoinPlaceholder<object>.Add)).MakeGenericMethod(join.Conversion.ReturnType);
-            var getMethod = joinPlaceholderParameter.Type.GetMethod(nameof(JoinPlaceholder<object>.Get)).MakeGenericMethod(join.Conversion.ReturnType);
-            var selectMethod = GenericQueryableSelect.MakeGenericMethod(joinPlaceholderParameter.Type, joinPlaceholderParameter.Type);
-            var selectBody = Expression.Call(joinPlaceholderParameter, addMethod, joinConstant, selectRemaining);
-            var result = Expression.Call(selectMethod, newRoot, Expression.Quote(Expression.Lambda(selectBody, joinPlaceholderParameter)));
-
-            parameters[join.Placeholder] = Expression.Call(joinPlaceholderParameter, getMethod, joinConstant);
-            return result;
-        }
-
         internal static MethodCallExpression CallQueryableSelect(Expression list, LambdaExpression selector)
         {
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });

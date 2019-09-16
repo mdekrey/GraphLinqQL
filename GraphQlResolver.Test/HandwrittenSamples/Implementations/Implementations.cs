@@ -41,7 +41,7 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         //                                                                 join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t).Id equals reputation.HeroId
         //                                                                 select GraphQlJoin.BuildPlaceholder(t, reputation));
         private readonly GraphQlJoin<Domain.Hero, IEnumerable<Domain.Hero>> friends =
-            GraphQlJoin.JoinList<Domain.Hero, Domain.Hero>((original) => from friendId in Domain.Data.friends
+            GraphQlJoin.JoinSingle<Domain.Hero, IEnumerable<Domain.Hero>>((original) => from friendId in Domain.Data.friends
                                                                          where original.Id == friendId.Id1
                                                                          join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
                                                                          select friend);
@@ -79,7 +79,7 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         //                                                                join reputation in Domain.Data.heroReputation on GraphQlJoin.FindOriginal(t) equals reputation.HeroId
         //                                                                select GraphQlJoin.BuildPlaceholder(t, reputation));
         private readonly GraphQlJoin<string, IEnumerable<Domain.Hero>> friends =
-            GraphQlJoin.JoinList<string, Domain.Hero>((id) => from friendId in Domain.Data.friends
+            GraphQlJoin.JoinSingle<string, IEnumerable<Domain.Hero>>((id) => from friendId in Domain.Data.friends
                                                               where id == friendId.Id1
                                                               join friend in Domain.Data.heroes on friendId.Id2 equals friend.Id
                                                               select friend);
