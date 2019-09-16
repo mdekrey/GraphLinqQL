@@ -19,7 +19,6 @@ namespace GraphQlResolver
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
             var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As(t).ResolveComplex());
             var expression = resolved?.ResolveExpression<GraphQlRoot>();
-            // TODO - check for JOINs
             var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
             return queryable.Single();
         }
@@ -130,17 +129,10 @@ namespace GraphQlResolver
 
             var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
 
-            var next = resultSelector.Body.Replace(resultSelector.Parameters[0], originalParameter);
-            var last = next;
-            // TODO - could do this all simultaneously with a specialized visitor
-            do
-            {
-                last = next;
-                next = joins.Aggregate(next, (current, join) => current.Replace(join.Placeholder, join.Conversion.Body.Replace(join.Conversion.Parameters[0], originalParameter)));
-            } while (last != next);
-            var mainBody = Expression.Lambda(next, originalParameter);
-
-            var selected = Expressions.CallQueryableSelect(getList, mainBody);
+            var mainBody = resultSelector.Body.Replace(resultSelector.Parameters[0], originalParameter)
+                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Body.Replace(join.Conversion.Parameters[0], originalParameter)));
+            var mainSelector = Expression.Lambda(mainBody, originalParameter);
+            var selected = Expressions.CallQueryableSelect(getList, mainSelector);
             var returnResult = Expression.TryCatch(selected, Expression.Catch(Expression.Parameter(typeof(Exception)), Expression.Constant(null, selected.Type)));
 
             var func = Expression.Lambda(returnResult, inputParameter);

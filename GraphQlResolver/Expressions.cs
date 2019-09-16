@@ -17,7 +17,13 @@ namespace GraphQlResolver
         internal static T Replace<T>(this T body, Expression from, Expression with)
             where T : Expression
         {
-            return (T)new ReplaceConstantExpression(from, with).Visit(body);
+            return body.Replace(new Dictionary<Expression, Expression> { { from, with } });
+        }
+
+        internal static T Replace<T>(this T body, IDictionary<Expression, Expression> replacements)
+            where T : Expression
+        {
+            return (T)new ReplaceConstantExpressions(replacements).Visit(body);
         }
 
 
