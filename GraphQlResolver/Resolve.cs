@@ -119,10 +119,14 @@ namespace GraphQlResolver
                 var getList = target.UntypedResolver.Body;
                 if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
                 {
-                    getList = Expression.Call(Resolve.asQueryable.MakeGenericMethod(modelType), getList);
+                    var selected = Expression.Call(Resolve.asQueryable.MakeGenericMethod(mainBody.ReturnType), Expressions.CallEnumerableSelect(getList, mainBody));
+                    return Expressions.IfNotNull(target.UntypedResolver.Body, selected);
                 }
-                var selected = Expressions.CallQueryableSelect(getList, mainBody);
-                return Expressions.IfNotNull(target.UntypedResolver.Body, selected);
+                else
+                {
+                    var selected = Expressions.CallQueryableSelect(getList, mainBody);
+                    return selected;
+                }
             }
 
             return ToResult;

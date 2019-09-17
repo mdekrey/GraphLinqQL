@@ -13,6 +13,11 @@ namespace GraphQlResolver
                     // 2nd parameter should be Expression<Func<,>>
                     .Where(m => m.GetParameters()[1].ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>))
                     .Single();
+        private static readonly MethodInfo GenericEnumerableSelect = typeof(System.Linq.Enumerable).GetMethods()
+                    .Where(m => m.Name == nameof(System.Linq.Enumerable.Select))
+                    // 2nd parameter should be Func<,>
+                    .Where(m => m.GetParameters()[1].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>))
+                    .Single();
 
         internal static T Replace<T>(this T body, Expression from, Expression with)
             where T : Expression
@@ -40,6 +45,12 @@ namespace GraphQlResolver
         {
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
             return Expression.Call(queryableSelect, list, Expression.Quote(selector));
+        }
+
+        internal static MethodCallExpression CallEnumerableSelect(Expression list, LambdaExpression selector)
+        {
+            var enumerableSelect = GenericEnumerableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
+            return Expression.Call(enumerableSelect, list, selector);
         }
 
         internal static Expression IfNotNull(this Expression maybeNull, Expression whenNotNull)
