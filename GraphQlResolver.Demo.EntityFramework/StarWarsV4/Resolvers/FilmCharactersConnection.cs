@@ -6,22 +6,10 @@ using GraphQlResolver.StarWarsV4.Interfaces;
 
 namespace GraphQlResolver.StarWarsV4.Resolvers
 {
-    public class FilmCharactersConnection : Interfaces.FilmCharactersConnection.GraphQlContract<FilmCharactersConnection.ConnectionData>
+    public class FilmCharactersConnection : Interfaces.FilmCharactersConnection.GraphQlContract<IQueryable<Domain.FilmCharacter>>
     {
-        public class ConnectionData
-        {
-            public ConnectionData(IQueryable<Domain.Person> people, string cursorData)
-            {
-                People = people;
-                CursorData = cursorData;
-            }
-
-            public IQueryable<Domain.Person> People { get; }
-            public string CursorData { get; }
-        }
-
         public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters() =>
-            Original.Resolve((fc) => fc.People).ConvertableList().As<Person>();
+            Original.Resolve((c) => c.Select(fc => fc.Character)).ConvertableList().As<Person>();
 
         public override IGraphQlResult<IEnumerable<Interfaces.FilmCharactersEdge?>?> edges()
         {
@@ -34,7 +22,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
         }
 
         public override IGraphQlResult<int?> totalCount() =>
-            Original.Resolve((fc) => (int?)fc.People.Count());
+            Original.Resolve((c) => (int?)c.Count());
 
     }
 }

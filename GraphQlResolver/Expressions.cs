@@ -41,5 +41,10 @@ namespace GraphQlResolver
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
             return Expression.Call(queryableSelect, list, Expression.Quote(selector));
         }
+
+        internal static Expression SafeNull(Expression maybeNull, Expression whenNotNull)
+        {
+            return Expression.Condition(Expression.ReferenceEqual(maybeNull, Expression.Constant(null)), Expression.Constant(null, whenNotNull.Type), whenNotNull);
+        }
     }
 }

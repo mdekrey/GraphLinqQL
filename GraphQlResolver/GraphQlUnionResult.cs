@@ -22,6 +22,8 @@ namespace GraphQlResolver
 
         public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
+        public LambdaExpression Finalizer => throw new InvalidOperationException();
+
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 
         public Type ResultType => typeof(T);

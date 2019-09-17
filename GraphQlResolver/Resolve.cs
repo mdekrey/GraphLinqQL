@@ -54,32 +54,16 @@ namespace GraphQlResolver
         public static IComplexResolverBuilder<TContract> ResolveComplex<TContract>(this IGraphQlResult<TContract> target)
             where TContract : IGraphQlResolvable
         {
-            var actualContractType = target.GetType().GetGenericArguments()[0];
+            var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
             
-            GetContract<TContract>(target, actualContractType, target.UntypedResolver.ReturnType, out var resolver, out var modelType);
+            GetContract<TContract>(target, actualContractType, out var resolver, out var modelType);
 
             return new ComplexResolverBuilder<TContract>(
                 resolver,
-                ToResult,
+                GetResultConverter(target),
                 modelType
             );
 
-            IGraphQlResult<IDictionary<string, object>> ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
-            {
-                var inputParameter = target.UntypedResolver.Parameters[0];
-
-                var actualModelType = typeof(TContract).GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).Single()
-                    .GetGenericArguments()[0];
-
-                var mainBody = BuildJoinedSelector(resultSelector, joins, target.UntypedResolver.ReturnType);
-                var resultBody = IsSimple(target.UntypedResolver.Body)
-                    ? mainBody.Body.Replace(mainBody.Parameters[0], target.UntypedResolver.Body)
-                    : Expression.Invoke(Expression.Quote(mainBody), target.UntypedResolver.Body);
-
-                var resultFunc = Expression.Lambda(resultBody, target.UntypedResolver.Parameters);
-
-                return new GraphQlExpressionResult<IDictionary<string, object>>(resultFunc, target.ServiceProvider, target.Joins);
-            }
         }
 
         public static IComplexResolverBuilder<TContract> ResolveComplex<TContract>(this IGraphQlResult<IEnumerable<TContract>> target)
@@ -87,53 +71,66 @@ namespace GraphQlResolver
         {
             if (target is IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult)
             {
-                if (!typeof(IGraphQlResolvable).IsAssignableFrom(typeof(TContract)))
-                {
-                    throw new InvalidOperationException($"Union types can only handle {typeof(IGraphQlResolvable).FullName}");
-                }
                 return new UnionResolverBuilder<TContract>(unionResult);
             }
             var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
-            var actualModelType = TypeSystem.GetElementType(target.UntypedResolver.ReturnType);
-            GetContract<TContract>(target, actualContractType, actualModelType, out var resolver, out var modelType);
+            GetContract<TContract>(target, actualContractType, out var resolver, out var modelType);
 
             return new ComplexResolverBuilder<TContract>(
                 resolver,
-                ToListResult,
+                GetResultConverter(target),
                 modelType
             );
+        }
 
-            IGraphQlResult<IEnumerable<IDictionary<string, object>>> ToListResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
+        private static Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> GetResultConverter(IGraphQlResult target)
+        {
+            IGraphQlResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
             {
-                var func = BuildListLambdaWithJoins(target.UntypedResolver, resultSelector, joins);
+                //resultSelector.Parameters[0].Type == target.UntypedResolver.ReturnType
+                var isList = !resultSelector.Parameters[0].Type.IsAssignableFrom(target.UntypedResolver.ReturnType)
+                    && resultSelector.Parameters[0].Type == TypeSystem.GetElementType(target.UntypedResolver.ReturnType);
+                var modelType = isList ? TypeSystem.GetElementType(target.UntypedResolver.ReturnType)
+                    : target.UntypedResolver.ReturnType;
+                var mainBody = BuildJoinedSelector(resultSelector, joins, isList ? TypeSystem.GetElementType(modelType) : modelType);
 
-                return new GraphQlExpressionResult<IEnumerable<IDictionary<string, object>>>(func, target.ServiceProvider, target.Joins);
+                var returnResult = isList
+                        ? GetListReturnResult(modelType, mainBody)
+                    : IsSimple(target.UntypedResolver.Body)
+                        ? mainBody.Body.Replace(mainBody.Parameters[0], target.UntypedResolver.Body)
+                    : Expression.Invoke(Expression.Quote(mainBody), target.UntypedResolver.Body);
+
+                if (target.Finalizer != null)
+                {
+                    if (!target.Finalizer.Parameters[0].Type.IsAssignableFrom(returnResult.Type))
+                    {
+                        throw new InvalidOperationException($"Unable to finalize - expected '{target.Finalizer.Parameters[0].Type.FullName}' but got '{returnResult.Type.FullName}'");
+                    }
+                    returnResult = target.Finalizer.Body.Replace(target.Finalizer.Parameters[0], returnResult);
+                }
+
+                var resultFunc = Expression.Lambda(returnResult, target.UntypedResolver.Parameters);
+                return new GraphQlExpressionResult<object>(resultFunc, target.ServiceProvider, target.Joins);
             }
 
+            Expression GetListReturnResult(Type modelType, LambdaExpression mainBody)
+            {
+                var getList = target.UntypedResolver.Body;
+                if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
+                {
+                    getList = Expression.Call(Resolve.asQueryable.MakeGenericMethod(modelType), getList);
+                }
+                var selected = Expressions.CallQueryableSelect(getList, mainBody);
+                return Expressions.SafeNull(target.UntypedResolver.Body, selected);
+            }
+
+            return ToResult;
         }
 
         private static bool IsSimple(Expression body)
         {
             // TODO - we could probably make this nicer, but it doesn't seem to matter
-            return false;
-        }
-
-        private static LambdaExpression BuildListLambdaWithJoins(LambdaExpression targetQueryable, LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
-        {
-            var inputParameter = targetQueryable.Parameters[0];
-            var getList = targetQueryable.Body;
-            var modelType = TypeSystem.GetElementType(getList.Type);
-
-            if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
-            {
-                getList = Expression.Call(Resolve.asQueryable.MakeGenericMethod(modelType), getList);
-            }
-            var mainSelector = BuildJoinedSelector(resultSelector, joins, modelType);
-            var selected = Expressions.CallQueryableSelect(getList, mainSelector);
-            var returnResult = TryOrNull(selected);
-
-            var func = Expression.Lambda(returnResult, inputParameter);
-            return func;
+            return body.NodeType == ExpressionType.Parameter || typeof(IQueryable).IsAssignableFrom(body.Type);
         }
 
         private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
@@ -146,13 +143,10 @@ namespace GraphQlResolver
             return mainSelector;
         }
 
-        private static Expression TryOrNull(Expression mainBody)
+        private static void GetContract<TContract>(IGraphQlResult target, Type actualContractType, out TContract resolver, out Type modelType) where TContract : IGraphQlResolvable
         {
-            return Expression.TryCatch(mainBody, Expression.Catch(Expression.Parameter(typeof(Exception)), Expression.Constant(null, mainBody.Type)));
-        }
+            var actualModelType = target.UntypedResolver.ReturnType;
 
-        private static void GetContract<TContract>(IGraphQlResult target, Type actualContractType, Type actualModelType, out TContract resolver, out Type modelType) where TContract : IGraphQlResolvable
-        {
             resolver = (TContract)ActivatorUtilities.GetServiceOrCreateInstance(target.ServiceProvider, actualContractType);
             var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
@@ -160,7 +154,7 @@ namespace GraphQlResolver
                 throw new ArgumentException("Contract does not accept an input type");
             }
             modelType = accepts.ModelType;
-            if (modelType != actualModelType)
+            if (!modelType.IsAssignableFrom(actualModelType) && !modelType.IsAssignableFrom(TypeSystem.GetElementType(actualModelType)))
             {
                 throw new ArgumentException("Contract not valid for incoming model");
             }
@@ -244,9 +238,9 @@ namespace GraphQlResolver
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
                 new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider, target.Joins);
 
-            public IGraphQlResult<TContract> As<TContract>(Expression<Func<IQueryable<TModel>, TModel>> finalizer)
+            public IGraphQlResult<TContract> As<TContract>(Expression<Func<IQueryable<object>, object>> finalizer)
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins); // TODO - finalizer
+                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins, finalizer);
         }
     }
 }

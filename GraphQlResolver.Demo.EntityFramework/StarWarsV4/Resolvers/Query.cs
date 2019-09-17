@@ -50,7 +50,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
         public override IGraphQlResult<Interfaces.Film?> film(string? id, string? filmID)
         {
             var episodeId = int.Parse(id ?? filmID!);
-            return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId).FirstOrDefault()).Convertable().As<Film>();
+            return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId)).ConvertableList().As<Film>(f => f.FirstOrDefault());
         }
 
         public override IGraphQlResult<Node?> node(string id)

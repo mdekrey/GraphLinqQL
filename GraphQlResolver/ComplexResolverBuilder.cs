@@ -56,6 +56,7 @@ namespace GraphQlResolver
                 .Add(displayName, resolve(contract)), modelType);
         }
 
+        private const bool PerformNullCheck = true;
         public IGraphQlResult Build()
         {
             var modelParameter = Expression.Parameter(modelType, "ComplexResolverBuilder " + modelType.FullName);
@@ -68,7 +69,9 @@ namespace GraphQlResolver
                 var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
             })), typeof(IDictionary<string, object>));
-            var returnResult = Expression.Condition(Expression.ReferenceEqual(modelParameter, Expression.Constant(null)), Expression.Constant(null, typeof(IDictionary<string, object>)), resultDictionary);
+            var returnResult = PerformNullCheck
+                ? Expressions.SafeNull(modelParameter, resultDictionary)
+                : resultDictionary;
             var func = Expression.Lambda(returnResult, modelParameter);
 
             return resolve(func, allJoins);

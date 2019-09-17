@@ -13,6 +13,8 @@ namespace GraphQlResolver
 
         public LambdaExpression UntypedResolver { get; }
 
+        public LambdaExpression? Finalizer => null;
+
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 
         public GraphQlConstantResult(TReturnType result)
@@ -30,16 +32,23 @@ namespace GraphQlResolver
 
         public LambdaExpression UntypedResolver { get; }
 
+        public LambdaExpression? Finalizer { get; }
+
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider)
             : this(func, serviceProvider, ImmutableHashSet<IGraphQlJoin>.Empty) { }
 
         public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins)
+            : this(func, serviceProvider, joins, null)
+        { }
+
+        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins, LambdaExpression? finalizer)
         {
             this.UntypedResolver = func;
             this.ServiceProvider = serviceProvider;
             this.Joins = joins;
+            this.Finalizer = finalizer;
         }
 
         public static GraphQlExpressionResult<TReturnType> Construct<TInput>(Expression<Func<TInput, TReturnType>> func, IServiceProvider serviceProvider)
