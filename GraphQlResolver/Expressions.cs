@@ -38,7 +38,8 @@ namespace GraphQlResolver
             {
                 throw new InvalidOperationException($"Expected single input parameter of type {typeof(TInput).FullName}, got {string.Join(", ", expression.Parameters.Select(p => p.Type.FullName))}");
             }
-            return Expression.Lambda<Func<TInput, object>>(Expression.Convert(expression.Body, typeof(object)), expression.Parameters);
+            
+            return Expression.Lambda<Func<TInput, object>>(expression.Body.Type.IsValueType ? Expression.Convert(expression.Body, typeof(object)) : expression.Body, expression.Parameters);
         }
 
         internal static MethodCallExpression CallQueryableSelect(Expression list, LambdaExpression selector)

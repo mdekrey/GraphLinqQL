@@ -17,9 +17,9 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
             dbContext.Database.EnsureCreated();
         }
 
-        public override IGraphQlResult<FilmsConnection?> allFilms(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<Interfaces.FilmsConnection?> allFilms(string? after, int? first, string? before, int? last)
         {
-            throw new NotImplementedException();
+            return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films).Convertable().As<FilmsConnection>();
         }
 
         public override IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last)

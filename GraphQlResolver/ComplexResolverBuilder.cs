@@ -67,6 +67,11 @@ namespace GraphQlResolver
             {
                 var inputResolver = result.Value.UntypedResolver;
                 var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
+                if (typeof(IEnumerable<object>).IsAssignableFrom(inputResolver.Body.Type) && !typeof(System.Collections.IDictionary).IsAssignableFrom(inputResolver.Body.Type))
+                {
+                    var param = Expression.Parameter(typeof(object));
+                    resolveBody = resolveBody.IfNotNull(Expressions.CallEnumerableSelect(resolveBody, Expression.Lambda(param, param)));
+                }
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
             })), typeof(IDictionary<string, object>));
             var returnResult = PerformNullCheck
