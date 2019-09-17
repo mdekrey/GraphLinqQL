@@ -14,11 +14,16 @@ namespace GraphQlResolver
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
+        private static readonly IReadOnlyList<MethodInfo> complexResolvers = (from method in typeof(Resolve).GetMethods()
+                                                                              where method.Name == nameof(ResolveComplex) && method.IsGenericMethodDefinition
+                                                                              select method).ToArray();
+
         public static object GraphQlRoot(this IServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
             var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As(t).ResolveComplex());
-            var expression = resolved?.ResolveExpression<GraphQlRoot>();
+            var expression = resolved?.ResolveExpression<GraphQlRoot>()!;
+            expression = expression.CollapseDoubleSelect();
             var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
             return queryable.Single();
         }
@@ -32,10 +37,6 @@ namespace GraphQlResolver
             var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
             return queryable.Single();
         }
-
-        private static readonly IReadOnlyList<MethodInfo> complexResolvers = (from method in typeof(Resolve).GetMethods()
-                                                                              where method.Name == nameof(ResolveComplex) && method.IsGenericMethodDefinition
-                                                                              select method).ToArray();
 
         public static IComplexResolverBuilder ResolveComplex(this IGraphQlResult target)
         {
@@ -121,7 +122,7 @@ namespace GraphQlResolver
                     getList = Expression.Call(Resolve.asQueryable.MakeGenericMethod(modelType), getList);
                 }
                 var selected = Expressions.CallQueryableSelect(getList, mainBody);
-                return Expressions.SafeNull(target.UntypedResolver.Body, selected);
+                return Expressions.IfNotNull(target.UntypedResolver.Body, selected);
             }
 
             return ToResult;

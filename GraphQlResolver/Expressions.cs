@@ -42,9 +42,37 @@ namespace GraphQlResolver
             return Expression.Call(queryableSelect, list, Expression.Quote(selector));
         }
 
-        internal static Expression SafeNull(Expression maybeNull, Expression whenNotNull)
+        internal static Expression IfNotNull(this Expression maybeNull, Expression whenNotNull)
         {
             return Expression.Condition(Expression.ReferenceEqual(maybeNull, Expression.Constant(null)), Expression.Constant(null, whenNotNull.Type), whenNotNull);
+        }
+
+        internal static T CollapseDoubleSelect<T>(this T original)
+            where T : Expression
+        {
+            return (T)new CollapseDoubleSelectVisitor().Visit(original);
+        }
+
+        class CollapseDoubleSelectVisitor : ExpressionVisitor
+        {
+            protected override Expression VisitMethodCall(MethodCallExpression node)
+            {
+                bool IsQueryableSelect(MethodCallExpression mce) =>
+                    mce.Method.IsGenericMethod && mce.Method.GetGenericMethodDefinition() == GenericQueryableSelect;
+
+                if (IsQueryableSelect(node) && node.Arguments[0] is MethodCallExpression innerNode && IsQueryableSelect(innerNode))
+                {
+                    var outerLambda = (LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand;
+                    var innerLambda = (LambdaExpression)((UnaryExpression)innerNode.Arguments[1]).Operand;
+
+                    return base.VisitMethodCall(Expression.Call(
+                        GenericQueryableSelect.MakeGenericMethod(innerNode.Method.GetGenericArguments()[0], node.Method.GetGenericArguments()[1]),
+                        innerNode.Arguments[0],
+                        Expression.Quote(Expression.Lambda(outerLambda.Body.Replace(outerLambda.Parameters[0], innerLambda.Body), innerLambda.Parameters))
+                    ));
+                }
+                return base.VisitMethodCall(node);
+            }
         }
     }
 }

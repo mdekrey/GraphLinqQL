@@ -70,7 +70,7 @@ namespace GraphQlResolver
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
             })), typeof(IDictionary<string, object>));
             var returnResult = PerformNullCheck
-                ? Expressions.SafeNull(modelParameter, resultDictionary)
+                ? Expressions.IfNotNull(modelParameter, resultDictionary)
                 : resultDictionary;
             var func = Expression.Lambda(returnResult, modelParameter);
 
