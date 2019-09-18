@@ -177,8 +177,8 @@ namespace GraphQlResolver
             //   }
             //   rand
             // }
-            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.Add("heroes", q => q.Heroes().ResolveComplex().Add("id").Add("name").Build())
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex().Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
 
@@ -202,12 +202,12 @@ namespace GraphQlResolver
             //   }
             // }
 
-            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.Add("heroes", q => q.Heroes().ResolveComplex()
-                                                  .Add("id")
-                                                  .Add("name")
-                                                  .Add("friends", hero => hero.Friends().ResolveComplex().Add("id").Add("name").Build())
-                                                  .Build())
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex()
+                                                                .Add("id")
+                                                                .Add("name")
+                                                                .Add("friends", hero => hero.ResolveQuery("friends").ResolveComplex().Add("id").Add("name").Build())
+                                                                .Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -228,13 +228,13 @@ namespace GraphQlResolver
             //   }
             // }
 
-            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.Add("heroes", q => q.Heroes().ResolveComplex()
-                                                  .Add("id")
-                                                  .Add("name")
-                                                  .Add("renown")
-                                                  .Add("faction")
-                                                  .Build())
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex()
+                                                                .Add("id")
+                                                                .Add("name")
+                                                                .Add("renown")
+                                                                .Add("faction")
+                                                                .Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -255,13 +255,13 @@ namespace GraphQlResolver
             //   }
             // }
 
-            var result = new SimpleServiceProvider().GraphQlRoot<Implementations.Query>(root =>
-                root.Add("heroes", q => q.Heroes().ResolveComplex()
-                                                  .Add("id")
-                                                  .Add("name")
-                                                  .Add("location")
-                                                  .Add("oldLocation", "location", new Dictionary<string, object?> { { "date", "2008-05-02" } })
-                                                  .Build())
+            var result = new SimpleServiceProvider().GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex()
+                                                                .Add("id")
+                                                                .Add("name")
+                                                                .Add("location")
+                                                                .Add("oldLocation", "location", new Dictionary<string, object?> { { "date", "2008-05-02" } })
+                                                                .Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);

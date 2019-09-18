@@ -14,10 +14,6 @@ namespace GraphQlResolver
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        private static readonly IReadOnlyList<MethodInfo> complexResolvers = (from method in typeof(Resolve).GetMethods()
-                                                                              where method.Name == nameof(ResolveComplex) && method.IsGenericMethodDefinition
-                                                                              select method).ToArray();
-
         public static object GraphQlRoot(this IServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
@@ -28,61 +24,20 @@ namespace GraphQlResolver
             return queryable.Single();
         }
 
-        public static object GraphQlRoot<T>(this IServiceProvider serviceProvider, Func<IComplexResolverBuilder<T>, IGraphQlResult> resolver)
-            where T : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
-        {
-            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
-            var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As<T>().ResolveComplex());
-            var expression = resolved?.ResolveExpression<GraphQlRoot>();
-            var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
-            return queryable.Single();
-        }
-
         public static IComplexResolverBuilder ResolveComplex(this IGraphQlResult target)
         {
             var paramType = target.GetType();
             var resultType = paramType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlResult<>)).Select(iface => iface.GetGenericArguments()[0]).First();
             var contractType = TypeSystem.GetElementType(resultType) ?? resultType;
 
-            if (typeof(IGraphQlResolvable).IsAssignableFrom(contractType))
-            {
-                var method = complexResolvers.Select(m => m.MakeGenericMethod(contractType)).First(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(paramType));
-                return (IComplexResolverBuilder)method.Invoke(null, new[] { target });
-            }
-            throw new ArgumentException("Not a resolvable complex type", nameof(target));
-        }
-
-        public static IComplexResolverBuilder<TContract> ResolveComplex<TContract>(this IGraphQlResult<TContract> target)
-            where TContract : IGraphQlResolvable
-        {
-            var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
-            
-            GetContract<TContract>(target, actualContractType, out var resolver, out var modelType);
-
-            return new ComplexResolverBuilder<TContract>(
-                resolver,
-                GetResultConverter(target),
-                modelType
-            );
-
-        }
-
-        public static IComplexResolverBuilder<TContract> ResolveComplex<TContract>(this IGraphQlResult<IEnumerable<TContract>> target)
-            where TContract : IGraphQlResolvable
-        {
             if (target is IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult)
             {
-                return new UnionResolverBuilder<TContract>(unionResult);
+                return new UnionResolverBuilder(unionResult);
             }
             var actualContractType = TypeSystem.GetElementType(target.GetType().GetGenericArguments()[0]);
-            GetContract<TContract>(target, actualContractType, out var resolver, out var modelType);
-
-            return new ComplexResolverBuilder<TContract>(
-                resolver,
-                GetResultConverter(target),
-                modelType
-            );
+            return GetContract(target, actualContractType);
         }
+
 
         private static Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> GetResultConverter(IGraphQlResult target)
         {
@@ -148,22 +103,28 @@ namespace GraphQlResolver
             return mainSelector;
         }
 
-        private static void GetContract<TContract>(IGraphQlResult target, Type actualContractType, out TContract resolver, out Type modelType) where TContract : IGraphQlResolvable
+        private static ComplexResolverBuilder GetContract(IGraphQlResult target, Type actualContractType)
         {
             var actualModelType = target.UntypedResolver.ReturnType;
 
-            resolver = (TContract)ActivatorUtilities.GetServiceOrCreateInstance(target.ServiceProvider, actualContractType);
+            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(target.ServiceProvider, actualContractType);
             var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
             {
                 throw new ArgumentException("Contract does not accept an input type");
             }
-            modelType = accepts.ModelType;
+            var modelType = accepts.ModelType;
             if (!modelType.IsAssignableFrom(actualModelType) && !modelType.IsAssignableFrom(TypeSystem.GetElementType(actualModelType)))
             {
                 throw new ArgumentException("Contract not valid for incoming model");
             }
             accepts.Original = (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), target.ServiceProvider);
+
+            return new ComplexResolverBuilder(
+                resolver,
+                GetResultConverter(target),
+                modelType
+            );
         }
 
         public static Expression<Func<TInput, object>> ResolveExpression<TInput>(this IGraphQlResult result)
@@ -247,5 +208,8 @@ namespace GraphQlResolver
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
                 new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins, finalizer);
         }
+
+        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
+            target.ResolveQuery(name, ImmutableDictionary<string, object?>.Empty);
     }
 }

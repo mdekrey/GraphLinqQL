@@ -7,8 +7,7 @@ using System.Reflection;
 
 namespace GraphQlResolver
 {
-    internal class UnionResolverBuilder<TContract> : IComplexResolverBuilder<TContract>
-        where TContract : IGraphQlResolvable
+    internal class UnionResolverBuilder : IComplexResolverBuilder
     {
 
         private static readonly MethodInfo QueryableUnion = typeof(System.Linq.Queryable).GetMethods()
@@ -29,24 +28,9 @@ namespace GraphQlResolver
             this.resolvers = resolvers.ToImmutableList();
         }
 
-        public IComplexResolverBuilder<TContract> Add(string displayName, Func<TContract, IGraphQlResult> resolve)
-        {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(displayName, r => resolve((TContract)r))));
-        }
-
-        public IComplexResolverBuilder<TContract> Add(string property, IDictionary<string, object?>? parameters = null)
-        {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(property, parameters)));
-        }
-
-        public IComplexResolverBuilder<TContract> Add(string displayName, string property, IDictionary<string, object?>? parameters = null)
-        {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(displayName, property, parameters)));
-        }
-
         public IComplexResolverBuilder Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(displayName, resolve)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(displayName, resolve)));
         }
 
         public IGraphQlResult Build()
@@ -60,17 +44,17 @@ namespace GraphQlResolver
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)
         {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.IfType(value, typedBuilder)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.IfType(value, typedBuilder)));
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string property, IDictionary<string, object?>? parameters)
+        public IComplexResolverBuilder Add(string property, IDictionary<string, object?>? parameters)
         {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(property, parameters)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(property, parameters)));
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, string property, IDictionary<string, object?>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, object?>? parameters)
         {
-            return new UnionResolverBuilder<TContract>(resolvers.Select(r => r.Add(property, property, parameters)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(property, property, parameters)));
         }
     }
 }
