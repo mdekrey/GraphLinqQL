@@ -5,9 +5,9 @@ namespace GraphQlResolver
 {
     public static class GraphQlConstantResult
     {
-        public static IGraphQlResult<TReturnType> Construct<TReturnType>(TReturnType result, IServiceProvider? serviceProvider = null)
+        public static IGraphQlResult<TReturnType> Construct<TReturnType>(TReturnType result)
         {
-            return new GraphQlExpressionResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result), serviceProvider!);
+            return new GraphQlExpressionResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result));
         }
 
     }

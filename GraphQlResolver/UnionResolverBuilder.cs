@@ -18,8 +18,8 @@ namespace GraphQlResolver
 
         private ImmutableList<IComplexResolverBuilder> resolvers;
 
-        public UnionResolverBuilder(IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult)
-            : this(unionResult.Results.Select(result => result.ResolveComplex()))
+        public UnionResolverBuilder(IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult, IServiceProvider serviceProvider)
+            : this(unionResult.Results.Select(result => result.ResolveComplex(serviceProvider)))
         {
         }
 
@@ -39,7 +39,7 @@ namespace GraphQlResolver
             var param = results[0].UntypedResolver.Parameters[0];
             var expressions = results.Select(e => e.UntypedResolver.Body.Replace(e.UntypedResolver.Parameters[0], param)).ToArray();
             var lambda = Expression.Lambda(expressions.Skip(1).Aggregate(expressions[0], (prev, next) => Expression.Call(QueryableUnion, prev, next)), param);
-            return new GraphQlExpressionResult<object>(lambda, results[0].ServiceProvider);
+            return new GraphQlExpressionResult<object>(lambda);
         }
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)

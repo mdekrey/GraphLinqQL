@@ -8,20 +8,14 @@ namespace GraphQlResolver
 {
     internal class GraphQlResultFactory<TValue> : IGraphQlResultFactory<TValue>
     {
-        private readonly IServiceProvider serviceProvider;
-        public GraphQlResultFactory(IServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
-        }
-
         IGraphQlResultJoinedFactory<TValue, TJoinedType> IGraphQlResultFactory<TValue>.Join<TJoinedType>(GraphQlJoin<TValue, TJoinedType> join)
         {
-            return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join, serviceProvider);
+            return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join);
         }
 
         IGraphQlResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
         {
-            return GraphQlExpressionResult<TDomainResult>.Construct<TValue>(resolver, serviceProvider);
+            return GraphQlExpressionResult<TDomainResult>.Construct(resolver);
         }
 
     }

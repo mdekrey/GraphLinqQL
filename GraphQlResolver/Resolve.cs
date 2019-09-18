@@ -16,9 +16,9 @@ namespace GraphQlResolver
 
         public static object GraphQlRoot(this IServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
-            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(serviceProvider);
-            var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As(t).ResolveComplex());
-            var expression = resolved?.ResolveExpression<GraphQlRoot>()!;
+            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>();
+            var resolved = resolver(resultFactory.Resolve(a => a).Convertable().As(t).ResolveComplex(serviceProvider));
+            var expression = resolved.ResolveExpression<GraphQlRoot>();
             expression = expression.CollapseDoubleSelect();
             var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
             return queryable.Single();
@@ -84,11 +84,11 @@ namespace GraphQlResolver
 
 
             public IGraphQlResult As(Type contract) =>
-                GraphQlExpressionResult.Construct(contract, target.UntypedResolver, target.ServiceProvider, target.Joins);
+                GraphQlExpressionResult.Construct(contract, target.UntypedResolver, target.Joins);
 
             public IGraphQlResult<TContract> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins);
+                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.Joins);
 
         }
 
@@ -99,11 +99,11 @@ namespace GraphQlResolver
 
             public IGraphQlResult<IEnumerable<TContract>> As<TContract>()
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.ServiceProvider, target.Joins);
+                new GraphQlExpressionResult<IEnumerable<TContract>>(target.UntypedResolver, target.Joins);
 
             public IGraphQlResult<TContract> As<TContract>(Expression<Func<IQueryable<object>, object>> finalizer)
                 where TContract : IGraphQlAccepts<TModel>, IGraphQlResolvable =>
-                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.ServiceProvider, target.Joins, finalizer);
+                new GraphQlExpressionResult<TContract>(target.UntypedResolver, target.Joins, finalizer);
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>

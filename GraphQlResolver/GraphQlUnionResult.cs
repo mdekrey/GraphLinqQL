@@ -18,8 +18,6 @@ namespace GraphQlResolver
 
         public IReadOnlyList<IGraphQlResult<T>> Results { get; }
 
-        public IServiceProvider ServiceProvider => Results[0].ServiceProvider;
-
         public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
         public LambdaExpression Finalizer => throw new InvalidOperationException();
@@ -28,8 +26,8 @@ namespace GraphQlResolver
 
         public Type ResultType => typeof(T);
 
-        public IComplexResolverBuilder ResolveComplex() =>
-            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this);
+        public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider) =>
+            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
     }
 
     internal interface IUnionGraphQlResult<out T> : IGraphQlResult<T>

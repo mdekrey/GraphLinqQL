@@ -10,43 +10,40 @@ namespace GraphQlResolver
 {
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
-        public IServiceProvider ServiceProvider { get; }
-
         public LambdaExpression UntypedResolver { get; }
 
         public LambdaExpression? Finalizer { get; }
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider)
-            : this(func, serviceProvider, ImmutableHashSet<IGraphQlJoin>.Empty) { }
+        public GraphQlExpressionResult(LambdaExpression func)
+            : this(func, ImmutableHashSet<IGraphQlJoin>.Empty) { }
 
-        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins)
-            : this(func, serviceProvider, joins, null)
+        public GraphQlExpressionResult(LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
+            : this(func, joins, null)
         { }
 
-        public GraphQlExpressionResult(LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins, LambdaExpression? finalizer)
+        public GraphQlExpressionResult(LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins, LambdaExpression? finalizer)
         {
             this.UntypedResolver = func;
-            this.ServiceProvider = serviceProvider;
             this.Joins = joins;
             this.Finalizer = finalizer;
         }
 
-        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(Expression<Func<TInput, TReturnType>> func, IServiceProvider serviceProvider)
+        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(Expression<Func<TInput, TReturnType>> func)
         {
-            return new GraphQlExpressionResult<TReturnType>(func, serviceProvider);
+            return new GraphQlExpressionResult<TReturnType>(func);
         }
         public Type ResultType => UntypedResolver.ReturnType;
 
 
 
-        public IComplexResolverBuilder ResolveComplex()
+        public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider)
         {
             var actualContractType = TypeSystem.GetElementType(typeof(TReturnType));
             var actualModelType = this.UntypedResolver.ReturnType;
 
-            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(this.ServiceProvider, actualContractType);
+            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, actualContractType);
             var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
             {
@@ -57,7 +54,7 @@ namespace GraphQlResolver
             {
                 throw new ArgumentException("Contract not valid for incoming model");
             }
-            accepts.Original = (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), this.ServiceProvider);
+            accepts.Original = (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType));
 
             return new ComplexResolverBuilder(
                 resolver,
@@ -91,7 +88,7 @@ namespace GraphQlResolver
             }
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<object>(resultFunc, this.ServiceProvider, this.Joins);
+            return new GraphQlExpressionResult<object>(resultFunc, this.Joins);
         }
 
         private Expression GetListReturnResult(Type modelType, LambdaExpression mainBody)
@@ -130,10 +127,10 @@ namespace GraphQlResolver
     static class GraphQlExpressionResult
     {
         
-        public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IServiceProvider serviceProvider, IReadOnlyCollection<IGraphQlJoin> joins)
+        public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
-            var parameters = new object[] { func, serviceProvider, joins };
-            return (IGraphQlResult)typeof(GraphQlExpressionResult<>).MakeGenericType(returnType).GetConstructors().Single(c => c.GetParameters().Length == 3).Invoke(parameters);
+            var parameters = new object[] { func, joins };
+            return (IGraphQlResult)typeof(GraphQlExpressionResult<>).MakeGenericType(returnType).GetConstructors().Single(c => c.GetParameters().Length == 2).Invoke(parameters);
         }
     }
 }

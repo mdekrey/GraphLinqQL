@@ -98,7 +98,7 @@ namespace GraphQlResolver.Execution
                     {
                         return builder.Add(
                             field.Alias?.Value ?? field.Name.Value,
-                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, context)).ResolveComplex(), field.SelectionSet.Selections, context).Build()
+                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, context)).ResolveComplex(serviceProvider), field.SelectionSet.Selections, context).Build()
                         );
                     }
                     else

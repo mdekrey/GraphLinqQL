@@ -8,13 +8,12 @@ namespace GraphQlResolver
 {
     public interface IGraphQlResult
     {
-        IServiceProvider ServiceProvider { get; }
         LambdaExpression UntypedResolver { get; }
         LambdaExpression? Finalizer { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
         Type ResultType { get; }
 
-        IComplexResolverBuilder ResolveComplex();
+        IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider);
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
