@@ -69,7 +69,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
-                "__typename" => new GraphQlConstantResult<string>("Query"),
+                "__typename" => GraphQlConstantResult.Construct("Query"),
                 "characters" => Characters(),
                 "heroes" => Heroes(),
                 "nulls" => Nulls(),
@@ -108,7 +108,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
-                "__typename" => new GraphQlConstantResult<string>("Hero"),
+                "__typename" => GraphQlConstantResult.Construct("Hero"),
                 "id" => Id(),
                 "name" => Name(),
                 "renown" => Renown(),
@@ -143,7 +143,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch
             {
-                "__typename" => new GraphQlConstantResult<string>("Villain"),
+                "__typename" => GraphQlConstantResult.Construct("Villain"),
                 "id" => Id(),
                 "name" => Name(),
                 "goal" => Goal(),

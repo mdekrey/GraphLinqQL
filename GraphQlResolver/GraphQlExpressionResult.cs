@@ -7,25 +7,6 @@ using System.Reflection;
 
 namespace GraphQlResolver
 {
-    public class GraphQlConstantResult<TReturnType> : IGraphQlResult<TReturnType>
-    {
-        public IServiceProvider ServiceProvider => throw new InvalidOperationException();
-
-        public LambdaExpression UntypedResolver { get; }
-
-        public LambdaExpression? Finalizer => null;
-
-        public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
-
-        public GraphQlConstantResult(TReturnType result)
-        {
-            UntypedResolver = (Expression<Func<object?, TReturnType>>)(_ => result);
-        }
-
-        public Type ResultType => UntypedResolver.ReturnType;
-
-    }
-
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
         public IServiceProvider ServiceProvider { get; }
