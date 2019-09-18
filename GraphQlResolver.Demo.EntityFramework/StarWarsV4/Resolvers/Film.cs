@@ -17,8 +17,33 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
-            //return Original.Resolve(film => film.FilmCharacters).Convertable().As<FilmCharactersConnection>();
-            return Original.Resolve(film => new FilmCharactersConnection.Parameters(film.EpisodeId, after, first, before, last)).Convertable().As<FilmCharactersConnection>();
+            return Original.Resolve(film => film.FilmCharacters).Convertable().As<FilmCharactersConnection>();
+            //if (after != null || first != null || (before == null && last == null))
+            //{
+            //    var take = first ?? 10;
+            //    if (after == null)
+            //    {
+            //        return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).Convertable().As<FilmCharactersConnection>();
+            //    }
+            //    else
+            //    {
+            //        var id = int.Parse(after);
+            //        return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take)).Convertable().As<FilmCharactersConnection>();
+            //    }
+            //}
+            //else
+            //{
+            //    var take = last ?? 10;
+            //    if (after == null)
+            //    {
+            //        return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).Convertable().As<FilmCharactersConnection>();
+            //    }
+            //    else
+            //    {
+            //        var id = int.Parse(after);
+            //        return Original.Resolve(film => film.FilmCharacters.OrderByDescending(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take).Reverse()).Convertable().As<FilmCharactersConnection>();
+            //    }
+            //}
         }
 
         public override IGraphQlResult<string?> created()
