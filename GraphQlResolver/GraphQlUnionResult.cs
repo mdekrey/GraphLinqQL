@@ -27,6 +27,9 @@ namespace GraphQlResolver
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 
         public Type ResultType => typeof(T);
+
+        public IComplexResolverBuilder ResolveComplex() =>
+            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this);
     }
 
     internal interface IUnionGraphQlResult<out T> : IGraphQlResult<T>

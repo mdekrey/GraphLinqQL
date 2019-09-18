@@ -13,6 +13,8 @@ namespace GraphQlResolver
         LambdaExpression? Finalizer { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
         Type ResultType { get; }
+
+        IComplexResolverBuilder ResolveComplex();
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
