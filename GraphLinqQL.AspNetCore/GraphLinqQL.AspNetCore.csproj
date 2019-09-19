@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
     <ProjectReference Include="..\GraphLinqQL\GraphLinqQL.csproj" />
   </ItemGroup>

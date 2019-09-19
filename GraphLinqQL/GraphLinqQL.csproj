@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview9.19423.4" />
     <PackageReference Include="System.Collections.Immutable" Version="1.6.0-preview9.19421.4" />
   </ItemGroup>

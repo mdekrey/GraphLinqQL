@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.CommonTypes\GraphLinqQL.CommonTypes.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
     <ProjectReference Include="..\GraphLinqQL\GraphLinqQL.csproj" />
   </ItemGroup>
 
