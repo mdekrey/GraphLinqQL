@@ -93,7 +93,7 @@ namespace GraphQlResolver
             return (IGraphQlResult)method.Invoke(this, Array.Empty<object>());
         }
 
-        public IGraphQlResult<TContract> As<TContract>() =>
+        public IGraphQlResult<TContract> As<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
             AsContract<TContract>();
 
         private IGraphQlResult<TContract> AsContract<TContract>()

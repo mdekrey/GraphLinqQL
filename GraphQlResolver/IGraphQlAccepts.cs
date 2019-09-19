@@ -9,9 +9,7 @@ namespace GraphQlResolver
         Type ModelType { get; }
     }
 
-    public interface IGraphQlAccepts<T> : IGraphQlAccepts
+    public interface IGraphQlAccepts<in T> : IGraphQlAccepts
     {
-        new IGraphQlResultFactory<T> Original { set; }
-
     }
 }

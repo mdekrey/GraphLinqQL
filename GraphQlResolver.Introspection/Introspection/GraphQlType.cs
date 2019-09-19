@@ -40,7 +40,7 @@ namespace GraphQlResolver.Introspection
             Original.Join(typeInformation).Resolve((_, info) => info.Name);
 
         public override IGraphQlResult<__Type?> ofType() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.OfType).As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.OfType).Nullable(_ => _.As<GraphQlType>());
 
         public override IGraphQlResult<IEnumerable<__Type>?> possibleTypes() =>
             Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).Nullable(_ => _.List(_ => _.As<GraphQlType>()));

@@ -19,7 +19,14 @@ namespace GraphQlResolver.Introspection
             this.typeListing = ActivatorUtilities.GetServiceOrCreateInstance<TTypeListing>(serviceProvider);
         }
 
-        public IGraphQlResultFactory<GraphQlRoot> Original { set => original = originalQuery.Original = value; }
+        public IGraphQlResultFactory<GraphQlRoot> Original
+        {
+            set
+            {
+                original = value;
+                originalQuery.Original = value;
+            }
+        }
         public Type ModelType => originalQuery.ModelType;
         IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
         public bool IsType(string value) => originalQuery.IsType(value);
@@ -27,8 +34,8 @@ namespace GraphQlResolver.Introspection
         internal IGraphQlResult<Schema> schema() =>
             original!.Resolve(_ => typeListing).As<Schema>();
 
-        internal IGraphQlResult<GraphQlType> type(string name) =>
-            original!.Resolve(_ => typeListing.Type(name)).As<GraphQlType>();
+        internal IGraphQlResult<GraphQlType?> type(string name) =>
+            original!.Resolve(_ => typeListing.Type(name)).Nullable(_ => _.As<GraphQlType>());
 
         public IGraphQlResult ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch

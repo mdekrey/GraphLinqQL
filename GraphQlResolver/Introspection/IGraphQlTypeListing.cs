@@ -6,7 +6,7 @@ namespace GraphQlResolver.Introspection
 {
     public interface IGraphQlTypeListing
     {
-        Type? Query { get; }
+        Type Query { get; }
         Type? Mutation { get; }
         Type? Subscription { get; }
 

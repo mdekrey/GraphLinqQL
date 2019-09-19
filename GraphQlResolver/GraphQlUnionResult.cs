@@ -32,7 +32,9 @@ namespace GraphQlResolver
 
 
         public IGraphQlResult As(Type contract) => throw new NotImplementedException();
-        public IGraphQlResult<TContract> As<TContract>() => throw new NotImplementedException();
+
+        public IGraphQlResult<TContract> As<TContract>() where TContract : IGraphQlAccepts<T> =>
+            (IGraphQlResult<TContract>)As(typeof(TContract));
     }
 
     internal interface IUnionGraphQlResult<out T> : IGraphQlResult<T>
