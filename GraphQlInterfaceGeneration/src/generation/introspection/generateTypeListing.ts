@@ -32,7 +32,7 @@ public class TypeListing : IGraphQlTypeListing
         this.serviceProvider = serviceProvider;
     }
 
-    public Type? Query => ${maybeRenderIntrospectionType(schema.getQueryType())};
+    public Type Query => ${maybeRenderIntrospectionType(schema.getQueryType())};
     public Type? Mutation => ${maybeRenderIntrospectionType(schema.getMutationType())};
     public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
 
