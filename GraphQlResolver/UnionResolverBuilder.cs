@@ -13,7 +13,7 @@ namespace GraphQlResolver
         private static readonly MethodInfo QueryableUnion = typeof(System.Linq.Queryable).GetMethods()
                     .Where(m => m.Name == nameof(System.Linq.Queryable.Union))
                     .Where(m => m.GetParameters().Length == 2)
-                    .Select(m => m.MakeGenericMethod(typeof(IDictionary<string, object>)))
+                    .Select(m => m.MakeGenericMethod(typeof(object)))
                     .Single();
 
         private ImmutableList<IComplexResolverBuilder> resolvers;
@@ -37,7 +37,7 @@ namespace GraphQlResolver
         {
             var results = resolvers.Select(r => r.Build()).ToArray();
             var param = results[0].UntypedResolver.Parameters[0];
-            var expressions = results.Select(e => e.UntypedResolver.Body.Replace(e.UntypedResolver.Parameters[0], param)).ToArray();
+            var expressions = results.Select(e => e.UntypedResolver.Inline(param)).ToArray();
             var lambda = Expression.Lambda(expressions.Skip(1).Aggregate(expressions[0], (prev, next) => Expression.Call(QueryableUnion, prev, next)), param);
             return new GraphQlExpressionResult<object>(lambda);
         }

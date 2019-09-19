@@ -196,6 +196,23 @@ namespace GraphQlResolver
         }
 
         [Fact]
+        public void BeAbleToRepresentScalars()
+        {
+            // {
+            //   rand
+            // }
+            var sp = new SimpleServiceProvider();
+            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+                root.Add("rand")
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"rand\":5}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentNestedStructures()
         {
             // {

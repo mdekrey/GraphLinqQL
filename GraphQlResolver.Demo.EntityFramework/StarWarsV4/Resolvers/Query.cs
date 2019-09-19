@@ -19,7 +19,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.FilmsConnection?> allFilms(string? after, int? first, string? before, int? last)
         {
-            return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films).Convertable().As<FilmsConnection>();
+            return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films).As<FilmsConnection>();
         }
 
         public override IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last)
@@ -50,7 +50,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
         public override IGraphQlResult<Interfaces.Film?> film(string? id, string? filmID)
         {
             var episodeId = int.Parse(id ?? filmID!);
-            return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId)).ConvertableList().As<Film>(f => f.FirstOrDefault());
+            return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId)).Nullable(_ => _.List(_ => _.As<Film>()).Only());
         }
 
         public override IGraphQlResult<Node?> node(string id)

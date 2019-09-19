@@ -6,7 +6,7 @@ namespace GraphQlResolver.Introspection
     internal class GraphQlField : Interfaces.__Field.GraphQlContract<GraphQlFieldInformation>
     {
         public override IGraphQlResult<IEnumerable<__InputValue>> args() =>
-            Original.Resolve(field => field.Arguments).ConvertableList().As<GraphQlInputField>();
+            Original.Resolve(field => field.Arguments).List(_ => _.As<GraphQlInputField>());
 
         public override IGraphQlResult<string?> deprecationReason() =>
             Original.Resolve(v => v.DeprecationReason);
@@ -21,6 +21,6 @@ namespace GraphQlResolver.Introspection
             Original.Resolve(v => v.Name);
 
         public override IGraphQlResult<__Type> type() =>
-            Original.Resolve(v => v.FieldType).Convertable().As<GraphQlType>();
+            Original.Resolve(v => v.FieldType).As<GraphQlType>();
     }
 }

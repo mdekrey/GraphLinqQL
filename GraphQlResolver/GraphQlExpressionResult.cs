@@ -16,17 +16,13 @@ namespace GraphQlResolver
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        public GraphQlExpressionResult(LambdaExpression func)
-            : this(func, ImmutableHashSet<IGraphQlJoin>.Empty) { }
+        public Type? Contract { get; }
 
-        public GraphQlExpressionResult(LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
-            : this(func, joins, null)
-        { }
-
-        public GraphQlExpressionResult(LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins, LambdaExpression? finalizer)
+        public GraphQlExpressionResult(LambdaExpression func, Type? contract = null, IReadOnlyCollection<IGraphQlJoin>? joins = null, LambdaExpression? finalizer = null)
         {
             this.UntypedResolver = func;
-            this.Joins = joins;
+            this.Contract = contract;
+            this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
             this.Finalizer = finalizer;
         }
 
@@ -34,26 +30,22 @@ namespace GraphQlResolver
         {
             return new GraphQlExpressionResult<TReturnType>(func);
         }
-        public Type ResultType => UntypedResolver.ReturnType;
-
 
 
         public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider)
         {
-            var actualContractType = TypeSystem.GetElementType(typeof(TReturnType));
-            var actualModelType = this.UntypedResolver.ReturnType;
+            if (Contract == null)
+            {
+                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects");
+            }
 
-            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, actualContractType);
+            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, Contract);
             var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
             {
                 throw new ArgumentException("Contract does not accept an input type");
             }
             var modelType = accepts.ModelType;
-            if (!modelType.IsAssignableFrom(actualModelType) && !modelType.IsAssignableFrom(TypeSystem.GetElementType(actualModelType)))
-            {
-                throw new ArgumentException("Contract not valid for incoming model");
-            }
             accepts.Original = (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType));
 
             return new ComplexResolverBuilder(
@@ -65,18 +57,18 @@ namespace GraphQlResolver
         
         private IGraphQlResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
         {
-            //resultSelector.Parameters[0].Type == target.UntypedResolver.ReturnType
-            var isList = !resultSelector.Parameters[0].Type.IsAssignableFrom(this.UntypedResolver.ReturnType)
-                && resultSelector.Parameters[0].Type == TypeSystem.GetElementType(this.UntypedResolver.ReturnType);
-            var modelType = isList ? TypeSystem.GetElementType(this.UntypedResolver.ReturnType)
-                : this.UntypedResolver.ReturnType;
-            var mainBody = BuildJoinedSelector(resultSelector, joins, isList ? TypeSystem.GetElementType(modelType) : modelType);
+            var visitor = new GraphQlContractExpressionReplaceVisitor();
+            visitor.Visit(this.UntypedResolver);
+            var modelType = visitor.ModelType!;
 
-            var returnResult = isList
-                    ? GetListReturnResult(modelType, mainBody)
-                : IsSimple(this.UntypedResolver.Body)
-                    ? mainBody.Body.Replace(mainBody.Parameters[0], this.UntypedResolver.Body)
-                : Expression.Invoke(Expression.Quote(mainBody), this.UntypedResolver.Body);
+            visitor.NewOperation = BuildJoinedSelector(resultSelector, joins, modelType);
+            var returnResult = visitor.Visit(this.UntypedResolver.Body);
+
+            //var returnResult = isList
+            //        ? GetListReturnResult(modelType, mainBody)
+            //    : IsSimple(this.UntypedResolver.Body)
+            //        ? mainBody.Body.Replace(mainBody.Parameters[0], this.UntypedResolver.Body)
+            //    : Expression.Invoke(Expression.Quote(mainBody), this.UntypedResolver.Body);
 
             if (this.Finalizer != null)
             {
@@ -84,11 +76,11 @@ namespace GraphQlResolver
                 {
                     throw new InvalidOperationException($"Unable to finalize - expected '{this.Finalizer.Parameters[0].Type.FullName}' but got '{returnResult.Type.FullName}'");
                 }
-                returnResult = this.Finalizer.Body.Replace(this.Finalizer.Parameters[0], returnResult);
+                returnResult = this.Finalizer.Inline(returnResult);
             }
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<object>(resultFunc, this.Joins);
+            return new GraphQlExpressionResult<object>(resultFunc, joins: this.Joins);
         }
 
         private Expression GetListReturnResult(Type modelType, LambdaExpression mainBody)
@@ -110,8 +102,8 @@ namespace GraphQlResolver
         {
             var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
 
-            var mainBody = resultSelector.Body.Replace(resultSelector.Parameters[0], originalParameter)
-                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Body.Replace(join.Conversion.Parameters[0], originalParameter)));
+            var mainBody = resultSelector.Inline(originalParameter)
+                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
             var mainSelector = Expression.Lambda(mainBody, originalParameter);
             return mainSelector;
         }
@@ -122,15 +114,65 @@ namespace GraphQlResolver
             return body.NodeType == ExpressionType.Parameter || typeof(IQueryable).IsAssignableFrom(body.Type);
         }
 
+        public IGraphQlResult As(Type contract)
+        {
+            var method = this.GetType().GetMethod(nameof(AsContract), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(contract);
+            return (IGraphQlResult)method.Invoke(this, Array.Empty<object>());
+        }
+
+        public IGraphQlResult<TContract> As<TContract>() =>
+            AsContract<TContract>();
+
+        private IGraphQlResult<TContract> AsContract<TContract>()
+        {
+            if (Contract != null)
+            {
+                throw new InvalidOperationException($"Can't put a contract on top of a contract; already was assigned {Contract.FullName}");
+            }
+            var contract = typeof(TContract);
+            var currentReturnType = UntypedResolver.ReturnType;
+            var acceptsInterface = contract.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
+                .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
+                .FirstOrDefault();
+            if (acceptsInterface == null)
+            {
+                throw new ArgumentException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}", nameof(contract));
+            }
+            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
+            return new GraphQlExpressionResult<TContract>(newResolver, contract);
+        }
     }
 
     static class GraphQlExpressionResult
     {
-        
         public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
             var parameters = new object[] { func, joins };
             return (IGraphQlResult)typeof(GraphQlExpressionResult<>).MakeGenericType(returnType).GetConstructors().Single(c => c.GetParameters().Length == 2).Invoke(parameters);
+        }
+    }
+
+    class GraphQlContractExpressionReplaceVisitor : ExpressionVisitor
+    {
+        public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpressionReplaceVisitor).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic);
+
+        private static object? ContractPlaceholder(object input) => null;
+
+        public LambdaExpression? NewOperation { get; set; }
+
+        public Type? ModelType { get; set; }
+
+        protected override Expression VisitMethodCall(MethodCallExpression node)
+        {
+            if (node.Method == ContractPlaceholderMethod)
+            {
+                ModelType = node.Arguments[0].Type;
+                if (NewOperation != null)
+                {
+                    return Visit(Expressions.Inline(NewOperation, node.Arguments[0]));
+                }
+            }
+            return base.VisitMethodCall(node);
         }
     }
 }

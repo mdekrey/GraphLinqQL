@@ -28,19 +28,19 @@ namespace GraphQlResolver.Introspection
         }
 
         public override IGraphQlResult<IEnumerable<__Directive>> directives() =>
-            Original.Resolve(types => types.DirectiveInformation).ConvertableList().As<DirectiveDefinition>();
+            Original.Resolve(types => types.DirectiveInformation).List(_ => _.As<DirectiveDefinition>());
 
         public override IGraphQlResult<__Type?> mutationType() =>
-            Original.Resolve(types => types.Mutation).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Mutation).As<GraphQlType>();
 
         public override IGraphQlResult<__Type> queryType() =>
-            Original.Resolve(types => types.Query).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Query).As<GraphQlType>();
 
         public override IGraphQlResult<__Type?> subscriptionType() =>
-            Original.Resolve(types => types.Subscription).Convertable().As<GraphQlType>();
+            Original.Resolve(types => types.Subscription).As<GraphQlType>();
 
         public override IGraphQlResult<IEnumerable<__Type>> types() =>
-            Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).ConvertableList().As<GraphQlType>();
+            Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).List(_ => _.As<GraphQlType>());
 
     }
 }

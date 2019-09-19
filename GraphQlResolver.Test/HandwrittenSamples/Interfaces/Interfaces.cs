@@ -58,7 +58,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     {
         private Query() { }
         public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
-        public abstract IGraphQlResult<IEnumerable<Hero>> Nulls();
+        public abstract IGraphQlResult<IEnumerable<Hero>?> Nulls();
         public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<Hero> HeroFinalized();
         public abstract IGraphQlResult<Hero> HeroById(string id);

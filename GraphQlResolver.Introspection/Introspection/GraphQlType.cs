@@ -22,16 +22,16 @@ namespace GraphQlResolver.Introspection
             Original.Join(typeInformation).Resolve((_, info) => info.Description);
 
         public override IGraphQlResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated) =>
-            Original.Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).ConvertableList().As<EnumValue>();
+            Original.Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).Nullable(_ => _.List(_ => _.As<EnumValue>()));
 
         public override IGraphQlResult<IEnumerable<__Field>?> fields(bool? includeDeprecated) =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).ConvertableList().As<GraphQlField>();
+            Original.Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).Nullable(_ => _.List(_ => _.As<GraphQlField>()));
 
         public override IGraphQlResult<IEnumerable<__InputValue>?> inputFields() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.InputFields).ConvertableList().As<GraphQlInputField>();
+            Original.Join(typeInformation).Resolve((_, info) => info.InputFields).Nullable(_ => _.List(_ => _.As<GraphQlInputField>()));
 
         public override IGraphQlResult<IEnumerable<__Type>?> interfaces() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).ConvertableList().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).Nullable(_ => _.List(_ => _.As<GraphQlType>()));
 
         public override IGraphQlResult<__TypeKind> kind() =>
             Original.Join(typeInformation).Resolve((_, info) => ToInterfaceKind(info.Kind));
@@ -40,10 +40,10 @@ namespace GraphQlResolver.Introspection
             Original.Join(typeInformation).Resolve((_, info) => info.Name);
 
         public override IGraphQlResult<__Type?> ofType() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.OfType).Convertable().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.OfType).As<GraphQlType>();
 
         public override IGraphQlResult<IEnumerable<__Type>?> possibleTypes() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).ConvertableList().As<GraphQlType>();
+            Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).Nullable(_ => _.List(_ => _.As<GraphQlType>()));
 
         private __TypeKind ToInterfaceKind(TypeKind kind)
         {

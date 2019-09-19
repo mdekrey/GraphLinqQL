@@ -20,7 +20,8 @@ namespace GraphQlResolver
 
         public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
-        public LambdaExpression Finalizer => throw new InvalidOperationException();
+        public LambdaExpression? Finalizer => null;
+        public Type? Contract => null;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 
@@ -28,6 +29,10 @@ namespace GraphQlResolver
 
         public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider) =>
             new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
+
+
+        public IGraphQlResult As(Type contract) => throw new NotImplementedException();
+        public IGraphQlResult<TContract> As<TContract>() => throw new NotImplementedException();
     }
 
     internal interface IUnionGraphQlResult<out T> : IGraphQlResult<T>

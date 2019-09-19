@@ -34,7 +34,6 @@ namespace GraphQlResolver
                 .Add(displayName, resolve(contract)), modelType);
         }
 
-        private const bool PerformNullCheck = true;
         public IGraphQlResult Build()
         {
             var modelParameter = Expression.Parameter(modelType, "ComplexResolverBuilder " + modelType.FullName);
@@ -44,17 +43,10 @@ namespace GraphQlResolver
             var resultDictionary = Expression.Convert(Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
             {
                 var inputResolver = result.Value.UntypedResolver;
-                var resolveBody = inputResolver.Body.Replace(inputResolver.Parameters[0], with: modelParameter);
-                if (typeof(IEnumerable<object>).IsAssignableFrom(inputResolver.Body.Type) && !typeof(System.Collections.IDictionary).IsAssignableFrom(inputResolver.Body.Type))
-                {
-                    resolveBody = resolveBody.IfNotNull(resolveBody);
-                }
+                var resolveBody = inputResolver.Inline(modelParameter);
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
-            })), typeof(IDictionary<string, object>));
-            var returnResult = PerformNullCheck
-                ? Expressions.IfNotNull(modelParameter, resultDictionary)
-                : resultDictionary;
-            var func = Expression.Lambda(returnResult, modelParameter);
+            })), typeof(object));
+            var func = Expression.Lambda(resultDictionary, modelParameter);
 
             return resolve(func, allJoins);
         }

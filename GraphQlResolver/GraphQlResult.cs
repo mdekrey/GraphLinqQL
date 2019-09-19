@@ -10,10 +10,13 @@ namespace GraphQlResolver
     {
         LambdaExpression UntypedResolver { get; }
         LambdaExpression? Finalizer { get; }
+        Type? Contract { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
-        Type ResultType { get; }
 
         IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider);
+
+        IGraphQlResult As(Type contract);
+        IGraphQlResult<TContract> As<TContract>();
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
@@ -28,7 +31,7 @@ namespace GraphQlResolver
 
     public interface IGraphQlResultFactory { }
 
-    public interface IGraphQlResultFactory<TInputType> : IGraphQlResultFactory
+    public interface IGraphQlResultFactory<TInputType> : IGraphQlResultFactory, IGraphQlResult<TInputType>
     {
         IGraphQlResultJoinedFactory<TInputType, TJoinedType> Join<TJoinedType>(GraphQlJoin<TInputType, TJoinedType> join);
         IGraphQlResult<TDomainResult> Resolve<TDomainResult>(Expression<Func<TInputType, TDomainResult>> resolver);

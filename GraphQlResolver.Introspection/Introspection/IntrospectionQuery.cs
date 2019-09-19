@@ -25,10 +25,10 @@ namespace GraphQlResolver.Introspection
         public bool IsType(string value) => originalQuery.IsType(value);
 
         internal IGraphQlResult<Schema> schema() =>
-            original!.Resolve(_ => typeListing).Convertable().As<Schema>();
+            original!.Resolve(_ => typeListing).As<Schema>();
 
         internal IGraphQlResult<GraphQlType> type(string name) =>
-            original!.Resolve(_ => typeListing.Type(name)).Convertable().As<GraphQlType>();
+            original!.Resolve(_ => typeListing.Type(name)).As<GraphQlType>();
 
         public IGraphQlResult ResolveQuery(string name, IDictionary<string, object?> parameters) =>
             name switch

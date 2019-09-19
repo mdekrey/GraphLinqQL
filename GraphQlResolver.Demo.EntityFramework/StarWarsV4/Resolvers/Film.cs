@@ -17,7 +17,7 @@ namespace GraphQlResolver.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
-            return Original.Resolve(film => film.FilmCharacters).Convertable().As<FilmCharactersConnection>();
+            return Original.Resolve(film => film.FilmCharacters).As<FilmCharactersConnection>();
             //if (after != null || first != null || (before == null && last == null))
             //{
             //    var take = first ?? 10;

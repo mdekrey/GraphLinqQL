@@ -11,29 +11,29 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
     public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
-            Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>();
+            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>());
 
-        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Nulls() =>
-            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).ConvertableList().As<Hero>();
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>?> Nulls() =>
+            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.As<Hero>()));
 
         public override IGraphQlResult<Interfaces.Hero?> NoHero() =>
-            Original.Resolve(root => (Domain.Hero?)null).Convertable().As<Hero>();
+            Original.Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.As<Hero>());
 
         public override IGraphQlResult<Interfaces.Hero> Hero() =>
-            Original.Resolve(root => Domain.Data.heroes.First()).Convertable().As<Hero>();
+            Original.Resolve(root => Domain.Data.heroes.First()).As<Hero>();
 
         public override IGraphQlResult<Interfaces.Hero> HeroFinalized() =>
-            Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>(heroes => heroes.First());
+            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>()).Only();
 
         public override IGraphQlResult<Interfaces.Hero> HeroById(string id) =>
-            Original.Resolve(root => id).Convertable().As<HeroById>();
+            Original.Resolve(root => id).As<HeroById>();
 
         public override IGraphQlResult<double> Rand() =>
             Original.Resolve(root => 5.0);
 
         public override IGraphQlResult<IEnumerable?> Characters() =>
-            Original.Resolve(root => Domain.Data.heroes).ConvertableList().As<Hero>()
-            .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.villains).ConvertableList().As<Villain>());
+            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>())
+            .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.villains).List(item => item.As<Villain>()));
     }
 
     public class Hero : Interfaces.Hero.GraphQlContract<Domain.Hero>
@@ -58,7 +58,7 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
-            Original.Join(friends).Resolve((hero, friends) => friends).ConvertableList().As<Hero>();
+            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.As<Hero>());
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Resolve(hero => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>
@@ -96,7 +96,7 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
-            Original.Join(friends).Resolve((hero, friends) => friends).ConvertableList().As<Hero>();
+            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.As<Hero>());
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Join(hero).Resolve((_, hero) => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>

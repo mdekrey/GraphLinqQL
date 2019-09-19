@@ -14,6 +14,6 @@ namespace GraphQlResolver.Introspection
             Original.Resolve(field => field.Name);
 
         public override IGraphQlResult<__Type> type() =>
-            Original.Resolve(field => field.FieldType).Convertable().As<GraphQlType>();
+            Original.Resolve(field => field.FieldType).As<GraphQlType>();
     }
 }

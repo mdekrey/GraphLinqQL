@@ -88,11 +88,21 @@ namespace GraphQlResolver
                     return base.VisitMethodCall(Expression.Call(
                         GenericQueryableSelect.MakeGenericMethod(innerNode.Method.GetGenericArguments()[0], node.Method.GetGenericArguments()[1]),
                         innerNode.Arguments[0],
-                        Expression.Quote(Expression.Lambda(outerLambda.Body.Replace(outerLambda.Parameters[0], innerLambda.Body), innerLambda.Parameters))
+                        Expression.Quote(Expression.Lambda(outerLambda.Inline(innerLambda.Body), innerLambda.Parameters))
                     ));
                 }
                 return base.VisitMethodCall(node);
             }
+        }
+
+        internal static Expression Inline(this LambdaExpression newOperation, params Expression[] expressions)
+        {
+            var parameters = newOperation.Parameters.Zip(expressions, (old, inlined) => (old, inlined)).ToDictionary(kvp => (Expression)kvp.old, kvp => kvp.inlined);
+            if (parameters.Any(kvp => !kvp.Key.Type.IsAssignableFrom(kvp.Value.Type)))
+            {
+                throw new ArgumentException("Parameters did not match types");
+            }
+            return newOperation.Body.Replace(parameters);
         }
     }
 }
