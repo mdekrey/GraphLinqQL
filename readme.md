@@ -27,5 +27,6 @@ expressions and code generation from a schema to create
 - [ ] Support versions of C# prior to 8
 - [ ] Determine dependencies to generate code
     - Currently, we depend on Node, but would Docker be better?
+	- See how [Pegasus](https://github.com/otac0n/Pegasus) adds build tools
 - [ ] Publish to NuGet, etc.
 - [ ] More documentation
