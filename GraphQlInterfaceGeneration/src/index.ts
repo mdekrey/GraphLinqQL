@@ -18,7 +18,7 @@ interface Switches {
 program
   .option("-i, --input-file <input>", "Specify input file", program.STRING, null, true)
   .option("-o, --output-file <output>", "Specify output file", program.STRING, null, true)
-  .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, "GraphQlResolver.Interfaces", false)
+  .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, null, true)
   .option("--no-nullability", "disable nullability flags (which requires C# 8)", program.BOOLEAN, false, false)
   .option("-u, --using", "additional using statements", program.ARRAY, [], false)
   .option("-_, --introspection", "include introspection properties", program.BOOLEAN, false, false)

@@ -1,7 +1,7 @@
 import { Options } from "./Options";
 
 export const defaultOptions: Options = {
-  namespace: "GraphQlResolver.Interfaces",
+  namespace: "GraphLinqQL.Interfaces",
   useNullabilityIndicator: true,
   scalarTypes: {
     Int: { csharpNullable: false, csharpType: "int" },
@@ -10,8 +10,8 @@ export const defaultOptions: Options = {
     Boolean: { csharpNullable: false, csharpType: "bool" }
   },
   using: [
-    "GraphQlResolver",
-    "GraphQlResolver.Introspection",
+    "GraphLinqQL",
+    "GraphLinqQL.Introspection",
     "System",
     "System.Collections",
     "System.Collections.Generic",
