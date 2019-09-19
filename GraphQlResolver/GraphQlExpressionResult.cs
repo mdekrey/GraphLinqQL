@@ -64,12 +64,6 @@ namespace GraphQlResolver
             visitor.NewOperation = BuildJoinedSelector(resultSelector, joins, modelType);
             var returnResult = visitor.Visit(this.UntypedResolver.Body);
 
-            //var returnResult = isList
-            //        ? GetListReturnResult(modelType, mainBody)
-            //    : IsSimple(this.UntypedResolver.Body)
-            //        ? mainBody.Body.Replace(mainBody.Parameters[0], this.UntypedResolver.Body)
-            //    : Expression.Invoke(Expression.Quote(mainBody), this.UntypedResolver.Body);
-
             if (this.Finalizer != null)
             {
                 if (!this.Finalizer.Parameters[0].Type.IsAssignableFrom(returnResult.Type))
@@ -83,21 +77,6 @@ namespace GraphQlResolver
             return new GraphQlExpressionResult<object>(resultFunc, joins: this.Joins);
         }
 
-        private Expression GetListReturnResult(Type modelType, LambdaExpression mainBody)
-        {
-            var getList = this.UntypedResolver.Body;
-            if (!typeof(IQueryable<>).MakeGenericType(modelType).IsAssignableFrom(getList.Type))
-            {
-                var selected = Expression.Call(Resolve.asQueryable.MakeGenericMethod(mainBody.ReturnType), Expressions.CallEnumerableSelect(getList, mainBody));
-                return Expressions.IfNotNull(this.UntypedResolver.Body, selected);
-            }
-            else
-            {
-                var selected = Expressions.CallQueryableSelect(getList, mainBody);
-                return selected;
-            }
-        }
-
         private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
         {
             var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
@@ -106,12 +85,6 @@ namespace GraphQlResolver
                 .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
             var mainSelector = Expression.Lambda(mainBody, originalParameter);
             return mainSelector;
-        }
-
-        private static bool IsSimple(Expression body)
-        {
-            // TODO - we could probably make this nicer, but it doesn't seem to matter
-            return body.NodeType == ExpressionType.Parameter || typeof(IQueryable).IsAssignableFrom(body.Type);
         }
 
         public IGraphQlResult As(Type contract)
