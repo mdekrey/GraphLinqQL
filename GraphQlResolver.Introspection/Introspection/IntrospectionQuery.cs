@@ -37,11 +37,11 @@ namespace GraphQlResolver.Introspection
         internal IGraphQlResult<GraphQlType?> type(string name) =>
             original!.Resolve(_ => typeListing.Type(name)).Nullable(_ => _.As<GraphQlType>());
 
-        public IGraphQlResult ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+        public IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__schema" => this.schema(),
-                "__type" => this.type(name: (string)parameters["name"]!),
+                "__type" => this.type(name: parameters.GetParameter<string>("name")),
                 _ => originalQuery.ResolveQuery(name, parameters)
             };
     }

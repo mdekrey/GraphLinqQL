@@ -1,5 +1,6 @@
 ﻿using GraphQLParser;
 using GraphQLParser.AST;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,15 +13,18 @@ namespace GraphQlResolver.Execution
     {
         private IServiceProvider serviceProvider;
         private readonly IGraphQlExecutionOptions options;
+        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
         public GraphQlExecutor(IServiceProvider serviceProvider, IGraphQlExecutionOptions options)
         {
             this.serviceProvider = serviceProvider;
             this.options = options;
+            this.parameterResolverFactory = serviceProvider.GetRequiredService<IGraphQlParameterResolverFactory>();
         }
 
-        public object Execute(string query, GraphQlArgumentsSupplier argumentsSupplier)
+        public object Execute(string query, IDictionary<string, string>? arguments = null)
         {
+            var actualArguments = arguments ?? ImmutableDictionary<string, string>.Empty;
             var lexer = new Lexer();
             var parser = new Parser(lexer);
             var ast = parser.Parse(new Source(query));
@@ -30,10 +34,10 @@ namespace GraphQlResolver.Execution
                 throw new ArgumentException("Query did not contain a document", nameof(query));
             }
 
-            var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
-                ?? ImmutableDictionary<string, Type>.Empty;
+            //var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
+            //    ?? ImmutableDictionary<string, Type>.Empty;
 
-            var executionResult = Execute(ast, def, argumentsSupplier(variableDefinitions));
+            var executionResult = Execute(ast, def, actualArguments);
             return executionResult;
         }
 
@@ -60,7 +64,7 @@ namespace GraphQlResolver.Execution
             throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
         }
 
-        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, object?> arguments)
+        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, string> arguments)
         {
             var operation = def.Operation switch
             {
@@ -98,7 +102,9 @@ namespace GraphQlResolver.Execution
                     {
                         return builder.Add(
                             field.Alias?.Value ?? field.Name.Value,
-                            b => Build(b.ResolveQuery(field.Name.Value, ResolveArguments(field.Arguments, context)).ResolveComplex(serviceProvider), field.SelectionSet.Selections, context).Build()
+                            b => Build(b.ResolveQuery(field.Name.Value, parameterResolverFactory.FromParameterData(ResolveArguments(field.Arguments, context)))
+                                        .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
+                                ).Build()
                         );
                     }
                     else
@@ -136,22 +142,26 @@ namespace GraphQlResolver.Execution
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name.Value);
             return actualDirective == null
                 ? node
-                : actualDirective.HandleDirective(node, arguments, context);
+                : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
         }
 
-        private IDictionary<string, object?> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
+        private IDictionary<string, string> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
         {
             return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, context));
         }
 
-        private object? ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
+        private string ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
         {
-            return value switch
+            switch (value)
             {
-                GraphQLScalarValue scalar => scalar.Value,
-                GraphQLVariable variable => context.Arguments[variable.Name.Value],
-                _ => throw new NotSupportedException()
-            };
+                case GraphQLScalarValue scalar:
+                    // TODO - is there a better way to handle this string?
+                    return scalar.Kind == ASTNodeKind.StringValue ? $"\"{scalar.Value.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"" : scalar.Value;
+                case GraphQLVariable variable:
+                    return context.Arguments[variable.Name.Value];
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }

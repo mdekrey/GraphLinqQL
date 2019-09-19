@@ -9,6 +9,6 @@ namespace GraphQlResolver
     public interface IGraphQlDirective
     {
         string Name { get; }
-        ASTNode? HandleDirective(ASTNode node, IDictionary<string, object?> arguments, GraphQLExecutionContext context);
+        ASTNode? HandleDirective(ASTNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context);
     }
 }

@@ -10,7 +10,8 @@ namespace GraphQlResolver.Directives
     {
         public string Name => "skip";
 
-        public ASTNode? HandleDirective(ASTNode node, IDictionary<string, object?> arguments, GraphQLExecutionContext context) =>
-            Convert.ToBoolean(arguments["if"]) == false ? node : null;
+        public ASTNode? HandleDirective(ASTNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context) =>
+            arguments.GetParameter<bool>("if") == false ? node : null;
+
     }
 }

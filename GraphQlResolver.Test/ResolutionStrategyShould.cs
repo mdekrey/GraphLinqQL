@@ -1,3 +1,4 @@
+using GraphQlResolver.Stubs;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -15,14 +16,6 @@ namespace GraphQlResolver
             WriteIndented = false
         };
 
-        private class SimpleServiceProvider : IServiceProvider
-        {
-            public object GetService(Type serviceType)
-            {
-                return Activator.CreateInstance(serviceType) ?? throw new NotSupportedException();
-            }
-        }
-
         [Fact]
         public void BeAbleToHandlePlainObjects()
         {
@@ -34,7 +27,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("hero", q => q.ResolveQuery("hero", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("hero", q => q.ResolveQuery("hero").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -56,7 +49,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("hero", q => q.ResolveQuery("hero", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
+                root.Add("hero", q => q.ResolveQuery("hero").ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
                     .Build());
 
             //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
@@ -90,7 +83,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("hero", q => q.ResolveQuery("heroFinalized", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
+                root.Add("hero", q => q.ResolveQuery("heroFinalized").ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
                     .Build());
 
             //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
@@ -122,7 +115,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("nohero", q => q.ResolveQuery("nohero", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("nohero", q => q.ResolveQuery("nohero").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -142,7 +135,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("nulls", q => q.ResolveQuery("nulls", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("nulls", q => q.ResolveQuery("nulls").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -163,7 +156,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("heroes", q => q.ResolveQuery("heroes", ImmutableDictionary<string, object?>.Empty).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
 
@@ -287,7 +280,7 @@ namespace GraphQlResolver
                                                                 .Add("id")
                                                                 .Add("name")
                                                                 .Add("location")
-                                                                .Add("oldLocation", "location", new Dictionary<string, object?> { { "date", "2008-05-02" } })
+                                                                .Add("oldLocation", "location", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } })
                                                                 .Build())
                     .Build());
 
@@ -308,7 +301,7 @@ namespace GraphQlResolver
             // }
             var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
-                root.Add("heroById", q => q.ResolveQuery("heroById", new Dictionary<string, object?>() { { "id", "GUARDIANS-1" } }.ToImmutableDictionary()).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("heroById", q => q.ResolveQuery("heroById", new BasicParameterResolver(new Dictionary<string, string>() { { "id", "\"GUARDIANS-1\"" } })).ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
@@ -316,6 +309,8 @@ namespace GraphQlResolver
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
+
+
 
     }
 }

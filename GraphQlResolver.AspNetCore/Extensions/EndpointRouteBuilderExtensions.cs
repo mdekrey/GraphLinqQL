@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -37,9 +38,7 @@ namespace Microsoft.AspNetCore.Builder
 
                     context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
 
-                    executionResult = executor.Execute(query, types =>
-                        types.ToDictionary(kvp => kvp.Key, kvp => (object?)JsonSerializer.Deserialize(variables?.GetProperty(kvp.Key).GetRawText(), kvp.Value))
-                    );
+                    executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => p.Value.GetRawText()));
                 }
                 await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions);
             });

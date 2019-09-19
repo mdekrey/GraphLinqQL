@@ -28,7 +28,7 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
       .map(field => resultAbstractDeclaration(field, options)).join(`
     `)}
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
             "__typename" => GraphQlConstantResult.Construct("${object.name}"),
@@ -119,8 +119,8 @@ function fieldResolveQueryCaseArg(arg: GraphQLArgument, options: Options) {
   const defaultValue = arg.defaultValue;
 
   const getValue = nullable
-    ? `(parameters.TryGetValue("${arg.name}", out var ${fieldName}) ? (${inputTypeName})${fieldName} : null)`
-    : `(${inputTypeName})parameters["${arg.name}"]`;
+    ? `(parameters.HasParameter("${arg.name}") ? parameters.GetParameter<${inputTypeName}>("${arg.name}") : null)`
+    : `parameters.GetParameter<${inputTypeName}>("${arg.name}")`;
   const defaultValueExpression = defaultValue ? ` ?? ${toCsharpValue(arg.defaultValue, arg.type, options)}` : "";
   return `${fieldName}: ${getValue}${defaultValueExpression}`;
 }

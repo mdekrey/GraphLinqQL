@@ -10,7 +10,7 @@ namespace GraphQlResolver.Directives
     {
         public string Name => "include";
 
-        public ASTNode? HandleDirective(ASTNode node, IDictionary<string, object?> arguments, GraphQLExecutionContext context) =>
-            Convert.ToBoolean(arguments["if"]) == true ? node : null;
+        public ASTNode? HandleDirective(ASTNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context) =>
+            arguments.GetParameter<bool>("if") == true ? node : null;
     }
 }

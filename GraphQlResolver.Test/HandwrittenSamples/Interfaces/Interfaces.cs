@@ -24,8 +24,12 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     //union Character = Hero | Villain
     //type Query {
     //  characters: [Character!]!
-    //  heroes: [Hero!]!
+    //  heroes(first: Int): [Hero!]!
+    //  nulls: [Hero!]
+    //  nohero: Hero
     //  hero: Hero!
+    //  heroFinalized: Hero!
+    //  heroById(id: String!): Hero
     //  rand: Float!
     //}
     //schema {
@@ -57,7 +61,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
     public abstract class Query : IGraphQlResolvable
     {
         private Query() { }
-        public abstract IGraphQlResult<IEnumerable<Hero>> Heroes();
+        public abstract IGraphQlResult<IEnumerable<Hero>> Heroes(int? first);
         public abstract IGraphQlResult<IEnumerable<Hero>?> Nulls();
         public abstract IGraphQlResult<Hero> Hero();
         public abstract IGraphQlResult<Hero> HeroFinalized();
@@ -66,17 +70,17 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<double> Rand();
         public abstract IGraphQlResult<IEnumerable?> Characters();
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Query"),
                 "characters" => Characters(),
-                "heroes" => Heroes(),
+                "heroes" => Heroes(first: (parameters.HasParameter("first") ? parameters.GetParameter<int?>("first") : null)),
                 "nulls" => Nulls(),
                 "nohero" => NoHero(),
                 "hero" => Hero(),
                 "heroFinalized" => HeroFinalized(),
-                "heroById" => HeroById((string)parameters["id"]!),
+                "heroById" => HeroById(id: (parameters.GetParameter<string>("id"))),
                 "rand" => Rand(),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
@@ -105,7 +109,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<IEnumerable<Hero>> Friends();
         public abstract IGraphQlResult<string> Location(string date);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Hero"),
@@ -114,7 +118,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
                 "renown" => Renown(),
                 "faction" => Faction(),
                 "friends" => Friends(),
-                "location" => Location(date: (parameters.TryGetValue("date", out var date) ? date as string : null) ?? "2019-04-22"),
+                "location" => Location(date: (parameters.HasParameter("date") ? parameters.GetParameter<string>("date") : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
 
@@ -140,7 +144,7 @@ namespace GraphQlResolver.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<string> Name();
         public abstract IGraphQlResult<string> Goal();
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Villain"),

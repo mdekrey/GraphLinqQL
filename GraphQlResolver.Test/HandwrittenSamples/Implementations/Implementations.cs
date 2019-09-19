@@ -10,8 +10,10 @@ namespace GraphQlResolver.HandwrittenSamples.Implementations
 {
     public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
-        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes() =>
-            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>());
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes(int? first) =>
+            first == null 
+                ? Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>())
+                : Original.Resolve(root => Domain.Data.heroes.Take(first.Value)).List(item => item.As<Hero>());
 
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>?> Nulls() =>
             Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.As<Hero>()));

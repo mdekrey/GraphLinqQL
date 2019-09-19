@@ -7,7 +7,7 @@ namespace GraphQlResolver
     {
         public static IGraphQlResult<TReturnType> Construct<TReturnType>(TReturnType result)
         {
-            return new GraphQlExpressionResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result));
+            return new GraphQlExpressionResult<TReturnType>(null!, (Expression<Func<object?, TReturnType>>)(_ => result));
         }
 
     }

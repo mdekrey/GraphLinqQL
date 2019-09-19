@@ -10,6 +10,8 @@ namespace GraphQlResolver
 {
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
+        public IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
+
         public LambdaExpression UntypedResolver { get; }
 
         public LambdaExpression? Finalizer { get; }
@@ -18,17 +20,23 @@ namespace GraphQlResolver
 
         public Type? Contract { get; }
 
-        public GraphQlExpressionResult(LambdaExpression func, Type? contract = null, IReadOnlyCollection<IGraphQlJoin>? joins = null, LambdaExpression? finalizer = null)
+        public GraphQlExpressionResult(
+            IGraphQlParameterResolverFactory parameterResolverFactory,
+            LambdaExpression func,
+            Type? contract = null,
+            IReadOnlyCollection<IGraphQlJoin>? joins = null,
+            LambdaExpression? finalizer = null)
         {
+            this.ParameterResolverFactory = parameterResolverFactory;
             this.UntypedResolver = func;
             this.Contract = contract;
             this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
             this.Finalizer = finalizer;
         }
 
-        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(Expression<Func<TInput, TReturnType>> func)
+        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(IGraphQlParameterResolverFactory parameterResolverFactory, Expression<Func<TInput, TReturnType>> func)
         {
-            return new GraphQlExpressionResult<TReturnType>(func);
+            return new GraphQlExpressionResult<TReturnType>(parameterResolverFactory, func);
         }
 
 
@@ -46,12 +54,13 @@ namespace GraphQlResolver
                 throw new ArgumentException("Contract does not accept an input type");
             }
             var modelType = accepts.ModelType;
-            accepts.Original = (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType));
+            accepts.Original = (IGraphQlResultFactory)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, typeof(GraphQlResultFactory<>).MakeGenericType(modelType));
 
             return new ComplexResolverBuilder(
                 resolver,
                 ToResult,
-                modelType
+                modelType,
+                ParameterResolverFactory
             );
         }
         
@@ -74,7 +83,7 @@ namespace GraphQlResolver
             }
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<object>(resultFunc, joins: this.Joins);
+            return new GraphQlExpressionResult<object>(ParameterResolverFactory, resultFunc, joins: this.Joins);
         }
 
         private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
@@ -112,7 +121,7 @@ namespace GraphQlResolver
                 throw new ArgumentException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}", nameof(contract));
             }
             var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<TContract>(newResolver, contract);
+            return new GraphQlExpressionResult<TContract>(ParameterResolverFactory, newResolver, contract);
         }
     }
 

@@ -18,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.Configure(optionsName, optionFactory);
             services.TryAddTransient<IGraphQlExecutorFactory, GraphQlExecutorFactory>();
+            services.TryAddTransient<IGraphQlParameterResolverFactory, BasicParameterResolverFactory>();
         }
 
         public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, Action<GraphQlOptions>? optionFactory = null)

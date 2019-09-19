@@ -8,6 +8,7 @@ namespace GraphQlResolver
 {
     public interface IGraphQlResult
     {
+        IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
         LambdaExpression UntypedResolver { get; }
         LambdaExpression? Finalizer { get; }
         Type? Contract { get; }

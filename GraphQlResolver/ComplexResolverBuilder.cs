@@ -13,25 +13,35 @@ namespace GraphQlResolver
         private readonly Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve;
         private readonly Type modelType;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
+        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
-        public ComplexResolverBuilder(IGraphQlResolvable contract, Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve, Type modelType)
+        public ComplexResolverBuilder(
+            IGraphQlResolvable contract,
+            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
+            Type modelType,
+            IGraphQlParameterResolverFactory parameterResolverFactory)
+            : this(contract, resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType, parameterResolverFactory)
+        {
+        }
+
+        protected ComplexResolverBuilder(
+            IGraphQlResolvable contract,
+            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
+            ImmutableDictionary<string, IGraphQlResult> expressions,
+            Type modelType,
+            IGraphQlParameterResolverFactory parameterResolverFactory)
         {
             this.contract = contract;
             this.resolve = resolve;
             this.modelType = modelType;
-            this.expressions = ImmutableDictionary<string, IGraphQlResult>.Empty;
-        }
-
-        protected ComplexResolverBuilder(IGraphQlResolvable contract, Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve, ImmutableDictionary<string, IGraphQlResult> expressions, Type modelType)
-            : this(contract, resolve, modelType)
-        {
             this.expressions = expressions;
+            this.parameterResolverFactory = parameterResolverFactory;
         }
 
         IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
             return new ComplexResolverBuilder(contract, this.resolve, expressions
-                .Add(displayName, resolve(contract)), modelType);
+                .Add(displayName, resolve(contract)), modelType, parameterResolverFactory);
         }
 
         public IGraphQlResult Build()
@@ -51,19 +61,19 @@ namespace GraphQlResolver
             return resolve(func, allJoins);
         }
 
-        public IComplexResolverBuilder Add(string property, IDictionary<string, object?>? parameters) =>
+        public IComplexResolverBuilder Add(string property, IDictionary<string, string>? parameters) =>
             Add(property, property, parameters);
 
-        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, object?>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, string>? parameters)
         {
-            var result = contract.ResolveQuery(property, parameters: parameters ?? ImmutableDictionary<string, object?>.Empty);
+            var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, string>.Empty));
             // TODO - prevent non-primitives from being final return after adding. If this result is a non-primitive, client will be getting raw domain value!
             //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
             //{
             //    throw new InvalidOperationException("Cannot use simple resolution for complex type");
             //}
             return new ComplexResolverBuilder(contract, resolve, expressions
-                .Add(displayName ?? property, result), modelType);
+                .Add(displayName ?? property, result), modelType, parameterResolverFactory);
         }
 
         public bool IsType(string value) =>
