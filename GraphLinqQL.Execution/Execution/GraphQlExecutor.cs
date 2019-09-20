@@ -10,11 +10,11 @@ namespace GraphLinqQL.Execution
 {
     public class GraphQlExecutor : IGraphQlExecutor
     {
-        private IGraphQlServicesProvider serviceProvider;
+        private readonly IGraphQlServiceProvider serviceProvider;
         private readonly IGraphQlExecutionOptions options;
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
-        public GraphQlExecutor(IGraphQlServicesProvider serviceProvider, IGraphQlExecutionOptions options)
+        public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IGraphQlExecutionOptions options)
         {
             this.serviceProvider = serviceProvider;
             this.options = options;
@@ -161,6 +161,11 @@ namespace GraphLinqQL.Execution
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        void IDisposable.Dispose()
+        {
+            serviceProvider.Dispose();
         }
     }
 }

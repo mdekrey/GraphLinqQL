@@ -39,7 +39,7 @@ namespace GraphLinqQL
         }
 
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServicesProvider serviceProvider)
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider)
         {
             if (Contract == null)
             {

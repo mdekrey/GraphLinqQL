@@ -11,7 +11,8 @@ namespace GraphLinqQL
         public static void AddIntrospection<T>(this GraphQlOptions options)
             where T : IGraphQlTypeListing
         {
-            options.Query = typeof(Introspection.IntrospectionQuery<,>).MakeGenericType(options.Query!, typeof(T));
+            options.Query = typeof(Introspection.IntrospectionQuery<>).MakeGenericType(options.Query!);
+            options.TypeListing = typeof(T);
         }
     }
 }

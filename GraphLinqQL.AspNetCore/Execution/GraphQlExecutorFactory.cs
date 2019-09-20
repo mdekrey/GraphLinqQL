@@ -9,12 +9,12 @@ namespace GraphLinqQL.Execution
 {
     internal class GraphQlExecutorFactory : IGraphQlExecutorFactory
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IGraphQlServiceProviderFactory serviceProviderFactory;
         private readonly IOptionsMonitor<GraphQlOptions> options;
 
-        public GraphQlExecutorFactory(IServiceProvider serviceProvider, IOptionsMonitor<GraphQlOptions> options)
+        public GraphQlExecutorFactory(IGraphQlServiceProviderFactory serviceProviderFactory, IOptionsMonitor<GraphQlOptions> options)
         {
-            this.serviceProvider = serviceProvider;
+            this.serviceProviderFactory = serviceProviderFactory;
             this.options = options;
         }
 
@@ -26,14 +26,15 @@ namespace GraphLinqQL.Execution
 
         private IGraphQlExecutor Create(GraphQlOptions options)
         {
-            return new GraphQlExecutor(serviceProvider.GetRequiredService<IGraphQlServicesProvider>(), new GraphQlExecutionOptions()
+            var serviceProvider = serviceProviderFactory.GetServiceProvider(options);
+
+            return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions()
             {
                 Query = options.Query,
                 Mutation = options.Mutation,
                 Subscription = options.Subscription,
-                Directives = options.Directives.Select(directiveType => ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, directiveType)).OfType<IGraphQlDirective>().ToImmutableList(),
-                TypeResolver = (ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, options.TypeResolver) as IGraphQlTypeResolver)
-                    ?? throw new InvalidOperationException($"{nameof(options.TypeResolver)} was not of type {nameof(IGraphQlTypeResolver)}")
+                Directives = options.Directives.Select(directiveType => serviceProvider.GetDirective(directiveType)).ToImmutableList(),
+                TypeResolver = serviceProvider.GetTypeResolver()
             });
         }
 

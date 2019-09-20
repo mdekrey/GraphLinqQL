@@ -30,7 +30,7 @@ namespace GraphLinqQL
 
         public Type ResultType => typeof(T);
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServicesProvider serviceProvider) =>
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
             new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
 
 

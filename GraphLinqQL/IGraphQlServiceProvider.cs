@@ -4,10 +4,11 @@ using System.Text;
 
 namespace GraphLinqQL
 {
-    public interface IGraphQlServicesProvider
+    public interface IGraphQlServiceProvider : IDisposable
     {
         IGraphQlParameterResolverFactory GetParameterResolverFactory();
         IGraphQlResolvable GetResolverContract(Type contract);
-        
+        Introspection.IGraphQlTypeListing GetTypeListing();
+        IGraphQlTypeResolver? GetTypeResolver();
     }
 }

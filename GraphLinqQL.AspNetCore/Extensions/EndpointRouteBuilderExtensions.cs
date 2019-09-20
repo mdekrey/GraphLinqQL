@@ -29,7 +29,8 @@ namespace Microsoft.AspNetCore.Builder
             return endpoints.MapPost(pattern, async context =>
             {
                 var executor = context.RequestServices.GetRequiredService<IGraphQlExecutorFactory>().Create(name);
-
+                context.Response.RegisterForDispose(executor);
+                
                 object executionResult;
                 using (var body = await JsonDocument.ParseAsync(context.Request.Body))
                 {

@@ -5,19 +5,18 @@ using System.Text;
 
 namespace GraphLinqQL.Introspection
 {
-    public class IntrospectionQuery<TQuery, TTypeListing> : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
+    public class IntrospectionQuery<TQuery> : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         where TQuery : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
-        where TTypeListing : IGraphQlTypeListing
     {
         private readonly TQuery originalQuery;
         private readonly IGraphQlTypeListing typeListing;
         private IGraphQlResultFactory<GraphQlRoot>? original;
 
-        public IntrospectionQuery(IServiceProvider serviceProvider)
+        public IntrospectionQuery(IGraphQlServiceProvider servicesProvider)
         {
             // FIXME: This shouldn't use a service provider, should it?
-            this.originalQuery = ActivatorUtilities.GetServiceOrCreateInstance<TQuery>(serviceProvider);
-            this.typeListing = ActivatorUtilities.GetServiceOrCreateInstance<TTypeListing>(serviceProvider);
+            this.originalQuery = (TQuery)servicesProvider.GetResolverContract(typeof(TQuery));
+            this.typeListing = servicesProvider.GetTypeListing();
         }
 
         public IGraphQlResultFactory<GraphQlRoot> Original
