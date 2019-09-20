@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -40,21 +39,21 @@ namespace GraphLinqQL
         }
 
 
-        public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider)
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServicesProvider serviceProvider)
         {
             if (Contract == null)
             {
                 throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects");
             }
 
-            var resolver = (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, Contract);
+            var resolver = serviceProvider.GetResolverContract(Contract);
             var accepts = resolver as IGraphQlAccepts;
             if (accepts == null)
             {
                 throw new ArgumentException("Contract does not accept an input type");
             }
             var modelType = accepts.ModelType;
-            accepts.Original = (IGraphQlResultFactory)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, typeof(GraphQlResultFactory<>).MakeGenericType(modelType));
+            accepts.Original = GraphQlResultFactory.Construct(modelType, serviceProvider);
 
             return new ComplexResolverBuilder(
                 resolver,
@@ -129,8 +128,7 @@ namespace GraphLinqQL
     {
         public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
-            var parameters = new object[] { func, joins };
-            return (IGraphQlResult)typeof(GraphQlExpressionResult<>).MakeGenericType(returnType).GetConstructors().Single(c => c.GetParameters().Length == 2).Invoke(parameters);
+            return (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlExpressionResult<>).MakeGenericType(returnType), func, joins);
         }
     }
 

@@ -1,6 +1,5 @@
 ﻿using GraphQLParser;
 using GraphQLParser.AST;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,15 +10,15 @@ namespace GraphLinqQL.Execution
 {
     public class GraphQlExecutor : IGraphQlExecutor
     {
-        private IServiceProvider serviceProvider;
+        private IGraphQlServicesProvider serviceProvider;
         private readonly IGraphQlExecutionOptions options;
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
-        public GraphQlExecutor(IServiceProvider serviceProvider, IGraphQlExecutionOptions options)
+        public GraphQlExecutor(IGraphQlServicesProvider serviceProvider, IGraphQlExecutionOptions options)
         {
             this.serviceProvider = serviceProvider;
             this.options = options;
-            this.parameterResolverFactory = serviceProvider.GetRequiredService<IGraphQlParameterResolverFactory>();
+            this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
         }
 
         public object Execute(string query, IDictionary<string, string>? arguments = null)

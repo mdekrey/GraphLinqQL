@@ -15,6 +15,7 @@ namespace GraphLinqQL.Introspection
 
         public IntrospectionQuery(IServiceProvider serviceProvider)
         {
+            // FIXME: This shouldn't use a service provider, should it?
             this.originalQuery = ActivatorUtilities.GetServiceOrCreateInstance<TQuery>(serviceProvider);
             this.typeListing = ActivatorUtilities.GetServiceOrCreateInstance<TTypeListing>(serviceProvider);
         }

@@ -26,7 +26,7 @@ namespace GraphLinqQL.Execution
 
         private IGraphQlExecutor Create(GraphQlOptions options)
         {
-            return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions()
+            return new GraphQlExecutor(serviceProvider.GetRequiredService<IGraphQlServicesProvider>(), new GraphQlExecutionOptions()
             {
                 Query = options.Query,
                 Mutation = options.Mutation,

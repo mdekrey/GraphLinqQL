@@ -26,4 +26,12 @@ namespace GraphLinqQL
 
     }
 
+    internal static class GraphQlResultFactory
+    {
+        public static IGraphQlResultFactory Construct(Type modelType, IGraphQlServicesProvider serviceProvider)
+        {
+            return (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), serviceProvider.GetParameterResolverFactory());
+        }
+    }
+
 }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Collections.Immutable;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphLinqQL
 {
@@ -14,9 +12,9 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static object GraphQlRoot(this IServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static object GraphQlRoot(this IGraphQlServicesProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
-            var parameterResolverFactory = serviceProvider.GetRequiredService<IGraphQlParameterResolverFactory>();
+            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
             var resolved = resolver(resultFactory.Resolve(a => a).As(t).ResolveComplex(serviceProvider));
             var expression = resolved.UntypedResolver.CastAndBoxSingleInput<GraphQlRoot>();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -31,8 +30,8 @@ namespace GraphLinqQL
 
         public Type ResultType => typeof(T);
 
-        public IComplexResolverBuilder ResolveComplex(IServiceProvider serviceProvider) =>
-            new UnionResolverBuilder(serviceProvider.GetRequiredService<IGraphQlParameterResolverFactory>(), (IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServicesProvider serviceProvider) =>
+            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
 
 
         public IGraphQlResult As(Type contract) => throw new NotImplementedException();

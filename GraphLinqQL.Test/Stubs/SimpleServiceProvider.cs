@@ -2,25 +2,16 @@
 
 namespace GraphLinqQL.Stubs
 {
-    class SimpleServiceProvider : IServiceProvider
+    class SimpleServiceProvider : IGraphQlServicesProvider
     {
-        public object? GetService(Type serviceType)
+        public IGraphQlParameterResolverFactory GetParameterResolverFactory()
         {
-            if (serviceType == typeof(IGraphQlParameterResolverFactory))
-            {
-                return new BasicParameterResolverFactory();
-            }
-            else
-            {
-                try
-                {
-                    return Activator.CreateInstance(serviceType);
-                }
-                catch
-                {
-                    return null;
-                }
-            }
+            return new BasicParameterResolverFactory();
+        }
+
+        public IGraphQlResolvable GetResolverContract(Type contract)
+        {
+            return (IGraphQlResolvable)Activator.CreateInstance(contract)!;
         }
     }
 
