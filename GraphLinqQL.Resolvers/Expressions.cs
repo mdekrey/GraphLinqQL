@@ -56,14 +56,6 @@ namespace GraphLinqQL
 
         internal static Expression IfNotNull(this Expression maybeNull, Expression whenNotNull)
         {
-            // In some cases, we can statically analyze that maybeNull is never null, for instance result of any of the Enumerable/Queryable functions where the result is still enumerable/queryable
-            if (typeof(System.Collections.IEnumerable).IsAssignableFrom(maybeNull.Type) && maybeNull is MethodCallExpression methodCall)
-            {
-                if (methodCall.Method.DeclaringType == typeof(Enumerable) || methodCall.Method.DeclaringType == typeof(Queryable))
-                {
-                    return whenNotNull;
-                }
-            }
             return Expression.Condition(Expression.ReferenceEqual(maybeNull, Expression.Constant(null)), Expression.Constant(null, whenNotNull.Type), whenNotNull);
         }
 

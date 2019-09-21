@@ -42,25 +42,23 @@ namespace GraphLinqQL.Execution
 
         private Type GetTypeFromGraphQlType(GraphQLType arg)
         {
-            if (arg is GraphQLNonNullType nonNullType)
+            switch (arg)
             {
-                var t = GetTypeFromGraphQlType(nonNullType.Type);
-                if (t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    return t.GetGenericArguments()[0];
-                }
-                return t;
+                case GraphQLNonNullType nonNullNode:
+                    var nonNullType = GetTypeFromGraphQlType(nonNullNode.Type);
+                    if (nonNullType.IsConstructedGenericType && nonNullType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        return nonNullType.GetGenericArguments()[0];
+                    }
+                    return nonNullType;
+                case GraphQLListType listNode:
+                    var listType = GetTypeFromGraphQlType(listNode.Type);
+                    return typeof(IEnumerable<>).MakeGenericType(listType);
+                case GraphQLNamedType namedType:
+                    return options.TypeResolver.Resolve(namedType.Name.Value);
+                default:
+                    throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
             }
-            if (arg is GraphQLListType listType)
-            {
-                var t = GetTypeFromGraphQlType(listType.Type);
-                return typeof(IEnumerable<>).MakeGenericType(t);
-            }
-            if (arg is GraphQLNamedType namedType)
-            {
-                return options.TypeResolver.Resolve(namedType.Name.Value);
-            }
-            throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
         }
 
         private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, string> arguments)
