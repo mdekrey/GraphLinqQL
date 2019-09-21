@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable" Version="1.6.0-preview9.19421.4" />
+    <ProjectReference Include="..\GraphLinqQL.CommonTypes\GraphLinqQL.CommonTypes.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
   </ItemGroup>
 
 </Project>

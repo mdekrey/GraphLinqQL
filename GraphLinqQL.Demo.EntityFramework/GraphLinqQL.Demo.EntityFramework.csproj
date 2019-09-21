@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
-    <ProjectReference Include="..\GraphLinqQL\GraphLinqQL.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
   </ItemGroup>
 

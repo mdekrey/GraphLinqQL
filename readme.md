@@ -27,6 +27,8 @@ expressions and code generation from a schema to create
 - [ ] Support versions of C# prior to 8
 - [ ] Determine dependencies to generate code
     - Currently, we depend on Node, but would Docker be better?
+	    - Considering "No" because web devs on VS can install Node via VS
 	- See how [Pegasus](https://github.com/otac0n/Pegasus) adds build tools
+- [ ] Mark as obsolete parameters in schema as obsolete in C#
 - [ ] Publish to NuGet, etc.
 - [ ] More documentation
