@@ -20,12 +20,6 @@ namespace GraphLinqQL.Introspection
                     typeof(Introspection.Interfaces.Introspection.__Directive),
                     typeof(Introspection.Interfaces.Introspection.__DirectiveLocation),
                 };
-        private readonly IServiceProvider serviceProvider;
-
-        public Schema(IServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
-        }
 
         public override IGraphQlResult<IEnumerable<__Directive>> directives() =>
             Original.Resolve(types => types.DirectiveInformation).List(_ => _.As<DirectiveDefinition>());

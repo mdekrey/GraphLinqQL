@@ -47,6 +47,13 @@ namespace GraphLinqQL
             return (IGraphQlTypeResolver)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, options.TypeResolver);
         }
 
+        public IGraphQlTypeInformation? TryGetTypeInformation(Type? type)
+        {
+            return type == null
+                ? null
+                : (IGraphQlTypeInformation)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, type);
+        }
+
         void IDisposable.Dispose()
         {
             scope.Dispose();

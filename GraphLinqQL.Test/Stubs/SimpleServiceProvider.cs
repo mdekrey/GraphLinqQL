@@ -28,6 +28,11 @@ namespace GraphLinqQL.Stubs
         {
             throw new NotImplementedException();
         }
+
+        public IGraphQlTypeInformation? TryGetTypeInformation(Type? type)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

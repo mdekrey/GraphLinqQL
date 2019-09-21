@@ -7,12 +7,9 @@ namespace GraphLinqQL.Introspection
 {
     class GraphQlType : Interfaces.__Type.GraphQlContract<Type>
     {
-        private readonly IServiceProvider serviceProvider;
-
-        public GraphQlType(IServiceProvider serviceProvider)
+        public GraphQlType(IGraphQlServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
-            typeInformation = GraphQlJoin.JoinSingle<Type, IGraphQlTypeInformation>((type) => serviceProvider.MaybeInstantiate(type)!);
+            typeInformation = GraphQlJoin.JoinSingle<Type, IGraphQlTypeInformation>((type) => serviceProvider.TryGetTypeInformation(type)!);
         }
 
         private readonly GraphQlJoin<Type, IGraphQlTypeInformation> typeInformation; 

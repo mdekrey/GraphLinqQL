@@ -25,13 +25,6 @@ public class TypeListing : IGraphQlTypeListing
         `)}
     };
 
-    private readonly IServiceProvider serviceProvider;
-
-    public TypeListing(IServiceProvider serviceProvider)
-    {
-        this.serviceProvider = serviceProvider;
-    }
-
     public Type Query => ${maybeRenderIntrospectionType(schema.getQueryType())};
     public Type? Mutation => ${maybeRenderIntrospectionType(schema.getMutationType())};
     public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
