@@ -18,7 +18,6 @@ namespace GraphLinqQL
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
             var resolved = resolver(resultFactory.Resolve(a => a).As(t).ResolveComplex(serviceProvider));
             var expression = resolved.UntypedResolver.CastAndBoxSingleInput<GraphQlRoot>();
-            expression = expression.CollapseDoubleSelect();
             var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
             return queryable.Single();
         }
