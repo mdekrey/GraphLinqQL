@@ -83,6 +83,10 @@ function resultAbstractDeclaration(field: GraphQLField<any, any, { [key: string]
   const propertyName = getPropertyName(field.name, options);
   const typeName = getOutputTypeName(field.type, options);
   const args = field.args.map(arg => resultAbstractDeclarationArg(arg, options)).join(", ");
+  const obsoleteAttr = field.isDeprecated
+    ? `[Obsolete(${field.deprecationReason ? JSON.stringify(field.deprecationReason) : ""})]
+    `
+    : ``;
   return `${
     field.description
       ? `
@@ -91,7 +95,7 @@ function resultAbstractDeclaration(field: GraphQLField<any, any, { [key: string]
     /// </summary>
     `
       : ``
-  }public abstract IGraphQlResult${typeName && `<${typeName}>`} ${propertyName}(${args});`;
+  }${obsoleteAttr}public abstract IGraphQlResult${typeName && `<${typeName}>`} ${propertyName}(${args});`;
 }
 
 function resultAbstractDeclarationArg(arg: GraphQLArgument, options: Options) {

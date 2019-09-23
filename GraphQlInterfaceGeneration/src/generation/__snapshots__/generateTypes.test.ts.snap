@@ -604,6 +604,612 @@ public abstract class Subscription : IGraphQlResolvable
 "
 `;
 
+exports[`can generate v3 types with deprecations 1`] = `
+"
+/// <summary>
+/// The query type, represents all of the entry points into our object graph
+/// </summary>
+public abstract class Query : IGraphQlResolvable
+{
+    private Query() { }
+    [Obsolete(\\"Was too subjective\\")]
+    public abstract IGraphQlResult<Character?> hero(Episode? episode);
+    [Obsolete(\\"No longer supported\\")]
+    public abstract IGraphQlResult<IEnumerable<Review?>?> reviews(Episode episode);
+    public abstract IGraphQlResult<IEnumerable?> search(string? text);
+    public abstract IGraphQlResult<Character?> character(string id);
+    public abstract IGraphQlResult<Droid?> droid(string id);
+    public abstract IGraphQlResult<Human?> human(string id);
+    public abstract IGraphQlResult<Starship?> starship(string id);
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
+            \\"hero\\" => this.hero(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
+            \\"reviews\\" => this.reviews(
+                episode: parameters.GetParameter<Episode>(\\"episode\\")),
+            \\"search\\" => this.search(
+                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null)),
+            \\"character\\" => this.character(
+                id: parameters.GetParameter<string>(\\"id\\")),
+            \\"droid\\" => this.droid(
+                id: parameters.GetParameter<string>(\\"id\\")),
+            \\"human\\" => this.human(
+                id: parameters.GetParameter<string>(\\"id\\")),
+            \\"starship\\" => this.starship(
+                id: parameters.GetParameter<string>(\\"id\\")),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Query\\";
+
+    public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// The episodes in the Star Wars trilogy
+/// </summary>
+public enum Episode
+{
+    
+    /// <summary>
+    /// Star Wars Episode IV: A New Hope, released in 1977.
+    /// </summary>
+    NEWHOPE,
+    
+    /// <summary>
+    /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
+    /// </summary>
+    EMPIRE,
+    
+    /// <summary>
+    /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+    /// </summary>
+    JEDI
+}
+
+
+/// <summary>
+/// A character from the Star Wars universe
+/// </summary>
+public interface Character : IGraphQlResolvable
+{
+    
+      /// <summary>
+      /// The ID of the character
+      /// </summary>
+      IGraphQlResult<string> id();
+    
+      /// <summary>
+      /// The name of the character
+      /// </summary>
+      IGraphQlResult<string> name();
+    
+      /// <summary>
+      /// The friends of the character, or an empty list if they have none
+      /// </summary>
+      IGraphQlResult<IEnumerable<Character?>?> friends();
+    
+      /// <summary>
+      /// The friends of the character exposed as a connection with edges
+      /// </summary>
+      IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
+    
+      /// <summary>
+      /// The movies this character appears in
+      /// </summary>
+      IGraphQlResult<IEnumerable<Episode?>> appearsIn();
+}
+
+
+/// <summary>
+/// A connection object for a character's friends
+/// </summary>
+public abstract class FriendsConnection : IGraphQlResolvable
+{
+    private FriendsConnection() { }
+    
+    /// <summary>
+    /// The total number of friends
+    /// </summary>
+    public abstract IGraphQlResult<int?> totalCount();
+    
+    /// <summary>
+    /// The edges for each of the character's friends.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<FriendsEdge?>?> edges();
+    
+    /// <summary>
+    /// A list of the friends, as a convenience when edges are not needed.
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    
+    /// <summary>
+    /// Information for paginating this connection
+    /// </summary>
+    public abstract IGraphQlResult<PageInfo> pageInfo();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsConnection\\"),
+            \\"totalCount\\" => this.totalCount(),
+            \\"edges\\" => this.edges(),
+            \\"friends\\" => this.friends(),
+            \\"pageInfo\\" => this.pageInfo(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FriendsConnection\\";
+
+    public abstract class GraphQlContract<T> : FriendsConnection, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An edge object for a character's friends
+/// </summary>
+public abstract class FriendsEdge : IGraphQlResolvable
+{
+    private FriendsEdge() { }
+    
+    /// <summary>
+    /// A cursor used for pagination
+    /// </summary>
+    public abstract IGraphQlResult<string> cursor();
+    
+    /// <summary>
+    /// The character represented by this friendship edge
+    /// </summary>
+    public abstract IGraphQlResult<Character?> node();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsEdge\\"),
+            \\"cursor\\" => this.cursor(),
+            \\"node\\" => this.node(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"FriendsEdge\\";
+
+    public abstract class GraphQlContract<T> : FriendsEdge, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// Information for paginating this connection
+/// </summary>
+public abstract class PageInfo : IGraphQlResolvable
+{
+    private PageInfo() { }
+    public abstract IGraphQlResult<string?> startCursor();
+    public abstract IGraphQlResult<string?> endCursor();
+    public abstract IGraphQlResult<bool> hasNextPage();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
+            \\"startCursor\\" => this.startCursor(),
+            \\"endCursor\\" => this.endCursor(),
+            \\"hasNextPage\\" => this.hasNextPage(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"PageInfo\\";
+
+    public abstract class GraphQlContract<T> : PageInfo, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// Represents a review for a movie
+/// </summary>
+public abstract class Review : IGraphQlResolvable
+{
+    private Review() { }
+    
+    /// <summary>
+    /// The movie
+    /// </summary>
+    public abstract IGraphQlResult<Episode?> episode();
+    
+    /// <summary>
+    /// The number of stars this review gave, 1-5
+    /// </summary>
+    public abstract IGraphQlResult<int> stars();
+    
+    /// <summary>
+    /// Comment about the movie
+    /// </summary>
+    public abstract IGraphQlResult<string?> commentary();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Review\\"),
+            \\"episode\\" => this.episode(),
+            \\"stars\\" => this.stars(),
+            \\"commentary\\" => this.commentary(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Review\\";
+
+    public abstract class GraphQlContract<T> : Review, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+// Union: SearchResult
+
+/// <summary>
+/// A humanoid creature from the Star Wars universe
+/// </summary>
+public abstract class Human : IGraphQlResolvable, Character
+{
+    private Human() { }
+    
+    /// <summary>
+    /// The ID of the human
+    /// </summary>
+    public abstract IGraphQlResult<string> id();
+    
+    /// <summary>
+    /// What this human calls themselves
+    /// </summary>
+    public abstract IGraphQlResult<string> name();
+    
+    /// <summary>
+    /// The home planet of the human, or null if unknown
+    /// </summary>
+    public abstract IGraphQlResult<string?> homePlanet();
+    
+    /// <summary>
+    /// Height in the preferred unit, default is meters
+    /// </summary>
+    public abstract IGraphQlResult<double?> height(LengthUnit? unit);
+    
+    /// <summary>
+    /// Mass in kilograms, or null if unknown
+    /// </summary>
+    public abstract IGraphQlResult<double?> mass();
+    
+    /// <summary>
+    /// This human's friends, or an empty list if they have none
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    
+    /// <summary>
+    /// The friends of the human exposed as a connection with edges
+    /// </summary>
+    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
+    
+    /// <summary>
+    /// The movies this human appears in
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Episode?>> appearsIn();
+    
+    /// <summary>
+    /// A list of starships this person has piloted, or an empty list if none
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Human\\"),
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"homePlanet\\" => this.homePlanet(),
+            \\"height\\" => this.height(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
+            \\"mass\\" => this.mass(),
+            \\"friends\\" => this.friends(),
+            \\"friendsConnection\\" => this.friendsConnection(
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
+            \\"appearsIn\\" => this.appearsIn(),
+            \\"starships\\" => this.starships(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Human\\" || value == \\"Character\\";
+
+    public abstract class GraphQlContract<T> : Human, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// Units of height
+/// </summary>
+public enum LengthUnit
+{
+    
+    /// <summary>
+    /// The standard unit around the world
+    /// </summary>
+    METER,
+    
+    /// <summary>
+    /// Primarily used in the United States
+    /// </summary>
+    FOOT
+}
+
+
+
+public abstract class Starship : IGraphQlResolvable
+{
+    private Starship() { }
+    
+    /// <summary>
+    /// The ID of the starship
+    /// </summary>
+    public abstract IGraphQlResult<string> id();
+    
+    /// <summary>
+    /// The name of the starship
+    /// </summary>
+    public abstract IGraphQlResult<string> name();
+    
+    /// <summary>
+    /// Length of the starship, along the longest axis
+    /// </summary>
+    public abstract IGraphQlResult<double?> length(LengthUnit? unit);
+    public abstract IGraphQlResult<IEnumerable<IEnumerable<double>>?> coordinates();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"length\\" => this.length(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
+            \\"coordinates\\" => this.coordinates(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Starship\\";
+
+    public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// An autonomous mechanical character in the Star Wars universe
+/// </summary>
+public abstract class Droid : IGraphQlResolvable, Character
+{
+    private Droid() { }
+    
+    /// <summary>
+    /// The ID of the droid
+    /// </summary>
+    public abstract IGraphQlResult<string> id();
+    
+    /// <summary>
+    /// What others call this droid
+    /// </summary>
+    public abstract IGraphQlResult<string> name();
+    
+    /// <summary>
+    /// This droid's friends, or an empty list if they have none
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Character?>?> friends();
+    
+    /// <summary>
+    /// The friends of the droid exposed as a connection with edges
+    /// </summary>
+    public abstract IGraphQlResult<FriendsConnection> friendsConnection(int? first, string? after);
+    
+    /// <summary>
+    /// The movies this droid appears in
+    /// </summary>
+    public abstract IGraphQlResult<IEnumerable<Episode?>> appearsIn();
+    
+    /// <summary>
+    /// This droid's primary function
+    /// </summary>
+    public abstract IGraphQlResult<string?> primaryFunction();
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Droid\\"),
+            \\"id\\" => this.id(),
+            \\"name\\" => this.name(),
+            \\"friends\\" => this.friends(),
+            \\"friendsConnection\\" => this.friendsConnection(
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
+            \\"appearsIn\\" => this.appearsIn(),
+            \\"primaryFunction\\" => this.primaryFunction(),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Droid\\" || value == \\"Character\\";
+
+    public abstract class GraphQlContract<T> : Droid, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// The mutation type, represents all updates we can make to our data
+/// </summary>
+public abstract class Mutation : IGraphQlResolvable
+{
+    private Mutation() { }
+    public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Mutation\\"),
+            \\"createReview\\" => this.createReview(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null),
+                review: parameters.GetParameter<ReviewInput>(\\"review\\")),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Mutation\\";
+
+    public abstract class GraphQlContract<T> : Mutation, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+
+
+/// <summary>
+/// The input object sent when someone is creating a new review
+/// </summary>
+public class ReviewInput
+{
+    
+      /// <summary>
+      /// 0-5 stars
+      /// </summary>
+      public int stars { get; set; }
+    
+      /// <summary>
+      /// Comment about the movie, optional
+      /// </summary>
+      public string? commentary { get; set; }
+    
+      /// <summary>
+      /// Favorite color, optional
+      /// </summary>
+      public ColorInput? favorite_color { get; set; }
+}
+
+
+/// <summary>
+/// The input object sent when passing in a color
+/// </summary>
+public class ColorInput
+{
+    public int red { get; set; }
+    public int green { get; set; }
+    public int blue { get; set; }
+}
+
+
+/// <summary>
+/// The subscription type, represents all subscriptions we can make to our data
+/// </summary>
+public abstract class Subscription : IGraphQlResolvable
+{
+    private Subscription() { }
+    public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
+
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        name switch
+        {
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Subscription\\"),
+            \\"reviewAdded\\" => this.reviewAdded(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
+            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+        };
+
+    bool IGraphQlResolvable.IsType(string value) =>
+      value == \\"Subscription\\";
+
+    public abstract class GraphQlContract<T> : Subscription, IGraphQlAccepts<T>
+    {
+#nullable disable
+        public IGraphQlResultFactory<T> Original { get; set; }
+#nullable enable
+
+        IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+        Type IGraphQlAccepts.ModelType => typeof(T);
+    }
+}
+"
+`;
+
 exports[`can generate v4 types 1`] = `
 "
 
