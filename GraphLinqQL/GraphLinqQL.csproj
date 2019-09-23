@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.CommonTypes\GraphLinqQL.CommonTypes.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
   </ItemGroup>
