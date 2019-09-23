@@ -4,30 +4,17 @@
     <TargetFramework>netstandard2.0</TargetFramework>
 
     <ToolsRootDir>../GraphQlInterfaceGeneration/</ToolsRootDir>
-    <InputSchemaV3>$(MSBuildProjectDirectory)/StarWarsV3/sw-schema.3.graphql</InputSchemaV3>
-    <OutputFileV3>$(MSBuildProjectDirectory)/StarWarsV3/interfaces.generated.cs</OutputFileV3>
   </PropertyGroup>
 
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
 
-  <Target Name="EnsureNodeEnv" BeforeTargets="CoreCompile" Condition=" !Exists('$(ToolsRootDir)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm install" />
-  </Target>
+  <ItemGroup>
+    <None Remove="StarWarsV3\sw-schema.3.graphql" />
+  </ItemGroup>
 
-  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchemaV3)" Outputs="$(OutputFileV3)">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm start -- -i &quot;$(InputSchemaV3)&quot; -o &quot;$(OutputFileV3)&quot; -n GraphLinqQL.StarWarsV3.Interfaces" />
-  </Target>
+  <ItemGroup>
+    <GraphLinqQlSchema Include="StarWarsV3\sw-schema.3.graphql" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />

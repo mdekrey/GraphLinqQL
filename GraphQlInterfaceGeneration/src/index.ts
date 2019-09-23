@@ -1,7 +1,7 @@
 import * as program from "caporal";
 import { parseToSchema } from "./parseToSchema";
-import { join } from "path";
-import { readFileSync, writeFileSync } from "fs";
+import { dirname } from "path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { defaultOptions } from "./generation/defaultOptions";
 import { generateFullFile } from "./generation/generateFullFile";
 import { Options } from "./generation/Options";
@@ -28,6 +28,7 @@ program
     const graphqlSchema = readFileSync(inputPath).toString();
     const parsed = parseToSchema(graphqlSchema);
     const output = generateFullFile(parsed, buildOptions(switches as Switches));
+    recursiveMkdir(dirname(outputPath));
     writeFileSync(outputPath, output);
   });
 
@@ -42,4 +43,11 @@ function buildOptions(switches: Switches): Options {
     introspection: switches.introspection
   };
   return result;
+}
+
+function recursiveMkdir(dir: string) {
+  if (!existsSync(dir)) {
+    recursiveMkdir(dirname(dir));
+    mkdirSync(dir);
+  }
 }

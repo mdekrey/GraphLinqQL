@@ -5,7 +5,16 @@
 
     <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
     <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
+    <GraphLinqQLArguments>--introspection</GraphLinqQLArguments>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="introspection.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <GraphLinqQlSchema Include="Introspection\introspection.graphql" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview9.19423.4" />
@@ -15,25 +24,6 @@
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
   </ItemGroup>
 
-
-  <Target Name="EnsureNodeEnv" BeforeTargets="CoreCompile" Condition=" !Exists('$(ToolsRootDir)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm install" />
-  </Target>
-
-  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchema)" Outputs="$(OutputFile)">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm start -- -i &quot;$(InputSchema)&quot; -o &quot;$(OutputFile)&quot; --introspection -n GraphLinqQL.Introspection.Interfaces" />
-  </Target>
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
 
 </Project>

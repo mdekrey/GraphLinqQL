@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CompileDependsOn>$(CompileDependsOn);CompileGraphLinqQl</CompileDependsOn>
+    <CoreCompileDependsOn>$(CoreCompileDependsOn);CompileGraphLinqQl</CoreCompileDependsOn>
+    <BuildDependsOn>$(BuildDependsOn);CompileGraphLinqQl</BuildDependsOn>
+    <CoreBuildDependsOn>$(CoreBuildDependsOn);CompileGraphLinqQl</CoreBuildDependsOn>
+    <CleanDependsOn>$(CleanDependsOn);CleanGraphLinqQl</CleanDependsOn>
+    <GraphLinqQLArguments Condition=" '$(GraphLinqQLArguments)' == '' "></GraphLinqQLArguments>
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <AvailableItemName Include="GraphLinqQlSchema" DisplayName="GraphQL Schema (GraphLinqQL)" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
+    <PegasusAssemblyPath>$(MSBuildThisFileDirectory)netcoreapp2.0\Pegasus.dll</PegasusAssemblyPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
+    <PegasusAssemblyPath>$(MSBuildThisFileDirectory)net45\Pegasus.exe</PegasusAssemblyPath>
+  </PropertyGroup>
+
+  <Target Name="Test">
+    <Message Importance="high" Text="@(GraphLinqQlSchema)" />
+  </Target>
+
+  <Target Name="CompileGraphLinqQl" BeforeTargets="PrepareForBuild" AfterTargets="EnsureGraphLinqQlNodeEnv" DependsOnTargets="_CompileGraphLinqQl" Condition=" '@(GraphLinqQlSchema)' != '' ">
+    <ItemGroup>
+      <Compile Include="%(GraphLinqQlSchema.OutputPath)" />
+    </ItemGroup>
+    <Message Importance="high" Text="@(Compile)" />
+  </Target>
+
+  <Target Name="_UpdateGraphLinqQlMetatdata">
+    <ItemGroup>
+      <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Link)' != '' ">
+        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+      </GraphLinqQlSchema>
+      <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Link)' == '' ">
+        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+      </GraphLinqQlSchema>
+      <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Namespace)' == '' ">
+        <Namespace>$(RootNamespace).$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.RelativeDir), '[/\\\\]', '.'))Interfaces</Namespace>
+      </GraphLinqQlSchema>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CleanGraphLinqQl" BeforeTargets="Clean" DependsOnTargets="_UpdateGraphLinqQlMetatdata">
+    <Delete Files="@(GraphLinqQlSchema -> '%(OutputPath)')" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="_CompileGraphLinqQl" DependsOnTargets="_UpdateGraphLinqQlMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GraphLinqQlSchema)" Outputs="@(GraphLinqQlSchema -> '%(OutputPath)')">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Rebuilding schema" />
+    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm start -- -i %22%(GraphLinqQlSchema.FullPath)%22 -o %22$(MSBuildProjectDirectory)/%(GraphLinqQlSchema.OutputPath)%22 -n %22%(GraphLinqQlSchema.Namespace)%22 $(GraphLinqQLArguments)" />
+
+    <Message Text="%(GraphLinqQlSchema.Identity) -> %(GraphLinqQlSchema.OutputPath)" />
+  </Target>
+
+  <Target Name="EnsureGraphLinqQlNodeEnv" BeforeTargets="CoreCompile" Condition=" '$(ToolsRootDir)' != '' AND !Exists('$(ToolsRootDir)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm install" />
+  </Target>
+
+</Project>

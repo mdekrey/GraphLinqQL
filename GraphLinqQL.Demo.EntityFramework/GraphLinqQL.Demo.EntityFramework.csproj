@@ -3,29 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
 
-    <InputSchemaV4>$(MSBuildProjectDirectory)/StarWarsV4/sw-schema.4.graphql</InputSchemaV4>
-    <OutputFileV4>$(MSBuildProjectDirectory)/StarWarsV4/interfaces.generated.cs</OutputFileV4>
   </PropertyGroup>
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
 
-  <Target Name="EnsureNodeEnv" BeforeTargets="CoreCompile" Condition=" !Exists('$(ToolsRootDir)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm install" />
-  </Target>
+  <ItemGroup>
+    <None Remove="StarWarsV4\sw-schema.4.graphql" />
+  </ItemGroup>
 
-  <Target Name="EnsureInterfaces" BeforeTargets="CoreCompile" AfterTargets="EnsureNodeEnv" Inputs="$(InputSchemaV4)" Outputs="$(OutputFileV4)">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm start -- -i &quot;$(InputSchemaV4)&quot; -o &quot;$(OutputFileV4)&quot; -n GraphLinqQL.StarWarsV4.Interfaces" />
-  </Target>
+  <ItemGroup>
+    <GraphLinqQlSchema Include="StarWarsV4\sw-schema.4.graphql" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
