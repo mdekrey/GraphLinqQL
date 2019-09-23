@@ -10,12 +10,10 @@ export function generateFullFile(schema: GraphQLSchema, options: Options): strin
 `)}${
     options.useNullabilityIndicator
       ? `
-#nullable enable`
+#nullable enable
+#nullable disable warnings`
       : ""
   }
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8605 // Unboxing a possibly null value.
 #pragma warning disable CS0618 // Type or member is obsolete. (Don't check these in the generated file because it only calls itself.)
 
 namespace ${options.namespace}

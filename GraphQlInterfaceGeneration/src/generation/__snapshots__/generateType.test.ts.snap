@@ -122,10 +122,7 @@ public abstract class Person : IGraphQlResolvable, Node
 
     public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
     {
-#nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable enable
-
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
     }
@@ -162,10 +159,7 @@ public abstract class Query : IGraphQlResolvable
 
     public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
     {
-#nullable disable
         public IGraphQlResultFactory<T> Original { get; set; }
-#nullable enable
-
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
     }

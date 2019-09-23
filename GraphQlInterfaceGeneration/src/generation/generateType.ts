@@ -47,18 +47,7 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
 
     public abstract class GraphQlContract<T> : ${typeName}, IGraphQlAccepts<T>
     {
-${
-  options.useNullabilityIndicator
-    ? `#nullable disable
-`
-    : ""
-}        public IGraphQlResultFactory<T> Original { get; set; }
-${
-  options.useNullabilityIndicator
-    ? `#nullable enable
-`
-    : ""
-}
+        public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
         Type IGraphQlAccepts.ModelType => typeof(T);
     }

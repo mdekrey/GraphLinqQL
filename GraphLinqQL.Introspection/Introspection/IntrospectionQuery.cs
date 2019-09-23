@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using GraphLinqQL.Introspection.Interfaces.Introspection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ namespace GraphLinqQL.Introspection
     {
         private readonly TQuery originalQuery;
         private readonly IGraphQlTypeListing typeListing;
+        private readonly TypeListing introspectionTypeListing;
         private IGraphQlResultFactory<GraphQlRoot>? original;
 
         public IntrospectionQuery(IGraphQlServiceProvider servicesProvider)
@@ -17,6 +19,7 @@ namespace GraphLinqQL.Introspection
             // FIXME: This shouldn't use a service provider, should it?
             this.originalQuery = (TQuery)servicesProvider.GetResolverContract(typeof(TQuery));
             this.typeListing = servicesProvider.GetTypeListing();
+            this.introspectionTypeListing = new Interfaces.Introspection.TypeListing();
         }
 
         public IGraphQlResultFactory<GraphQlRoot> Original
@@ -35,7 +38,7 @@ namespace GraphLinqQL.Introspection
             original!.Resolve(_ => typeListing).As<Schema>();
 
         internal IGraphQlResult<GraphQlType?> type(string name) =>
-            original!.Resolve(_ => typeListing.Type(name)).Nullable(_ => _.As<GraphQlType>());
+            original!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.As<GraphQlType>());
 
         public IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
