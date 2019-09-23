@@ -10,7 +10,7 @@ interface Switches {
   inputFile: string;
   outputFile: string;
   namespace: string;
-  noNullability: boolean;
+  csharpLanguage: number;
   using: string[];
   introspection: boolean;
 }
@@ -19,7 +19,7 @@ program
   .option("-i, --input-file <input>", "Specify input file", program.STRING, null, true)
   .option("-o, --output-file <output>", "Specify output file", program.STRING, null, true)
   .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, null, true)
-  .option("--no-nullability", "disable nullability flags (which requires C# 8)", program.BOOLEAN, false, false)
+  .option("--csharp-language", "set csharp language version", program.FLOAT, 8.0, false)
   .option("-u, --using", "additional using statements", program.ARRAY, [], false)
   .option("-_, --introspection", "include introspection properties", program.BOOLEAN, false, false)
   .action(function(_, switches, logger) {
@@ -38,7 +38,7 @@ function buildOptions(switches: Switches): Options {
   const result: Options = {
     ...defaultOptions,
     namespace: switches.namespace,
-    useNullabilityIndicator: !switches.noNullability,
+    languageVersion: switches.csharpLanguage,
     using: [...defaultOptions.using, ...switches.using],
     introspection: switches.introspection
   };

@@ -3,6 +3,7 @@ import { GraphQLSchema, GraphQLNamedType, isScalarType } from "graphql";
 import { shouldGenerate } from "../shouldGenerate";
 import { getTypeName } from "../getTypeName";
 import { generateDirectiveInfo } from "./generateDirectiveInfo";
+import { useNullabilityIndicator } from "../options/useNullabilityIndicator";
 
 export function generateTypeListing(schema: GraphQLSchema, options: Options) {
   return `
@@ -26,17 +27,17 @@ public class TypeListing : IGraphQlTypeListing
     };
 
     public Type Query { get { return ${maybeRenderIntrospectionType(schema.getQueryType())}; } }
-    public Type${options.useNullabilityIndicator ? "?" : ""} Mutation { get { return ${maybeRenderIntrospectionType(
+    public Type${useNullabilityIndicator(options) ? "?" : ""} Mutation { get { return ${maybeRenderIntrospectionType(
     schema.getMutationType()
   )}; } }
-    public Type${options.useNullabilityIndicator ? "?" : ""} Subscription { get { return ${maybeRenderIntrospectionType(
-    schema.getSubscriptionType()
-  )}; } }
+    public Type${
+      useNullabilityIndicator(options) ? "?" : ""
+    } Subscription { get { return ${maybeRenderIntrospectionType(schema.getSubscriptionType())}; } }
 
     public IEnumerable<Type> TypeInformation { get { return types.Values; } }
     public IEnumerable<DirectiveInformation> DirectiveInformation { get { return directives; } }
 
-    public Type${options.useNullabilityIndicator ? "?" : ""} Type(string name)
+    public Type${useNullabilityIndicator(options) ? "?" : ""} Type(string name)
     {
         Type type;
         return types.TryGetValue(name, out type) ? type : null;

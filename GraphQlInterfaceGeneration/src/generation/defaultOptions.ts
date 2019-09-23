@@ -2,7 +2,7 @@ import { Options } from "./Options";
 
 export const defaultOptions: Options = {
   namespace: "GraphLinqQL.Interfaces",
-  useNullabilityIndicator: true,
+  languageVersion: 8.0,
   scalarTypes: {
     Int: { csharpNullable: false, csharpType: "int" },
     Float: { csharpNullable: false, csharpType: "double" },

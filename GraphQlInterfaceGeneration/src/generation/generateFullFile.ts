@@ -3,12 +3,13 @@ import { GraphQLSchema } from "graphql";
 import { generateTypes } from "./generateTypes";
 import { generateTypeResolver } from "./generateTypeResolver";
 import { generateIntrospectionNamespace } from "./introspection/generateIntrospectionNamespace";
+import { useNullabilityIndicator } from "./options/useNullabilityIndicator";
 
 export function generateFullFile(schema: GraphQLSchema, options: Options): string {
   const types = generateTypes(schema, options);
   return `${options.using.map(ns => `using ${ns};`).join(`
 `)}${
-    options.useNullabilityIndicator
+    useNullabilityIndicator(options)
       ? `
 #nullable enable
 #nullable disable warnings`

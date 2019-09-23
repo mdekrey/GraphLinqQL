@@ -20,6 +20,7 @@ import { toCsharpValue } from "../toCsharpValue";
 import { multilineString } from "./multilineString";
 import { toIntrospectionType } from "./toIntrospectionType";
 import { toInputObjectInfoArray } from "./toInputObjectInfoArray";
+import { useNullabilityIndicator } from "../options/useNullabilityIndicator";
 
 type TypeKindMap = {
   Scalar: GraphQLScalarType;
@@ -128,18 +129,18 @@ export function generateTypeInfo(type: GraphQLNamedType, options: Options) {
 public class ${getTypeName(type.name, options)} : IGraphQlTypeInformation
 {
     public string Name { get { return "${type.name}"; } }
-    public string${options.useNullabilityIndicator ? "?" : ""} Description { get { return ${
+    public string${useNullabilityIndicator(options) ? "?" : ""} Description { get { return ${
     type.description ? multilineString(type.description) : null
   }; } }
     public TypeKind Kind { get { return TypeKind.${typeSwitch(type, options, typeKindEnum, neverEver as any)}; } }
-    public Type${options.useNullabilityIndicator ? "?" : ""} OfType { get { return null; } }
-    public IReadOnlyList<Type>${options.useNullabilityIndicator ? "?" : ""} Interfaces { get { return ${typeSwitch(
+    public Type${useNullabilityIndicator(options) ? "?" : ""} OfType { get { return null; } }
+    public IReadOnlyList<Type>${useNullabilityIndicator(options) ? "?" : ""} Interfaces { get { return ${typeSwitch(
     type,
     options,
     interfacesList,
     () => "null"
   )}; } }
-    public IReadOnlyList<Type>${options.useNullabilityIndicator ? "?" : ""} PossibleTypes { get { return ${typeSwitch(
+    public IReadOnlyList<Type>${useNullabilityIndicator(options) ? "?" : ""} PossibleTypes { get { return ${typeSwitch(
     type,
     options,
     possibleTypesList,
@@ -147,19 +148,19 @@ public class ${getTypeName(type.name, options)} : IGraphQlTypeInformation
   )}; } }
 
     public IReadOnlyList<GraphQlInputFieldInformation>${
-      options.useNullabilityIndicator ? "?" : ""
+      useNullabilityIndicator(options) ? "?" : ""
     } InputFields { get { return ${typeSwitch(type, options, inputFieldsList, () => "null")}; } }
 
     ${typeSwitch(type, options, enumValuesListDeclarations, () => "")}
     public IEnumerable<GraphQlEnumValueInformation>${
-      options.useNullabilityIndicator ? "?" : ""
+      useNullabilityIndicator(options) ? "?" : ""
     } EnumValues(bool? includeDeprecated)
     {
         return ${typeSwitch(type, options, enumValuesList, () => "null")};
     }
     ${typeSwitch(type, options, fieldListDeclarations, () => "")}
     public IEnumerable<GraphQlFieldInformation>${
-      options.useNullabilityIndicator ? "?" : ""
+      useNullabilityIndicator(options) ? "?" : ""
     } Fields(bool? includeDeprecated)
     {
         return ${typeSwitch(type, options, fieldList, () => "null")};
