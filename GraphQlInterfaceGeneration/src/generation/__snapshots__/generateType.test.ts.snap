@@ -82,10 +82,10 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Person\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Person\\"),
             \\"name\\" => this.name(),
             \\"birthYear\\" => this.birthYear(),
             \\"eyeColor\\" => this.eyeColor(),
@@ -96,21 +96,21 @@ public abstract class Person : IGraphQlResolvable, Node
             \\"skinColor\\" => this.skinColor(),
             \\"homeworld\\" => this.homeworld(),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"species\\" => this.species(),
             \\"starshipConnection\\" => this.starshipConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"vehicleConnection\\" => this.vehicleConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -141,19 +141,19 @@ public abstract class Query : IGraphQlResolvable
     private Query() { }
     public abstract IGraphQlResult<string?> randomTest(string? id, int? i, double? f, bool? b, IEnumerable<int>? l, string? s, ColorInput? o, ColorInput? n);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Query\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
             \\"randomTest\\" => this.randomTest(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null) ?? System.Text.Json.JsonSerializer.Deserialize<string?>(\\"\\\\\\"foo\\\\\\"\\"),
-                i: (parameters.TryGetValue(\\"i\\", out var i) ? (int?)i : null) ?? 15,
-                f: (parameters.TryGetValue(\\"f\\", out var f) ? (double?)f : null) ?? 2.5,
-                b: (parameters.TryGetValue(\\"b\\", out var b) ? (bool?)b : null) ?? true,
-                l: (parameters.TryGetValue(\\"l\\", out var l) ? (IEnumerable<int>?)l : null) ?? System.Text.Json.JsonSerializer.Deserialize<IEnumerable<int>?>(\\"[5,4,3]\\"),
-                s: (parameters.TryGetValue(\\"s\\", out var s) ? (string?)s : null) ?? \\"evil\\\\\\"\\\\\\\\\\\\\\"string\\\\\\\\\\",
-                o: (parameters.TryGetValue(\\"o\\", out var o) ? (ColorInput?)o : null) ?? System.Text.Json.JsonSerializer.Deserialize<ColorInput?>(\\"{\\\\\\"red\\\\\\":255,\\\\\\"green\\\\\\":255,\\\\\\"blue\\\\\\":255}\\"),
-                n: (parameters.TryGetValue(\\"n\\", out var n) ? (ColorInput?)n : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<string?>(\\"\\\\\\"foo\\\\\\"\\"),
+                i: (parameters.HasParameter(\\"i\\") ? parameters.GetParameter<int?>(\\"i\\") : null) ?? 15,
+                f: (parameters.HasParameter(\\"f\\") ? parameters.GetParameter<double?>(\\"f\\") : null) ?? 2.5,
+                b: (parameters.HasParameter(\\"b\\") ? parameters.GetParameter<bool?>(\\"b\\") : null) ?? true,
+                l: (parameters.HasParameter(\\"l\\") ? parameters.GetParameter<IEnumerable<int>?>(\\"l\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<IEnumerable<int>?>(\\"[5,4,3]\\"),
+                s: (parameters.HasParameter(\\"s\\") ? parameters.GetParameter<string?>(\\"s\\") : null) ?? \\"evil\\\\\\"\\\\\\\\\\\\\\"string\\\\\\\\\\",
+                o: (parameters.HasParameter(\\"o\\") ? parameters.GetParameter<ColorInput?>(\\"o\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<ColorInput?>(\\"{\\\\\\"red\\\\\\":255,\\\\\\"green\\\\\\":255,\\\\\\"blue\\\\\\":255}\\"),
+                n: (parameters.HasParameter(\\"n\\") ? parameters.GetParameter<ColorInput?>(\\"n\\") : null)),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 

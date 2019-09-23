@@ -16,24 +16,24 @@ public abstract class Query : IGraphQlResolvable
     public abstract IGraphQlResult<Human?> human(string id);
     public abstract IGraphQlResult<Starship?> starship(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Query\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
             \\"hero\\" => this.hero(
-                episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null)),
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
             \\"reviews\\" => this.reviews(
-                episode: (Episode)parameters[\\"episode\\"]),
+                episode: parameters.GetParameter<Episode>(\\"episode\\")),
             \\"search\\" => this.search(
-                text: (parameters.TryGetValue(\\"text\\", out var text) ? (string?)text : null)),
+                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null)),
             \\"character\\" => this.character(
-                id: (string)parameters[\\"id\\"]),
+                id: parameters.GetParameter<string>(\\"id\\")),
             \\"droid\\" => this.droid(
-                id: (string)parameters[\\"id\\"]),
+                id: parameters.GetParameter<string>(\\"id\\")),
             \\"human\\" => this.human(
-                id: (string)parameters[\\"id\\"]),
+                id: parameters.GetParameter<string>(\\"id\\")),
             \\"starship\\" => this.starship(
-                id: (string)parameters[\\"id\\"]),
+                id: parameters.GetParameter<string>(\\"id\\")),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -135,10 +135,10 @@ public abstract class FriendsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<PageInfo> pageInfo();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FriendsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsConnection\\"),
             \\"totalCount\\" => this.totalCount(),
             \\"edges\\" => this.edges(),
             \\"friends\\" => this.friends(),
@@ -178,10 +178,10 @@ public abstract class FriendsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Character?> node();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FriendsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsEdge\\"),
             \\"cursor\\" => this.cursor(),
             \\"node\\" => this.node(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -212,10 +212,10 @@ public abstract class PageInfo : IGraphQlResolvable
     public abstract IGraphQlResult<string?> endCursor();
     public abstract IGraphQlResult<bool> hasNextPage();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PageInfo\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
             \\"startCursor\\" => this.startCursor(),
             \\"endCursor\\" => this.endCursor(),
             \\"hasNextPage\\" => this.hasNextPage(),
@@ -259,10 +259,10 @@ public abstract class Review : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> commentary();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Review\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Review\\"),
             \\"episode\\" => this.episode(),
             \\"stars\\" => this.stars(),
             \\"commentary\\" => this.commentary(),
@@ -337,20 +337,20 @@ public abstract class Human : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Human\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Human\\"),
             \\"id\\" => this.id(),
             \\"name\\" => this.name(),
             \\"homePlanet\\" => this.homePlanet(),
             \\"height\\" => this.height(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? LengthUnit.METER),
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
             \\"mass\\" => this.mass(),
             \\"friends\\" => this.friends(),
             \\"friendsConnection\\" => this.friendsConnection(
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
             \\"appearsIn\\" => this.appearsIn(),
             \\"starships\\" => this.starships(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -410,14 +410,14 @@ public abstract class Starship : IGraphQlResolvable
     public abstract IGraphQlResult<double?> length(LengthUnit? unit);
     public abstract IGraphQlResult<IEnumerable<IEnumerable<double>>?> coordinates();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Starship\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
             \\"id\\" => this.id(),
             \\"name\\" => this.name(),
             \\"length\\" => this.length(
-                unit: (parameters.TryGetValue(\\"unit\\", out var unit) ? (LengthUnit?)unit : null) ?? LengthUnit.METER),
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
             \\"coordinates\\" => this.coordinates(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
@@ -474,16 +474,16 @@ public abstract class Droid : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<string?> primaryFunction();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Droid\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Droid\\"),
             \\"id\\" => this.id(),
             \\"name\\" => this.name(),
             \\"friends\\" => this.friends(),
             \\"friendsConnection\\" => this.friendsConnection(
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null)),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
             \\"appearsIn\\" => this.appearsIn(),
             \\"primaryFunction\\" => this.primaryFunction(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -512,13 +512,13 @@ public abstract class Mutation : IGraphQlResolvable
     private Mutation() { }
     public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Mutation\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Mutation\\"),
             \\"createReview\\" => this.createReview(
-                episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null),
-                review: (ReviewInput)parameters[\\"review\\"]),
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null),
+                review: parameters.GetParameter<ReviewInput>(\\"review\\")),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -579,12 +579,12 @@ public abstract class Subscription : IGraphQlResolvable
     private Subscription() { }
     public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Subscription\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Subscription\\"),
             \\"reviewAdded\\" => this.reviewAdded(
-                episode: (parameters.TryGetValue(\\"episode\\", out var episode) ? (Episode?)episode : null)),
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -628,60 +628,60 @@ public abstract class Root : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Node?> node(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Root\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Root\\"),
             \\"allFilms\\" => this.allFilms(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"film\\" => this.film(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                filmID: (parameters.TryGetValue(\\"filmID\\", out var filmID) ? (string?)filmID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                filmID: (parameters.HasParameter(\\"filmID\\") ? parameters.GetParameter<string?>(\\"filmID\\") : null)),
             \\"allPeople\\" => this.allPeople(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"person\\" => this.person(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                personID: (parameters.TryGetValue(\\"personID\\", out var personID) ? (string?)personID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                personID: (parameters.HasParameter(\\"personID\\") ? parameters.GetParameter<string?>(\\"personID\\") : null)),
             \\"allPlanets\\" => this.allPlanets(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"planet\\" => this.planet(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                planetID: (parameters.TryGetValue(\\"planetID\\", out var planetID) ? (string?)planetID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                planetID: (parameters.HasParameter(\\"planetID\\") ? parameters.GetParameter<string?>(\\"planetID\\") : null)),
             \\"allSpecies\\" => this.allSpecies(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"species\\" => this.species(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                speciesID: (parameters.TryGetValue(\\"speciesID\\", out var speciesID) ? (string?)speciesID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                speciesID: (parameters.HasParameter(\\"speciesID\\") ? parameters.GetParameter<string?>(\\"speciesID\\") : null)),
             \\"allStarships\\" => this.allStarships(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"starship\\" => this.starship(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                starshipID: (parameters.TryGetValue(\\"starshipID\\", out var starshipID) ? (string?)starshipID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                starshipID: (parameters.HasParameter(\\"starshipID\\") ? parameters.GetParameter<string?>(\\"starshipID\\") : null)),
             \\"allVehicles\\" => this.allVehicles(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"vehicle\\" => this.vehicle(
-                id: (parameters.TryGetValue(\\"id\\", out var id) ? (string?)id : null),
-                vehicleID: (parameters.TryGetValue(\\"vehicleID\\", out var vehicleID) ? (string?)vehicleID : null)),
+                id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
+                vehicleID: (parameters.HasParameter(\\"vehicleID\\") ? parameters.GetParameter<string?>(\\"vehicleID\\") : null)),
             \\"node\\" => this.node(
-                id: (string)parameters[\\"id\\"]),
+                id: parameters.GetParameter<string>(\\"id\\")),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
         };
 
@@ -735,10 +735,10 @@ public abstract class FilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -788,10 +788,10 @@ public abstract class PageInfo : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> endCursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PageInfo\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
             \\"hasNextPage\\" => this.hasNextPage(),
             \\"hasPreviousPage\\" => this.hasPreviousPage(),
             \\"startCursor\\" => this.startCursor(),
@@ -831,10 +831,10 @@ public abstract class FilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -912,10 +912,10 @@ public abstract class Film : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Film\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Film\\"),
             \\"title\\" => this.title(),
             \\"episodeID\\" => this.episodeID(),
             \\"openingCrawl\\" => this.openingCrawl(),
@@ -923,30 +923,30 @@ public abstract class Film : IGraphQlResolvable, Node
             \\"producers\\" => this.producers(),
             \\"releaseDate\\" => this.releaseDate(),
             \\"speciesConnection\\" => this.speciesConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"starshipConnection\\" => this.starshipConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"vehicleConnection\\" => this.vehicleConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"characterConnection\\" => this.characterConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"planetConnection\\" => this.planetConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -1016,10 +1016,10 @@ public abstract class FilmSpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmSpeciesConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmSpeciesConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -1059,10 +1059,10 @@ public abstract class FilmSpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmSpeciesEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmSpeciesEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -1160,10 +1160,10 @@ public abstract class Species : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Species\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Species\\"),
             \\"name\\" => this.name(),
             \\"classification\\" => this.classification(),
             \\"designation\\" => this.designation(),
@@ -1175,15 +1175,15 @@ public abstract class Species : IGraphQlResolvable, Node
             \\"language\\" => this.language(),
             \\"homeworld\\" => this.homeworld(),
             \\"personConnection\\" => this.personConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -1279,10 +1279,10 @@ public abstract class Planet : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Planet\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Planet\\"),
             \\"name\\" => this.name(),
             \\"diameter\\" => this.diameter(),
             \\"rotationPeriod\\" => this.rotationPeriod(),
@@ -1293,15 +1293,15 @@ public abstract class Planet : IGraphQlResolvable, Node
             \\"terrains\\" => this.terrains(),
             \\"surfaceWater\\" => this.surfaceWater(),
             \\"residentConnection\\" => this.residentConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -1358,10 +1358,10 @@ public abstract class PlanetResidentsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> residents();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetResidentsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetResidentsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -1401,10 +1401,10 @@ public abstract class PlanetResidentsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetResidentsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetResidentsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -1505,10 +1505,10 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Person\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Person\\"),
             \\"name\\" => this.name(),
             \\"birthYear\\" => this.birthYear(),
             \\"eyeColor\\" => this.eyeColor(),
@@ -1519,21 +1519,21 @@ public abstract class Person : IGraphQlResolvable, Node
             \\"skinColor\\" => this.skinColor(),
             \\"homeworld\\" => this.homeworld(),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"species\\" => this.species(),
             \\"starshipConnection\\" => this.starshipConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"vehicleConnection\\" => this.vehicleConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -1590,10 +1590,10 @@ public abstract class PersonFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonFilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonFilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -1633,10 +1633,10 @@ public abstract class PersonFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonFilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonFilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -1692,10 +1692,10 @@ public abstract class PersonStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonStarshipsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonStarshipsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -1735,10 +1735,10 @@ public abstract class PersonStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonStarshipsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonStarshipsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -1856,10 +1856,10 @@ public abstract class Starship : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Starship\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
             \\"name\\" => this.name(),
             \\"model\\" => this.model(),
             \\"starshipClass\\" => this.starshipClass(),
@@ -1874,15 +1874,15 @@ public abstract class Starship : IGraphQlResolvable, Node
             \\"cargoCapacity\\" => this.cargoCapacity(),
             \\"consumables\\" => this.consumables(),
             \\"pilotConnection\\" => this.pilotConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -1939,10 +1939,10 @@ public abstract class StarshipPilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipPilotsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipPilotsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -1982,10 +1982,10 @@ public abstract class StarshipPilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipPilotsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipPilotsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2041,10 +2041,10 @@ public abstract class StarshipFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipFilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipFilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2084,10 +2084,10 @@ public abstract class StarshipFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipFilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipFilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2143,10 +2143,10 @@ public abstract class PersonVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonVehiclesConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonVehiclesConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2186,10 +2186,10 @@ public abstract class PersonVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PersonVehiclesEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonVehiclesEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2292,10 +2292,10 @@ public abstract class Vehicle : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"Vehicle\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Vehicle\\"),
             \\"name\\" => this.name(),
             \\"model\\" => this.model(),
             \\"vehicleClass\\" => this.vehicleClass(),
@@ -2308,15 +2308,15 @@ public abstract class Vehicle : IGraphQlResolvable, Node
             \\"cargoCapacity\\" => this.cargoCapacity(),
             \\"consumables\\" => this.consumables(),
             \\"pilotConnection\\" => this.pilotConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"filmConnection\\" => this.filmConnection(
-                after: (parameters.TryGetValue(\\"after\\", out var after) ? (string?)after : null),
-                first: (parameters.TryGetValue(\\"first\\", out var first) ? (int?)first : null),
-                before: (parameters.TryGetValue(\\"before\\", out var before) ? (string?)before : null),
-                last: (parameters.TryGetValue(\\"last\\", out var last) ? (int?)last : null)),
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
+                first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
+                before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
             \\"created\\" => this.created(),
             \\"edited\\" => this.edited(),
             \\"id\\" => this.id(),
@@ -2373,10 +2373,10 @@ public abstract class VehiclePilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehiclePilotsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclePilotsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2416,10 +2416,10 @@ public abstract class VehiclePilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehiclePilotsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclePilotsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2475,10 +2475,10 @@ public abstract class VehicleFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehicleFilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehicleFilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2518,10 +2518,10 @@ public abstract class VehicleFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehicleFilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehicleFilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2577,10 +2577,10 @@ public abstract class PlanetFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetFilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetFilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2620,10 +2620,10 @@ public abstract class PlanetFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetFilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetFilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2679,10 +2679,10 @@ public abstract class SpeciesPeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesPeopleConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesPeopleConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2722,10 +2722,10 @@ public abstract class SpeciesPeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesPeopleEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesPeopleEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2781,10 +2781,10 @@ public abstract class SpeciesFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesFilmsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesFilmsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2824,10 +2824,10 @@ public abstract class SpeciesFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesFilmsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesFilmsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2883,10 +2883,10 @@ public abstract class FilmStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmStarshipsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmStarshipsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -2926,10 +2926,10 @@ public abstract class FilmStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmStarshipsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmStarshipsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -2985,10 +2985,10 @@ public abstract class FilmVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmVehiclesConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmVehiclesConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3028,10 +3028,10 @@ public abstract class FilmVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmVehiclesEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmVehiclesEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3087,10 +3087,10 @@ public abstract class FilmCharactersConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> characters();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmCharactersConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmCharactersConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3130,10 +3130,10 @@ public abstract class FilmCharactersEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmCharactersEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmCharactersEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3189,10 +3189,10 @@ public abstract class FilmPlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmPlanetsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmPlanetsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3232,10 +3232,10 @@ public abstract class FilmPlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"FilmPlanetsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmPlanetsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3291,10 +3291,10 @@ public abstract class PeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PeopleConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PeopleConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3334,10 +3334,10 @@ public abstract class PeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PeopleEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PeopleEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3393,10 +3393,10 @@ public abstract class PlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3436,10 +3436,10 @@ public abstract class PlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"PlanetsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3495,10 +3495,10 @@ public abstract class SpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3538,10 +3538,10 @@ public abstract class SpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"SpeciesEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3597,10 +3597,10 @@ public abstract class StarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipsConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipsConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3640,10 +3640,10 @@ public abstract class StarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"StarshipsEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipsEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
@@ -3699,10 +3699,10 @@ public abstract class VehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehiclesConnection\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclesConnection\\"),
             \\"pageInfo\\" => this.pageInfo(),
             \\"edges\\" => this.edges(),
             \\"totalCount\\" => this.totalCount(),
@@ -3742,10 +3742,10 @@ public abstract class VehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IDictionary<string, object?> parameters) =>
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
         name switch
         {
-            \\"__typename\\" => new GraphQlConstantResult<string>(\\"VehiclesEdge\\"),
+            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclesEdge\\"),
             \\"node\\" => this.node(),
             \\"cursor\\" => this.cursor(),
             _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
