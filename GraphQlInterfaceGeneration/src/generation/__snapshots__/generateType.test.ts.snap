@@ -82,49 +82,53 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Person\\"),
-            \\"name\\" => this.name(),
-            \\"birthYear\\" => this.birthYear(),
-            \\"eyeColor\\" => this.eyeColor(),
-            \\"gender\\" => this.gender(),
-            \\"hairColor\\" => this.hairColor(),
-            \\"height\\" => this.height(),
-            \\"mass\\" => this.mass(),
-            \\"skinColor\\" => this.skinColor(),
-            \\"homeworld\\" => this.homeworld(),
-            \\"filmConnection\\" => this.filmConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Person\\");
+            case \\"name\\": return this.name();
+            case \\"birthYear\\": return this.birthYear();
+            case \\"eyeColor\\": return this.eyeColor();
+            case \\"gender\\": return this.gender();
+            case \\"hairColor\\": return this.hairColor();
+            case \\"height\\": return this.height();
+            case \\"mass\\": return this.mass();
+            case \\"skinColor\\": return this.skinColor();
+            case \\"homeworld\\": return this.homeworld();
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"species\\" => this.species(),
-            \\"starshipConnection\\" => this.starshipConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"species\\": return this.species();
+            case \\"starshipConnection\\": return this.starshipConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"vehicleConnection\\" => this.vehicleConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"vehicleConnection\\": return this.vehicleConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Person\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Person\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "
@@ -138,11 +142,12 @@ public abstract class Query : IGraphQlResolvable
     private Query() { }
     public abstract IGraphQlResult<string?> randomTest(string? id, int? i, double? f, bool? b, IEnumerable<int>? l, string? s, ColorInput? o, ColorInput? n);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
-            \\"randomTest\\" => this.randomTest(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Query\\");
+            case \\"randomTest\\": return this.randomTest(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<string?>(\\"\\\\\\"foo\\\\\\"\\"),
                 i: (parameters.HasParameter(\\"i\\") ? parameters.GetParameter<int?>(\\"i\\") : null) ?? 15,
                 f: (parameters.HasParameter(\\"f\\") ? parameters.GetParameter<double?>(\\"f\\") : null) ?? 2.5,
@@ -150,18 +155,21 @@ public abstract class Query : IGraphQlResolvable
                 l: (parameters.HasParameter(\\"l\\") ? parameters.GetParameter<IEnumerable<int>?>(\\"l\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<IEnumerable<int>?>(\\"[5,4,3]\\"),
                 s: (parameters.HasParameter(\\"s\\") ? parameters.GetParameter<string?>(\\"s\\") : null) ?? \\"evil\\\\\\"\\\\\\\\\\\\\\"string\\\\\\\\\\",
                 o: (parameters.HasParameter(\\"o\\") ? parameters.GetParameter<ColorInput?>(\\"o\\") : null) ?? System.Text.Json.JsonSerializer.Deserialize<ColorInput?>(\\"{\\\\\\"red\\\\\\":255,\\\\\\"green\\\\\\":255,\\\\\\"blue\\\\\\":255}\\"),
-                n: (parameters.HasParameter(\\"n\\") ? parameters.GetParameter<ColorInput?>(\\"n\\") : null)),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                n: (parameters.HasParameter(\\"n\\") ? parameters.GetParameter<ColorInput?>(\\"n\\") : null));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Query\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Query\\";
+    }
 
     public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "

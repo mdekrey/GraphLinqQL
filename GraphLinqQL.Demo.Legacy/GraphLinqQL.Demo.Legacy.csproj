@@ -2,16 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>5.0</LangVersion>
+    <Nullable>disable</Nullable>
+
+    <GraphLinqQLArguments>--no-nullability</GraphLinqQLArguments>
   </PropertyGroup>
 
   <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
 
   <ItemGroup>
-    <None Remove="StarWarsV3\sw-schema.3.graphql" />
+    <None Remove="sw-schema.3.graphql" />
   </ItemGroup>
 
   <ItemGroup>
-    <GraphLinqQlSchema Include="StarWarsV3\sw-schema.3.graphql" />
+    <GraphLinqQlSchema Include="sw-schema.3.graphql" />
   </ItemGroup>
 
   <ItemGroup>

@@ -77,10 +77,9 @@ const inputFieldsList: TypeKindSwitch<string> = {
     `.ToImmutableList()`
 };
 
-const enumValuesList: TypeKindSwitch<string> = {
+const enumValuesListDeclarations: TypeKindSwitch<string> = {
   Enum: (obj, options) =>
     `
-        enumValues.Where(v => !v.IsDeprecated || (includeDeprecated ?? false));
     private static readonly IReadOnlyList<GraphQlEnumValueInformation> enumValues = new GraphQlEnumValueInformation[] {
         ${obj
           .getValues()
@@ -93,13 +92,16 @@ const enumValuesList: TypeKindSwitch<string> = {
               )})`
           ).join(`,
         `)}
-    }.ToImmutableList()`
+    }.ToImmutableList();`
 };
 
-const fieldList: TypeKindSwitch<string> = {
+const enumValuesList: TypeKindSwitch<string> = {
+  Enum: (obj, options) => `enumValues.Where(v => !v.IsDeprecated || (includeDeprecated ?? false));`
+};
+
+const fieldListDeclarations: TypeKindSwitch<string> = {
   Object: (obj, options) =>
     `
-        fields.Where(v => !v.IsDeprecated || (includeDeprecated ?? false));
     private static readonly IReadOnlyList<GraphQlFieldInformation> fields = new GraphQlFieldInformation[] {
         ${Object.keys(obj.getFields())
           .map(fieldName => obj.getFields()[fieldName])
@@ -114,39 +116,54 @@ const fieldList: TypeKindSwitch<string> = {
             deprecationReason: ${multilineString(field.deprecationReason)})`
           ).join(`,
         `)}
-    }.ToImmutableList()`
+    }.ToImmutableList();`
+};
+
+const fieldList: TypeKindSwitch<string> = {
+  Object: (obj, options) => `fields.Where(v => !v.IsDeprecated || (includeDeprecated ?? false))`
 };
 
 export function generateTypeInfo(type: GraphQLNamedType, options: Options) {
   return `
 public class ${getTypeName(type.name, options)} : IGraphQlTypeInformation
 {
-    public string Name => "${type.name}";
-    public string? Description => ${type.description ? multilineString(type.description) : null};
-    public TypeKind Kind => TypeKind.${typeSwitch(type, options, typeKindEnum, neverEver as any)};
-    public Type? OfType => null;
-    public IReadOnlyList<Type>? Interfaces => ${typeSwitch(type, options, interfacesList, () => "null")};
-    public IReadOnlyList<Type>? PossibleTypes => ${typeSwitch(type, options, possibleTypesList, () => "null")};
+    public string Name { get { return "${type.name}"; } }
+    public string${options.useNullabilityIndicator ? "?" : ""} Description { get { return ${
+    type.description ? multilineString(type.description) : null
+  }; } }
+    public TypeKind Kind { get { return TypeKind.${typeSwitch(type, options, typeKindEnum, neverEver as any)}; } }
+    public Type${options.useNullabilityIndicator ? "?" : ""} OfType { get { return null; } }
+    public IReadOnlyList<Type>${options.useNullabilityIndicator ? "?" : ""} Interfaces { get { return ${typeSwitch(
+    type,
+    options,
+    interfacesList,
+    () => "null"
+  )}; } }
+    public IReadOnlyList<Type>${options.useNullabilityIndicator ? "?" : ""} PossibleTypes { get { return ${typeSwitch(
+    type,
+    options,
+    possibleTypesList,
+    () => "null"
+  )}; } }
 
-    public IReadOnlyList<GraphQlInputFieldInformation>? InputFields { get; } = ${typeSwitch(
-      type,
-      options,
-      inputFieldsList,
-      () => "null"
-    )};
+    public IReadOnlyList<GraphQlInputFieldInformation>${
+      options.useNullabilityIndicator ? "?" : ""
+    } InputFields { get { return ${typeSwitch(type, options, inputFieldsList, () => "null")}; } }
 
-    public IEnumerable<GraphQlEnumValueInformation>? EnumValues(bool? includeDeprecated) => ${typeSwitch(
-      type,
-      options,
-      enumValuesList,
-      () => "null"
-    )};
-    public IEnumerable<GraphQlFieldInformation>? Fields(bool? includeDeprecated) => ${typeSwitch(
-      type,
-      options,
-      fieldList,
-      () => "null"
-    )};
+    ${typeSwitch(type, options, enumValuesListDeclarations, () => "")}
+    public IEnumerable<GraphQlEnumValueInformation>${
+      options.useNullabilityIndicator ? "?" : ""
+    } EnumValues(bool? includeDeprecated)
+    {
+        return ${typeSwitch(type, options, enumValuesList, () => "null")};
+    }
+    ${typeSwitch(type, options, fieldListDeclarations, () => "")}
+    public IEnumerable<GraphQlFieldInformation>${
+      options.useNullabilityIndicator ? "?" : ""
+    } Fields(bool? includeDeprecated)
+    {
+        return ${typeSwitch(type, options, fieldList, () => "null")};
+    }
 }`;
 }
 

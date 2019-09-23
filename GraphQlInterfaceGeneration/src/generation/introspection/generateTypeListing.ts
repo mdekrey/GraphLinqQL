@@ -25,14 +25,22 @@ public class TypeListing : IGraphQlTypeListing
         `)}
     };
 
-    public Type Query => ${maybeRenderIntrospectionType(schema.getQueryType())};
-    public Type? Mutation => ${maybeRenderIntrospectionType(schema.getMutationType())};
-    public Type? Subscription => ${maybeRenderIntrospectionType(schema.getSubscriptionType())};
+    public Type Query { get { return ${maybeRenderIntrospectionType(schema.getQueryType())}; } }
+    public Type${options.useNullabilityIndicator ? "?" : ""} Mutation { get { return ${maybeRenderIntrospectionType(
+    schema.getMutationType()
+  )}; } }
+    public Type${options.useNullabilityIndicator ? "?" : ""} Subscription { get { return ${maybeRenderIntrospectionType(
+    schema.getSubscriptionType()
+  )}; } }
 
-    public IEnumerable<Type> TypeInformation => types.Values;
-    public IEnumerable<DirectiveInformation> DirectiveInformation => directives;
+    public IEnumerable<Type> TypeInformation { get { return types.Values; } }
+    public IEnumerable<DirectiveInformation> DirectiveInformation { get { return directives; } }
 
-    public Type? Type(string name) => types.TryGetValue(name, out var type) ? type : null;
+    public Type${options.useNullabilityIndicator ? "?" : ""} Type(string name)
+    {
+        Type type;
+        return types.TryGetValue(name, out type) ? type : null;
+    }
 }`;
   function getTypeForIntrospection(t: GraphQLNamedType) {
     return getTypeName(t.name, options);

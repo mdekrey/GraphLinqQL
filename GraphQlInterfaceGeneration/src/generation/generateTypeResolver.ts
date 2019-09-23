@@ -23,7 +23,7 @@ public class TypeResolver : IGraphQlTypeResolver
             ).join(`
             `)}
             default:
-                throw new ArgumentException("Unknown type " + name, nameof(name));
+                throw new ArgumentException("Unknown type " + name, "name");
         }
     }
 }`;

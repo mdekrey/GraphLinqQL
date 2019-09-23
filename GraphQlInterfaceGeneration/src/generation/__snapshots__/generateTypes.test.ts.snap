@@ -16,35 +16,39 @@ public abstract class Query : IGraphQlResolvable
     public abstract IGraphQlResult<Human?> human(string id);
     public abstract IGraphQlResult<Starship?> starship(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
-            \\"hero\\" => this.hero(
-                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
-            \\"reviews\\" => this.reviews(
-                episode: parameters.GetParameter<Episode>(\\"episode\\")),
-            \\"search\\" => this.search(
-                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null)),
-            \\"character\\" => this.character(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"droid\\" => this.droid(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"human\\" => this.human(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"starship\\" => this.starship(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Query\\");
+            case \\"hero\\": return this.hero(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null));
+            case \\"reviews\\": return this.reviews(
+                episode: parameters.GetParameter<Episode>(\\"episode\\"));
+            case \\"search\\": return this.search(
+                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null));
+            case \\"character\\": return this.character(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"droid\\": return this.droid(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"human\\": return this.human(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"starship\\": return this.starship(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Query\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Query\\";
+    }
 
     public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -132,25 +136,29 @@ public abstract class FriendsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<PageInfo> pageInfo();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsConnection\\"),
-            \\"totalCount\\" => this.totalCount(),
-            \\"edges\\" => this.edges(),
-            \\"friends\\" => this.friends(),
-            \\"pageInfo\\" => this.pageInfo(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FriendsConnection\\");
+            case \\"totalCount\\": return this.totalCount();
+            case \\"edges\\": return this.edges();
+            case \\"friends\\": return this.friends();
+            case \\"pageInfo\\": return this.pageInfo();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FriendsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FriendsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FriendsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -172,23 +180,27 @@ public abstract class FriendsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Character?> node();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsEdge\\"),
-            \\"cursor\\" => this.cursor(),
-            \\"node\\" => this.node(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FriendsEdge\\");
+            case \\"cursor\\": return this.cursor();
+            case \\"node\\": return this.node();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FriendsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FriendsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FriendsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -203,24 +215,28 @@ public abstract class PageInfo : IGraphQlResolvable
     public abstract IGraphQlResult<string?> endCursor();
     public abstract IGraphQlResult<bool> hasNextPage();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
-            \\"startCursor\\" => this.startCursor(),
-            \\"endCursor\\" => this.endCursor(),
-            \\"hasNextPage\\" => this.hasNextPage(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PageInfo\\");
+            case \\"startCursor\\": return this.startCursor();
+            case \\"endCursor\\": return this.endCursor();
+            case \\"hasNextPage\\": return this.hasNextPage();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PageInfo\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PageInfo\\";
+    }
 
     public abstract class GraphQlContract<T> : PageInfo, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -247,24 +263,28 @@ public abstract class Review : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> commentary();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Review\\"),
-            \\"episode\\" => this.episode(),
-            \\"stars\\" => this.stars(),
-            \\"commentary\\" => this.commentary(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Review\\");
+            case \\"episode\\": return this.episode();
+            case \\"stars\\": return this.stars();
+            case \\"commentary\\": return this.commentary();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Review\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Review\\";
+    }
 
     public abstract class GraphQlContract<T> : Review, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -322,33 +342,37 @@ public abstract class Human : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Human\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"homePlanet\\" => this.homePlanet(),
-            \\"height\\" => this.height(
-                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
-            \\"mass\\" => this.mass(),
-            \\"friends\\" => this.friends(),
-            \\"friendsConnection\\" => this.friendsConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Human\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"homePlanet\\": return this.homePlanet();
+            case \\"height\\": return this.height(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER);
+            case \\"mass\\": return this.mass();
+            case \\"friends\\": return this.friends();
+            case \\"friendsConnection\\": return this.friendsConnection(
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
-                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
-            \\"appearsIn\\" => this.appearsIn(),
-            \\"starships\\" => this.starships(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null));
+            case \\"appearsIn\\": return this.appearsIn();
+            case \\"starships\\": return this.starships();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Human\\" || value == \\"Character\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Human\\" || value == \\"Character\\";
+    }
 
     public abstract class GraphQlContract<T> : Human, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -392,26 +416,30 @@ public abstract class Starship : IGraphQlResolvable
     public abstract IGraphQlResult<double?> length(LengthUnit? unit);
     public abstract IGraphQlResult<IEnumerable<IEnumerable<double>>?> coordinates();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"length\\" => this.length(
-                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
-            \\"coordinates\\" => this.coordinates(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Starship\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"length\\": return this.length(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER);
+            case \\"coordinates\\": return this.coordinates();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Starship\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Starship\\";
+    }
 
     public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -453,29 +481,33 @@ public abstract class Droid : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<string?> primaryFunction();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Droid\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"friends\\" => this.friends(),
-            \\"friendsConnection\\" => this.friendsConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Droid\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"friends\\": return this.friends();
+            case \\"friendsConnection\\": return this.friendsConnection(
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
-                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
-            \\"appearsIn\\" => this.appearsIn(),
-            \\"primaryFunction\\" => this.primaryFunction(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null));
+            case \\"appearsIn\\": return this.appearsIn();
+            case \\"primaryFunction\\": return this.primaryFunction();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Droid\\" || value == \\"Character\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Droid\\" || value == \\"Character\\";
+    }
 
     public abstract class GraphQlContract<T> : Droid, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -488,24 +520,28 @@ public abstract class Mutation : IGraphQlResolvable
     private Mutation() { }
     public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Mutation\\"),
-            \\"createReview\\" => this.createReview(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Mutation\\");
+            case \\"createReview\\": return this.createReview(
                 episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null),
-                review: parameters.GetParameter<ReviewInput>(\\"review\\")),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                review: parameters.GetParameter<ReviewInput>(\\"review\\"));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Mutation\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Mutation\\";
+    }
 
     public abstract class GraphQlContract<T> : Mutation, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -552,23 +588,27 @@ public abstract class Subscription : IGraphQlResolvable
     private Subscription() { }
     public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Subscription\\"),
-            \\"reviewAdded\\" => this.reviewAdded(
-                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Subscription\\");
+            case \\"reviewAdded\\": return this.reviewAdded(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Subscription\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Subscription\\";
+    }
 
     public abstract class GraphQlContract<T> : Subscription, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "
@@ -592,35 +632,39 @@ public abstract class Query : IGraphQlResolvable
     public abstract IGraphQlResult<Human?> human(string id);
     public abstract IGraphQlResult<Starship?> starship(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Query\\"),
-            \\"hero\\" => this.hero(
-                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
-            \\"reviews\\" => this.reviews(
-                episode: parameters.GetParameter<Episode>(\\"episode\\")),
-            \\"search\\" => this.search(
-                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null)),
-            \\"character\\" => this.character(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"droid\\" => this.droid(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"human\\" => this.human(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            \\"starship\\" => this.starship(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Query\\");
+            case \\"hero\\": return this.hero(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null));
+            case \\"reviews\\": return this.reviews(
+                episode: parameters.GetParameter<Episode>(\\"episode\\"));
+            case \\"search\\": return this.search(
+                text: (parameters.HasParameter(\\"text\\") ? parameters.GetParameter<string?>(\\"text\\") : null));
+            case \\"character\\": return this.character(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"droid\\": return this.droid(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"human\\": return this.human(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            case \\"starship\\": return this.starship(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Query\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Query\\";
+    }
 
     public abstract class GraphQlContract<T> : Query, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -708,25 +752,29 @@ public abstract class FriendsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<PageInfo> pageInfo();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsConnection\\"),
-            \\"totalCount\\" => this.totalCount(),
-            \\"edges\\" => this.edges(),
-            \\"friends\\" => this.friends(),
-            \\"pageInfo\\" => this.pageInfo(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FriendsConnection\\");
+            case \\"totalCount\\": return this.totalCount();
+            case \\"edges\\": return this.edges();
+            case \\"friends\\": return this.friends();
+            case \\"pageInfo\\": return this.pageInfo();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FriendsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FriendsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FriendsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -748,23 +796,27 @@ public abstract class FriendsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Character?> node();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FriendsEdge\\"),
-            \\"cursor\\" => this.cursor(),
-            \\"node\\" => this.node(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FriendsEdge\\");
+            case \\"cursor\\": return this.cursor();
+            case \\"node\\": return this.node();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FriendsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FriendsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FriendsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -779,24 +831,28 @@ public abstract class PageInfo : IGraphQlResolvable
     public abstract IGraphQlResult<string?> endCursor();
     public abstract IGraphQlResult<bool> hasNextPage();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
-            \\"startCursor\\" => this.startCursor(),
-            \\"endCursor\\" => this.endCursor(),
-            \\"hasNextPage\\" => this.hasNextPage(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PageInfo\\");
+            case \\"startCursor\\": return this.startCursor();
+            case \\"endCursor\\": return this.endCursor();
+            case \\"hasNextPage\\": return this.hasNextPage();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PageInfo\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PageInfo\\";
+    }
 
     public abstract class GraphQlContract<T> : PageInfo, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -823,24 +879,28 @@ public abstract class Review : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> commentary();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Review\\"),
-            \\"episode\\" => this.episode(),
-            \\"stars\\" => this.stars(),
-            \\"commentary\\" => this.commentary(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Review\\");
+            case \\"episode\\": return this.episode();
+            case \\"stars\\": return this.stars();
+            case \\"commentary\\": return this.commentary();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Review\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Review\\";
+    }
 
     public abstract class GraphQlContract<T> : Review, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -898,33 +958,37 @@ public abstract class Human : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Human\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"homePlanet\\" => this.homePlanet(),
-            \\"height\\" => this.height(
-                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
-            \\"mass\\" => this.mass(),
-            \\"friends\\" => this.friends(),
-            \\"friendsConnection\\" => this.friendsConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Human\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"homePlanet\\": return this.homePlanet();
+            case \\"height\\": return this.height(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER);
+            case \\"mass\\": return this.mass();
+            case \\"friends\\": return this.friends();
+            case \\"friendsConnection\\": return this.friendsConnection(
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
-                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
-            \\"appearsIn\\" => this.appearsIn(),
-            \\"starships\\" => this.starships(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null));
+            case \\"appearsIn\\": return this.appearsIn();
+            case \\"starships\\": return this.starships();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Human\\" || value == \\"Character\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Human\\" || value == \\"Character\\";
+    }
 
     public abstract class GraphQlContract<T> : Human, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -968,26 +1032,30 @@ public abstract class Starship : IGraphQlResolvable
     public abstract IGraphQlResult<double?> length(LengthUnit? unit);
     public abstract IGraphQlResult<IEnumerable<IEnumerable<double>>?> coordinates();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"length\\" => this.length(
-                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER),
-            \\"coordinates\\" => this.coordinates(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Starship\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"length\\": return this.length(
+                unit: (parameters.HasParameter(\\"unit\\") ? parameters.GetParameter<LengthUnit?>(\\"unit\\") : null) ?? GraphLinqQL.Interfaces.LengthUnit.METER);
+            case \\"coordinates\\": return this.coordinates();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Starship\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Starship\\";
+    }
 
     public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1029,29 +1097,33 @@ public abstract class Droid : IGraphQlResolvable, Character
     /// </summary>
     public abstract IGraphQlResult<string?> primaryFunction();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Droid\\"),
-            \\"id\\" => this.id(),
-            \\"name\\" => this.name(),
-            \\"friends\\" => this.friends(),
-            \\"friendsConnection\\" => this.friendsConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Droid\\");
+            case \\"id\\": return this.id();
+            case \\"name\\": return this.name();
+            case \\"friends\\": return this.friends();
+            case \\"friendsConnection\\": return this.friendsConnection(
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
-                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null)),
-            \\"appearsIn\\" => this.appearsIn(),
-            \\"primaryFunction\\" => this.primaryFunction(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null));
+            case \\"appearsIn\\": return this.appearsIn();
+            case \\"primaryFunction\\": return this.primaryFunction();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Droid\\" || value == \\"Character\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Droid\\" || value == \\"Character\\";
+    }
 
     public abstract class GraphQlContract<T> : Droid, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1064,24 +1136,28 @@ public abstract class Mutation : IGraphQlResolvable
     private Mutation() { }
     public abstract IGraphQlResult<Review?> createReview(Episode? episode, ReviewInput review);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Mutation\\"),
-            \\"createReview\\" => this.createReview(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Mutation\\");
+            case \\"createReview\\": return this.createReview(
                 episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null),
-                review: parameters.GetParameter<ReviewInput>(\\"review\\")),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                review: parameters.GetParameter<ReviewInput>(\\"review\\"));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Mutation\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Mutation\\";
+    }
 
     public abstract class GraphQlContract<T> : Mutation, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1128,23 +1204,27 @@ public abstract class Subscription : IGraphQlResolvable
     private Subscription() { }
     public abstract IGraphQlResult<Review?> reviewAdded(Episode? episode);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Subscription\\"),
-            \\"reviewAdded\\" => this.reviewAdded(
-                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null)),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Subscription\\");
+            case \\"reviewAdded\\": return this.reviewAdded(
+                episode: (parameters.HasParameter(\\"episode\\") ? parameters.GetParameter<Episode?>(\\"episode\\") : null));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Subscription\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Subscription\\";
+    }
 
     public abstract class GraphQlContract<T> : Subscription, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "
@@ -1174,71 +1254,75 @@ public abstract class Root : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<Node?> node(string id);
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Root\\"),
-            \\"allFilms\\" => this.allFilms(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Root\\");
+            case \\"allFilms\\": return this.allFilms(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"film\\" => this.film(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"film\\": return this.film(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                filmID: (parameters.HasParameter(\\"filmID\\") ? parameters.GetParameter<string?>(\\"filmID\\") : null)),
-            \\"allPeople\\" => this.allPeople(
+                filmID: (parameters.HasParameter(\\"filmID\\") ? parameters.GetParameter<string?>(\\"filmID\\") : null));
+            case \\"allPeople\\": return this.allPeople(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"person\\" => this.person(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"person\\": return this.person(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                personID: (parameters.HasParameter(\\"personID\\") ? parameters.GetParameter<string?>(\\"personID\\") : null)),
-            \\"allPlanets\\" => this.allPlanets(
+                personID: (parameters.HasParameter(\\"personID\\") ? parameters.GetParameter<string?>(\\"personID\\") : null));
+            case \\"allPlanets\\": return this.allPlanets(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"planet\\" => this.planet(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"planet\\": return this.planet(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                planetID: (parameters.HasParameter(\\"planetID\\") ? parameters.GetParameter<string?>(\\"planetID\\") : null)),
-            \\"allSpecies\\" => this.allSpecies(
+                planetID: (parameters.HasParameter(\\"planetID\\") ? parameters.GetParameter<string?>(\\"planetID\\") : null));
+            case \\"allSpecies\\": return this.allSpecies(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"species\\" => this.species(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"species\\": return this.species(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                speciesID: (parameters.HasParameter(\\"speciesID\\") ? parameters.GetParameter<string?>(\\"speciesID\\") : null)),
-            \\"allStarships\\" => this.allStarships(
+                speciesID: (parameters.HasParameter(\\"speciesID\\") ? parameters.GetParameter<string?>(\\"speciesID\\") : null));
+            case \\"allStarships\\": return this.allStarships(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"starship\\" => this.starship(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"starship\\": return this.starship(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                starshipID: (parameters.HasParameter(\\"starshipID\\") ? parameters.GetParameter<string?>(\\"starshipID\\") : null)),
-            \\"allVehicles\\" => this.allVehicles(
+                starshipID: (parameters.HasParameter(\\"starshipID\\") ? parameters.GetParameter<string?>(\\"starshipID\\") : null));
+            case \\"allVehicles\\": return this.allVehicles(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"vehicle\\" => this.vehicle(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"vehicle\\": return this.vehicle(
                 id: (parameters.HasParameter(\\"id\\") ? parameters.GetParameter<string?>(\\"id\\") : null),
-                vehicleID: (parameters.HasParameter(\\"vehicleID\\") ? parameters.GetParameter<string?>(\\"vehicleID\\") : null)),
-            \\"node\\" => this.node(
-                id: parameters.GetParameter<string>(\\"id\\")),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                vehicleID: (parameters.HasParameter(\\"vehicleID\\") ? parameters.GetParameter<string?>(\\"vehicleID\\") : null));
+            case \\"node\\": return this.node(
+                id: parameters.GetParameter<string>(\\"id\\"));
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Root\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Root\\";
+    }
 
     public abstract class GraphQlContract<T> : Root, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1278,25 +1362,29 @@ public abstract class FilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1328,25 +1416,29 @@ public abstract class PageInfo : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string?> endCursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PageInfo\\"),
-            \\"hasNextPage\\" => this.hasNextPage(),
-            \\"hasPreviousPage\\" => this.hasPreviousPage(),
-            \\"startCursor\\" => this.startCursor(),
-            \\"endCursor\\" => this.endCursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PageInfo\\");
+            case \\"hasNextPage\\": return this.hasNextPage();
+            case \\"hasPreviousPage\\": return this.hasPreviousPage();
+            case \\"startCursor\\": return this.startCursor();
+            case \\"endCursor\\": return this.endCursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PageInfo\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PageInfo\\";
+    }
 
     public abstract class GraphQlContract<T> : PageInfo, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1368,23 +1460,27 @@ public abstract class FilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1446,55 +1542,59 @@ public abstract class Film : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Film\\"),
-            \\"title\\" => this.title(),
-            \\"episodeID\\" => this.episodeID(),
-            \\"openingCrawl\\" => this.openingCrawl(),
-            \\"director\\" => this.director(),
-            \\"producers\\" => this.producers(),
-            \\"releaseDate\\" => this.releaseDate(),
-            \\"speciesConnection\\" => this.speciesConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Film\\");
+            case \\"title\\": return this.title();
+            case \\"episodeID\\": return this.episodeID();
+            case \\"openingCrawl\\": return this.openingCrawl();
+            case \\"director\\": return this.director();
+            case \\"producers\\": return this.producers();
+            case \\"releaseDate\\": return this.releaseDate();
+            case \\"speciesConnection\\": return this.speciesConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"starshipConnection\\" => this.starshipConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"starshipConnection\\": return this.starshipConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"vehicleConnection\\" => this.vehicleConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"vehicleConnection\\": return this.vehicleConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"characterConnection\\" => this.characterConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"characterConnection\\": return this.characterConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"planetConnection\\" => this.planetConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"planetConnection\\": return this.planetConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Film\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Film\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Film, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1547,25 +1647,29 @@ public abstract class FilmSpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmSpeciesConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"species\\" => this.species(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmSpeciesConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"species\\": return this.species();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmSpeciesConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmSpeciesConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmSpeciesConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1587,23 +1691,27 @@ public abstract class FilmSpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmSpeciesEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmSpeciesEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmSpeciesEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmSpeciesEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmSpeciesEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1685,44 +1793,48 @@ public abstract class Species : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Species\\"),
-            \\"name\\" => this.name(),
-            \\"classification\\" => this.classification(),
-            \\"designation\\" => this.designation(),
-            \\"averageHeight\\" => this.averageHeight(),
-            \\"averageLifespan\\" => this.averageLifespan(),
-            \\"eyeColors\\" => this.eyeColors(),
-            \\"hairColors\\" => this.hairColors(),
-            \\"skinColors\\" => this.skinColors(),
-            \\"language\\" => this.language(),
-            \\"homeworld\\" => this.homeworld(),
-            \\"personConnection\\" => this.personConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Species\\");
+            case \\"name\\": return this.name();
+            case \\"classification\\": return this.classification();
+            case \\"designation\\": return this.designation();
+            case \\"averageHeight\\": return this.averageHeight();
+            case \\"averageLifespan\\": return this.averageLifespan();
+            case \\"eyeColors\\": return this.eyeColors();
+            case \\"hairColors\\": return this.hairColors();
+            case \\"skinColors\\": return this.skinColors();
+            case \\"language\\": return this.language();
+            case \\"homeworld\\": return this.homeworld();
+            case \\"personConnection\\": return this.personConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"filmConnection\\" => this.filmConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Species\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Species\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Species, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1801,43 +1913,47 @@ public abstract class Planet : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Planet\\"),
-            \\"name\\" => this.name(),
-            \\"diameter\\" => this.diameter(),
-            \\"rotationPeriod\\" => this.rotationPeriod(),
-            \\"orbitalPeriod\\" => this.orbitalPeriod(),
-            \\"gravity\\" => this.gravity(),
-            \\"population\\" => this.population(),
-            \\"climates\\" => this.climates(),
-            \\"terrains\\" => this.terrains(),
-            \\"surfaceWater\\" => this.surfaceWater(),
-            \\"residentConnection\\" => this.residentConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Planet\\");
+            case \\"name\\": return this.name();
+            case \\"diameter\\": return this.diameter();
+            case \\"rotationPeriod\\": return this.rotationPeriod();
+            case \\"orbitalPeriod\\": return this.orbitalPeriod();
+            case \\"gravity\\": return this.gravity();
+            case \\"population\\": return this.population();
+            case \\"climates\\": return this.climates();
+            case \\"terrains\\": return this.terrains();
+            case \\"surfaceWater\\": return this.surfaceWater();
+            case \\"residentConnection\\": return this.residentConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"filmConnection\\" => this.filmConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Planet\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Planet\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Planet, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1877,25 +1993,29 @@ public abstract class PlanetResidentsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> residents();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetResidentsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"residents\\" => this.residents(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetResidentsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"residents\\": return this.residents();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetResidentsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetResidentsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetResidentsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -1917,23 +2037,27 @@ public abstract class PlanetResidentsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetResidentsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetResidentsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetResidentsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetResidentsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetResidentsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2018,49 +2142,53 @@ public abstract class Person : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Person\\"),
-            \\"name\\" => this.name(),
-            \\"birthYear\\" => this.birthYear(),
-            \\"eyeColor\\" => this.eyeColor(),
-            \\"gender\\" => this.gender(),
-            \\"hairColor\\" => this.hairColor(),
-            \\"height\\" => this.height(),
-            \\"mass\\" => this.mass(),
-            \\"skinColor\\" => this.skinColor(),
-            \\"homeworld\\" => this.homeworld(),
-            \\"filmConnection\\" => this.filmConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Person\\");
+            case \\"name\\": return this.name();
+            case \\"birthYear\\": return this.birthYear();
+            case \\"eyeColor\\": return this.eyeColor();
+            case \\"gender\\": return this.gender();
+            case \\"hairColor\\": return this.hairColor();
+            case \\"height\\": return this.height();
+            case \\"mass\\": return this.mass();
+            case \\"skinColor\\": return this.skinColor();
+            case \\"homeworld\\": return this.homeworld();
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"species\\" => this.species(),
-            \\"starshipConnection\\" => this.starshipConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"species\\": return this.species();
+            case \\"starshipConnection\\": return this.starshipConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"vehicleConnection\\" => this.vehicleConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"vehicleConnection\\": return this.vehicleConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Person\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Person\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Person, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2100,25 +2228,29 @@ public abstract class PersonFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonFilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonFilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonFilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonFilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonFilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2140,23 +2272,27 @@ public abstract class PersonFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonFilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonFilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonFilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonFilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonFilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2196,25 +2332,29 @@ public abstract class PersonStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonStarshipsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"starships\\" => this.starships(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonStarshipsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"starships\\": return this.starships();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonStarshipsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonStarshipsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonStarshipsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2236,23 +2376,27 @@ public abstract class PersonStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonStarshipsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonStarshipsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonStarshipsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonStarshipsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonStarshipsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2354,47 +2498,51 @@ public abstract class Starship : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Starship\\"),
-            \\"name\\" => this.name(),
-            \\"model\\" => this.model(),
-            \\"starshipClass\\" => this.starshipClass(),
-            \\"manufacturers\\" => this.manufacturers(),
-            \\"costInCredits\\" => this.costInCredits(),
-            \\"length\\" => this.length(),
-            \\"crew\\" => this.crew(),
-            \\"passengers\\" => this.passengers(),
-            \\"maxAtmospheringSpeed\\" => this.maxAtmospheringSpeed(),
-            \\"hyperdriveRating\\" => this.hyperdriveRating(),
-            \\"MGLT\\" => this.MGLT(),
-            \\"cargoCapacity\\" => this.cargoCapacity(),
-            \\"consumables\\" => this.consumables(),
-            \\"pilotConnection\\" => this.pilotConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Starship\\");
+            case \\"name\\": return this.name();
+            case \\"model\\": return this.model();
+            case \\"starshipClass\\": return this.starshipClass();
+            case \\"manufacturers\\": return this.manufacturers();
+            case \\"costInCredits\\": return this.costInCredits();
+            case \\"length\\": return this.length();
+            case \\"crew\\": return this.crew();
+            case \\"passengers\\": return this.passengers();
+            case \\"maxAtmospheringSpeed\\": return this.maxAtmospheringSpeed();
+            case \\"hyperdriveRating\\": return this.hyperdriveRating();
+            case \\"MGLT\\": return this.MGLT();
+            case \\"cargoCapacity\\": return this.cargoCapacity();
+            case \\"consumables\\": return this.consumables();
+            case \\"pilotConnection\\": return this.pilotConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"filmConnection\\" => this.filmConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Starship\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Starship\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Starship, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2434,25 +2582,29 @@ public abstract class StarshipPilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipPilotsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"pilots\\" => this.pilots(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipPilotsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"pilots\\": return this.pilots();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipPilotsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipPilotsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipPilotsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2474,23 +2626,27 @@ public abstract class StarshipPilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipPilotsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipPilotsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipPilotsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipPilotsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipPilotsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2530,25 +2686,29 @@ public abstract class StarshipFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipFilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipFilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipFilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipFilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipFilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2570,23 +2730,27 @@ public abstract class StarshipFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipFilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipFilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipFilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipFilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipFilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2626,25 +2790,29 @@ public abstract class PersonVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonVehiclesConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"vehicles\\" => this.vehicles(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonVehiclesConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"vehicles\\": return this.vehicles();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonVehiclesConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonVehiclesConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonVehiclesConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2666,23 +2834,27 @@ public abstract class PersonVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PersonVehiclesEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PersonVehiclesEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PersonVehiclesEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PersonVehiclesEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PersonVehiclesEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2769,45 +2941,49 @@ public abstract class Vehicle : IGraphQlResolvable, Node
     /// </summary>
     public abstract IGraphQlResult<string> id();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"Vehicle\\"),
-            \\"name\\" => this.name(),
-            \\"model\\" => this.model(),
-            \\"vehicleClass\\" => this.vehicleClass(),
-            \\"manufacturers\\" => this.manufacturers(),
-            \\"costInCredits\\" => this.costInCredits(),
-            \\"length\\" => this.length(),
-            \\"crew\\" => this.crew(),
-            \\"passengers\\" => this.passengers(),
-            \\"maxAtmospheringSpeed\\" => this.maxAtmospheringSpeed(),
-            \\"cargoCapacity\\" => this.cargoCapacity(),
-            \\"consumables\\" => this.consumables(),
-            \\"pilotConnection\\" => this.pilotConnection(
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"Vehicle\\");
+            case \\"name\\": return this.name();
+            case \\"model\\": return this.model();
+            case \\"vehicleClass\\": return this.vehicleClass();
+            case \\"manufacturers\\": return this.manufacturers();
+            case \\"costInCredits\\": return this.costInCredits();
+            case \\"length\\": return this.length();
+            case \\"crew\\": return this.crew();
+            case \\"passengers\\": return this.passengers();
+            case \\"maxAtmospheringSpeed\\": return this.maxAtmospheringSpeed();
+            case \\"cargoCapacity\\": return this.cargoCapacity();
+            case \\"consumables\\": return this.consumables();
+            case \\"pilotConnection\\": return this.pilotConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"filmConnection\\" => this.filmConnection(
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"filmConnection\\": return this.filmConnection(
                 after: (parameters.HasParameter(\\"after\\") ? parameters.GetParameter<string?>(\\"after\\") : null),
                 first: (parameters.HasParameter(\\"first\\") ? parameters.GetParameter<int?>(\\"first\\") : null),
                 before: (parameters.HasParameter(\\"before\\") ? parameters.GetParameter<string?>(\\"before\\") : null),
-                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null)),
-            \\"created\\" => this.created(),
-            \\"edited\\" => this.edited(),
-            \\"id\\" => this.id(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+                last: (parameters.HasParameter(\\"last\\") ? parameters.GetParameter<int?>(\\"last\\") : null));
+            case \\"created\\": return this.created();
+            case \\"edited\\": return this.edited();
+            case \\"id\\": return this.id();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"Vehicle\\" || value == \\"Node\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"Vehicle\\" || value == \\"Node\\";
+    }
 
     public abstract class GraphQlContract<T> : Vehicle, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2847,25 +3023,29 @@ public abstract class VehiclePilotsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> pilots();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclePilotsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"pilots\\" => this.pilots(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehiclePilotsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"pilots\\": return this.pilots();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehiclePilotsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehiclePilotsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : VehiclePilotsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2887,23 +3067,27 @@ public abstract class VehiclePilotsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclePilotsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehiclePilotsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehiclePilotsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehiclePilotsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : VehiclePilotsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2943,25 +3127,29 @@ public abstract class VehicleFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehicleFilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehicleFilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehicleFilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehicleFilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : VehicleFilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -2983,23 +3171,27 @@ public abstract class VehicleFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehicleFilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehicleFilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehicleFilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehicleFilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : VehicleFilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3039,25 +3231,29 @@ public abstract class PlanetFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetFilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetFilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetFilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetFilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetFilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3079,23 +3275,27 @@ public abstract class PlanetFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetFilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetFilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetFilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetFilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetFilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3135,25 +3335,29 @@ public abstract class SpeciesPeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesPeopleConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"people\\" => this.people(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesPeopleConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"people\\": return this.people();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesPeopleConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesPeopleConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesPeopleConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3175,23 +3379,27 @@ public abstract class SpeciesPeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesPeopleEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesPeopleEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesPeopleEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesPeopleEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesPeopleEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3231,25 +3439,29 @@ public abstract class SpeciesFilmsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Film?>?> films();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesFilmsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"films\\" => this.films(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesFilmsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"films\\": return this.films();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesFilmsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesFilmsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesFilmsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3271,23 +3483,27 @@ public abstract class SpeciesFilmsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesFilmsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesFilmsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesFilmsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesFilmsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesFilmsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3327,25 +3543,29 @@ public abstract class FilmStarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmStarshipsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"starships\\" => this.starships(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmStarshipsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"starships\\": return this.starships();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmStarshipsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmStarshipsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmStarshipsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3367,23 +3587,27 @@ public abstract class FilmStarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmStarshipsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmStarshipsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmStarshipsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmStarshipsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmStarshipsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3423,25 +3647,29 @@ public abstract class FilmVehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmVehiclesConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"vehicles\\" => this.vehicles(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmVehiclesConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"vehicles\\": return this.vehicles();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmVehiclesConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmVehiclesConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmVehiclesConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3463,23 +3691,27 @@ public abstract class FilmVehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmVehiclesEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmVehiclesEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmVehiclesEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmVehiclesEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmVehiclesEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3519,25 +3751,29 @@ public abstract class FilmCharactersConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> characters();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmCharactersConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"characters\\" => this.characters(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmCharactersConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"characters\\": return this.characters();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmCharactersConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmCharactersConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmCharactersConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3559,23 +3795,27 @@ public abstract class FilmCharactersEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmCharactersEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmCharactersEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmCharactersEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmCharactersEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmCharactersEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3615,25 +3855,29 @@ public abstract class FilmPlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmPlanetsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"planets\\" => this.planets(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmPlanetsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"planets\\": return this.planets();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmPlanetsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmPlanetsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmPlanetsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3655,23 +3899,27 @@ public abstract class FilmPlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"FilmPlanetsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"FilmPlanetsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"FilmPlanetsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"FilmPlanetsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : FilmPlanetsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3711,25 +3959,29 @@ public abstract class PeopleConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Person?>?> people();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PeopleConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"people\\" => this.people(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PeopleConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"people\\": return this.people();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PeopleConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PeopleConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PeopleConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3751,23 +4003,27 @@ public abstract class PeopleEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PeopleEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PeopleEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PeopleEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PeopleEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PeopleEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3807,25 +4063,29 @@ public abstract class PlanetsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Planet?>?> planets();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"planets\\" => this.planets(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"planets\\": return this.planets();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3847,23 +4107,27 @@ public abstract class PlanetsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"PlanetsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"PlanetsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"PlanetsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"PlanetsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : PlanetsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3903,25 +4167,29 @@ public abstract class SpeciesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Species?>?> species();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"species\\" => this.species(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"species\\": return this.species();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3943,23 +4211,27 @@ public abstract class SpeciesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"SpeciesEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"SpeciesEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"SpeciesEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"SpeciesEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : SpeciesEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -3999,25 +4271,29 @@ public abstract class StarshipsConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Starship?>?> starships();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipsConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"starships\\" => this.starships(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipsConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"starships\\": return this.starships();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipsConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipsConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipsConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -4039,23 +4315,27 @@ public abstract class StarshipsEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"StarshipsEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"StarshipsEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"StarshipsEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"StarshipsEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : StarshipsEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -4095,25 +4375,29 @@ public abstract class VehiclesConnection : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<IEnumerable<Vehicle?>?> vehicles();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclesConnection\\"),
-            \\"pageInfo\\" => this.pageInfo(),
-            \\"edges\\" => this.edges(),
-            \\"totalCount\\" => this.totalCount(),
-            \\"vehicles\\" => this.vehicles(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehiclesConnection\\");
+            case \\"pageInfo\\": return this.pageInfo();
+            case \\"edges\\": return this.edges();
+            case \\"totalCount\\": return this.totalCount();
+            case \\"vehicles\\": return this.vehicles();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehiclesConnection\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehiclesConnection\\";
+    }
 
     public abstract class GraphQlContract<T> : VehiclesConnection, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 
@@ -4135,23 +4419,27 @@ public abstract class VehiclesEdge : IGraphQlResolvable
     /// </summary>
     public abstract IGraphQlResult<string> cursor();
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            \\"__typename\\" => GraphQlConstantResult.Construct(\\"VehiclesEdge\\"),
-            \\"node\\" => this.node(),
-            \\"cursor\\" => this.cursor(),
-            _ => throw new ArgumentException(\\"Unknown property \\" + name, nameof(name))
+            case \\"__typename\\": return GraphQlConstantResult.Construct(\\"VehiclesEdge\\");
+            case \\"node\\": return this.node();
+            case \\"cursor\\": return this.cursor();
+            default: throw new ArgumentException(\\"Unknown property \\" + name, \\"name\\");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      value == \\"VehiclesEdge\\";
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return value == \\"VehiclesEdge\\";
+    }
 
     public abstract class GraphQlContract<T> : VehiclesEdge, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "

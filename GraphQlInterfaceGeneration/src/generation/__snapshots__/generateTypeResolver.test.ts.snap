@@ -23,7 +23,7 @@ public class TypeResolver : IGraphQlTypeResolver
             case \\"ColorInput\\":
                 return typeof(ColorInput);
             default:
-                throw new ArgumentException(\\"Unknown type \\" + name, nameof(name));
+                throw new ArgumentException(\\"Unknown type \\" + name, \\"name\\");
         }
     }
 }"

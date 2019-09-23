@@ -30,7 +30,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{D27178A6-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1BD68627-7F2F-41A6-AB71-9B76F58E0CD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLinqQL.Resolvers", "GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj", "{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Resolvers", "GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj", "{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLinqQL.Demo.Legacy", "GraphLinqQL.Demo.Legacy\GraphLinqQL.Demo.Legacy.csproj", "{6C6D794D-F913-4643-8192-4BED2CEDC936}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +93,7 @@ Global
 		{EF55CACA-FC01-48BE-B680-192769C334EF} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
 		{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
 		{F8254753-CA00-4E32-990E-206782DB71FB} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
+		{6C6D794D-F913-4643-8192-4BED2CEDC936} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B05A32A-DACC-4EAA-98CE-3462557D2258}

@@ -28,28 +28,32 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
       .map(field => resultAbstractDeclaration(field, options)).join(`
     `)}
 
-    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
-        name switch
+    IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+    {
+        switch (name)
         {
-            "__typename" => GraphQlConstantResult.Construct("${object.name}"),
+            case "__typename": return GraphQlConstantResult.Construct("${object.name}");
             ${Object.keys(fields)
               .map(fieldName => fields[fieldName])
               .map(field => fieldResolveQueryCase(field, options)).join(`
             `)}
-            _ => throw new ArgumentException("Unknown property " + name, nameof(name))
+            default: throw new ArgumentException("Unknown property " + name, "name");
         };
+    }
 
-    bool IGraphQlResolvable.IsType(string value) =>
-      ${[object.name]
-        .concat(object.getInterfaces().map(iface => iface.name))
-        .map(n => `value == "${n}"`)
-        .join(" || ")};
+    bool IGraphQlResolvable.IsType(string value)
+    {
+        return ${[object.name]
+          .concat(object.getInterfaces().map(iface => iface.name))
+          .map(n => `value == "${n}"`)
+          .join(" || ")};
+    }
 
     public abstract class GraphQlContract<T> : ${typeName}, IGraphQlAccepts<T>
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType => typeof(T);
+        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 `;
@@ -96,13 +100,13 @@ function resultAbstractDeclarationArg(arg: GraphQLArgument, options: Options) {
 function fieldResolveQueryCase(field: GraphQLField<any, any, { [key: string]: any }>, options: Options) {
   const propertyName = getPropertyName(field.name, options);
   const args = field.args.map(arg => fieldResolveQueryCaseArg(arg, options));
-  return `"${field.name}" => this.${propertyName}(${
+  return `case "${field.name}": return this.${propertyName}(${
     args.length
       ? `
                 ${args.join(`,
                 `)}`
       : ""
-  }),`;
+  });`;
 }
 
 function fieldResolveQueryCaseArg(arg: GraphQLArgument, options: Options) {
