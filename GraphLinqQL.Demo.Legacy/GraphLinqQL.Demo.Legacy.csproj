@@ -5,7 +5,7 @@
     <LangVersion>5.0</LangVersion>
     <Nullable>disable</Nullable>
 
-    <GraphLinqQLArguments>--no-nullability</GraphLinqQLArguments>
+    <GraphLinqQLArguments>--csharp-language 5.0</GraphLinqQLArguments>
   </PropertyGroup>
 
   <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />

@@ -19,7 +19,7 @@ program
   .option("-i, --input-file <input>", "Specify input file", program.STRING, null, true)
   .option("-o, --output-file <output>", "Specify output file", program.STRING, null, true)
   .option("-n, --namespace <namespace>", "csharp namespace", program.STRING, null, true)
-  .option("--csharp-language", "set csharp language version", program.FLOAT, 8.0, false)
+  .option("--csharp-language <version>", "set csharp language version", program.FLOAT, 8.0)
   .option("-u, --using", "additional using statements", program.ARRAY, [], false)
   .option("-_, --introspection", "include introspection properties", program.BOOLEAN, false, false)
   .action(function(_, switches, logger) {
