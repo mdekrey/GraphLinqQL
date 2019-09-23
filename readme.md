@@ -20,15 +20,3 @@ expressions and code generation from a schema to create
 
     Connect them to your Domain model using the expressions that will be
 	converted into the IQueryable.
-
-# Remaining work
-
-- [ ] Fix naming/reorganization
-- [ ] Support versions of C# prior to 8
-- [ ] Determine dependencies to generate code
-    - Currently, we depend on Node, but would Docker be better?
-	    - Considering "No" because web devs on VS can install Node via VS
-	- See how [Pegasus](https://github.com/otac0n/Pegasus) adds build tools
-- [ ] Mark as obsolete parameters in schema as obsolete in C#
-- [ ] Publish to NuGet, etc.
-- [ ] More documentation
