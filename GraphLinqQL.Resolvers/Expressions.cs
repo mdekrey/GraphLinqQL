@@ -61,7 +61,7 @@ namespace GraphLinqQL
         
         internal static Expression Inline(this LambdaExpression newOperation, params Expression[] expressions)
         {
-            var parameters = newOperation.Parameters.Zip(expressions, (old, inlined) => (old, inlined)).ToDictionary(kvp => (Expression)kvp.old, kvp => kvp.inlined);
+            var parameters = newOperation.Parameters.Zip(expressions, (old, inlined) => new { old, inlined }).ToDictionary(kvp => (Expression)kvp.old, kvp => kvp.inlined);
             if (parameters.Any(kvp => !kvp.Key.Type.IsAssignableFrom(kvp.Value.Type)))
             {
                 throw new ArgumentException("Parameters did not match types");

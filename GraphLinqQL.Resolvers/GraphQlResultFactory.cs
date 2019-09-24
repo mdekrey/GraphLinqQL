@@ -30,7 +30,7 @@ namespace GraphLinqQL
     {
         public static IGraphQlResultFactory Construct(Type modelType, IGraphQlServiceProvider serviceProvider)
         {
-            return (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), serviceProvider.GetParameterResolverFactory());
+            return (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), serviceProvider.GetParameterResolverFactory())!;
         }
     }
 

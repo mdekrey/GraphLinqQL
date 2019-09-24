@@ -7,6 +7,11 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
+    internal static class EmptyObjectArrayContainer
+    {
+        public static readonly object[] Objects = new object[0];
+    }
+
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
         public IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
@@ -97,8 +102,8 @@ namespace GraphLinqQL
 
         public IGraphQlResult As(Type contract)
         {
-            var method = this.GetType().GetMethod(nameof(AsContract), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(contract);
-            return (IGraphQlResult)method.Invoke(this, Array.Empty<object>());
+            var method = this.GetType().GetMethod(nameof(AsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
+            return (IGraphQlResult)method.Invoke(this, EmptyObjectArrayContainer.Objects)!;
         }
 
         public IGraphQlResult<TContract> As<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
@@ -128,13 +133,13 @@ namespace GraphLinqQL
     {
         public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
-            return (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlExpressionResult<>).MakeGenericType(returnType), func, joins);
+            return (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlExpressionResult<>).MakeGenericType(returnType), func, joins)!;
         }
     }
 
     class GraphQlContractExpressionReplaceVisitor : ExpressionVisitor
     {
-        public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpressionReplaceVisitor).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic);
+        public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpressionReplaceVisitor).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic)!;
 
         private static object? ContractPlaceholder(object input) => null;
 

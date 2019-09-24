@@ -4,6 +4,11 @@ using System.Linq.Expressions;
 
 namespace GraphLinqQL
 {
+    internal static class EmptyJoinArrayContainer
+    {
+        public static readonly IReadOnlyCollection<IGraphQlJoin> Joins = new IGraphQlJoin[0];
+    }
+
     internal class GraphQlUnionResult<T> : IUnionGraphQlResult<T>
         where T : IEnumerable<IGraphQlResolvable?>?
     {
@@ -26,7 +31,7 @@ namespace GraphLinqQL
         public LambdaExpression? Finalizer => null;
         public Type? Contract => null;
 
-        public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
+        public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyJoinArrayContainer.Joins;
 
         public Type ResultType => typeof(T);
 

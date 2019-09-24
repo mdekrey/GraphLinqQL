@@ -16,7 +16,7 @@ namespace GraphLinqQL
             if (seqType == null || seqType == typeof(string))
                 return null;
             if (seqType.IsArray)
-                return typeof(IEnumerable<>).MakeGenericType(seqType.GetElementType());
+                return typeof(IEnumerable<>).MakeGenericType(seqType.GetElementType()!);
             if (seqType.IsGenericType)
             {
                 foreach (Type arg in seqType.GetGenericArguments())

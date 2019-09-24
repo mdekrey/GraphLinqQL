@@ -8,7 +8,7 @@ namespace GraphLinqQL
 {
     public class ComplexResolverBuilder : IComplexResolverBuilder
     {
-        private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod("Add");
+        private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod(nameof(IDictionary<string, object>.Add))!;
         private readonly IGraphQlResolvable contract;
         private readonly Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve;
         private readonly Type modelType;
