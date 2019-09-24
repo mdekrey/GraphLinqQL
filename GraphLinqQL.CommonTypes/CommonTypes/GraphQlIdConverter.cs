@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NET45
+using System;
 using System.Text.Json;
 
 namespace GraphLinqQL.CommonTypes
@@ -16,3 +17,4 @@ namespace GraphLinqQL.CommonTypes
         }
     }
 }
+#endif
