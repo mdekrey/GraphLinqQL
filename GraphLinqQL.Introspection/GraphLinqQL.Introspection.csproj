@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
 
     <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
     <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[3.0.*,]" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.*" Condition=" '$(TargetFramework)' == 'netstandard1.0' " />
   </ItemGroup>
 
   <ItemGroup>

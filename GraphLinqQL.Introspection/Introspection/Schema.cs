@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GraphLinqQL.Introspection.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphLinqQL.Introspection
 {
