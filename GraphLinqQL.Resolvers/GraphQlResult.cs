@@ -31,7 +31,9 @@ namespace GraphLinqQL
         LambdaExpression Conversion { get; }
     }
 
+#pragma warning disable CA1040 // Avoid empty interfaces - this empty interface is used to avoid reflection but still get some type safety via the IGraphQlAccepts interface
     public interface IGraphQlResultFactory { }
+#pragma warning restore CA1040 // Avoid empty interfaces
 
     public interface IGraphQlResultFactory<TInputType> : IGraphQlResultFactory, IGraphQlResult<TInputType>
     {

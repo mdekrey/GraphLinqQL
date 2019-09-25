@@ -1,5 +1,13 @@
 ﻿[*.cs]
 
+# CA1044: Properties should not be write only
+# The IGraphQlAccepts interface has only a setter, but implementations have the getter.
+dotnet_diagnostic.CA1044.severity = none
+
 # CA1062: Validate arguments of public methods
 # We suppress this because we're using C# 8 nullability, and we hope callers of our internal APIs do so, too.
 dotnet_diagnostic.CA1062.severity = none
+
+# CA1303: Do not pass literals as localized parameters
+# Choosing not to localize at this time.
+dotnet_diagnostic.CA1303.severity = none

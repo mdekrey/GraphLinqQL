@@ -27,8 +27,10 @@ namespace GraphLinqQL.Execution
             var value = rawData[parameter];
             if (typeof(T) == typeof(string))
             {
-                // Because the main graphQl AST parser strips quotes from strings
+                // Because the main graphQl AST parser strips quotes from strings - FIXME - better GraphQL AST Parser - Issue #11
+#pragma warning disable CA1305 // Specify IFormatProvider
                 return (T)(object)value?.ToString()!;
+#pragma warning restore CA1305 // Specify IFormatProvider
             }
             return System.Text.Json.JsonSerializer.Deserialize<T>(value);
         }
