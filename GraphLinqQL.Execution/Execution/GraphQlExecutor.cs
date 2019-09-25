@@ -85,8 +85,8 @@ namespace GraphLinqQL.Execution
 
         private IComplexResolverBuilder Build(IComplexResolverBuilder builder, ASTNode node, GraphQLExecutionContext context)
         {
-            var resultNode = (node is IHasDirectivesNode directives)
-                ? directives.Directives.Aggregate((ASTNode?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
+            var resultNode = TryGetDirectives(node, out var directives)
+                ? directives.Aggregate((ASTNode?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
                 : node;
             if (resultNode == null)
             {
@@ -130,6 +130,72 @@ namespace GraphLinqQL.Execution
                     }
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private bool TryGetDirectives(ASTNode node, out IEnumerable<GraphQLDirective> directives)
+        {
+            switch (node)
+            {
+                case GraphQLEnumTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLEnumValueDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLFieldDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLFieldSelection def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLFragmentSpread def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLInlineFragment def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLInputObjectTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLInputValueDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLInterfaceTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLObjectTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLOperationDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLScalarTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLSchemaDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                case GraphQLUnionTypeDefinition def:
+                    directives = def.Directives;
+                    return true;
+
+                default:
+                    directives = null!;
+                    return false;
             }
         }
 
