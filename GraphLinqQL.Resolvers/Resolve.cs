@@ -14,6 +14,15 @@ namespace GraphLinqQL
 
         public static object GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
+            if (serviceProvider == null)
+            {
+                throw new ArgumentNullException(nameof(serviceProvider));
+            }
+            if (resolver == null)
+            {
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
             var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
             var resolved = resolver(resultFactory.Resolve(a => a).As(t).ResolveComplex(serviceProvider));
@@ -25,6 +34,11 @@ namespace GraphLinqQL
         public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
             where T : IEnumerable<IGraphQlResolvable?>?
         {
+            if (graphQlResult == null)
+            {
+                throw new ArgumentNullException(nameof(graphQlResult));
+            }
+
             var allResults = new List<IGraphQlResult<T>>();
             if (graphQlResult is IUnionGraphQlResult<T> union)
             {
@@ -48,6 +62,11 @@ namespace GraphLinqQL
 
         public static IGraphQlResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlResult<IEnumerable<TInput>> original, Func<IGraphQlResult<TInput>, IGraphQlResult<TContract>> func)
         {
+            if (original == null)
+            {
+                throw new ArgumentNullException(nameof(original));
+            }
+
             if (original.Contract != null)
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
@@ -65,7 +84,7 @@ namespace GraphLinqQL
             }
 
             var newResolver = Expression.Lambda(
-                Expressions.CallQueryableSelect(getList, newResult.UntypedResolver), 
+                getList.CallQueryableSelect(newResult.UntypedResolver), 
                 original.UntypedResolver.Parameters
             );
             if (newResult.Joins.Count > 0)
@@ -79,6 +98,11 @@ namespace GraphLinqQL
             where TInput : class
             where TContract : class
         {
+            if (original == null)
+            {
+                throw new ArgumentNullException(nameof(original));
+            }
+
             if (original.Contract != null)
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
@@ -99,10 +123,17 @@ namespace GraphLinqQL
 
         public static IGraphQlResult<TContract> Only<TContract>(this IGraphQlResult<IEnumerable<TContract>> original)
         {
+            if (original == null)
+            {
+                throw new ArgumentNullException(nameof(original));
+            }
+
             return new GraphQlExpressionResult<TContract>(original.ParameterResolverFactory, original.UntypedResolver, original.Contract, original.Joins, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
-            target.ResolveQuery(name, new NoParameterResolver());
+            target == null
+                ? throw new ArgumentNullException(nameof(target))
+                : target.ResolveQuery(name, new NoParameterResolver());
     }
 }

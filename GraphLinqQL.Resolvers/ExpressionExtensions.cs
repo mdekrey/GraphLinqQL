@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace GraphLinqQL
 {
-    public static class Expressions
+    public static class ExpressionExtensions
     {
         private static readonly MethodInfo GenericQueryableSelect = typeof(System.Linq.Queryable).GetMethods()
                     .Where(m => m.Name == nameof(System.Linq.Queryable.Select))
@@ -31,10 +32,14 @@ namespace GraphLinqQL
             return (T)new ReplaceConstantExpressions(replacements).Visit(body);
         }
 
-
+        [ContractArgumentValidator]
         public static Expression<Func<TInput, object>> CastAndBoxSingleInput<TInput>(this LambdaExpression expression)
         {
-            if (expression.Parameters.Count != 1 || expression.Parameters[0].Type != typeof(TInput))
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+            else if (expression.Parameters.Count != 1 || expression.Parameters[0].Type != typeof(TInput))
             {
                 throw new InvalidOperationException($"Expected single input parameter of type {typeof(TInput).FullName}, got {string.Join(", ", expression.Parameters.Select(p => p.Type.FullName))}");
             }
@@ -42,13 +47,13 @@ namespace GraphLinqQL
             return Expression.Lambda<Func<TInput, object>>(expression.Body.Type.IsValueType ? Expression.Convert(expression.Body, typeof(object)) : expression.Body, expression.Parameters);
         }
 
-        internal static MethodCallExpression CallQueryableSelect(Expression list, LambdaExpression selector)
+        internal static MethodCallExpression CallQueryableSelect(this Expression list, LambdaExpression selector)
         {
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
             return Expression.Call(queryableSelect, list, Expression.Quote(selector));
         }
 
-        internal static MethodCallExpression CallEnumerableSelect(Expression list, LambdaExpression selector)
+        internal static MethodCallExpression CallEnumerableSelect(this Expression list, LambdaExpression selector)
         {
             var enumerableSelect = GenericEnumerableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
             return Expression.Call(enumerableSelect, list, selector);

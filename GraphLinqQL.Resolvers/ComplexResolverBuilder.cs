@@ -81,6 +81,11 @@ namespace GraphLinqQL
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)
         {
+            if (typedBuilder == null)
+            {
+                throw new ArgumentNullException(nameof(typedBuilder));
+            }
+
             if (contract.IsType(value))
             {
                 return (IComplexResolverBuilder)typedBuilder((IComplexResolverBuilder)this);

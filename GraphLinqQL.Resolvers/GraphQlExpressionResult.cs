@@ -154,7 +154,7 @@ namespace GraphLinqQL
                 ModelType = node.Arguments[0].Type;
                 if (NewOperation != null)
                 {
-                    return Visit(Expressions.Inline(NewOperation, node.Arguments[0]));
+                    return Visit(NewOperation.Inline(node.Arguments[0]));
                 }
             }
             return base.VisitMethodCall(node);
