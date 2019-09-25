@@ -54,10 +54,26 @@ namespace GraphLinqQL
                 : (IGraphQlTypeInformation)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, type);
         }
 
-        void IDisposable.Dispose()
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
         {
-            scope.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    scope.Dispose();
+                }
+                disposedValue = true;
+            }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
