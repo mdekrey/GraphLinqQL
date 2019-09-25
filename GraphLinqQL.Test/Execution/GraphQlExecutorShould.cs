@@ -19,7 +19,7 @@ namespace GraphLinqQL.Execution
 
         private class GraphQlExecutionOptions : IGraphQlExecutionOptions
         {
-            public Type? Query => typeof(Implementations.Query);
+            public Type? Query => typeof(Implementations.QueryContract);
 
             public Type? Mutation => null;
 

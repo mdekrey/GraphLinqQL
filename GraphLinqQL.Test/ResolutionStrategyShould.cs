@@ -26,7 +26,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("hero", q => q.ResolveQuery("hero").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
@@ -48,7 +48,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("hero", q => q.ResolveQuery("hero").ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
                     .Build());
 
@@ -82,7 +82,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("hero", q => q.ResolveQuery("heroFinalized").ResolveComplex(sp).Add("id").Add("name").Add("renown").Add("faction").Build())
                     .Build());
 
@@ -114,7 +114,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("nohero", q => q.ResolveQuery("nohero").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
@@ -134,7 +134,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("nulls", q => q.ResolveQuery("nulls").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
@@ -155,7 +155,7 @@ namespace GraphLinqQL
             //   rand
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
@@ -177,7 +177,7 @@ namespace GraphLinqQL
             //   rand
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp).Add("id").Add("name").Build())
                     .Add("rand")
                     .Build());
@@ -195,7 +195,7 @@ namespace GraphLinqQL
             //   rand
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("rand")
                     .Build());
 
@@ -220,7 +220,7 @@ namespace GraphLinqQL
             // }
 
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp)
                                                                 .Add("id")
                                                                 .Add("name")
@@ -247,7 +247,7 @@ namespace GraphLinqQL
             // }
 
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp)
                                                                 .Add("id")
                                                                 .Add("name")
@@ -275,7 +275,7 @@ namespace GraphLinqQL
             // }
 
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp)
                                                                 .Add("id")
                                                                 .Add("name")
@@ -300,7 +300,7 @@ namespace GraphLinqQL
             //   }
             // }
             var sp = new SimpleServiceProvider();
-            var result = sp.GraphQlRoot(typeof(Implementations.Query), root =>
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
                 root.Add("heroById", q => q.ResolveQuery("heroById", new BasicParameterResolver(new Dictionary<string, string>() { { "id", "\"GUARDIANS-1\"" } })).ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 

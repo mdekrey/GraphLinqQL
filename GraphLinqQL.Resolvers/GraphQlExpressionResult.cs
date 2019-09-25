@@ -7,10 +7,12 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
+#if NET45
     internal static class EmptyObjectArrayContainer
     {
         public static readonly object[] Objects = new object[0];
     }
+#endif
 
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
@@ -103,7 +105,11 @@ namespace GraphLinqQL
         public IGraphQlResult AsContract(Type contract)
         {
             var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
+#if NET45
             return (IGraphQlResult)method.Invoke(this, EmptyObjectArrayContainer.Objects)!;
+#else
+            return (IGraphQlResult)method.Invoke(this, Array.Empty<object>())!;
+#endif
         }
 
         public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
@@ -141,7 +147,9 @@ namespace GraphLinqQL
     {
         public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpressionReplaceVisitor).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic)!;
 
+#pragma warning disable CA1801 // Remove unused parameter - this parameter is used in Expression manipulation
         private static object? ContractPlaceholder(object input) => null;
+#pragma warning restore CA1801 // Remove unused parameter
 
         public LambdaExpression? NewOperation { get; set; }
 

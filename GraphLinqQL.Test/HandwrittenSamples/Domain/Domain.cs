@@ -18,7 +18,7 @@ namespace GraphLinqQL.HandwrittenSamples.Domain
         public string Faction { get; set; }
     }
 
-    public class Friend
+    public class FriendAssociation
     {
         public string Id1 { get; set; }
         public string Id2 { get; set; }

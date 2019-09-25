@@ -52,10 +52,12 @@
         /// </summary>
         Scalar,
 
+#pragma warning disable CA1720 // Identifier contains type name - generated from graphql
         /// <summary>
         /// Location adjacent to an object type definition.
         /// </summary>
         Object,
+#pragma warning restore CA1720 // Identifier contains type name
 
         /// <summary>
         /// Location adjacent to a field definition.

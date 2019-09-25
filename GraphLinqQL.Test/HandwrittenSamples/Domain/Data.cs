@@ -2,7 +2,7 @@
 
 namespace GraphLinqQL.HandwrittenSamples.Domain
 {
-    public static class Data
+    public static class DomainData
     {
 
         public static readonly IReadOnlyList<Villain> villains = new[]
@@ -22,10 +22,10 @@ namespace GraphLinqQL.HandwrittenSamples.Domain
             new Reputation { HeroId = "ASGUARD-3", Renown = 50, Faction = "Asgardians" },
             new Reputation { HeroId = "AVENGERS-1", Renown = 100, Faction = "Avengers" },
         };
-        public static readonly IReadOnlyList<Friend> friends = new Friend[]
+        public static readonly IReadOnlyList<FriendAssociation> friends = new FriendAssociation[]
         {
-            new Friend { Id1 = "AVENGERS-1", Id2 = "ASGUARD-3" },
-            new Friend { Id1 = "ASGUARD-3", Id2 = "AVENGERS-1" },
+            new FriendAssociation { Id1 = "AVENGERS-1", Id2 = "ASGUARD-3" },
+            new FriendAssociation { Id1 = "ASGUARD-3", Id2 = "AVENGERS-1" },
         };
     }
 }
