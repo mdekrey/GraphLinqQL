@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
+#pragma warning disable CA1034 // Nested types should not be visible
 
 namespace GraphLinqQL
 {
     public class QueryableTest
     {
-        public class EntityA {
+        public class EntityA
+        {
             public int Id { get; set; }
         }
         public class EntityB { 

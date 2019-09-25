@@ -23,6 +23,7 @@ namespace GraphLinqQL.Introspection
 
         public IGraphQlResultFactory<GraphQlRoot> Original
         {
+            get { return original!; }
             set
             {
                 original = value;
