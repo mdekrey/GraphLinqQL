@@ -27,7 +27,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
                 }
                 else
                 {
-                    var id = int.Parse(after);
+                    var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                     return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take)).As<FilmCharactersConnection>();
                 }
             }
@@ -40,7 +40,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
                 }
                 else
                 {
-                    var id = int.Parse(after);
+                    var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                     return Original.Resolve(film => film.FilmCharacters.OrderByDescending(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take).Reverse()).As<FilmCharactersConnection>();
                 }
             }

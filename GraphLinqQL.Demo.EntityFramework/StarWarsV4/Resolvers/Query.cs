@@ -49,7 +49,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.Film?> film(string? id, string? filmID)
         {
-            var episodeId = int.Parse(id ?? filmID!);
+            var episodeId = int.Parse(id ?? filmID!, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId)).Nullable(_ => _.List(_ => _.As<Film>()).Only());
         }
 

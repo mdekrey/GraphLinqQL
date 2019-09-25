@@ -49,7 +49,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
         }
 
         public override IGraphQlResult<string> id() =>
-            Original.Resolve(p => p.Id.ToString());
+            Original.Resolve(p => p.Id.ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
 
         public override IGraphQlResult<double?> mass()
         {
