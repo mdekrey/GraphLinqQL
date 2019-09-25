@@ -15,7 +15,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
         public override IGraphQlResult<IEnumerable<Interfaces.Film?>?> films()
         {
-            return Original.Resolve(films => films).Nullable(_ => _.List(_ => _.As<Film>()));
+            return Original.Resolve(films => films).Nullable(_ => _.List(_ => _.AsContract<Film>()));
         }
 
         public override IGraphQlResult<PageInfo> pageInfo()

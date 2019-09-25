@@ -12,30 +12,30 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
     {
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Heroes(int? first) =>
             first == null 
-                ? Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>())
-                : Original.Resolve(root => Domain.Data.heroes.Take(first.Value)).List(item => item.As<Hero>());
+                ? Original.Resolve(root => Domain.Data.heroes).List(item => item.AsContract<Hero>())
+                : Original.Resolve(root => Domain.Data.heroes.Take(first.Value)).List(item => item.AsContract<Hero>());
 
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>?> Nulls() =>
-            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.As<Hero>()));
+            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.AsContract<Hero>()));
 
         public override IGraphQlResult<Interfaces.Hero?> NoHero() =>
-            Original.Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.As<Hero>());
+            Original.Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.AsContract<Hero>());
 
         public override IGraphQlResult<Interfaces.Hero> Hero() =>
-            Original.Resolve(root => Domain.Data.heroes.First()).As<Hero>();
+            Original.Resolve(root => Domain.Data.heroes.First()).AsContract<Hero>();
 
         public override IGraphQlResult<Interfaces.Hero> HeroFinalized() =>
-            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>()).Only();
+            Original.Resolve(root => Domain.Data.heroes).List(item => item.AsContract<Hero>()).Only();
 
         public override IGraphQlResult<Interfaces.Hero> HeroById(string id) =>
-            Original.Resolve(root => id).As<HeroById>();
+            Original.Resolve(root => id).AsContract<HeroById>();
 
         public override IGraphQlResult<double> Rand() =>
             Original.Resolve(root => 5.0);
 
         public override IGraphQlResult<IEnumerable?> Characters() =>
-            Original.Resolve(root => Domain.Data.heroes).List(item => item.As<Hero>())
-            .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.villains).List(item => item.As<Villain>()));
+            Original.Resolve(root => Domain.Data.heroes).List(item => item.AsContract<Hero>())
+            .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.villains).List(item => item.AsContract<Villain>()));
     }
 
     public class Hero : Interfaces.Hero.GraphQlContract<Domain.Hero>
@@ -60,7 +60,7 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
-            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.As<Hero>());
+            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Resolve(hero => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>
@@ -98,7 +98,7 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         public override IGraphQlResult<string> Faction() =>
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
-            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.As<Hero>());
+            Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Join(hero).Resolve((_, hero) => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>

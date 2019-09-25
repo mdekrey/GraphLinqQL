@@ -16,12 +16,12 @@ namespace GraphLinqQL
 
         IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider);
 
-        IGraphQlResult As(Type contract);
+        IGraphQlResult AsContract(Type contract);
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
     {
-        IGraphQlResult<TContract> As<TContract>()
+        IGraphQlResult<TContract> AsContract<TContract>()
             where TContract : IGraphQlAccepts<TReturnType>;
     }
 

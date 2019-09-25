@@ -13,8 +13,8 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
         }
 
         public override IGraphQlResult<IEnumerable<Character?>?> friends() =>
-            Original.Resolve(human => human.Friends.Where(id => Domain.Data.humanLookup.ContainsKey(id)).Select(id => Domain.Data.humanLookup[id])).List(_ => _.As<Human>())
-                .Union<IEnumerable<Character?>?>(Original.Resolve(human => human.Friends.Where(id => Domain.Data.droidLookup.ContainsKey(id)).Select(id => Domain.Data.droidLookup[id])).List(_ => _.As<Droid>()));
+            Original.Resolve(human => human.Friends.Where(id => Domain.Data.humanLookup.ContainsKey(id)).Select(id => Domain.Data.humanLookup[id])).List(_ => _.AsContract<Human>())
+                .Union<IEnumerable<Character?>?>(Original.Resolve(human => human.Friends.Where(id => Domain.Data.droidLookup.ContainsKey(id)).Select(id => Domain.Data.droidLookup[id])).List(_ => _.AsContract<Droid>()));
 
         public override IGraphQlResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
         {

@@ -29,7 +29,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
 
         public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters() =>
-            Original.Resolve((c) => c.Select(fc => fc.Character)).List(_ => _.As<Person>());
+            Original.Resolve((c) => c.Select(fc => fc.Character)).List(_ => _.AsContract<Person>());
         //Original.Resolve((c) => from fc in dbContext.FilmCharacters
         //                            where fc.EpisodeId == c.EpisodeId
         //                            select fc.Character).ConvertableList().As<Person>();

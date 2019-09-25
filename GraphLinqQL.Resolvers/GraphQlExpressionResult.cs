@@ -100,16 +100,16 @@ namespace GraphLinqQL
             return mainSelector;
         }
 
-        public IGraphQlResult As(Type contract)
+        public IGraphQlResult AsContract(Type contract)
         {
-            var method = this.GetType().GetMethod(nameof(AsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
+            var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
             return (IGraphQlResult)method.Invoke(this, EmptyObjectArrayContainer.Objects)!;
         }
 
-        public IGraphQlResult<TContract> As<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            AsContract<TContract>();
+        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
+            UnsafeAsContract<TContract>();
 
-        private IGraphQlResult<TContract> AsContract<TContract>()
+        private IGraphQlResult<TContract> UnsafeAsContract<TContract>()
         {
             if (Contract != null)
             {
@@ -122,7 +122,7 @@ namespace GraphLinqQL
                 .FirstOrDefault();
             if (acceptsInterface == null)
             {
-                throw new ArgumentException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}", nameof(contract));
+                throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
             }
             var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
             return new GraphQlExpressionResult<TContract>(ParameterResolverFactory, newResolver, contract);

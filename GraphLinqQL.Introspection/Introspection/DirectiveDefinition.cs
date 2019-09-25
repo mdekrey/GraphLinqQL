@@ -9,7 +9,7 @@ namespace GraphLinqQL.Introspection
     public class DirectiveDefinition : __Directive.GraphQlContract<DirectiveInformation>
     {
         public override IGraphQlResult<IEnumerable<__InputValue>> args() =>
-            Original.Resolve(d => d.Arguments).List(_ => _.As<GraphQlInputField>());
+            Original.Resolve(d => d.Arguments).List(_ => _.AsContract<GraphQlInputField>());
 
         public override IGraphQlResult<string?> description() =>
             Original.Resolve(v => v.Description);
