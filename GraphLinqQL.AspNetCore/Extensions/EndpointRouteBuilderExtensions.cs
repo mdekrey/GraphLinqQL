@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.Builder
                 context.Response.RegisterForDispose(executor);
                 
                 object executionResult;
-                using (var body = await JsonDocument.ParseAsync(context.Request.Body))
+                using (var body = await JsonDocument.ParseAsync(context.Request.Body).ConfigureAwait(false))
                 {
                     var query = body.RootElement.GetProperty("query").GetString();
                     var variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
@@ -41,7 +41,7 @@ namespace Microsoft.AspNetCore.Builder
 
                     executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => p.Value.GetRawText()));
                 }
-                await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions);
+                await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions).ConfigureAwait(false);
             });
         }
     }

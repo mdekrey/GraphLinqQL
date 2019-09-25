@@ -11,3 +11,12 @@ dotnet_diagnostic.CA1062.severity = none
 # CA1303: Do not pass literals as localized parameters
 # Choosing not to localize at this time.
 dotnet_diagnostic.CA1303.severity = none
+
+# CA1812: ... is an internal class that is apparently never instantiated.
+# We instantiate a number of generic-referenced types via Service Providers.
+dotnet_diagnostic.CA1812.severity = none
+
+[Startup.cs]
+# CA1822: Mark members as static
+# Startup files have methods called by the runtime via reflection
+dotnet_diagnostic.CA1822.severity = none

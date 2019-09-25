@@ -41,7 +41,7 @@ namespace GraphLinqQL.Demo.Server
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync("Hello World!").ConfigureAwait(false);
                 });
 
                 endpoints.UseGraphQl("/star-wars-v3/graphql");

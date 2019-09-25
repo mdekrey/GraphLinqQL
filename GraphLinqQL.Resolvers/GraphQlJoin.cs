@@ -23,7 +23,6 @@ namespace GraphLinqQL
 
     public class GraphQlJoin<TFromDomain, TToDomain> : IGraphQlJoin
     {
-        private static readonly MethodInfo getJoinValue = typeof(JoinPlaceholder<TFromDomain>).GetMethod(nameof(JoinPlaceholder<TFromDomain>.Get))!.MakeGenericMethod(typeof(TToDomain));
         public ParameterExpression Placeholder { get; } = Expression.Variable(typeof(TToDomain), "JoinPlaceholder " + typeof(TToDomain).FullName);
 
         public Expression<Func<TFromDomain, TToDomain>> Conversion { get; }

@@ -133,7 +133,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private bool TryGetDirectives(ASTNode node, out IEnumerable<GraphQLDirective> directives)
+        private static bool TryGetDirectives(ASTNode node, out IEnumerable<GraphQLDirective> directives)
         {
             switch (node)
             {
@@ -208,12 +208,12 @@ namespace GraphLinqQL.Execution
                 : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
         }
 
-        private IDictionary<string, string> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
+        private static IDictionary<string, string> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
         {
             return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, context));
         }
 
-        private string ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
+        private static string ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
         {
             switch (value)
             {

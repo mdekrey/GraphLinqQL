@@ -32,14 +32,14 @@ namespace GraphLinqQL.Execution
 
         private static IGraphQlExecutor CreateExecutor()
         {
-            var serviceProvider = new SimpleServiceProvider();
+            using var serviceProvider = new SimpleServiceProvider();
             return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions());
         }
 
         [Fact]
         public void BeAbleToRepresentUntypedSimpleStructures()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   hero {
@@ -59,7 +59,7 @@ namespace GraphLinqQL.Execution
         [Fact]
         public void BeAbleToRepresentUntypedSimpleListStructures()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -79,7 +79,7 @@ namespace GraphLinqQL.Execution
         [Fact]
         public void BeAbleToRepresentNestedStructures()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -102,7 +102,7 @@ namespace GraphLinqQL.Execution
         [Fact]
         public void BeAbleToUseStructureFragments()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 fragment HeroPrimary on Hero {
   id
@@ -128,7 +128,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToRepresentComplexStructures()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -149,7 +149,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToPassParameters()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -170,7 +170,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToPassParametersWithNonStringTypes()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes(first: 1) {
@@ -191,7 +191,7 @@ fragment HeroPrimary on Hero {
         [Fact]
         public void BeAbleToPassArguments()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 query Heroes($date: String!) {
   heroes {
@@ -211,7 +211,7 @@ query Heroes($date: String!) {
         [Fact(Skip = "GraphQL-Parse does not support query default parameters")]
         public void BeAbleToPassArgumentsWithDefaultValues()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
   heroes {
@@ -232,7 +232,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseDirectives()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -253,7 +253,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseInlineFragments()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -276,7 +276,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseInlineFragmentsWithTypeConditions()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   heroes {
@@ -303,7 +303,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   characters {
@@ -329,7 +329,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
         [Fact]
         public void BeAbleToGetTypenames()
         {
-            var executor = CreateExecutor();
+            using var executor = CreateExecutor();
             var result = executor.Execute(@"
 {
   characters {
