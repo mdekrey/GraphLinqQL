@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net45</TargetFramework>
     <LangVersion>5.0</LangVersion>
     <Nullable>disable</Nullable>
 
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
+    <ProjectReference Include="..\GraphLinqQL\GraphLinqQL.csproj" />
   </ItemGroup>
 
 </Project>
