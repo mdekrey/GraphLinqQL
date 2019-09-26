@@ -10,7 +10,6 @@ namespace GraphLinqQL
     {
         IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
         LambdaExpression UntypedResolver { get; }
-        LambdaExpression? Finalizer { get; }
         Type? Contract { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 

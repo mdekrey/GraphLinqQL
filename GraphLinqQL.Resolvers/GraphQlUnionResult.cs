@@ -30,7 +30,6 @@ namespace GraphLinqQL
 
         public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
-        public LambdaExpression? Finalizer => null;
         public Type? Contract => null;
 
 #if NET45

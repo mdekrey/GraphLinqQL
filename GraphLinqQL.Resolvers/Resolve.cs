@@ -52,10 +52,6 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
             }
-            else if (original.Finalizer != null)
-            {
-                throw new ArgumentException($"Original cannot already have a finalizer.");
-            }
             var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
 
             var getList = original.UntypedResolver.Body;
@@ -83,10 +79,6 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
             }
-            else if (original.Finalizer != null)
-            {
-                throw new ArgumentException($"Original cannot already have a finalizer.");
-            }
             var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
 
             var newResolver = Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResult.UntypedResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters);
@@ -94,7 +86,7 @@ namespace GraphLinqQL
             {
                 throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
             }
-            return new GraphQlExpressionResult<TContract?>(original.ParameterResolverFactory, newResolver, newResult.Contract, original.Joins, newResult.Finalizer);
+            return new GraphQlExpressionResult<TContract?>(original.ParameterResolverFactory, newResolver, newResult.Contract, original.Joins);
         }
 
         public static IGraphQlResult<TContract> Defer<TInput, TContract>(this IGraphQlResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlResult<TContract>> func)
@@ -102,10 +94,6 @@ namespace GraphLinqQL
             if (original.Contract != null)
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
-            }
-            else if (original.Finalizer != null)
-            {
-                throw new ArgumentException($"Original cannot already have a finalizer.");
             }
             var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
 
@@ -123,7 +111,7 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Finalizers should only be applied after contracts.");
             }
-            return new GraphQlExpressionResult<TContract>(original.ParameterResolverFactory, original.UntypedResolver, original.Contract, original.Joins, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
+            return new GraphQlFinalizerResult<TContract>(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>

@@ -11,8 +11,6 @@ namespace GraphLinqQL
 
         public LambdaExpression UntypedResolver { get; }
 
-        public LambdaExpression? Finalizer => innerResult.Finalizer;
-
         private readonly IGraphQlResult<TReturnType> innerResult;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }

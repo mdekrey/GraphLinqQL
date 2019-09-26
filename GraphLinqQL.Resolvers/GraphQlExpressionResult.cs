@@ -20,8 +20,6 @@ namespace GraphLinqQL
 
         public LambdaExpression UntypedResolver { get; }
 
-        public LambdaExpression? Finalizer { get; }
-
         private readonly GraphQlContractExpressionReplaceVisitor visitor;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
@@ -32,14 +30,12 @@ namespace GraphLinqQL
             IGraphQlParameterResolverFactory parameterResolverFactory,
             LambdaExpression untypedResolver,
             Type? contract = null,
-            IReadOnlyCollection<IGraphQlJoin>? joins = null,
-            LambdaExpression? finalizer = null)
+            IReadOnlyCollection<IGraphQlJoin>? joins = null)
         {
             this.ParameterResolverFactory = parameterResolverFactory;
             this.UntypedResolver = untypedResolver;
             this.Contract = contract;
             this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
-            this.Finalizer = finalizer;
 
             visitor = new GraphQlContractExpressionReplaceVisitor();
             visitor.Visit(this.UntypedResolver);
@@ -74,15 +70,6 @@ namespace GraphLinqQL
 
             visitor.NewOperation = BuildJoinedSelector(resultSelector, joins, modelType);
             var returnResult = visitor.Visit(this.UntypedResolver.Body);
-
-            if (this.Finalizer != null)
-            {
-                if (!this.Finalizer.Parameters[0].Type.IsAssignableFrom(returnResult.Type))
-                {
-                    throw new InvalidOperationException($"Unable to finalize - expected '{this.Finalizer.Parameters[0].Type.FullName}' but got '{returnResult.Type.FullName}'");
-                }
-                returnResult = this.Finalizer.Inline(returnResult);
-            }
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
             return new GraphQlExpressionResult<object>(ParameterResolverFactory, resultFunc, joins: this.Joins);
