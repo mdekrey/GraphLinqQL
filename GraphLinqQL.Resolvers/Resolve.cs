@@ -81,12 +81,8 @@ namespace GraphLinqQL
             }
             var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
 
-            var newResolver = Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResult.UntypedResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters);
-            if (newResult.Joins.Count > 0)
-            {
-                throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
-            }
-            return new GraphQlExpressionResult<TContract?>(original.ParameterResolverFactory, newResolver, newResult.Contract, original.Joins);
+            return new GraphQlFinalizerResult<TContract>(newResult, 
+                newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
         }
 
         public static IGraphQlResult<TContract> Defer<TInput, TContract>(this IGraphQlResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlResult<TContract>> func)
@@ -111,7 +107,7 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Finalizers should only be applied after contracts.");
             }
-            return new GraphQlFinalizerResult<TContract>(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
+            return GraphQlFinalizerResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
