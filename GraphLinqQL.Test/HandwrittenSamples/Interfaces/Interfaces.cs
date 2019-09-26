@@ -99,7 +99,6 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
 #nullable restore
 
             IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-            Type IGraphQlAccepts.ModelType => typeof(T);
         }
     }
 
@@ -111,6 +110,7 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
         public abstract IGraphQlResult<double> Renown();
         public abstract IGraphQlResult<string> Faction();
         public abstract IGraphQlResult<IEnumerable<Hero>> Friends();
+        public abstract IGraphQlResult<IEnumerable<Hero>> FriendsDeferred();
         public abstract IGraphQlResult<string> Location(string date);
 
         IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
@@ -122,6 +122,7 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
                 "renown" => Renown(),
                 "faction" => Faction(),
                 "friends" => Friends(),
+                "friendsDeferred" => FriendsDeferred(),
                 "location" => Location(date: (parameters.HasParameter("date") ? parameters.GetParameter<string>("date") : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
@@ -136,7 +137,6 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
 #nullable restore
 
             IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-            Type IGraphQlAccepts.ModelType => typeof(T);
         }
     }
 
@@ -168,7 +168,6 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
 #nullable restore
 
             IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-            Type IGraphQlAccepts.ModelType => typeof(T);
         }
     }
 }

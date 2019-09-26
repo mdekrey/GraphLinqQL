@@ -15,15 +15,6 @@ namespace GraphLinqQL
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
-        public ComplexResolverBuilder(
-            IGraphQlResolvable contract,
-            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
-            Type modelType,
-            IGraphQlParameterResolverFactory parameterResolverFactory)
-            : this(contract, resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType, parameterResolverFactory)
-        {
-        }
-
         protected ComplexResolverBuilder(
             IGraphQlResolvable contract,
             Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
@@ -36,6 +27,28 @@ namespace GraphLinqQL
             this.modelType = modelType;
             this.expressions = expressions;
             this.parameterResolverFactory = parameterResolverFactory;
+        }
+
+        public ComplexResolverBuilder(
+            Type contractType,
+            IGraphQlServiceProvider serviceProvider,
+            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
+            Type modelType,
+            IGraphQlParameterResolverFactory parameterResolverFactory)
+            : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType, parameterResolverFactory)
+        {
+        }
+
+        private static IGraphQlResolvable CreateContract(Type contractType, IGraphQlServiceProvider serviceProvider, Type modelType)
+        {
+            var contract = serviceProvider.GetResolverContract(contractType);
+            var accepts = contract as IGraphQlAccepts;
+            if (accepts == null)
+            {
+                throw new ArgumentException("Contract does not accept an input type");
+            }
+            accepts.Original = GraphQlResultFactory.Construct(modelType, serviceProvider);
+            return contract;
         }
 
         IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)

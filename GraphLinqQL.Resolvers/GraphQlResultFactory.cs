@@ -21,7 +21,7 @@ namespace GraphLinqQL
 
         IGraphQlResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
         {
-            return GraphQlExpressionResult<TDomainResult>.Construct(ParameterResolverFactory, resolver);
+            return new GraphQlExpressionResult<TDomainResult>(ParameterResolverFactory, resolver);
         }
 
     }

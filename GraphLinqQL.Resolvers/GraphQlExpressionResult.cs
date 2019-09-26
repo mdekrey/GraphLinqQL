@@ -22,29 +22,35 @@ namespace GraphLinqQL
 
         public LambdaExpression? Finalizer { get; }
 
+        private readonly GraphQlContractExpressionReplaceVisitor visitor;
+
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         public Type? Contract { get; }
 
         public GraphQlExpressionResult(
             IGraphQlParameterResolverFactory parameterResolverFactory,
-            LambdaExpression func,
+            LambdaExpression untypedResolver,
             Type? contract = null,
             IReadOnlyCollection<IGraphQlJoin>? joins = null,
             LambdaExpression? finalizer = null)
         {
             this.ParameterResolverFactory = parameterResolverFactory;
-            this.UntypedResolver = func;
+            this.UntypedResolver = untypedResolver;
             this.Contract = contract;
             this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
             this.Finalizer = finalizer;
-        }
 
-        public static GraphQlExpressionResult<TReturnType> Construct<TInput>(IGraphQlParameterResolverFactory parameterResolverFactory, Expression<Func<TInput, TReturnType>> func)
-        {
-            return new GraphQlExpressionResult<TReturnType>(parameterResolverFactory, func);
+            visitor = new GraphQlContractExpressionReplaceVisitor();
+            visitor.Visit(this.UntypedResolver);
+            if (visitor.ModelType == null && contract != null)
+            {
+                throw new ArgumentException("The provided resolver did not have a contract.", nameof(untypedResolver));
+            } else if (contract == null && visitor.ModelType != null)
+            {
+                throw new ArgumentException("Expected a contract but had none.", nameof(untypedResolver));
+            }
         }
-
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider)
         {
@@ -52,28 +58,18 @@ namespace GraphLinqQL
             {
                 throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects");
             }
-
-            var resolver = serviceProvider.GetResolverContract(Contract);
-            var accepts = resolver as IGraphQlAccepts;
-            if (accepts == null)
-            {
-                throw new ArgumentException("Contract does not accept an input type");
-            }
-            var modelType = accepts.ModelType;
-            accepts.Original = GraphQlResultFactory.Construct(modelType, serviceProvider);
-
+            
             return new ComplexResolverBuilder(
-                resolver,
+                Contract!,
+                serviceProvider,
                 ToResult,
-                modelType,
+                visitor.ModelType!,
                 ParameterResolverFactory
             );
         }
         
         private IGraphQlResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
         {
-            var visitor = new GraphQlContractExpressionReplaceVisitor();
-            visitor.Visit(this.UntypedResolver);
             var modelType = visitor.ModelType!;
 
             visitor.NewOperation = BuildJoinedSelector(resultSelector, joins, modelType);

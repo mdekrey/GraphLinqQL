@@ -30,7 +30,6 @@ namespace GraphLinqQL.Introspection
                 originalQuery.Original = value;
             }
         }
-        public Type ModelType => originalQuery.ModelType;
         IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
         public bool IsType(string value) => originalQuery.IsType(value);
 

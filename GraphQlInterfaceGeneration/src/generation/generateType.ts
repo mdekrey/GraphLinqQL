@@ -53,7 +53,6 @@ public abstract class ${typeName} : IGraphQlResolvable${interfaceDeclaration(obj
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 `;

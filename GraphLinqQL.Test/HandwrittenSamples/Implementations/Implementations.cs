@@ -61,6 +61,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
             Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
+            Original.Join(friends).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Resolve(hero => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>
@@ -99,6 +101,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(reputation).Resolve((hero, reputation) => reputation.Faction);
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> Friends() =>
             Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
+            Original.Join(friends).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
         public override IGraphQlResult<GraphQlId> Id() =>
             Original.Join(hero).Resolve((_, hero) => new GraphQlId(hero.Id));
         public override IGraphQlResult<string> Location(string date) =>

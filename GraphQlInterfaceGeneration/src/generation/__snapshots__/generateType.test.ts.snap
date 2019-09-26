@@ -128,7 +128,6 @@ public abstract class Person : IGraphQlResolvable, Node
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "
@@ -169,7 +168,6 @@ public abstract class Query : IGraphQlResolvable
     {
         public IGraphQlResultFactory<T> Original { get; set; }
         IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
-        Type IGraphQlAccepts.ModelType { get { return typeof(T); } }
     }
 }
 "

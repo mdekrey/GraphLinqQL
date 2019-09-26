@@ -235,6 +235,35 @@ namespace GraphLinqQL
         }
 
         [Fact]
+        public void BeAbleToDeferNestedStructures()
+        {
+            // {
+            //   heroes {
+            //     id
+            //     name
+            //     friends {
+            //       id
+            //       name
+            //     }
+            //   }
+            // }
+
+            using var sp = new SimpleServiceProvider();
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
+                root.Add("heroes", q => q.ResolveQuery("heroes").ResolveComplex(sp)
+                                                                .Add("id")
+                                                                .Add("name")
+                                                                .Add("friends", hero => hero.ResolveQuery("friendsDeferred").ResolveComplex(sp).Add("id").Add("name").Build())
+                                                                .Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}],\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"friends\":[{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}],\"id\":\"AVENGERS-1\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentComplexStructures()
         {
             // {
