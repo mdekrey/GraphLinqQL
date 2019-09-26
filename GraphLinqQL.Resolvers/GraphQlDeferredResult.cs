@@ -7,46 +7,41 @@ namespace GraphLinqQL
 {
     class GraphQlDeferredResult<TReturnType> : IGraphQlResult<TReturnType>
     {
-        public IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
-
-        public LambdaExpression UntypedResolver { get; }
-
-        private readonly IGraphQlResult<TReturnType> innerResult;
-
-        public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
-
-        public Type? Contract => innerResult.Contract;
+        private readonly IGraphQlResult inner;
+        private readonly IGraphQlResult outer;
 
         public GraphQlDeferredResult(
-            IGraphQlParameterResolverFactory parameterResolverFactory,
-            LambdaExpression outerResolver,
-            IGraphQlResult<TReturnType> innerResult,
-            IReadOnlyCollection<IGraphQlJoin>? joins = null)
+            IGraphQlResult inner,
+            IGraphQlResult outer)
         {
-            this.ParameterResolverFactory = parameterResolverFactory;
-            this.UntypedResolver = outerResolver;
-            this.innerResult = innerResult;
-            this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
+            this.inner = inner;
+            this.outer = outer;
         }
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider)
-        {
-            if (Contract == null)
-            {
-                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects");
-            }
+        public IGraphQlParameterResolverFactory ParameterResolverFactory => outer.ParameterResolverFactory;
 
-            throw new NotImplementedException();
-        }
+        public LambdaExpression UntypedResolver =>
+            Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
+        //Expression.Lambda(inner.UntypedResolver.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 
-        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType>
-        {
-            throw new NotImplementedException();
-        }
+        public Type? Contract => inner.Contract;
 
-        public IGraphQlResult AsContract(Type contract)
+        public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
+
+        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
+            new GraphQlDeferredResult<TContract>(inner.AsContract(typeof(TContract)), outer);
+
+        public IGraphQlResult AsContract(Type contract) =>
+            (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlDeferredResult<>).MakeGenericType(contract), new object[] { inner.AsContract(contract), outer });
+
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
+            new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
+
+        private Expression<Func<object, object>> ResolveDeferredExpression => _ => this.ResolveDeferred(_);
+
+        public object ResolveDeferred(object input)
         {
-            throw new NotImplementedException();
+            return Resolve.InvokeResult(inner, input);
         }
     }
 }

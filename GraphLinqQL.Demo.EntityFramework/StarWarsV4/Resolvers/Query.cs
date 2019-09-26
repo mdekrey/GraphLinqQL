@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GraphLinqQL.StarWarsV4.Domain;
 using GraphLinqQL.StarWarsV4.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GraphLinqQL.StarWarsV4.Resolvers
 {
@@ -19,7 +20,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.FilmsConnection?> allFilms(string? after, int? first, string? before, int? last)
         {
-            return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films).AsContract<FilmsConnection>();
+            return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films.AsNoTracking()).AsContract<FilmsConnection>();
         }
 
         public override IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last)

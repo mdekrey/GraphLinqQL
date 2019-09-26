@@ -23,12 +23,12 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
                 var take = first ?? 10;
                 if (after == null)
                 {
-                    return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>();
+                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>());
                 }
                 else
                 {
                     var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                    return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take)).AsContract<FilmCharactersConnection>();
+                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take)).AsContract<FilmCharactersConnection>());
                 }
             }
             else
@@ -36,12 +36,12 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
                 var take = last ?? 10;
                 if (after == null)
                 {
-                    return Original.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>();
+                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>());
                 }
                 else
                 {
                     var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                    return Original.Resolve(film => film.FilmCharacters.OrderByDescending(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take).Reverse()).AsContract<FilmCharactersConnection>();
+                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderByDescending(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take).Reverse()).AsContract<FilmCharactersConnection>());
                 }
             }
         }

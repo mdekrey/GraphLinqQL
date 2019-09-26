@@ -17,9 +17,14 @@ namespace GraphLinqQL
             var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
             var resolved = resolver(resultFactory.Resolve(a => a).AsContract(t).ResolveComplex(serviceProvider));
-            var expression = resolved.UntypedResolver.CastAndBoxSingleInput<GraphQlRoot>();
-            var queryable = Enumerable.Repeat(new GraphQlRoot(), 1).AsQueryable().Select(expression);
-            return queryable.Single();
+            return InvokeResult(resolved, new GraphQlRoot());
+        }
+
+        public static object InvokeResult(IGraphQlResult resolved, object input)
+        {
+            // TODO - check if resolved has Joins
+            var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
+            return func.Compile()();
         }
 
         public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
@@ -61,7 +66,7 @@ namespace GraphLinqQL
             }
 
             var newResolver = Expression.Lambda(
-                getList.CallQueryableSelect(newResult.UntypedResolver), 
+                getList.CallQueryableSelect(newResult.UntypedResolver),
                 original.UntypedResolver.Parameters
             );
             if (newResult.Joins.Count > 0)
@@ -93,12 +98,7 @@ namespace GraphLinqQL
             }
             var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
 
-            var newResolver = original.UntypedResolver; // Expression.Lambda(newResult.UntypedResolver.Inline(original.UntypedResolver.Body), original.UntypedResolver.Parameters);
-            if (newResult.Joins.Count > 0)
-            {
-                throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
-            }
-            return new GraphQlDeferredResult<TContract>(original.ParameterResolverFactory, original.UntypedResolver, newResult, original.Joins);
+            return new GraphQlDeferredResult<TContract>(newResult, original);
         }
 
         public static IGraphQlResult<TContract> Only<TContract>(this IGraphQlResult<IEnumerable<TContract>> original)
