@@ -22,7 +22,6 @@ namespace GraphLinqQL
 
         public LambdaExpression UntypedResolver =>
             Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
-        //Expression.Lambda(inner.UntypedResolver.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 
         public Type? Contract => inner.Contract;
 
@@ -37,11 +36,6 @@ namespace GraphLinqQL
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
             new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
 
-        private Expression<Func<object, object>> ResolveDeferredExpression => _ => this.ResolveDeferred(_);
-
-        public object ResolveDeferred(object input)
-        {
-            return Resolve.InvokeResult(inner, input);
-        }
+        private Expression<Func<object, object>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input);
     }
 }

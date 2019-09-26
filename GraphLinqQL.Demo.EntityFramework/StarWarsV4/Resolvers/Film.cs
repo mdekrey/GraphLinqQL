@@ -17,31 +17,33 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
         public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(string? after, int? first, string? before, int? last)
         {
-            //return Original.Resolve(film => film.FilmCharacters).As<FilmCharactersConnection>();
+            var query = from fc in dbContext.FilmCharacters
+                        orderby fc.PersonId
+                        select fc;
             if (after != null || first != null || (before == null && last == null))
             {
                 var take = first ?? 10;
                 if (after == null)
                 {
-                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>());
+                    return Original.Defer(_ => _.Resolve(film => query.Where(fc => fc.EpisodeId == film.EpisodeId).Paginate(q => q.Take(take)))).AsContract<FilmCharactersConnection>();
                 }
                 else
                 {
                     var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take)).AsContract<FilmCharactersConnection>());
+                    return (Original.Defer(_ => _.Resolve(film => query.Where(fc => fc.EpisodeId == film.EpisodeId).Paginate(q => q.Where(c => c.PersonId > id).Take(take)))).AsContract<FilmCharactersConnection>());
                 }
             }
             else
             {
                 var take = last ?? 10;
-                if (after == null)
+                if (before == null)
                 {
-                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderBy(c => c.PersonId).Take(take)).AsContract<FilmCharactersConnection>());
+                    return (Original.Defer(_ => _.Resolve(film => query.Where(fc => fc.EpisodeId == film.EpisodeId).OrderByDescending(c => c.PersonId).Paginate(q => q.Take(take)))).AsContract<FilmCharactersConnection>());
                 }
                 else
                 {
-                    var id = int.Parse(after, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                    return Original.Defer(_ => _.Resolve(film => film.FilmCharacters.OrderByDescending(c => c.PersonId).SkipWhile(c => c.PersonId != id).Skip(1).Take(take).Reverse()).AsContract<FilmCharactersConnection>());
+                    var id = int.Parse(before, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                    return (Original.Defer(_ => _.Resolve(film => query.Where(fc => fc.EpisodeId == film.EpisodeId).OrderByDescending(c => c.PersonId).Paginate(q => q.Where(c => c.PersonId < id).Take(take)))).AsContract<FilmCharactersConnection>());
                 }
             }
         }

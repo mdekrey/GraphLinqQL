@@ -6,7 +6,7 @@ using GraphLinqQL.StarWarsV4.Interfaces;
 
 namespace GraphLinqQL.StarWarsV4.Resolvers
 {
-    public class FilmCharactersConnection : Interfaces.FilmCharactersConnection.GraphQlContract<IQueryable<Domain.FilmCharacter>>
+    public class FilmCharactersConnection : Interfaces.FilmCharactersConnection.GraphQlContract<Pagination<Domain.FilmCharacter>>
     //public class FilmCharactersConnection : Interfaces.FilmCharactersConnection.GraphQlContract<FilmCharactersConnection.Parameters>
     {
         //public class Parameters
@@ -29,7 +29,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 
 
         public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters() =>
-            Original.Resolve((c) => c.Select(fc => fc.Character)).List(_ => _.AsContract<Person>());
+            Original.Resolve((c) => c.Paginated.Select(fc => fc.Character)).List(_ => _.AsContract<Person>());
         //Original.Resolve((c) => from fc in dbContext.FilmCharacters
         //                            where fc.EpisodeId == c.EpisodeId
         //                            select fc.Character).ConvertableList().As<Person>();
@@ -45,7 +45,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
         }
 
         public override IGraphQlResult<int?> totalCount() =>
-            Original.Resolve((c) => (int?)c.Count());
+            Original.Resolve((c) => (int?)(c.Unpaginated.Count()));
         //Original.Resolve((c) => (int?)(from fc in dbContext.FilmCharacters
         //                                   where fc.EpisodeId == c.EpisodeId
         //                                   select fc).Count());
