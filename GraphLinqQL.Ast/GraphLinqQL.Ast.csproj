@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net35</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GenerationDockerfile Include="Generation\Dockerfile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard">
+      <Version>4.7.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
+
+  <Target Name="CompileAst" BeforeTargets="PrepareForBuild" DependsOnTargets="_CompileAst" Condition=" '@(GenerationDockerfile)' != '' ">
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)ast.g.cs" />
+    </ItemGroup>
+    <Message Importance="high" Text="@(Compile)" />
+  </Target>
+
+  <Target Name="_UpdateAstMetatdata">
+    <ItemGroup>
+      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Link)' != '' ">
+        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+      </GenerationDockerfile>
+      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Link)' == '' ">
+        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+      </GenerationDockerfile>
+      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Namespace)' == '' ">
+        <Namespace>$(RootNamespace).$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.RelativeDir), '[/\\\\]', '.'))Interfaces</Namespace>
+      </GenerationDockerfile>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CleanAst" BeforeTargets="Clean" DependsOnTargets="_UpdateAstMetatdata">
+    <Exec Command="docker image rm graphlinqql-ast" ContinueOnError="true" />
+    <Delete Files="$(IntermediateOutputPath)ast.g.cs" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="_CompileAst" DependsOnTargets="_UpdateAstMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile)" Outputs="$(IntermediateOutputPath)ast.g.cs')">
+    <Exec Command="docker --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Docker is required to build and run this project. To continue, please install Docker, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Rebuilding schema" />
+    <Exec WorkingDirectory="%(GenerationDockerfile.RootDir)%(GenerationDockerfile.Directory)" Command="docker build . -t graphlinqql-ast" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)" />
+    <Exec Command="docker run --rm -v %22$(MSBuildProjectDirectory)/$(IntermediateOutputPath):/dest%22 graphlinqql-ast" />
+    <Message Text="%(GenerationDockerfile.Identity) -&gt; $(IntermediateOutputPath)ast.g.cs" />
+  </Target>
+
+</Project>

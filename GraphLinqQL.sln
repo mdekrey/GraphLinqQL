@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Introspection",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Demo.EntityFramework", "GraphLinqQL.Demo.EntityFramework\GraphLinqQL.Demo.EntityFramework.csproj", "{F8254753-CA00-4E32-990E-206782DB71FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLinqQL.Execution", "GraphLinqQL.Execution\GraphLinqQL.Execution.csproj", "{2AE5B1E3-9C10-4018-B62B-159F8A359397}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Execution", "GraphLinqQL.Execution\GraphLinqQL.Execution.csproj", "{2AE5B1E3-9C10-4018-B62B-159F8A359397}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{D27178A6-5E6C-4491-81A6-6738AEC82BEC}"
 EndProject
@@ -32,7 +32,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1BD68627
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Resolvers", "GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj", "{A0DBF551-CB10-4DAB-80C8-2088F1C8A35E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLinqQL.Demo.Legacy", "GraphLinqQL.Demo.Legacy\GraphLinqQL.Demo.Legacy.csproj", "{6C6D794D-F913-4643-8192-4BED2CEDC936}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Demo.Legacy", "GraphLinqQL.Demo.Legacy\GraphLinqQL.Demo.Legacy.csproj", "{6C6D794D-F913-4643-8192-4BED2CEDC936}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Ast", "GraphLinqQL.Ast\GraphLinqQL.Ast.csproj", "{E4F84764-6BF2-436A-AB79-093CEF304070}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +86,10 @@ Global
 		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C6D794D-F913-4643-8192-4BED2CEDC936}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4F84764-6BF2-436A-AB79-093CEF304070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4F84764-6BF2-436A-AB79-093CEF304070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4F84764-6BF2-436A-AB79-093CEF304070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4F84764-6BF2-436A-AB79-093CEF304070}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
