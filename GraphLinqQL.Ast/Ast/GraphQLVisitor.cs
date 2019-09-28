@@ -217,6 +217,16 @@ namespace GraphLinqQL.Ast
             return new Directive(context.name().GetText(), context.arguments()?.argument().Select(Visit).Cast<Argument>(), context.Location());
         }
 
+        public override INode VisitInlineFragment([NotNull] GraphqlParser.InlineFragmentContext context)
+        {
+            return new InlineFragment(
+                (TypeCondition)Visit(context.typeCondition()),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                (SelectionSet)Visit(context.selectionSet()),
+                context.Location()
+            );
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)

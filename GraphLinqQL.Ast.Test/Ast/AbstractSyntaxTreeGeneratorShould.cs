@@ -170,7 +170,6 @@ query HeroNameAndFriends($episode: Episode = JEDI) {
 }
 ");
 
-        [UpdateSnapshots]
         [Fact]
         public void AllowDirectives() => MatchParsedDocumentToSnapshot(@"
 query Hero($episode: Episode, $withFriends: Boolean!) {
@@ -178,6 +177,31 @@ query Hero($episode: Episode, $withFriends: Boolean!) {
     name
     friends @include(if: $withFriends) {
       name
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowMutations() => MatchParsedDocumentToSnapshot(@"
+mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+  createReview(episode: $ep, review: $review) {
+    stars
+    commentary
+  }
+}
+");
+
+        [Fact]
+        public void AllowInlineFragments() => MatchParsedDocumentToSnapshot(@"
+query HeroForEpisode($ep: Episode!) {
+  hero(episode: $ep) {
+    name
+    ... on Droid {
+      primaryFunction
+    }
+    ... on Human {
+      height
     }
   }
 }

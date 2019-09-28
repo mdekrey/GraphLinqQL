@@ -24,5 +24,6 @@
         FragmentSpread,
         FragmentDefinition,
         TypeCondition,
+        InlineFragment,
     }
 }
