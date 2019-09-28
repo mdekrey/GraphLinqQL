@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
+using Snapper;
+using Snapper.Attributes;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -12,11 +14,6 @@ namespace GraphLinqQL.Execution
 {
     public class GraphQlExecutorShould
     {
-        private readonly System.Text.Json.JsonSerializerOptions JsonOptions = new System.Text.Json.JsonSerializerOptions()
-        {
-            WriteIndented = false
-        };
-
         private class GraphQlExecutionOptions : IGraphQlExecutionOptions
         {
             public Type? Query => typeof(Implementations.QueryContract);
@@ -50,10 +47,7 @@ namespace GraphLinqQL.Execution
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"rand\":5,\"hero\":{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"}}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -70,10 +64,7 @@ namespace GraphLinqQL.Execution
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}],\"rand\":5}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -93,10 +84,7 @@ namespace GraphLinqQL.Execution
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}],\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"friends\":[{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}],\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -119,10 +107,7 @@ fragment HeroPrimary on Hero {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}],\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"friends\":[{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}],\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -140,10 +125,7 @@ fragment HeroPrimary on Hero {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -161,10 +143,7 @@ fragment HeroPrimary on Hero {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"location\":\"Unknown (2019-04-22)\",\"oldLocation\":\"Unknown (2008-05-02)\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -182,10 +161,7 @@ fragment HeroPrimary on Hero {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -202,10 +178,7 @@ query Heroes($date: String!) {
 }
 ", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } });
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact(Skip = "GraphQL-Parse does not support query default parameters")]
@@ -223,10 +196,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } });
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            //var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
-
-            //Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -244,10 +214,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -267,10 +234,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -293,10 +257,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
 
@@ -320,10 +281,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"characters\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"},{\"name\":\"Thanos\",\"goal\":\"Snap\",\"id\":\"THANOS\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
 
         [Fact]
@@ -340,10 +298,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
 }
 ");
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
-            var expected = "{\"characters\":[{\"name\":\"Starlord\",\"__typename\":\"Hero\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"__typename\":\"Hero\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"__typename\":\"Hero\",\"id\":\"AVENGERS-1\"},{\"name\":\"Thanos\",\"__typename\":\"Villain\",\"id\":\"THANOS\"}]}";
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+            result.ShouldMatchSnapshot();
         }
     }
 

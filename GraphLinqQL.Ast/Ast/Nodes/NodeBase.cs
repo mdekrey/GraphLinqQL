@@ -6,13 +6,13 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public abstract class NodeBase : INode
     {
-        public NodeBase(Location location)
+        public NodeBase(LocationRange location)
         {
             this.Location = location;
         }
 
         public abstract NodeKind Kind { get; }
 
-        public Location Location { get; }
+        public LocationRange Location { get; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class TripleQuotedStringValue : NodeBase, IValueNode
     {
-        public TripleQuotedStringValue(string quotedStringValue, Location location) : base(location)
+        public TripleQuotedStringValue(string quotedStringValue, LocationRange location) : base(location)
         {
             QuotedStringValue = quotedStringValue;
         }

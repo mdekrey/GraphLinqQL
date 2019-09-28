@@ -8,6 +8,6 @@ namespace GraphLinqQL.Ast.Nodes
     {
         NodeKind Kind { get; }
 
-        Location Location { get; }
+        LocationRange Location { get; }
     }
 }

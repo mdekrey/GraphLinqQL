@@ -2,7 +2,7 @@
 {
     public class IntValue : NodeBase, IValueNode
     {
-        public IntValue(string tokenValue, Location location) : base(location)
+        public IntValue(string tokenValue, LocationRange location) : base(location)
         {
             TokenValue = tokenValue;
         }

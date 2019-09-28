@@ -2,7 +2,7 @@
 {
     public class Variable : NodeBase, IValueNode
     {
-        public Variable(string name, Location location) : base(location)
+        public Variable(string name, LocationRange location) : base(location)
         {
             Name = name;
         }

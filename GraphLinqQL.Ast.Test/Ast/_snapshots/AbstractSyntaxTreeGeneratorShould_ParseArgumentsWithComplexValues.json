@@ -1,0 +1,373 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 9,
+          "Column": 0
+        }
+      },
+      "OperationType": 0,
+      "Name": "Heroes",
+      "Variables": [
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "date",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 13
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 14
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 17,
+            "ElementType": {
+              "Kind": 18,
+              "BaseType": {
+                "Kind": 8,
+                "Name": "String",
+                "Location": {
+                  "Start": {
+                    "Line": 2,
+                    "Column": 21
+                  },
+                  "Stop": {
+                    "Line": 2,
+                    "Column": 21
+                  }
+                }
+              },
+              "Location": {
+                "Start": {
+                  "Line": 2,
+                  "Column": 21
+                },
+                "Stop": {
+                  "Line": 2,
+                  "Column": 27
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 20
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 28
+              }
+            }
+          },
+          "DefaultValue": {
+            "Kind": 10,
+            "QuotedStringValue": "\"2019-04-22\"",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 32
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 32
+              }
+            }
+          },
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 13
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 32
+            }
+          }
+        },
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "date2",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 46
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 47
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "String",
+              "Location": {
+                "Start": {
+                  "Line": 2,
+                  "Column": 54
+                },
+                "Stop": {
+                  "Line": 2,
+                  "Column": 54
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 54
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 60
+              }
+            }
+          },
+          "DefaultValue": {
+            "Kind": 10,
+            "QuotedStringValue": "\"2012-05-04\"",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 64
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 64
+              }
+            }
+          },
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 46
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 64
+            }
+          }
+        }
+      ],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "heroes",
+            "Alias": null,
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "id",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 4,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 4,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "name",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 5,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 5,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "locations",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [
+                    {
+                      "Kind": 7,
+                      "Name": "dates",
+                      "Value": {
+                        "Kind": 4,
+                        "Name": "date",
+                        "Location": {
+                          "Start": {
+                            "Line": 6,
+                            "Column": 21
+                          },
+                          "Stop": {
+                            "Line": 6,
+                            "Column": 22
+                          }
+                        }
+                      },
+                      "Location": {
+                        "Start": {
+                          "Line": 6,
+                          "Column": 14
+                        },
+                        "Stop": {
+                          "Line": 6,
+                          "Column": 22
+                        }
+                      }
+                    }
+                  ],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 6,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 6,
+                      "Column": 26
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "locations",
+                  "Alias": "locations2:",
+                  "SelectionSet": null,
+                  "Arguments": [
+                    {
+                      "Kind": 7,
+                      "Name": "dates",
+                      "Value": {
+                        "Kind": 9,
+                        "Values": [
+                          {
+                            "Kind": 4,
+                            "Name": "date2",
+                            "Location": {
+                              "Start": {
+                                "Line": 7,
+                                "Column": 34
+                              },
+                              "Stop": {
+                                "Line": 7,
+                                "Column": 35
+                              }
+                            }
+                          }
+                        ],
+                        "Location": {
+                          "Start": {
+                            "Line": 7,
+                            "Column": 33
+                          },
+                          "Stop": {
+                            "Line": 7,
+                            "Column": 40
+                          }
+                        }
+                      },
+                      "Location": {
+                        "Start": {
+                          "Line": 7,
+                          "Column": 26
+                        },
+                        "Stop": {
+                          "Line": 7,
+                          "Column": 40
+                        }
+                      }
+                    }
+                  ],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 7,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 41
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 9
+                },
+                "Stop": {
+                  "Line": 8,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 8,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 78
+          },
+          "Stop": {
+            "Line": 9,
+            "Column": 0
+          }
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 9,
+      "Column": 0
+    }
+  }
+}

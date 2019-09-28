@@ -1,0 +1,23 @@
+{
+  "heroes": [
+    {
+      "id": {
+        "Value": "GUARDIANS-1"
+      },
+      "name": "Starlord"
+    },
+    {
+      "id": {
+        "Value": "ASGUARD-3"
+      },
+      "name": "Thor"
+    },
+    {
+      "id": {
+        "Value": "AVENGERS-1"
+      },
+      "name": "Captain America"
+    }
+  ],
+  "rand": 5.0
+}

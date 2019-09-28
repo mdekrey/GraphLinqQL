@@ -1,0 +1,28 @@
+{
+  "heroes": [
+    {
+      "id": {
+        "Value": "GUARDIANS-1"
+      },
+      "location": "Unknown (2019-04-22)",
+      "oldLocation": "Unknown (2008-05-02)",
+      "name": "Starlord"
+    },
+    {
+      "id": {
+        "Value": "ASGUARD-3"
+      },
+      "location": "Unknown (2019-04-22)",
+      "oldLocation": "Unknown (2008-05-02)",
+      "name": "Thor"
+    },
+    {
+      "id": {
+        "Value": "AVENGERS-1"
+      },
+      "location": "Unknown (2019-04-22)",
+      "oldLocation": "Unknown (2008-05-02)",
+      "name": "Captain America"
+    }
+  ]
+}

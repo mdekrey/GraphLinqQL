@@ -5,7 +5,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class SelectionSet : NodeBase
     {
-        public SelectionSet(IEnumerable<ISelection> selections, Location location)
+        public SelectionSet(IEnumerable<ISelection> selections, LocationRange location)
             : base(location)
         {
             Selections = selections.ToArray();

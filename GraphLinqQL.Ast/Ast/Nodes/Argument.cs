@@ -2,7 +2,7 @@
 {
     public class Argument : NodeBase
     {
-        public Argument(string name, INode value, Location location) : base(location)
+        public Argument(string name, INode value, LocationRange location) : base(location)
         {
             Name = name;
             Value = value;

@@ -1,0 +1,32 @@
+{
+  "characters": [
+    {
+      "id": {
+        "Value": "GUARDIANS-1"
+      },
+      "__typename": "Hero",
+      "name": "Starlord"
+    },
+    {
+      "id": {
+        "Value": "ASGUARD-3"
+      },
+      "__typename": "Hero",
+      "name": "Thor"
+    },
+    {
+      "id": {
+        "Value": "AVENGERS-1"
+      },
+      "__typename": "Hero",
+      "name": "Captain America"
+    },
+    {
+      "id": {
+        "Value": "THANOS"
+      },
+      "__typename": "Villain",
+      "name": "Thanos"
+    }
+  ]
+}

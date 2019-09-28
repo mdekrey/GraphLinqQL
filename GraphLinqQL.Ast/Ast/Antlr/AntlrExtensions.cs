@@ -8,6 +8,8 @@ namespace GraphLinqQL.Ast.Antlr
 {
     public static class AntlrExtensions
     {
-        public static Location Location(this ParserRuleContext ruleContext) => new Location(ruleContext.Start, ruleContext.Stop);
+        public static LocationRange Location(this ParserRuleContext ruleContext) => new LocationRange(ruleContext.Start.Location(), ruleContext.Stop.Location());
+
+        public static Location Location(this IToken token) => new Location(token.Line, token.Column);
     }
 }

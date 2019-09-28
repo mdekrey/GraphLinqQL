@@ -2,7 +2,7 @@
 {
     public class EnumValue : NodeBase, IValueNode
     {
-        public EnumValue(string tokenValue, Location location) : base(location)
+        public EnumValue(string tokenValue, LocationRange location) : base(location)
         {
             TokenValue = tokenValue;
         }

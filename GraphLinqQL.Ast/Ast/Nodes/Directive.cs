@@ -2,7 +2,7 @@
 {
     public class Directive : NodeBase
     {
-        public Directive(Location location) : base(location)
+        public Directive(LocationRange location) : base(location)
         {
         }
 

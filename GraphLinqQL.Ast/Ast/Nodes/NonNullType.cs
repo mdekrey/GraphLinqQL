@@ -2,7 +2,7 @@
 {
     public class NonNullType : NodeBase, ITypeNode
     {
-        public NonNullType(ITypeNode baseType, Location location) : base(location)
+        public NonNullType(ITypeNode baseType, LocationRange location) : base(location)
         {
             BaseType = baseType;
         }

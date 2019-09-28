@@ -6,7 +6,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class StringValue : NodeBase, IValueNode
     {
-        public StringValue(string quotedStringValue, Location location) : base(location)
+        public StringValue(string quotedStringValue, LocationRange location) : base(location)
         {
             QuotedStringValue = quotedStringValue;
         }

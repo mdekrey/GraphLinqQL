@@ -6,7 +6,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class TypeName : NodeBase, ITypeNode
     {
-        public TypeName(string name, Location location) : base(location)
+        public TypeName(string name, LocationRange location) : base(location)
         {
             Name = name;
         }

@@ -2,7 +2,7 @@
 {
     public class BooleanValue : NodeBase, IValueNode
     {
-        public BooleanValue(string tokenValue, Location location) : base(location)
+        public BooleanValue(string tokenValue, LocationRange location) : base(location)
         {
             TokenValue = tokenValue == "true";
         }

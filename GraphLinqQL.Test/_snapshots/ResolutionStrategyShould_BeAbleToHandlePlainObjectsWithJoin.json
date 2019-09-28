@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "id": {
+      "Value": "GUARDIANS-1"
+    },
+    "renown": 5.0,
+    "faction": "Guardians of the Galaxy",
+    "name": "Starlord"
+  }
+}

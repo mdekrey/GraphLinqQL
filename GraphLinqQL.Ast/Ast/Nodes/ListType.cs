@@ -6,7 +6,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class ListType : NodeBase, ITypeNode
     {
-        public ListType(ITypeNode elementType, Location location) : base(location)
+        public ListType(ITypeNode elementType, LocationRange location) : base(location)
         {
             ElementType = elementType;
         }

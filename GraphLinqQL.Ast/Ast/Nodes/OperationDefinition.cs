@@ -9,7 +9,7 @@ namespace GraphLinqQL.Ast.Nodes
 
     public class OperationDefinition : IDefinitionNode
     {
-        public OperationDefinition(OperationType operationType, string? name, IEnumerable<VariableDefinition>? variables, SelectionSet selectionSet, Location location)
+        public OperationDefinition(OperationType operationType, string? name, IEnumerable<VariableDefinition>? variables, SelectionSet selectionSet, LocationRange location)
         {
             this.OperationType = operationType;
             this.Name = name;
@@ -20,7 +20,7 @@ namespace GraphLinqQL.Ast.Nodes
 
         public NodeKind Kind => NodeKind.OperationDefinition;
 
-        public Location Location { get; }
+        public LocationRange Location { get; }
         public OperationType OperationType { get; }
         public string? Name { get; }
         public IReadOnlyList<VariableDefinition> Variables { get; }

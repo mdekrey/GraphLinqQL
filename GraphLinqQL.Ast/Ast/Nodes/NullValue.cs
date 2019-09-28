@@ -2,7 +2,7 @@
 {
     public class NullValue : NodeBase, IValueNode
     {
-        public NullValue(Location location) : base(location)
+        public NullValue(LocationRange location) : base(location)
         {
         }
 

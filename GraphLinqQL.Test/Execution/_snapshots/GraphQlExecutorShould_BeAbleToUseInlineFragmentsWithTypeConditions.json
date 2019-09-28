@@ -1,0 +1,28 @@
+{
+  "heroes": [
+    {
+      "id": {
+        "Value": "GUARDIANS-1"
+      },
+      "renown": 5.0,
+      "faction": "Guardians of the Galaxy",
+      "name": "Starlord"
+    },
+    {
+      "id": {
+        "Value": "ASGUARD-3"
+      },
+      "renown": 50.0,
+      "faction": "Asgardians",
+      "name": "Thor"
+    },
+    {
+      "id": {
+        "Value": "AVENGERS-1"
+      },
+      "renown": 100.0,
+      "faction": "Avengers",
+      "name": "Captain America"
+    }
+  ]
+}

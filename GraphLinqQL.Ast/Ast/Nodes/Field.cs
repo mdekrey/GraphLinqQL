@@ -7,7 +7,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class Field : NodeBase, IHasDirectives, ISelection
     {
-        public Field(string name, string? alias, IEnumerable<Argument>? arguments, IEnumerable<Directive>? directives, SelectionSet? selectionSet, Location location)
+        public Field(string name, string? alias, IEnumerable<Argument>? arguments, IEnumerable<Directive>? directives, SelectionSet? selectionSet, LocationRange location)
             : base(location)
         {
             Name = name;

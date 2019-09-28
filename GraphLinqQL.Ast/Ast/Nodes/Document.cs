@@ -5,7 +5,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class Document : NodeBase
     {
-        public Document(IEnumerable<IDefinitionNode> children, Location location)
+        public Document(IEnumerable<IDefinitionNode> children, LocationRange location)
             : base(location)
         {
             this.Children = children.ToArray();

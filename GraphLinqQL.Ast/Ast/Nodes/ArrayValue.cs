@@ -6,7 +6,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class ArrayValue : NodeBase, IValueNode
     {
-        public ArrayValue(IEnumerable<IValueNode> values, Location location) : base(location)
+        public ArrayValue(IEnumerable<IValueNode> values, LocationRange location) : base(location)
         {
             Values = values;
         }
