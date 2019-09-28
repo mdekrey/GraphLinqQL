@@ -34,7 +34,13 @@ namespace GraphLinqQL.Ast
 
         public override INode VisitFragmentDefinition([NotNull] GraphqlParser.FragmentDefinitionContext context)
         {
-            return base.VisitFragmentDefinition(context);
+            return new FragmentDefinition(
+                context.fragmentName().GetText(), 
+                (TypeCondition)Visit(context.typeCondition()),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                (SelectionSet)Visit(context.selectionSet()),
+                context.Location()
+            );
         }
 
         public override INode VisitTypeSystemDefinition([NotNull] GraphqlParser.TypeSystemDefinitionContext context)
@@ -190,6 +196,20 @@ namespace GraphLinqQL.Ast
         public override INode VisitEnumValue([NotNull] GraphqlParser.EnumValueContext context)
         {
             return new EnumValue(context.GetText(), context.Location());
+        }
+
+        public override INode VisitFragmentSpread([NotNull] GraphqlParser.FragmentSpreadContext context)
+        {
+            return new FragmentSpread(
+                context.fragmentName().GetText(),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(), 
+                context.Location()
+            );
+        }
+
+        public override INode VisitTypeCondition([NotNull] GraphqlParser.TypeConditionContext context)
+        {
+            return new TypeCondition((TypeName)Visit(context.typeName()), context.Location());
         }
 
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)

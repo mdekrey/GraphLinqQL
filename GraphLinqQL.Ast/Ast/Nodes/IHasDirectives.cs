@@ -1,6 +1,9 @@
-﻿namespace GraphLinqQL.Ast.Nodes
+﻿using System.Collections.Generic;
+
+namespace GraphLinqQL.Ast.Nodes
 {
-    internal interface IHasDirectives
+    public interface IHasDirectives : INode
     {
+        IReadOnlyList<Directive> Directives { get; }
     }
 }

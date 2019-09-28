@@ -78,7 +78,6 @@ namespace GraphLinqQL.Ast
 }
 ");
 
-        [UpdateSnapshots]
         [Fact]
         public void AllowAliases() => MatchParsedDocumentToSnapshot(@"
 {
@@ -86,6 +85,27 @@ namespace GraphLinqQL.Ast
     name
   }
   jediHero: hero(episode: JEDI) {
+    name
+  }
+}
+");
+
+        [UpdateSnapshots]
+        [Fact]
+        public void AllowFragments() => MatchParsedDocumentToSnapshot(@"
+{
+  leftComparison: hero(episode: EMPIRE) {
+    ...comparisonFields
+  }
+  rightComparison: hero(episode: JEDI) {
+    ...comparisonFields
+  }
+}
+
+fragment comparisonFields on Character {
+  name
+  appearsIn
+  friends {
     name
   }
 }

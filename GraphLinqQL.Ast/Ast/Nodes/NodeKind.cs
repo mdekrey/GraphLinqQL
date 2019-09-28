@@ -21,5 +21,8 @@
         EnumValue,
         ListType,
         NonNullType,
+        FragmentSpread,
+        FragmentDefinition,
+        TypeCondition,
     }
 }
