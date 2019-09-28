@@ -170,6 +170,19 @@ query HeroNameAndFriends($episode: Episode = JEDI) {
 }
 ");
 
+        [UpdateSnapshots]
+        [Fact]
+        public void AllowDirectives() => MatchParsedDocumentToSnapshot(@"
+query Hero($episode: Episode, $withFriends: Boolean!) {
+  hero(episode: $episode) {
+    name
+    friends @include(if: $withFriends) {
+      name
+    }
+  }
+}
+");
+
         [Fact]
         public void ExpectParametersToHaveTypes() => ExpectParseError(@"
 query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {

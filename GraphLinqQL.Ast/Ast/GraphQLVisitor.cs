@@ -212,6 +212,11 @@ namespace GraphLinqQL.Ast
             return new TypeCondition((TypeName)Visit(context.typeName()), context.Location());
         }
 
+        public override INode VisitDirective([NotNull] GraphqlParser.DirectiveContext context)
+        {
+            return new Directive(context.name().GetText(), context.arguments()?.argument().Select(Visit).Cast<Argument>(), context.Location());
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)
