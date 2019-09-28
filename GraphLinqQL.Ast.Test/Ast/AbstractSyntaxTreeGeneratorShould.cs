@@ -208,6 +208,24 @@ query HeroForEpisode($ep: Episode!) {
 ");
 
         [Fact]
+        public void AllowMetaFields() => MatchParsedDocumentToSnapshot(@"
+{
+  search(text: ""an"") {
+    __typename
+    ... on Human {
+      name
+    }
+    ... on Droid {
+      name
+    }
+    ... on Starship {
+      name
+    }
+  }
+}
+");
+
+        [Fact]
         public void ExpectParametersToHaveTypes() => ExpectParseError(@"
 query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
   heroes {
