@@ -46,6 +46,55 @@ namespace GraphLinqQL.Ast
 ");
 
         [Fact]
+        public void ExpectParametersToHaveTypes() => ExpectParseError(@"
+query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
+  heroes {
+    id
+    name
+    location(date: $date)
+    avengersLocation: location(date: $date2)
+  }
+}
+");
+
+        [Fact]
+        public void ParseArgumentsWithDefaultValues() => MatchParsedDocumentToSnapshot(@"
+query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
+  heroes {
+    id
+    name
+    location(date: $date)
+    avengersLocation: location(date: $date2)
+  }
+}
+");
+
+        [Fact]
+        public void ParseArgumentsWithComplexValues() => MatchParsedDocumentToSnapshot(@"
+query Heroes($date: [String!] = ""2019-04-22"", $date2: String! = ""2012-05-04"") {
+  heroes {
+    id
+    name
+    locations(dates: $date)
+    locations2: locations(dates: [$date2])
+  }
+}
+");
+
+        [Fact]
+        public void ParseArgumentsWithObjects() => MatchParsedDocumentToSnapshot(@"
+mutation CreateReviewForEpisode {
+  createReview(episode: JEDI, review: {
+    stars: 5,
+    commentary: ""This is a great movie!""
+  }) {
+    stars
+    commentary
+  }
+}
+");
+        // These queries were originally from https://graphql.org/learn/queries/
+        [Fact]
         public void IgnoreComments() => MatchParsedDocumentToSnapshot(@"
 {
   hero {
@@ -225,53 +274,5 @@ query HeroForEpisode($ep: Episode!) {
 }
 ");
 
-        [Fact]
-        public void ExpectParametersToHaveTypes() => ExpectParseError(@"
-query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
-  heroes {
-    id
-    name
-    location(date: $date)
-    avengersLocation: location(date: $date2)
-  }
-}
-");
-
-        [Fact]
-        public void ParseArgumentsWithDefaultValues() => MatchParsedDocumentToSnapshot(@"
-query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
-  heroes {
-    id
-    name
-    location(date: $date)
-    avengersLocation: location(date: $date2)
-  }
-}
-");
-
-        [Fact]
-        public void ParseArgumentsWithComplexValues() => MatchParsedDocumentToSnapshot(@"
-query Heroes($date: [String!] = ""2019-04-22"", $date2: String! = ""2012-05-04"") {
-  heroes {
-    id
-    name
-    locations(dates: $date)
-    locations2: locations(dates: [$date2])
-  }
-}
-");
-
-        [Fact]
-        public void ParseArgumentsWithObjects() => MatchParsedDocumentToSnapshot(@"
-mutation CreateReviewForEpisode {
-  createReview(episode: JEDI, review: {
-    stars: 5,
-    commentary: ""This is a great movie!""
-  }) {
-    stars
-    commentary
-  }
-}
-");
     }
 }
