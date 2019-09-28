@@ -22,11 +22,21 @@ namespace GraphLinqQL.Ast
             return new AbstractSyntaxTreeGenerator();
         }
 
-        [Fact]
-        public void ParseFromQuery()
+        private void MatchParsedDocumentToSnapshot(string gql)
         {
             var target = CreateTarget();
-            var document = target.ParseDocument(@"
+            var document = target.ParseDocument(gql);
+            document.ShouldMatchSnapshot();
+        }
+
+        private void ExpectParseError(string gql)
+        {
+            var target = CreateTarget();
+            Assert.Throws<GraphqlParseException>(() => target.ParseDocument(gql));
+        }
+
+        [Fact]
+        public void ParseFromQuery() => MatchParsedDocumentToSnapshot(@"
 {
   hero {
     id
@@ -35,15 +45,9 @@ namespace GraphLinqQL.Ast
   rand
 }
 ");
-            document.ShouldMatchSnapshot();
-        }
 
         [Fact]
-        public void DetectErrorsInDocuments()
-        {
-            var target = CreateTarget();
-            // $date2 requires a type
-            Assert.Throws<GraphqlParseException>(() => target.ParseDocument(@"
+        public void ExpectParametersToHaveTypes() => ExpectParseError(@"
 query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
   heroes {
     id
@@ -52,14 +56,10 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     avengersLocation: location(date: $date2)
   }
 }
-"));
-        }
+");
 
         [Fact]
-        public void ParseArgumentsWithDefaultValues()
-        {
-            var target = CreateTarget();
-            var document = target.ParseDocument(@"
+        public void ParseArgumentsWithDefaultValues() => MatchParsedDocumentToSnapshot(@"
 query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
   heroes {
     id
@@ -69,14 +69,9 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
   }
 }
 ");
-            document.ShouldMatchSnapshot();
-        }
 
         [Fact]
-        public void ParseArgumentsWithComplexValues()
-        {
-            var target = CreateTarget();
-            var document = target.ParseDocument(@"
+        public void ParseArgumentsWithComplexValues() => MatchParsedDocumentToSnapshot(@"
 query Heroes($date: [String!] = ""2019-04-22"", $date2: String! = ""2012-05-04"") {
   heroes {
     id
@@ -86,14 +81,9 @@ query Heroes($date: [String!] = ""2019-04-22"", $date2: String! = ""2012-05-04""
   }
 }
 ");
-            document.ShouldMatchSnapshot();
-        }
 
         [Fact]
-        public void ParseArgumentsWithObjects()
-        {
-            var target = CreateTarget();
-            var document = target.ParseDocument(@"
+        public void ParseArgumentsWithObjects() => MatchParsedDocumentToSnapshot(@"
 mutation CreateReviewForEpisode {
   createReview(episode: JEDI, review: {
     stars: 5,
@@ -104,7 +94,5 @@ mutation CreateReviewForEpisode {
   }
 }
 ");
-            document.ShouldMatchSnapshot();
-        }
     }
 }
