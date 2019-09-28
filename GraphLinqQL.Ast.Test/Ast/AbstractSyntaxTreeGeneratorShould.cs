@@ -88,5 +88,23 @@ query Heroes($date: [String!] = ""2019-04-22"", $date2: String! = ""2012-05-04""
 ");
             document.ShouldMatchSnapshot();
         }
+
+        [Fact]
+        public void ParseArgumentsWithObjects()
+        {
+            var target = CreateTarget();
+            var document = target.ParseDocument(@"
+mutation CreateReviewForEpisode {
+  createReview(episode: JEDI, review: {
+    stars: 5,
+    commentary: ""This is a great movie!""
+  }) {
+    stars
+    commentary
+  }
+}
+");
+            document.ShouldMatchSnapshot();
+        }
     }
 }

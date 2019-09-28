@@ -164,6 +164,16 @@ namespace GraphLinqQL.Ast
             return new ArrayValue(context.valueWithVariable().Select(Visit).Cast<IValueNode>(), context.Location());
         }
 
+        public override INode VisitObjectValueWithVariable([NotNull] GraphqlParser.ObjectValueWithVariableContext context)
+        {
+            return new ObjectValue(context.objectFieldWithVariable().ToDictionary(field => field.name().GetText(), field => (IValueNode)Visit(field.valueWithVariable())), context.Location());
+        }
+
+        public override INode VisitObjectValue([NotNull] GraphqlParser.ObjectValueContext context)
+        {
+            return new ObjectValue(context.objectField().ToDictionary(field => field.name().GetText(), field => (IValueNode)Visit(field.value())), context.Location());
+        }
+
         public override INode VisitStringValue([NotNull] GraphqlParser.StringValueContext context)
         {
             var stringValue = context.StringValue();

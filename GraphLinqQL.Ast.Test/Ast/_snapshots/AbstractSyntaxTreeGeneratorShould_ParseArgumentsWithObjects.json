@@ -1,0 +1,200 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 10,
+          "Column": 0
+        }
+      },
+      "OperationType": 1,
+      "Name": "CreateReviewForEpisode",
+      "Variables": [],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "createReview",
+            "Alias": null,
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "stars",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 7,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "commentary",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 8,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 8,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 6,
+                  "Column": 5
+                },
+                "Stop": {
+                  "Line": 9,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 16,
+                  "TokenValue": "JEDI",
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 24
+                    },
+                    "Stop": {
+                      "Line": 3,
+                      "Column": 24
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 15
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 24
+                  }
+                }
+              },
+              {
+                "Kind": 7,
+                "Name": "review",
+                "Value": {
+                  "Kind": 9,
+                  "Fields": {
+                    "stars": {
+                      "Kind": 11,
+                      "TokenValue": "5",
+                      "Location": {
+                        "Start": {
+                          "Line": 4,
+                          "Column": 11
+                        },
+                        "Stop": {
+                          "Line": 4,
+                          "Column": 11
+                        }
+                      }
+                    },
+                    "commentary": {
+                      "Kind": 10,
+                      "QuotedStringValue": "\"This is a great movie!\"",
+                      "Location": {
+                        "Start": {
+                          "Line": 5,
+                          "Column": 16
+                        },
+                        "Stop": {
+                          "Line": 5,
+                          "Column": 16
+                        }
+                      }
+                    }
+                  },
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 38
+                    },
+                    "Stop": {
+                      "Line": 6,
+                      "Column": 2
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 30
+                  },
+                  "Stop": {
+                    "Line": 6,
+                    "Column": 2
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 9,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 32
+          },
+          "Stop": {
+            "Line": 10,
+            "Column": 0
+          }
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 10,
+      "Column": 0
+    }
+  }
+}
