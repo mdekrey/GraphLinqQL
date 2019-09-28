@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net35</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,7 +47,7 @@
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Docker is required to build and run this project. To continue, please install Docker, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="%(GenerationDockerfile.RootDir)%(GenerationDockerfile.Directory)" Command="docker build . -t graphlinqql-ast" />
+    <Exec WorkingDirectory="%(GenerationDockerfile.RootDir)%(GenerationDockerfile.Directory)" Command="docker build . -t graphlinqql-ast" IgnoreStandardErrorWarningFormat="true" />
     <MakeDir Directories="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)" />
     <Exec Command="docker run --rm -v %22$(MSBuildProjectDirectory)/$(IntermediateOutputPath):/dest%22 graphlinqql-ast" />
     <Message Text="%(GenerationDockerfile.Identity) -&gt; $(IntermediateOutputPath)ast.g.cs" />
