@@ -14,7 +14,6 @@ using Xunit;
 
 namespace GraphLinqQL.Ast
 {
-    [UpdateSnapshots]
     public class AbstractSyntaxTreeGeneratorShould
     {
         public static IAbstractSyntaxTreeGenerator CreateTarget()
@@ -43,6 +42,52 @@ namespace GraphLinqQL.Ast
     name
   }
   rand
+}
+");
+
+        [Fact]
+        public void IgnoreComments() => MatchParsedDocumentToSnapshot(@"
+{
+  hero {
+    name
+    # Queries can have comments!
+    friends {
+      name
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowArguments() => MatchParsedDocumentToSnapshot(@"
+{
+  human(id: ""1000"") {
+    name
+    height
+  }
+}
+");
+
+        [Fact]
+        public void AllowNestedArguments() => MatchParsedDocumentToSnapshot(@"
+{
+  human(id: ""1000"") {
+    name
+    height(unit: FOOT)
+  }
+}
+");
+
+        [UpdateSnapshots]
+        [Fact]
+        public void AllowAliases() => MatchParsedDocumentToSnapshot(@"
+{
+  empireHero: hero(episode: EMPIRE) {
+    name
+  }
+  jediHero: hero(episode: JEDI) {
+    name
+  }
 }
 ");
 

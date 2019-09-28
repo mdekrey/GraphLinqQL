@@ -1,0 +1,204 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 9,
+          "Column": 0
+        }
+      },
+      "OperationType": 0,
+      "Name": null,
+      "Variables": [],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "hero",
+            "Alias": "empireHero:",
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "name",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 4,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 4,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 36
+                },
+                "Stop": {
+                  "Line": 5,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 16,
+                  "TokenValue": "EMPIRE",
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 28
+                    },
+                    "Stop": {
+                      "Line": 3,
+                      "Column": 28
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 19
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 28
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 5,
+                "Column": 2
+              }
+            }
+          },
+          {
+            "Kind": 5,
+            "Name": "hero",
+            "Alias": "jediHero:",
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "name",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 7,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 6,
+                  "Column": 32
+                },
+                "Stop": {
+                  "Line": 8,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 16,
+                  "TokenValue": "JEDI",
+                  "Location": {
+                    "Start": {
+                      "Line": 6,
+                      "Column": 26
+                    },
+                    "Stop": {
+                      "Line": 6,
+                      "Column": 26
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 6,
+                    "Column": 17
+                  },
+                  "Stop": {
+                    "Line": 6,
+                    "Column": 26
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 6,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 8,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 0
+          },
+          "Stop": {
+            "Line": 9,
+            "Column": 0
+          }
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 9,
+      "Column": 0
+    }
+  }
+}
