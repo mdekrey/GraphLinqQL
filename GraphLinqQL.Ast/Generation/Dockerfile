@@ -20,4 +20,4 @@ RUN cat /source/*.cs | sed 's/package graphql\.parser\.antlr;$/ /g' > /temp/ast.
 
 WORKDIR /dest
 
-CMD mv /temp/*.cs /dest
+CMD cat /temp/ast.g.cs > /dest/ast.g.cs

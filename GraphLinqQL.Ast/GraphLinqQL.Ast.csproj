@@ -41,7 +41,7 @@
     <Delete Files="$(IntermediateOutputPath)ast.g.cs" ContinueOnError="true" />
   </Target>
 
-  <Target Name="_CompileAst" DependsOnTargets="_UpdateAstMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile)" Outputs="$(IntermediateOutputPath)ast.g.cs')">
+  <Target Name="_CompileAst" DependsOnTargets="_UpdateAstMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile)" Outputs="$(IntermediateOutputPath)ast.g.cs">
     <Exec Command="docker --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
