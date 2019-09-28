@@ -1,0 +1,477 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 9,
+          "Column": 0
+        }
+      },
+      "OperationType": 0,
+      "Name": "HeroComparison",
+      "Variables": [
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "first",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 21
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 22
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 8,
+            "Name": "Int",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 29
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 29
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 21
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 35
+            }
+          }
+        }
+      ],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "hero",
+            "Alias": "leftComparison:",
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 19,
+                  "FragmentName": "comparisonFields",
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 4,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 4,
+                      "Column": 7
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 40
+                },
+                "Stop": {
+                  "Line": 5,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 16,
+                  "TokenValue": "EMPIRE",
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 32
+                    },
+                    "Stop": {
+                      "Line": 3,
+                      "Column": 32
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 23
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 32
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 5,
+                "Column": 2
+              }
+            }
+          },
+          {
+            "Kind": 5,
+            "Name": "hero",
+            "Alias": "rightComparison:",
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 19,
+                  "FragmentName": "comparisonFields",
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 7,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 7
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 6,
+                  "Column": 39
+                },
+                "Stop": {
+                  "Line": 8,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 16,
+                  "TokenValue": "JEDI",
+                  "Location": {
+                    "Start": {
+                      "Line": 6,
+                      "Column": 33
+                    },
+                    "Stop": {
+                      "Line": 6,
+                      "Column": 33
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 6,
+                    "Column": 24
+                  },
+                  "Stop": {
+                    "Line": 6,
+                    "Column": 33
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 6,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 8,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 38
+          },
+          "Stop": {
+            "Line": 9,
+            "Column": 0
+          }
+        }
+      }
+    },
+    {
+      "Kind": 20,
+      "Name": "comparisonFields",
+      "TypeCondition": {
+        "Kind": 21,
+        "TypeName": {
+          "Kind": 8,
+          "Name": "Character",
+          "Location": {
+            "Start": {
+              "Line": 11,
+              "Column": 29
+            },
+            "Stop": {
+              "Line": 11,
+              "Column": 29
+            }
+          }
+        },
+        "Location": {
+          "Start": {
+            "Line": 11,
+            "Column": 26
+          },
+          "Stop": {
+            "Line": 11,
+            "Column": 29
+          }
+        }
+      },
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "name",
+            "Alias": null,
+            "SelectionSet": null,
+            "Arguments": [],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 12,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 12,
+                "Column": 2
+              }
+            }
+          },
+          {
+            "Kind": 5,
+            "Name": "friendsConnection",
+            "Alias": null,
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "totalCount",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 14,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 14,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "edges",
+                  "Alias": null,
+                  "SelectionSet": {
+                    "Kind": 2,
+                    "Selections": [
+                      {
+                        "Kind": 5,
+                        "Name": "node",
+                        "Alias": null,
+                        "SelectionSet": {
+                          "Kind": 2,
+                          "Selections": [
+                            {
+                              "Kind": 5,
+                              "Name": "name",
+                              "Alias": null,
+                              "SelectionSet": null,
+                              "Arguments": [],
+                              "Directives": [],
+                              "Location": {
+                                "Start": {
+                                  "Line": 17,
+                                  "Column": 8
+                                },
+                                "Stop": {
+                                  "Line": 17,
+                                  "Column": 8
+                                }
+                              }
+                            }
+                          ],
+                          "Location": {
+                            "Start": {
+                              "Line": 16,
+                              "Column": 11
+                            },
+                            "Stop": {
+                              "Line": 18,
+                              "Column": 6
+                            }
+                          }
+                        },
+                        "Arguments": [],
+                        "Directives": [],
+                        "Location": {
+                          "Start": {
+                            "Line": 16,
+                            "Column": 6
+                          },
+                          "Stop": {
+                            "Line": 18,
+                            "Column": 6
+                          }
+                        }
+                      }
+                    ],
+                    "Location": {
+                      "Start": {
+                        "Line": 15,
+                        "Column": 10
+                      },
+                      "Stop": {
+                        "Line": 19,
+                        "Column": 4
+                      }
+                    }
+                  },
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 15,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 19,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 13,
+                  "Column": 35
+                },
+                "Stop": {
+                  "Line": 20,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "first",
+                "Value": {
+                  "Kind": 4,
+                  "Name": "first",
+                  "Location": {
+                    "Start": {
+                      "Line": 13,
+                      "Column": 27
+                    },
+                    "Stop": {
+                      "Line": 13,
+                      "Column": 28
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 13,
+                    "Column": 20
+                  },
+                  "Stop": {
+                    "Line": 13,
+                    "Column": 28
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 13,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 20,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 11,
+            "Column": 39
+          },
+          "Stop": {
+            "Line": 21,
+            "Column": 0
+          }
+        }
+      },
+      "Directives": [],
+      "Location": {
+        "Start": {
+          "Line": 11,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 21,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 21,
+      "Column": 0
+    }
+  }
+}

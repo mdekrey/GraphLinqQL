@@ -90,7 +90,6 @@ namespace GraphLinqQL.Ast
 }
 ");
 
-        [UpdateSnapshots]
         [Fact]
         public void AllowFragments() => MatchParsedDocumentToSnapshot(@"
 {
@@ -107,6 +106,66 @@ fragment comparisonFields on Character {
   appearsIn
   friends {
     name
+  }
+}
+");
+
+        [Fact]
+        public void AllowFragmentsWithVariables() => MatchParsedDocumentToSnapshot(@"
+query HeroComparison($first: Int = 3) {
+  leftComparison: hero(episode: EMPIRE) {
+    ...comparisonFields
+  }
+  rightComparison: hero(episode: JEDI) {
+    ...comparisonFields
+  }
+}
+
+fragment comparisonFields on Character {
+  name
+  friendsConnection(first: $first) {
+    totalCount
+    edges {
+      node {
+        name
+      }
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowOperationNames() => MatchParsedDocumentToSnapshot(@"
+query HeroNameAndFriends {
+  hero {
+    name
+    friends {
+      name
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowVariables() => MatchParsedDocumentToSnapshot(@"
+query HeroNameAndFriends($episode: Episode) {
+  hero(episode: $episode) {
+    name
+    friends {
+      name
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowVariablesWithDefaults() => MatchParsedDocumentToSnapshot(@"
+query HeroNameAndFriends($episode: Episode = JEDI) {
+  hero(episode: $episode) {
+    name
+    friends {
+      name
+    }
   }
 }
 ");

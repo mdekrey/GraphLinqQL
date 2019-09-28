@@ -1,0 +1,218 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 9,
+          "Column": 0
+        }
+      },
+      "OperationType": 0,
+      "Name": "HeroNameAndFriends",
+      "Variables": [
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "episode",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 25
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 26
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 8,
+            "Name": "Episode",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 35
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 35
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 25
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 35
+            }
+          }
+        }
+      ],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "hero",
+            "Alias": null,
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "name",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 4,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 4,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "friends",
+                  "Alias": null,
+                  "SelectionSet": {
+                    "Kind": 2,
+                    "Selections": [
+                      {
+                        "Kind": 5,
+                        "Name": "name",
+                        "Alias": null,
+                        "SelectionSet": null,
+                        "Arguments": [],
+                        "Directives": [],
+                        "Location": {
+                          "Start": {
+                            "Line": 6,
+                            "Column": 6
+                          },
+                          "Stop": {
+                            "Line": 6,
+                            "Column": 6
+                          }
+                        }
+                      }
+                    ],
+                    "Location": {
+                      "Start": {
+                        "Line": 5,
+                        "Column": 12
+                      },
+                      "Stop": {
+                        "Line": 7,
+                        "Column": 4
+                      }
+                    }
+                  },
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 5,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 26
+                },
+                "Stop": {
+                  "Line": 8,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 4,
+                  "Name": "episode",
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 16
+                    },
+                    "Stop": {
+                      "Line": 3,
+                      "Column": 17
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 7
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 17
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 8,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 44
+          },
+          "Stop": {
+            "Line": 9,
+            "Column": 0
+          }
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 9,
+      "Column": 0
+    }
+  }
+}
