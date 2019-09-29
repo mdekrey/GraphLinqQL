@@ -1,4 +1,6 @@
-﻿namespace GraphLinqQL.Ast.Nodes
+﻿using System;
+
+namespace GraphLinqQL.Ast.Nodes
 {
     public class Variable : NodeBase, IValueNode
     {
@@ -10,5 +12,10 @@
         public override NodeKind Kind => NodeKind.Variable;
 
         public string Name { get; }
+
+        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        {
+            return converter.VisitVariable(this, converterContext, expectedType, nullable);
+        }
     }
 }

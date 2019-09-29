@@ -11,7 +11,7 @@ namespace GraphLinqQL.Ast
     {
         public Document ParseDocument(string text)
         {
-            // TODO - it would be better to re-implement this using the new Span types
+            // TODO - consider an Antlr Lexer engine using Spans
             var inputStream = new AntlrInputStream(text);
             var lexer = new GraphqlLexer(inputStream);
             var commonTokenStream = new CommonTokenStream(lexer);

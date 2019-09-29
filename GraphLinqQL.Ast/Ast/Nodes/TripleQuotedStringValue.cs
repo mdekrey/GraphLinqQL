@@ -1,4 +1,6 @@
-﻿namespace GraphLinqQL.Ast.Nodes
+﻿using System;
+
+namespace GraphLinqQL.Ast.Nodes
 {
     public class TripleQuotedStringValue : NodeBase, IValueNode, IStringValue
     {
@@ -12,5 +14,10 @@
         public string QuotedStringValue { get; }
 
         public string Text => QuotedStringValue.Substring(3, QuotedStringValue.Length - 6).Replace("\\\"\"\"", "\"\"\"");
+
+        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        {
+            return converter.VisitString((IStringValue)this, converterContext, expectedType, nullable);
+        }
     }
 }

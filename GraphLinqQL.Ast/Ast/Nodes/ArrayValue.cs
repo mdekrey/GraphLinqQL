@@ -14,5 +14,10 @@ namespace GraphLinqQL.Ast.Nodes
         public override NodeKind Kind => NodeKind.ArrayValue;
 
         public IEnumerable<IValueNode> Values { get; }
+
+        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        {
+            return converter.VisitArray(this, converterContext, expectedType, nullable);
+        }
     }
 }

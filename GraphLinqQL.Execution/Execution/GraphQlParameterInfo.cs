@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace GraphLinqQL.Execution
@@ -24,7 +25,13 @@ namespace GraphLinqQL.Execution
 
         private object? ToObject(Type type, IGraphQlParameterResolver variableResolver)
         {
-            throw new NotImplementedException();
+            return Convert(valueNode, type, variableResolver);
+        }
+
+        private object? Convert(IValueNode valueNode, Type type, IGraphQlParameterResolver variableResolver)
+        {
+            // TODO - variables, nullability
+            return new ValueConverter().Visit(valueNode, new ValueConverterContext(null!), type);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GraphLinqQL.Ast.Nodes
@@ -13,5 +14,10 @@ namespace GraphLinqQL.Ast.Nodes
         public override NodeKind Kind => NodeKind.ArrayValue;
 
         public IReadOnlyDictionary<string, IValueNode> Fields { get; }
+
+        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        {
+            return converter.VisitObject(this, converterContext, expectedType, nullable);
+        }
     }
 }

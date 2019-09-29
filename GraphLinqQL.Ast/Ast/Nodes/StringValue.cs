@@ -133,5 +133,10 @@ namespace GraphLinqQL.Ast.Nodes
             }
             return destination.ToString();
         }
+
+        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        {
+            return converter.VisitString((IStringValue)this, converterContext, expectedType, nullable);
+        }
     }
 }

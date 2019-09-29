@@ -7,7 +7,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public class InlineFragment : NodeBase, IHasDirectives, ISelection
     {
-        public InlineFragment(TypeCondition typeCondition, IEnumerable<Directive>? directives, SelectionSet selectionSet, LocationRange location) : base(location)
+        public InlineFragment(TypeCondition? typeCondition, IEnumerable<Directive>? directives, SelectionSet selectionSet, LocationRange location) : base(location)
         {
             TypeCondition = typeCondition;
             Directives = directives?.ToArray() ?? EmptyArrayHelper.Empty<Directive>();
@@ -16,7 +16,7 @@ namespace GraphLinqQL.Ast.Nodes
 
         public override NodeKind Kind => NodeKind.InlineFragment;
 
-        public TypeCondition TypeCondition { get; }
+        public TypeCondition? TypeCondition { get; }
         public IReadOnlyList<Directive> Directives { get; }
         public SelectionSet SelectionSet { get; }
     }

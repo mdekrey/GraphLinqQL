@@ -1,35 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace GraphLinqQL
 {
-    public static class TypeSystem
+    internal static class TypeSystem
     {
         public static Type GetElementType(Type seqType)
         {
             Type? ienum = FindIEnumerable(seqType);
             if (ienum == null) return seqType;
-            return ienum.GetGenericArguments()[0];
+            return ienum.GetTypeInfo().GenericTypeArguments[0];
         }
         private static Type? FindIEnumerable(Type seqType)
         {
             if (seqType == null || seqType == typeof(string))
                 return null;
+            var seqTypeInfo = seqType.GetTypeInfo();
             if (seqType.IsArray)
                 return typeof(IEnumerable<>).MakeGenericType(seqType.GetElementType()!);
-            if (seqType.IsGenericType)
+            if (seqTypeInfo.IsGenericType)
             {
-                foreach (Type arg in seqType.GetGenericArguments())
+                foreach (Type arg in seqTypeInfo.GenericTypeArguments)
                 {
                     Type ienum = typeof(IEnumerable<>).MakeGenericType(arg);
-                    if (ienum.IsAssignableFrom(seqType))
+                    if (ienum.GetTypeInfo().IsAssignableFrom(seqTypeInfo))
                     {
                         return ienum;
                     }
                 }
             }
-            Type[] ifaces = seqType.GetInterfaces();
-            if (ifaces != null && ifaces.Length > 0)
+            IEnumerable<Type> ifaces = seqTypeInfo.ImplementedInterfaces;
+            if (ifaces != null)
             {
                 foreach (Type iface in ifaces)
                 {
@@ -37,9 +39,9 @@ namespace GraphLinqQL
                     if (ienum != null) return ienum;
                 }
             }
-            if (seqType.BaseType != null && seqType.BaseType != typeof(object))
+            if (seqTypeInfo.BaseType != null && seqTypeInfo.BaseType != typeof(object))
             {
-                return FindIEnumerable(seqType.BaseType);
+                return FindIEnumerable(seqTypeInfo.BaseType);
             }
             return null;
         }

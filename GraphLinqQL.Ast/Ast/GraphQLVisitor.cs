@@ -218,7 +218,7 @@ namespace GraphLinqQL.Ast
         public override INode VisitInlineFragment([NotNull] GraphqlParser.InlineFragmentContext context)
         {
             return new InlineFragment(
-                (TypeCondition)Visit(context.typeCondition()),
+                (TypeCondition?)context.typeCondition()?.Accept(this),
                 context.directives()?.directive().Select(Visit).Cast<Directive>(),
                 (SelectionSet)Visit(context.selectionSet()),
                 context.Location()
