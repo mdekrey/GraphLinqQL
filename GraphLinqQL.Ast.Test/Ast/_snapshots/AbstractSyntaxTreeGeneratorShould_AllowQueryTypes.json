@@ -1,0 +1,173 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 23,
+      "Name": "Query",
+      "Description": null,
+      "Interfaces": [],
+      "Directives": [],
+      "Fields": [
+        {
+          "Kind": 24,
+          "Name": "hero",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 8,
+            "Name": "Character",
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 26
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 26
+              }
+            }
+          },
+          "Arguments": [
+            {
+              "Kind": 25,
+              "Name": "episode",
+              "Description": null,
+              "TypeNode": {
+                "Kind": 8,
+                "Name": "Episode",
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 16
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 16
+                  }
+                }
+              },
+              "DefaultValue": null,
+              "Directives": [],
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 7
+                },
+                "Stop": {
+                  "Line": 3,
+                  "Column": 16
+                }
+              }
+            }
+          ],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 26
+            }
+          }
+        },
+        {
+          "Kind": 24,
+          "Name": "droid",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 8,
+            "Name": "Droid",
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 18
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 18
+              }
+            }
+          },
+          "Arguments": [
+            {
+              "Kind": 25,
+              "Name": "id",
+              "Description": null,
+              "TypeNode": {
+                "Kind": 18,
+                "BaseType": {
+                  "Kind": 8,
+                  "Name": "ID",
+                  "Location": {
+                    "Start": {
+                      "Line": 4,
+                      "Column": 12
+                    },
+                    "Stop": {
+                      "Line": 4,
+                      "Column": 12
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 4,
+                    "Column": 12
+                  },
+                  "Stop": {
+                    "Line": 4,
+                    "Column": 14
+                  }
+                }
+              },
+              "DefaultValue": null,
+              "Directives": [],
+              "Location": {
+                "Start": {
+                  "Line": 4,
+                  "Column": 8
+                },
+                "Stop": {
+                  "Line": 4,
+                  "Column": 14
+                }
+              }
+            }
+          ],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 18
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 5,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 5,
+      "Column": 0
+    }
+  }
+}

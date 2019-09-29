@@ -1,0 +1,31 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 28,
+      "Directives": [],
+      "Name": "Date",
+      "Description": null,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 2,
+          "Column": 7
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 2,
+      "Column": 7
+    }
+  }
+}

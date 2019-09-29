@@ -300,5 +300,31 @@ schema {
 }
 ");
 
+        [Fact]
+        public void AllowArgumentStrings() => MatchParsedDocumentToSnapshot(@"
+query {
+  hero {
+    name
+  }
+  droid(id: ""2000"") {
+    name
+  }
+}
+");
+
+        [Fact]
+        public void AllowQueryTypes() => MatchParsedDocumentToSnapshot(@"
+type Query {
+  hero(episode: Episode): Character
+  droid(id: ID!): Droid
+}
+");
+
+        [UpdateSnapshots]
+        [Fact]
+        public void AllowCustomScalarTypes() => MatchParsedDocumentToSnapshot(@"
+scalar Date
+");
+
     }
 }

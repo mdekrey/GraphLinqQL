@@ -275,6 +275,16 @@ namespace GraphLinqQL.Ast
             return new OperationTypeDefinition(GetOperationType(context.operationType()), (TypeName)Visit(context.typeName()), context.Location());
         }
 
+        public override INode VisitScalarTypeDefinition([NotNull] GraphqlParser.ScalarTypeDefinitionContext context)
+        {
+            return new ScalarTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.Location()
+            );
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)

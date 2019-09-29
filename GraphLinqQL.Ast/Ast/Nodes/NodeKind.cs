@@ -30,5 +30,6 @@
         InputValueDefinition,
         SchemaDefinition,
         OperationTypeDefinition,
+        ScalarTypeDefinition,
     }
 }
