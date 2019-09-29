@@ -329,6 +329,17 @@ namespace GraphLinqQL.Ast
             );
         }
 
+        public override INode VisitInputObjectTypeDefinition([NotNull] GraphqlParser.InputObjectTypeDefinitionContext context)
+        {
+            return new InputObjectTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                directives: context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                fields: context.inputObjectValueDefinitions()?.inputValueDefinition().Select(Visit).Cast<InputValueDefinition>(),
+                location: context.Location()
+            );
+        }
+
         private IEnumerable<TypeName> GetUnionoMembers(GraphqlParser.UnionMembershipContext unionMembershipContext)
         {
             var current = unionMembershipContext.unionMembers();

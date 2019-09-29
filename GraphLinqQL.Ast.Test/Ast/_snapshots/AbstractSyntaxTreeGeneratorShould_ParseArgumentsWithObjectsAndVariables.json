@@ -1,0 +1,366 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 1,
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 10,
+          "Column": 0
+        }
+      },
+      "OperationType": 1,
+      "Name": "CreateReviewForEpisode",
+      "Variables": [
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "ep",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 32
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 33
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "Episode",
+              "Location": {
+                "Start": {
+                  "Line": 2,
+                  "Column": 37
+                },
+                "Stop": {
+                  "Line": 2,
+                  "Column": 37
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 37
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 44
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 32
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 44
+            }
+          }
+        },
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "stars",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 47
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 48
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "Int",
+              "Location": {
+                "Start": {
+                  "Line": 2,
+                  "Column": 55
+                },
+                "Stop": {
+                  "Line": 2,
+                  "Column": 55
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 55
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 58
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 47
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 58
+            }
+          }
+        },
+        {
+          "Kind": 3,
+          "Variable": {
+            "Kind": 4,
+            "Name": "commentary",
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 61
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 62
+              }
+            }
+          },
+          "GraphQLType": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "String",
+              "Location": {
+                "Start": {
+                  "Line": 2,
+                  "Column": 74
+                },
+                "Stop": {
+                  "Line": 2,
+                  "Column": 74
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 2,
+                "Column": 74
+              },
+              "Stop": {
+                "Line": 2,
+                "Column": 80
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 61
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 80
+            }
+          }
+        }
+      ],
+      "SelectionSet": {
+        "Kind": 2,
+        "Selections": [
+          {
+            "Kind": 5,
+            "Name": "createReview",
+            "Alias": null,
+            "SelectionSet": {
+              "Kind": 2,
+              "Selections": [
+                {
+                  "Kind": 5,
+                  "Name": "stars",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 7,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 7,
+                      "Column": 4
+                    }
+                  }
+                },
+                {
+                  "Kind": 5,
+                  "Name": "commentary",
+                  "Alias": null,
+                  "SelectionSet": null,
+                  "Arguments": [],
+                  "Directives": [],
+                  "Location": {
+                    "Start": {
+                      "Line": 8,
+                      "Column": 4
+                    },
+                    "Stop": {
+                      "Line": 8,
+                      "Column": 4
+                    }
+                  }
+                }
+              ],
+              "Location": {
+                "Start": {
+                  "Line": 6,
+                  "Column": 5
+                },
+                "Stop": {
+                  "Line": 9,
+                  "Column": 2
+                }
+              }
+            },
+            "Arguments": [
+              {
+                "Kind": 7,
+                "Name": "episode",
+                "Value": {
+                  "Kind": 4,
+                  "Name": "ep",
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 24
+                    },
+                    "Stop": {
+                      "Line": 3,
+                      "Column": 25
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 15
+                  },
+                  "Stop": {
+                    "Line": 3,
+                    "Column": 25
+                  }
+                }
+              },
+              {
+                "Kind": 7,
+                "Name": "review",
+                "Value": {
+                  "Kind": 9,
+                  "Fields": {
+                    "stars": {
+                      "Kind": 4,
+                      "Name": "stars",
+                      "Location": {
+                        "Start": {
+                          "Line": 4,
+                          "Column": 11
+                        },
+                        "Stop": {
+                          "Line": 4,
+                          "Column": 12
+                        }
+                      }
+                    },
+                    "commentary": {
+                      "Kind": 4,
+                      "Name": "commentary",
+                      "Location": {
+                        "Start": {
+                          "Line": 5,
+                          "Column": 16
+                        },
+                        "Stop": {
+                          "Line": 5,
+                          "Column": 17
+                        }
+                      }
+                    }
+                  },
+                  "Location": {
+                    "Start": {
+                      "Line": 3,
+                      "Column": 37
+                    },
+                    "Stop": {
+                      "Line": 6,
+                      "Column": 2
+                    }
+                  }
+                },
+                "Location": {
+                  "Start": {
+                    "Line": 3,
+                    "Column": 29
+                  },
+                  "Stop": {
+                    "Line": 6,
+                    "Column": 2
+                  }
+                }
+              }
+            ],
+            "Directives": [],
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 9,
+                "Column": 2
+              }
+            }
+          }
+        ],
+        "Location": {
+          "Start": {
+            "Line": 2,
+            "Column": 83
+          },
+          "Stop": {
+            "Line": 10,
+            "Column": 0
+          }
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 10,
+      "Column": 0
+    }
+  }
+}

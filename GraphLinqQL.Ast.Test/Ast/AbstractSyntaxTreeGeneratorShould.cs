@@ -93,6 +93,20 @@ mutation CreateReviewForEpisode {
   }
 }
 ");
+
+        [Fact]
+        public void ParseArgumentsWithObjectsAndVariables() => MatchParsedDocumentToSnapshot(@"
+mutation CreateReviewForEpisode($ep: Episode!, $stars: Int!, $commentary: String!) {
+  createReview(episode: $ep, review: {
+    stars: $stars,
+    commentary: $commentary
+  }) {
+    stars
+    commentary
+  }
+}
+");
+
         // These queries were originally from https://graphql.org/learn/queries/
         [Fact]
         public void IgnoreComments() => MatchParsedDocumentToSnapshot(@"
@@ -399,5 +413,34 @@ query HeroForEpisode($ep: Episode!) {
 union SearchResult = Human | Droid | Starship
 ");
 
+        [Fact]
+        public void AllowMultipleInlineFragments() => MatchParsedDocumentToSnapshot(@"
+{
+  search(text: ""an"") {
+    __typename
+    ... on Character {
+      name
+    }
+    ... on Human {
+      height
+    }
+    ... on Droid {
+      primaryFunction
+    }
+    ... on Starship {
+      name
+      length
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowInputTypes() => MatchParsedDocumentToSnapshot(@"
+input ReviewInput {
+  stars: Int!
+  commentary: String
+}
+");
     }
 }

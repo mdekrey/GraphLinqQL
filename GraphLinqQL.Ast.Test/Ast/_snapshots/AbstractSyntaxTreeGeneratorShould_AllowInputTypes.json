@@ -1,0 +1,108 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 23,
+      "Name": "ReviewInput",
+      "Description": null,
+      "Directives": [],
+      "InputValues": [
+        {
+          "Kind": 25,
+          "Name": "stars",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "Int",
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 9
+                },
+                "Stop": {
+                  "Line": 3,
+                  "Column": 9
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 9
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 12
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 12
+            }
+          }
+        },
+        {
+          "Kind": 25,
+          "Name": "commentary",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 8,
+            "Name": "String",
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 14
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 14
+              }
+            }
+          },
+          "DefaultValue": null,
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 14
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 5,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 5,
+      "Column": 0
+    }
+  }
+}
