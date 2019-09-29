@@ -48,12 +48,12 @@ namespace GraphLinqQL
             return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.IfType(value, typedBuilder)));
         }
 
-        public IComplexResolverBuilder Add(string property, IDictionary<string, string>? parameters)
+        public IComplexResolverBuilder Add(string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
             return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, parameters)));
         }
 
-        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, string>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
             return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, property, parameters)));
         }

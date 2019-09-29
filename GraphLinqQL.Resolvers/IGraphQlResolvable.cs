@@ -9,15 +9,19 @@ namespace GraphLinqQL
         bool IsType(string value);
     }
 
+    public interface IGraphQlParameterInfo
+    {
+        T BindTo<T>(IGraphQlParameterResolver variableResolver);
+    }
+
     public interface IGraphQlParameterResolverFactory
     {
-        IGraphQlParameterResolver FromParameterData(IDictionary<string, string> rawData);
+        IGraphQlParameterResolver FromParameterData(IDictionary<string, IGraphQlParameterInfo> rawData);
     }
 
     public interface IGraphQlParameterResolver
     {
         bool HasParameter(string parameter);
-        string GetRawParameter(string parameter);
         T GetParameter<T>(string parameter);
     }
 }

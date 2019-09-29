@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using GraphLinqQL.Ast.Nodes;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using GraphQLParser.AST;
 
 namespace GraphLinqQL.Execution
 {
     public class GraphQLExecutionContext
     {
-        public GraphQLDocument Ast { get; }
-        public IReadOnlyDictionary<string, string> Arguments { get; }
+        public Document Ast { get; }
+        public IReadOnlyDictionary<string, IGraphQlParameterInfo> Arguments { get; }
 
-        public GraphQLExecutionContext(GraphQLDocument ast, IDictionary<string, string> arguments)
+        public GraphQLExecutionContext(Document ast, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             this.Ast = ast;
             Arguments = arguments.ToImmutableDictionary();

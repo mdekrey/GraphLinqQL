@@ -110,7 +110,7 @@ namespace GraphLinqQL.Ast
 
         public override INode VisitArgument([NotNull] GraphqlParser.ArgumentContext context)
         {
-            return new Argument(context.name().GetText(), Visit(context.valueWithVariable()), context.Location());
+            return new Argument(context.name().GetText(), (IValueNode)Visit(context.valueWithVariable()), context.Location());
         }
 
         public override INode VisitVariable([NotNull] GraphqlParser.VariableContext context)
@@ -324,7 +324,7 @@ namespace GraphLinqQL.Ast
                 context.name().GetText(),
                 MaybeGetDescription(context.description()),
                 directives: context.directives()?.directive().Select(Visit).Cast<Directive>(),
-                unionMembers: GetUnionoMembers(context.unionMembership()),
+                unionMembers: GetUnionMembers(context.unionMembership()),
                 location: context.Location()
             );
         }
@@ -340,7 +340,7 @@ namespace GraphLinqQL.Ast
             );
         }
 
-        private IEnumerable<TypeName> GetUnionoMembers(GraphqlParser.UnionMembershipContext unionMembershipContext)
+        private IEnumerable<TypeName> GetUnionMembers(GraphqlParser.UnionMembershipContext unionMembershipContext)
         {
             var current = unionMembershipContext.unionMembers();
             while (current != null)

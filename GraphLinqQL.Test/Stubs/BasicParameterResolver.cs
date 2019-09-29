@@ -5,16 +5,14 @@ namespace GraphLinqQL.Stubs
 {
     internal class BasicParameterResolver : IGraphQlParameterResolver
     {
-        private readonly IDictionary<string, string> parameters;
+        private readonly IDictionary<string, IGraphQlParameterInfo> parameters;
 
-        public BasicParameterResolver(IDictionary<string, string> parameters)
+        public BasicParameterResolver(IDictionary<string, IGraphQlParameterInfo> parameters)
         {
             this.parameters = parameters.ToImmutableDictionary();
         }
 
-        public T GetParameter<T>(string parameter) => System.Text.Json.JsonSerializer.Deserialize<T>(GetRawParameter(parameter));
-
-        public string GetRawParameter(string parameter) => parameters[parameter];
+        public T GetParameter<T>(string parameter) => parameters[parameter].BindTo<T>(this);
 
         public bool HasParameter(string parameter) => parameters.ContainsKey(parameter);
     }

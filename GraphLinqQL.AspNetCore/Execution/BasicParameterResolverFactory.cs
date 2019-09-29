@@ -5,7 +5,7 @@ namespace GraphLinqQL.Execution
 {
     internal class BasicParameterResolverFactory : IGraphQlParameterResolverFactory
     {
-        public IGraphQlParameterResolver FromParameterData(IDictionary<string, string> rawData)
+        public IGraphQlParameterResolver FromParameterData(IDictionary<string, IGraphQlParameterInfo> rawData)
         {
             return new BasicParameterResolver(rawData);
         }

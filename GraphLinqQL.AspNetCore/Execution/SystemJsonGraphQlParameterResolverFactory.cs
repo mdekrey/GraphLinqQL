@@ -7,7 +7,7 @@ namespace GraphLinqQL.Execution
 {
     public class SystemJsonGraphQlParameterResolverFactory : IGraphQlParameterResolverFactory
     {
-        public IGraphQlParameterResolver FromParameterData(IDictionary<string, string> rawData)
+        public IGraphQlParameterResolver FromParameterData(IDictionary<string, IGraphQlParameterInfo> rawData)
         {
             return new SystemJsonGraphQlParameterResolver(rawData);
         }
@@ -15,27 +15,14 @@ namespace GraphLinqQL.Execution
 
     internal class SystemJsonGraphQlParameterResolver : IGraphQlParameterResolver
     {
-        private IDictionary<string, string> rawData;
+        private IDictionary<string, IGraphQlParameterInfo> rawData;
 
-        public SystemJsonGraphQlParameterResolver(IDictionary<string, string> rawData)
+        public SystemJsonGraphQlParameterResolver(IDictionary<string, IGraphQlParameterInfo> rawData)
         {
             this.rawData = rawData;
         }
 
-        public T GetParameter<T>(string parameter)
-        {
-            var value = rawData[parameter];
-            if (typeof(T) == typeof(string))
-            {
-                // Because the main graphQl AST parser strips quotes from strings - FIXME - better GraphQL AST Parser - Issue #11
-#pragma warning disable CA1305 // Specify IFormatProvider
-                return (T)(object)value?.ToString()!;
-#pragma warning restore CA1305 // Specify IFormatProvider
-            }
-            return System.Text.Json.JsonSerializer.Deserialize<T>(value);
-        }
-
-        public string GetRawParameter(string parameter) => rawData[parameter];
+        public T GetParameter<T>(string parameter) => rawData[parameter].BindTo<T>(this);
 
         public bool HasParameter(string parameter) => rawData.ContainsKey(parameter);
     }

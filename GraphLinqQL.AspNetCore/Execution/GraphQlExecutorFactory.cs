@@ -4,17 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Immutable;
+using GraphLinqQL.Ast;
 
 namespace GraphLinqQL.Execution
 {
     internal class GraphQlExecutorFactory : IGraphQlExecutorFactory
     {
         private readonly IGraphQlServiceProviderFactory serviceProviderFactory;
+        private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IOptionsMonitor<GraphQlOptions> options;
 
-        public GraphQlExecutorFactory(IGraphQlServiceProviderFactory serviceProviderFactory, IOptionsMonitor<GraphQlOptions> options)
+        public GraphQlExecutorFactory(IGraphQlServiceProviderFactory serviceProviderFactory, IAbstractSyntaxTreeGenerator astGenerator, IOptionsMonitor<GraphQlOptions> options)
         {
             this.serviceProviderFactory = serviceProviderFactory;
+            this.astGenerator = astGenerator;
             this.options = options;
         }
 
@@ -28,7 +31,7 @@ namespace GraphLinqQL.Execution
         {
             var serviceProvider = serviceProviderFactory.GetServiceProvider(options);
 
-            return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions()
+            return new GraphQlExecutor(serviceProvider, astGenerator, new GraphQlExecutionOptions()
             {
                 Query = options.Query,
                 Mutation = options.Mutation,

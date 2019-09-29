@@ -7,6 +7,7 @@ using Implementations = GraphLinqQL.HandwrittenSamples.Implementations;
 using System.Collections.Immutable;
 using GraphLinqQL.Execution;
 using GraphLinqQL.Stubs;
+using GraphLinqQL.Ast;
 
 namespace GraphLinqQL.Execution
 {
@@ -33,7 +34,7 @@ namespace GraphLinqQL.Execution
         private static IGraphQlExecutor CreateExecutor()
         {
             using var serviceProvider = new SimpleServiceProvider();
-            return new GraphQlExecutor(serviceProvider, new GraphQlExecutionOptions());
+            return new GraphQlExecutor(serviceProvider, new AbstractSyntaxTreeGenerator(), new GraphQlExecutionOptions());
         }
 
         [Fact]
@@ -200,7 +201,7 @@ query Heroes($date: String!) {
     location(date: $date)
   }
 }
-", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } });
+", new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"AVENGERS-1\"}]}";
@@ -208,12 +209,12 @@ query Heroes($date: String!) {
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
-        [Fact(Skip = "GraphQL-Parse does not support query default parameters")]
+        [Fact]
         public void BeAbleToPassArgumentsWithDefaultValues()
         {
             using var executor = CreateExecutor();
             var result = executor.Execute(@"
-query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
+query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
   heroes {
     id
     name
@@ -221,7 +222,7 @@ query Heroes($date: String = ""2019-04-22"", $date2 = ""2012-05-04"") {
     avengersLocation: location(date: $date2)
   }
 }
-", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } });
+", new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);
             //var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";

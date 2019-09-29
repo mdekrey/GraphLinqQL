@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GraphQLParser.AST;
 using GraphLinqQL.Execution;
+using GraphLinqQL.Ast.Nodes;
 
 namespace GraphLinqQL.Directives
 {
@@ -10,7 +10,8 @@ namespace GraphLinqQL.Directives
     {
         public string Name => "include";
 
-        public ASTNode? HandleDirective(ASTNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context) =>
+        public TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context)
+            where TNode : class, INode =>
             arguments.GetParameter<bool>("if") == true ? node : null;
     }
 }

@@ -1,5 +1,5 @@
-﻿using GraphQLParser;
-using GraphQLParser.AST;
+﻿using GraphLinqQL.Ast;
+using GraphLinqQL.Ast.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,23 +11,23 @@ namespace GraphLinqQL.Execution
     public class GraphQlExecutor : IGraphQlExecutor
     {
         private readonly IGraphQlServiceProvider serviceProvider;
+        private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IGraphQlExecutionOptions options;
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
-        public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IGraphQlExecutionOptions options)
+        public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options)
         {
             this.serviceProvider = serviceProvider;
+            this.astGenerator = astGenerator;
             this.options = options;
             this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
         }
 
-        public object Execute(string query, IDictionary<string, string>? arguments = null)
+        public object Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
-            var actualArguments = arguments ?? ImmutableDictionary<string, string>.Empty;
-            var lexer = new Lexer();
-            var parser = new Parser(lexer);
-            var ast = parser.Parse(new Source(query));
-            var def = ast.Definitions.OfType<GraphQLOperationDefinition>().First();
+            var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
+            var ast = astGenerator.ParseDocument(query);
+            var def = ast.Children.OfType<OperationDefinition>().First();
             if (def == null)
             {
                 throw new ArgumentException("Query did not contain a document", nameof(query));
@@ -40,30 +40,30 @@ namespace GraphLinqQL.Execution
             return executionResult;
         }
 
-        private Type GetTypeFromGraphQlType(GraphQLType arg)
+        private Type GetTypeFromGraphQlType(ITypeNode arg)
         {
             switch (arg)
             {
-                case GraphQLNonNullType nonNullNode:
-                    var nonNullType = GetTypeFromGraphQlType(nonNullNode.Type);
+                case NonNullType nonNullNode:
+                    var nonNullType = GetTypeFromGraphQlType(nonNullNode.BaseType);
                     if (nonNullType.IsConstructedGenericType && nonNullType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
                         return nonNullType.GetGenericArguments()[0];
                     }
                     return nonNullType;
-                case GraphQLListType listNode:
-                    var listType = GetTypeFromGraphQlType(listNode.Type);
+                case ListType listNode:
+                    var listType = GetTypeFromGraphQlType(listNode.ElementType);
                     return typeof(IEnumerable<>).MakeGenericType(listType);
-                case GraphQLNamedType namedType:
-                    return options.TypeResolver.Resolve(namedType.Name.Value);
+                case TypeName namedType:
+                    return options.TypeResolver.Resolve(namedType.Name);
                 default:
                     throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
             }
         }
 
-        private object Execute(GraphQLDocument ast, GraphQLOperationDefinition def, IDictionary<string, string> arguments)
+        private object Execute(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
-            var operation = def.Operation switch
+            var operation = def.OperationType switch
             {
                 OperationType.Query => options.Query,
                 OperationType.Mutation => options.Mutation,
@@ -78,15 +78,15 @@ namespace GraphLinqQL.Execution
             });
         }
 
-        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, IEnumerable<ASTNode> selections, GraphQLExecutionContext context)
+        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, IEnumerable<ISelection> selections, GraphQLExecutionContext context)
         {
             return selections.Aggregate(builder, (b, node) => Build(b, node, context));
         }
 
-        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, ASTNode node, GraphQLExecutionContext context)
+        private IComplexResolverBuilder Build(IComplexResolverBuilder builder, ISelection node, GraphQLExecutionContext context)
         {
             var resultNode = TryGetDirectives(node, out var directives)
-                ? directives.Aggregate((ASTNode?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
+                ? directives.Aggregate((ISelection?)node, (node, directive) => node != null ? HandleDirective(directive, node, context) : node)
                 : node;
             if (resultNode == null)
             {
@@ -94,25 +94,25 @@ namespace GraphLinqQL.Execution
             }
             switch (resultNode)
             {
-                case GraphQLFieldSelection field:
+                case Field field:
                     if (field.SelectionSet != null)
                     {
                         return builder.Add(
-                            field.Alias?.Value ?? field.Name.Value,
-                            b => Build(b.ResolveQuery(field.Name.Value, parameterResolverFactory.FromParameterData(ResolveArguments(field.Arguments, context)))
+                            field.Alias ?? field.Name,
+                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(ResolveArguments(field.Arguments, context)))
                                         .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
                                 ).Build()
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias?.Value ?? field.Name.Value, field.Name.Value, ResolveArguments(field.Arguments, context));
+                        return builder.Add(field.Alias ?? field.Name, field.Name, ResolveArguments(field.Arguments, context));
                     }
-                case GraphQLFragmentSpread fragmentSpread:
+                case FragmentSpread fragmentSpread:
                     return Build(builder,
-                        context.Ast.Definitions.OfType<GraphQLFragmentDefinition>().SingleOrDefault(frag => frag.Name.Value == fragmentSpread.Name.Value).SelectionSet.Selections,
+                        context.Ast.Children.OfType<FragmentDefinition>().SingleOrDefault(frag => frag.Name == fragmentSpread.FragmentName).SelectionSet.Selections,
                         context);
-                case GraphQLInlineFragment inlineFragment:
+                case InlineFragment inlineFragment:
                     IComplexResolverBuilder DoBuild(IComplexResolverBuilder builder)
                     {
                         return Build(builder,
@@ -122,7 +122,7 @@ namespace GraphLinqQL.Execution
 
                     if (inlineFragment.TypeCondition != null)
                     {
-                        return builder.IfType(inlineFragment.TypeCondition.Name.Value, DoBuild);
+                        return builder.IfType(inlineFragment.TypeCondition.TypeName.Name, DoBuild);
                     }
                     else
                     {
@@ -133,98 +133,30 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private static bool TryGetDirectives(ASTNode node, out IEnumerable<GraphQLDirective> directives)
+        private static bool TryGetDirectives(INode node, out IEnumerable<Directive> directives)
         {
-            switch (node)
-            {
-                case GraphQLEnumTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLEnumValueDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLFieldDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLFieldSelection def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLFragmentSpread def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLInlineFragment def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLInputObjectTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLInputValueDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLInterfaceTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLObjectTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLOperationDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLScalarTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLSchemaDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                case GraphQLUnionTypeDefinition def:
-                    directives = def.Directives;
-                    return true;
-
-                default:
-                    directives = null!;
-                    return false;
-            }
+            directives = node is IHasDirectives hasDirectives ? hasDirectives.Directives : null!;
+            return directives != null;
         }
 
-        private ASTNode? HandleDirective(GraphQLDirective directive, ASTNode node, GraphQLExecutionContext context)
+        private TNode? HandleDirective<TNode>(Directive directive, TNode node, GraphQLExecutionContext context)
+            where TNode : class, INode
         {
             var arguments = ResolveArguments(directive.Arguments, context);
-            var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name.Value);
+            var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
             return actualDirective == null
                 ? node
                 : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
         }
 
-        private static IDictionary<string, string> ResolveArguments(IEnumerable<GraphQLArgument> arguments, GraphQLExecutionContext context)
+        private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IEnumerable<Argument> arguments, GraphQLExecutionContext context)
         {
-            return arguments.ToDictionary(arg => arg.Name.Value, arg => ResolveValue(arg.Value, context));
+            return arguments.ToDictionary(arg => arg.Name, arg => ResolveValue(arg.Value, context));
         }
 
-        private static string ResolveValue(GraphQLValue value, GraphQLExecutionContext context)
+        private static IGraphQlParameterInfo ResolveValue(IValueNode value, GraphQLExecutionContext context)
         {
-            switch (value)
-            {
-                case GraphQLScalarValue scalar:
-                    // TODO - is there a better way to handle this string?
-                    return scalar.Kind == ASTNodeKind.StringValue ? $"\"{scalar.Value.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"" : scalar.Value;
-                case GraphQLVariable variable:
-                    return context.Arguments[variable.Name.Value];
-                default:
-                    throw new NotSupportedException();
-            }
+            return new GraphQlParameterInfo(value);
         }
 
         #region IDisposable Support

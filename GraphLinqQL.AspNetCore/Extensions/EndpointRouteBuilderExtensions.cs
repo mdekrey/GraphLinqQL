@@ -1,4 +1,5 @@
-﻿using GraphLinqQL.Execution;
+﻿using GraphLinqQL;
+using GraphLinqQL.Execution;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,7 @@ namespace Microsoft.AspNetCore.Builder
 
                     context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
 
-                    executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => p.Value.GetRawText()));
+                    executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
                 }
                 await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions).ConfigureAwait(false);
             });

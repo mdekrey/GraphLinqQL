@@ -309,7 +309,7 @@ namespace GraphLinqQL
                                                                 .Add("id")
                                                                 .Add("name")
                                                                 .Add("location")
-                                                                .Add("oldLocation", "location", new Dictionary<string, string> { { "date", "\"2008-05-02\"" } })
+                                                                .Add("oldLocation", "location", new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } })
                                                                 .Build())
                     .Build());
 
@@ -330,7 +330,7 @@ namespace GraphLinqQL
             // }
             using var sp = new SimpleServiceProvider();
             var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
-                root.Add("heroById", q => q.ResolveQuery("heroById", new BasicParameterResolver(new Dictionary<string, string>() { { "id", "\"GUARDIANS-1\"" } })).ResolveComplex(sp).Add("id").Add("name").Build())
+                root.Add("heroById", q => q.ResolveQuery("heroById", new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo>() { { "id", new NewtonsoftJsonParameterInfo("\"GUARDIANS-1\"") } })).ResolveComplex(sp).Add("id").Add("name").Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions);

@@ -74,12 +74,12 @@ namespace GraphLinqQL
             return resolve(func, allJoins);
         }
 
-        public IComplexResolverBuilder Add(string property, IDictionary<string, string>? parameters) =>
+        public IComplexResolverBuilder Add(string property, IDictionary<string, IGraphQlParameterInfo>? parameters) =>
             Add(property, property, parameters);
 
-        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, string>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, string>.Empty));
+            var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
             // TODO - prevent non-primitives from being final return after adding. If this result is a non-primitive, client will be getting raw domain value!
             //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
             //{

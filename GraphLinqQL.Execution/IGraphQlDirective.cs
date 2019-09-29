@@ -1,4 +1,4 @@
-﻿using GraphQLParser.AST;
+﻿using GraphLinqQL.Ast.Nodes;
 using GraphLinqQL.Execution;
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ namespace GraphLinqQL
     public interface IGraphQlDirective
     {
         string Name { get; }
-        ASTNode? HandleDirective(ASTNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context);
+        TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context)
+            where TNode : class, INode;
     }
 }
