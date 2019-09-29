@@ -1,0 +1,75 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 23,
+      "Name": "SearchResult",
+      "Description": null,
+      "UnionMembers": [
+        {
+          "Kind": 8,
+          "Name": "Starship",
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 37
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 37
+            }
+          }
+        },
+        {
+          "Kind": 8,
+          "Name": "Droid",
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 29
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 29
+            }
+          }
+        },
+        {
+          "Kind": 8,
+          "Name": "Human",
+          "Location": {
+            "Start": {
+              "Line": 2,
+              "Column": 21
+            },
+            "Stop": {
+              "Line": 2,
+              "Column": 21
+            }
+          }
+        }
+      ],
+      "Directives": [],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 2,
+          "Column": 37
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 2,
+      "Column": 37
+    }
+  }
+}

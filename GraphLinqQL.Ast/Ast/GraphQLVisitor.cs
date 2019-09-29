@@ -3,6 +3,7 @@ using Antlr4.Runtime.Tree;
 using GraphLinqQL.Ast.Antlr;
 using GraphLinqQL.Ast.Nodes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GraphLinqQL.Ast
@@ -315,6 +316,27 @@ namespace GraphLinqQL.Ast
                 fields: context.fieldsDefinition()?.fieldDefinition().Select(Visit).Cast<FieldDefinition>(),
                 location: context.Location()
             );
+        }
+
+        public override INode VisitUnionTypeDefinition([NotNull] GraphqlParser.UnionTypeDefinitionContext context)
+        {
+            return new UnionTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                directives: context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                unionMembers: GetUnionoMembers(context.unionMembership()),
+                location: context.Location()
+            );
+        }
+
+        private IEnumerable<TypeName> GetUnionoMembers(GraphqlParser.UnionMembershipContext unionMembershipContext)
+        {
+            var current = unionMembershipContext.unionMembers();
+            while (current != null)
+            {
+                yield return (TypeName)Visit(current.typeName());
+                current = current.unionMembers();
+            }
         }
 
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)

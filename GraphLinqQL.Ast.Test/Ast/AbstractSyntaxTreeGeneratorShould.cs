@@ -351,7 +351,6 @@ query DroidById($id: ID!) {
 }
 ");
 
-        [UpdateSnapshots]
         [Fact]
         public void AllowInterfaces() => MatchParsedDocumentToSnapshot(@"
 interface Character {
@@ -360,6 +359,44 @@ interface Character {
   friends: [Character]
   appearsIn: [Episode]!
 }
+");
+
+        [Fact]
+        public void AllowInterfaceImplementations() => MatchParsedDocumentToSnapshot(@"
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  starships: [Starship]
+  totalCredits: Int
+}
+
+type Droid implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  primaryFunction: String
+}
+
+");
+
+        [Fact]
+        public void AllowInlineFragmentsWithTypeConditions() => MatchParsedDocumentToSnapshot(@"
+query HeroForEpisode($ep: Episode!) {
+  hero(episode: $ep) {
+    name
+    ... on Droid {
+      primaryFunction
+    }
+  }
+}
+");
+
+        [Fact]
+        public void AllowUnionTypes() => MatchParsedDocumentToSnapshot(@"
+union SearchResult = Human | Droid | Starship
 ");
 
     }
