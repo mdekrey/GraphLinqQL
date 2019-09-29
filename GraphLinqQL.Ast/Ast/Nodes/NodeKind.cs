@@ -28,5 +28,7 @@
         ObjectType,
         FieldDefinition,
         InputValueDefinition,
+        SchemaDefinition,
+        OperationTypeDefinition,
     }
 }

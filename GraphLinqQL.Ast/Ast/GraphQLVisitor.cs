@@ -43,10 +43,12 @@ namespace GraphLinqQL.Ast
             );
         }
 
+#if DEBUG
         public override INode VisitOperationType([NotNull] GraphqlParser.OperationTypeContext context)
         {
             throw new InvalidOperationException("Should not reach this code; expected to convert this to an enum");
         }
+#endif
 
 
         public virtual OperationType GetOperationType(GraphqlParser.OperationTypeContext? context)
@@ -256,6 +258,21 @@ namespace GraphLinqQL.Ast
                 context.directives()?.directive().Select(Visit).Cast<Directive>(),
                 context.Location()
             );
+        }
+
+        public override INode VisitSchemaDefinition([NotNull] GraphqlParser.SchemaDefinitionContext context)
+        {
+            return new SchemaDefinition(
+                MaybeGetDescription(context.description()),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.operationTypeDefinition().Select(Visit).Cast<OperationTypeDefinition>(),
+                context.Location()
+            );
+        }
+
+        public override INode VisitOperationTypeDefinition([NotNull] GraphqlParser.OperationTypeDefinitionContext context)
+        {
+            return new OperationTypeDefinition(GetOperationType(context.operationType()), (TypeName)Visit(context.typeName()), context.Location());
         }
 
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)

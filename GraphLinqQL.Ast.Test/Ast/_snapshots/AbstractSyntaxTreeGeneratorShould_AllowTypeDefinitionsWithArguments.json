@@ -1,0 +1,198 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 23,
+      "Name": "Starship",
+      "Description": null,
+      "Interfaces": [],
+      "Directives": [],
+      "Fields": [
+        {
+          "Kind": 24,
+          "Name": "id",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "ID",
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 6
+                },
+                "Stop": {
+                  "Line": 3,
+                  "Column": 6
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 6
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 8
+              }
+            }
+          },
+          "Arguments": [],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 8
+            }
+          }
+        },
+        {
+          "Kind": 24,
+          "Name": "name",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "String",
+              "Location": {
+                "Start": {
+                  "Line": 4,
+                  "Column": 8
+                },
+                "Stop": {
+                  "Line": 4,
+                  "Column": 8
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 8
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 14
+              }
+            }
+          },
+          "Arguments": [],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 14
+            }
+          }
+        },
+        {
+          "Kind": 24,
+          "Name": "length",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 8,
+            "Name": "Float",
+            "Location": {
+              "Start": {
+                "Line": 5,
+                "Column": 36
+              },
+              "Stop": {
+                "Line": 5,
+                "Column": 36
+              }
+            }
+          },
+          "Arguments": [
+            {
+              "Kind": 25,
+              "Name": "unit",
+              "Description": null,
+              "TypeNode": {
+                "Kind": 8,
+                "Name": "LengthUnit",
+                "Location": {
+                  "Start": {
+                    "Line": 5,
+                    "Column": 15
+                  },
+                  "Stop": {
+                    "Line": 5,
+                    "Column": 15
+                  }
+                }
+              },
+              "DefaultValue": {
+                "Kind": 16,
+                "TokenValue": "METER",
+                "Location": {
+                  "Start": {
+                    "Line": 5,
+                    "Column": 28
+                  },
+                  "Stop": {
+                    "Line": 5,
+                    "Column": 28
+                  }
+                }
+              },
+              "Directives": [],
+              "Location": {
+                "Start": {
+                  "Line": 5,
+                  "Column": 9
+                },
+                "Stop": {
+                  "Line": 5,
+                  "Column": 28
+                }
+              }
+            }
+          ],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 5,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 5,
+              "Column": 36
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 6,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 6,
+      "Column": 0
+    }
+  }
+}

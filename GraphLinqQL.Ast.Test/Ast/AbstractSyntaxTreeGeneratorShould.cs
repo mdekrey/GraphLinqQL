@@ -283,5 +283,22 @@ type Character {
 }
 ");
 
+        [Fact]
+        public void AllowTypeDefinitionsWithArguments() => MatchParsedDocumentToSnapshot(@"
+type Starship {
+  id: ID!
+  name: String!
+  length(unit: LengthUnit = METER): Float
+}
+");
+
+        [Fact]
+        public void AllowSchemaDefinition() => MatchParsedDocumentToSnapshot(@"
+schema {
+  query: Query
+  mutation: Mutation
+}
+");
+
     }
 }

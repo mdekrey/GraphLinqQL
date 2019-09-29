@@ -1,0 +1,88 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 26,
+      "Description": null,
+      "Directives": [],
+      "OperationTypes": [
+        {
+          "Kind": 27,
+          "OperationType": 0,
+          "TypeName": {
+            "Kind": 8,
+            "Name": "Query",
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 9
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 9
+              }
+            }
+          },
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 9
+            }
+          }
+        },
+        {
+          "Kind": 27,
+          "OperationType": 1,
+          "TypeName": {
+            "Kind": 8,
+            "Name": "Mutation",
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 12
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 12
+              }
+            }
+          },
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 12
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 5,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 5,
+      "Column": 0
+    }
+  }
+}
