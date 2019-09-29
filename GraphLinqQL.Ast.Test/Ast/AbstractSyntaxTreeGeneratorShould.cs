@@ -320,10 +320,18 @@ type Query {
 }
 ");
 
-        [UpdateSnapshots]
         [Fact]
         public void AllowCustomScalarTypes() => MatchParsedDocumentToSnapshot(@"
 scalar Date
+");
+
+        [Fact]
+        public void AllowEnumTypes() => MatchParsedDocumentToSnapshot(@"
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
 ");
 
     }

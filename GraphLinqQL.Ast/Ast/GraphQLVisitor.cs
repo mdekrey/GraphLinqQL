@@ -285,6 +285,27 @@ namespace GraphLinqQL.Ast
             );
         }
 
+        public override INode VisitEnumTypeDefinition([NotNull] GraphqlParser.EnumTypeDefinitionContext context)
+        {
+            return new EnumTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                context.enumValueDefinitions().enumValueDefinition().Select(Visit).Cast<EnumValueDefinition>(),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.Location()
+            );
+        }
+
+        public override INode VisitEnumValueDefinition([NotNull] GraphqlParser.EnumValueDefinitionContext context)
+        {
+            return new EnumValueDefinition(
+                (EnumValue)Visit(context.enumValue()),
+                MaybeGetDescription(context.description()),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.Location()
+            );
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)

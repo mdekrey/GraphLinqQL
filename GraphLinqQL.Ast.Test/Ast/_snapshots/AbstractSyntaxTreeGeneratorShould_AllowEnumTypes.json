@@ -1,0 +1,120 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 28,
+      "Directives": [],
+      "Name": "Episode",
+      "Description": null,
+      "EnumValues": [
+        {
+          "Kind": 28,
+          "Directives": [],
+          "EnumValue": {
+            "Kind": 16,
+            "TokenValue": "NEWHOPE",
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 2
+              }
+            }
+          },
+          "Description": null,
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 2
+            }
+          }
+        },
+        {
+          "Kind": 28,
+          "Directives": [],
+          "EnumValue": {
+            "Kind": 16,
+            "TokenValue": "EMPIRE",
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 2
+              }
+            }
+          },
+          "Description": null,
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 2
+            }
+          }
+        },
+        {
+          "Kind": 28,
+          "Directives": [],
+          "EnumValue": {
+            "Kind": 16,
+            "TokenValue": "JEDI",
+            "Location": {
+              "Start": {
+                "Line": 5,
+                "Column": 2
+              },
+              "Stop": {
+                "Line": 5,
+                "Column": 2
+              }
+            }
+          },
+          "Description": null,
+          "Location": {
+            "Start": {
+              "Line": 5,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 5,
+              "Column": 2
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 6,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 6,
+      "Column": 0
+    }
+  }
+}
