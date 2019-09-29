@@ -274,5 +274,14 @@ query HeroForEpisode($ep: Episode!) {
 }
 ");
 
+        // These queries were originally from https://graphql.org/learn/schema/
+        [Fact]
+        public void AllowTypeDefinitions() => MatchParsedDocumentToSnapshot(@"
+type Character {
+  name: String!
+  appearsIn: [Episode!]!
+}
+");
+
     }
 }

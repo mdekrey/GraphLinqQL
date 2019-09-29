@@ -285,6 +285,7 @@
                 "Value": {
                   "Kind": 10,
                   "QuotedStringValue": "\"an\"",
+                  "Text": "an",
                   "Location": {
                     "Start": {
                       "Line": 3,

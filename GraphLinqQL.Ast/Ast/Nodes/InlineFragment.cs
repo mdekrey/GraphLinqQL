@@ -17,7 +17,7 @@ namespace GraphLinqQL.Ast.Nodes
         public override NodeKind Kind => NodeKind.InlineFragment;
 
         public TypeCondition TypeCondition { get; }
-        public IReadOnlyList<Directive>? Directives { get; }
+        public IReadOnlyList<Directive> Directives { get; }
         public SelectionSet SelectionSet { get; }
     }
 }

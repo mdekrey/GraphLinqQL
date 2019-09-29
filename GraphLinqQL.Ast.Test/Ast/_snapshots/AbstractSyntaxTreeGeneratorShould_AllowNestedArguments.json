@@ -110,6 +110,7 @@
                 "Value": {
                   "Kind": 10,
                   "QuotedStringValue": "\"1000\"",
+                  "Text": "1000",
                   "Location": {
                     "Start": {
                       "Line": 3,

@@ -25,5 +25,8 @@
         FragmentDefinition,
         TypeCondition,
         InlineFragment,
+        ObjectType,
+        FieldDefinition,
+        InputValueDefinition,
     }
 }

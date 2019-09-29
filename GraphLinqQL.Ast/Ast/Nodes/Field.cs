@@ -22,7 +22,7 @@ namespace GraphLinqQL.Ast.Nodes
         public string Name { get; }
         public string? Alias { get; }
         public SelectionSet? SelectionSet { get; }
-        public IReadOnlyList<Argument>? Arguments { get; }
-        public IReadOnlyList<Directive>? Directives { get; }
+        public IReadOnlyList<Argument> Arguments { get; }
+        public IReadOnlyList<Directive> Directives { get; }
     }
 }

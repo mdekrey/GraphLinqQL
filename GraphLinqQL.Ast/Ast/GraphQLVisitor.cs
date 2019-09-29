@@ -43,11 +43,6 @@ namespace GraphLinqQL.Ast
             );
         }
 
-        public override INode VisitTypeSystemDefinition([NotNull] GraphqlParser.TypeSystemDefinitionContext context)
-        {
-            return base.VisitTypeSystemDefinition(context);
-        }
-
         public override INode VisitOperationType([NotNull] GraphqlParser.OperationTypeContext context)
         {
             throw new InvalidOperationException("Should not reach this code; expected to convert this to an enum");
@@ -227,6 +222,42 @@ namespace GraphLinqQL.Ast
             );
         }
 
+        public override INode VisitObjectTypeDefinition([NotNull] GraphqlParser.ObjectTypeDefinitionContext context)
+        {
+            return new ObjectTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                interfaces: context.implementsInterfaces()?.typeName().Select(Visit).Cast<TypeName>(),
+                directives: context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                fields: context.fieldsDefinition()?.fieldDefinition().Select(Visit).Cast<FieldDefinition>(),
+                location: context.Location()
+            );
+        }
+
+        public override INode VisitFieldDefinition([NotNull] GraphqlParser.FieldDefinitionContext context)
+        {
+            return new FieldDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                (ITypeNode)Visit(context.type()),
+                context.argumentsDefinition()?.inputValueDefinition().Select(Visit).Cast<InputValueDefinition>(),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.Location()
+            );
+        }
+
+        public override INode VisitInputValueDefinition([NotNull] GraphqlParser.InputValueDefinitionContext context)
+        {
+            return new InputValueDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                (ITypeNode)Visit(context.type()),
+                (IValueNode?)context.defaultValue()?.Accept(this),
+                context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                context.Location()
+            );
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)
@@ -234,5 +265,11 @@ namespace GraphLinqQL.Ast
                 throw new GraphqlParseException($"Unable to parse, could not match {context.GetType().Name} at {context.Start.Line}:{context.Start.Column}", context.exception);
             }
         }
+
+        private string? MaybeGetDescription(GraphqlParser.DescriptionContext? description)
+        {
+            return ((IStringValue?)description?.Accept(this))?.Text;
+        }
+
     }
 }

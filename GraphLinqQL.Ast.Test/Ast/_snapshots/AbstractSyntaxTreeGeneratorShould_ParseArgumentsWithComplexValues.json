@@ -75,6 +75,7 @@
           "DefaultValue": {
             "Kind": 10,
             "QuotedStringValue": "\"2019-04-22\"",
+            "Text": "2019-04-22",
             "Location": {
               "Start": {
                 "Line": 2,
@@ -143,6 +144,7 @@
           "DefaultValue": {
             "Kind": 10,
             "QuotedStringValue": "\"2012-05-04\"",
+            "Text": "2012-05-04",
             "Location": {
               "Start": {
                 "Line": 2,

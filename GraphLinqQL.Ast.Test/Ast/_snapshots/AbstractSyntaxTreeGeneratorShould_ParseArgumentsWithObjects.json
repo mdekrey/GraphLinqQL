@@ -126,6 +126,7 @@
                     "commentary": {
                       "Kind": 10,
                       "QuotedStringValue": "\"This is a great movie!\"",
+                      "Text": "This is a great movie!",
                       "Location": {
                         "Start": {
                           "Line": 5,
