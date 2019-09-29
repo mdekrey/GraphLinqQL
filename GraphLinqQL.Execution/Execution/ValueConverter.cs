@@ -109,7 +109,13 @@ namespace GraphLinqQL.Execution
 
         public object? VisitVariable(Variable variable, ValueConverterContext converterContext, Type expectedType, bool nullable)
         {
-            throw new NotImplementedException();
+            var result = converterContext.GetVariableValues(variable.Name);
+            if (result == null && !nullable)
+            {
+                throw new ArgumentNullException(nameof(variable));
+            }
+            // TODO - maybe should type check this further?
+            return result;
         }
     }
 }

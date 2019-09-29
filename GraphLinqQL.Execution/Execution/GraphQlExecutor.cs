@@ -99,14 +99,14 @@ namespace GraphLinqQL.Execution
                     {
                         return builder.Add(
                             field.Alias ?? field.Name,
-                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(ResolveArguments(field.Arguments, context)))
+                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(context.Arguments))
                                         .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
                                 ).Build()
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, ResolveArguments(field.Arguments, context));
+                        return builder.Add(field.Alias ?? field.Name, field.Name, context.Arguments);
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,
@@ -142,21 +142,11 @@ namespace GraphLinqQL.Execution
         private TNode? HandleDirective<TNode>(Directive directive, TNode node, GraphQLExecutionContext context)
             where TNode : class, INode
         {
-            var arguments = ResolveArguments(directive.Arguments, context);
+            var arguments = context.Arguments; //ResolveArguments(directive.Arguments, context);
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
             return actualDirective == null
                 ? node
                 : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
-        }
-
-        private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IEnumerable<Argument> arguments, GraphQLExecutionContext context)
-        {
-            return arguments.ToDictionary(arg => arg.Name, arg => ResolveValue(arg.Value, context));
-        }
-
-        private static IGraphQlParameterInfo ResolveValue(IValueNode value, GraphQLExecutionContext context)
-        {
-            return new GraphQlParameterInfo(value);
         }
 
         #region IDisposable Support

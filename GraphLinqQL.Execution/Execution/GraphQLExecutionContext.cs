@@ -7,7 +7,7 @@ namespace GraphLinqQL.Execution
     public class GraphQLExecutionContext
     {
         public Document Ast { get; }
-        public IReadOnlyDictionary<string, IGraphQlParameterInfo> Arguments { get; }
+        public IDictionary<string, IGraphQlParameterInfo> Arguments { get; }
 
         public GraphQLExecutionContext(Document ast, IDictionary<string, IGraphQlParameterInfo> arguments)
         {

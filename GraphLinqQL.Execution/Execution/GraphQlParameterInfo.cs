@@ -13,6 +13,10 @@ namespace GraphLinqQL.Execution
 
         public GraphQlParameterInfo(IValueNode valueNode)
         {
+            if (valueNode is Variable)
+            {
+                throw new ArgumentException("Cannot be a variable itself.", nameof(valueNode));
+            }
             this.valueNode = valueNode;
         }
 
@@ -31,7 +35,7 @@ namespace GraphLinqQL.Execution
         private object? Convert(IValueNode valueNode, Type type, IGraphQlParameterResolver variableResolver)
         {
             // TODO - variables, nullability
-            return new ValueConverter().Visit(valueNode, new ValueConverterContext(null!), type);
+            return new ValueConverter().Visit(valueNode, new ValueConverterContext(variableResolver.GetParameter<object>), type);
         }
     }
 }

@@ -8,14 +8,16 @@ namespace GraphLinqQL.Ast.Nodes
         object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true);
     }
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
     public readonly struct ValueConverterContext
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public ValueConverterContext(IReadOnlyDictionary<string, IValueNode> variableValues)
+        public ValueConverterContext(Func<string, object?> getVariableValues)
         {
-            VariableValues = variableValues;
+            GetVariableValues = getVariableValues;
         }
 
-        public IReadOnlyDictionary<string, IValueNode> VariableValues { get; }
+        public Func<string, object?> GetVariableValues { get; }
     }
 
     public interface IValueConverter

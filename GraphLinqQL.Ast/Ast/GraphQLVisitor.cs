@@ -95,7 +95,7 @@ namespace GraphLinqQL.Ast
         {
             return new Field(
                 context.name().GetText(), 
-                context.alias()?.GetText(), 
+                context.alias()?.name().GetText(), 
                 context.arguments()?.argument().Select(Visit).Cast<Argument>(), 
                 context.directives()?.directive().Select(Visit).Cast<Directive>(), 
                 context.selectionSet() == null ? null : (SelectionSet)Visit(context.selectionSet()),
