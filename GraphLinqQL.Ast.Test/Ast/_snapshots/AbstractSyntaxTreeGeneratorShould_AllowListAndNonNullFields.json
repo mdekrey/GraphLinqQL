@@ -1,0 +1,135 @@
+{
+  "Kind": 0,
+  "Children": [
+    {
+      "Kind": 23,
+      "Name": "Character",
+      "Description": null,
+      "Interfaces": [],
+      "Directives": [],
+      "Fields": [
+        {
+          "Kind": 24,
+          "Name": "name",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 8,
+              "Name": "String",
+              "Location": {
+                "Start": {
+                  "Line": 3,
+                  "Column": 8
+                },
+                "Stop": {
+                  "Line": 3,
+                  "Column": 8
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 3,
+                "Column": 8
+              },
+              "Stop": {
+                "Line": 3,
+                "Column": 14
+              }
+            }
+          },
+          "Arguments": [],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 3,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 3,
+              "Column": 14
+            }
+          }
+        },
+        {
+          "Kind": 24,
+          "Name": "appearsIn",
+          "Description": null,
+          "TypeNode": {
+            "Kind": 18,
+            "BaseType": {
+              "Kind": 17,
+              "ElementType": {
+                "Kind": 8,
+                "Name": "Episode",
+                "Location": {
+                  "Start": {
+                    "Line": 4,
+                    "Column": 14
+                  },
+                  "Stop": {
+                    "Line": 4,
+                    "Column": 14
+                  }
+                }
+              },
+              "Location": {
+                "Start": {
+                  "Line": 4,
+                  "Column": 13
+                },
+                "Stop": {
+                  "Line": 4,
+                  "Column": 21
+                }
+              }
+            },
+            "Location": {
+              "Start": {
+                "Line": 4,
+                "Column": 13
+              },
+              "Stop": {
+                "Line": 4,
+                "Column": 22
+              }
+            }
+          },
+          "Arguments": [],
+          "Directives": [],
+          "Location": {
+            "Start": {
+              "Line": 4,
+              "Column": 2
+            },
+            "Stop": {
+              "Line": 4,
+              "Column": 22
+            }
+          }
+        }
+      ],
+      "Location": {
+        "Start": {
+          "Line": 2,
+          "Column": 0
+        },
+        "Stop": {
+          "Line": 5,
+          "Column": 0
+        }
+      }
+    }
+  ],
+  "Location": {
+    "Start": {
+      "Line": 2,
+      "Column": 0
+    },
+    "Stop": {
+      "Line": 5,
+      "Column": 0
+    }
+  }
+}

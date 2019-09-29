@@ -306,6 +306,17 @@ namespace GraphLinqQL.Ast
             );
         }
 
+        public override INode VisitInterfaceTypeDefinition([NotNull] GraphqlParser.InterfaceTypeDefinitionContext context)
+        {
+            return new InterfaceTypeDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                directives: context.directives()?.directive().Select(Visit).Cast<Directive>(),
+                fields: context.fieldsDefinition()?.fieldDefinition().Select(Visit).Cast<FieldDefinition>(),
+                location: context.Location()
+            );
+        }
+
         private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
         {
             if (context.exception != null)

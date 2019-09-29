@@ -334,5 +334,33 @@ enum Episode {
 }
 ");
 
+        [Fact]
+        public void AllowListAndNonNullFields() => MatchParsedDocumentToSnapshot(@"
+type Character {
+  name: String!
+  appearsIn: [Episode]!
+}
+");
+
+        [Fact]
+        public void AllowNonNullArguments() => MatchParsedDocumentToSnapshot(@"
+query DroidById($id: ID!) {
+  droid(id: $id) {
+    name
+  }
+}
+");
+
+        [UpdateSnapshots]
+        [Fact]
+        public void AllowInterfaces() => MatchParsedDocumentToSnapshot(@"
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+}
+");
+
     }
 }
