@@ -14,13 +14,14 @@ namespace GraphLinqQL.CodeGeneration
         }
 
         public string Label => arg.Name;
+        public string? Description => arg.Description;
 
-        public string TypeName => options.TypeResolver.Resolve(arg.TypeNode, options);
-        public string TypeNameNonNull => options.TypeResolver.Resolve(arg.TypeNode, options);
+        public string TypeName => options.Resolve(arg.TypeNode);
+        public string TypeNameNonNull => options.Resolve(arg.TypeNode, nullable: false);
 
         public string FieldName => CSharpNaming.GetFieldName(arg.Name);
 
-        public string DefaultValue => arg.DefaultValue != null ? options.ValueResolver.Resolve(arg.DefaultValue, options) : "null";
+        public string DefaultValue => arg.DefaultValue != null ? options.Resolve(arg.DefaultValue, arg.TypeNode) : "null";
 
         public string GetParameterWithDefault()
         {
@@ -31,7 +32,7 @@ namespace GraphLinqQL.CodeGeneration
             var getValue = nullable
                 ? $"(parameters.HasParameter(\"{fieldName}\") ? parameters.GetParameter<{inputTypeName}>(\"{fieldName}\") : null)"
                 : $"parameters.GetParameter<{inputTypeName}>(\"{fieldName}\")";
-            var defaultValueExpression = arg.DefaultValue != null ? $" ?? {options.ValueResolver.Resolve(arg.DefaultValue, options)}" : "";
+            var defaultValueExpression = arg.DefaultValue != null ? $" ?? {options.Resolve(arg.DefaultValue, arg.TypeNode)}" : "";
             return $"{fieldName}: {getValue}{defaultValueExpression}";
         }
     }

@@ -30,7 +30,7 @@ namespace GraphLinqQL.CodeGeneration
                     var reason = obsolete.Arguments.FirstOrDefault(a => a.Name == "reason")?.Value;
                     if (reason != null)
                     {
-                        return options.ValueResolver.Resolve(reason, options);
+                        return options.Resolve(reason, new TypeName("String", new LocationRange()));
                     }
                     else
                     {
@@ -41,7 +41,7 @@ namespace GraphLinqQL.CodeGeneration
             }
         }
 
-        public string? TypeName => options.TypeResolver.Resolve(field.TypeNode, options);
+        public string? TypeName => options.Resolve(field.TypeNode);
 
         public IEnumerable<InputValueContext> Arguments
         {

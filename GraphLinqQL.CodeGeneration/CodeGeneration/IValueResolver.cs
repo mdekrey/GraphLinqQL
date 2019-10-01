@@ -4,6 +4,6 @@ namespace GraphLinqQL.CodeGeneration
 {
     public interface IValueResolver
     {
-        string Resolve(IValueNode reason, GraphQLGenerationOptions options);
+        string Resolve(IValueNode reason, ITypeNode typeNode, GraphQLGenerationOptions options);
     }
 }

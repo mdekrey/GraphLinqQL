@@ -10,7 +10,7 @@ namespace Introspection
 		private static readonly ImmutableDictionary<string, Type> types = new Dictionary<string, Type>
 		{
 			{{each declaration in model.GetTypeDeclarations()}}
-				{ "{{= declaration.Label }}", typeof({{= declaration.TypeName}}) },
+				{ "{{= declaration.Label }}", typeof(Introspection.{{= declaration.TypeName}}) },
 			{{/each}}
 		}.ToImmutableDictionary();
 	    private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
@@ -23,7 +23,10 @@ namespace Introspection
 										 },
                                          args: new GraphQlInputFieldInformation[] {
 											{{each arg in directive.Arguments}}
-												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", type: typeof({{=arg.TypeNameNonNull}}), description: @"{{= directive.Description.Replace("\"", "\"\"") }}", defaultValue: "{{= arg.DefaultValue}}"),
+												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", 
+																				 type: typeof({{=arg.TypeNameNonNull}}), 
+																				 description: @"{{= arg.Description.Replace("\"", "\"\"") }}", 
+																				 defaultValue: {{= arg.DefaultValue}}),
 											{{/each}}
                                          },
                                          description: @"{{= directive.Description.Replace("\"", "\"\"") }}"),

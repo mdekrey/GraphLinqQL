@@ -15,9 +15,9 @@ namespace GraphLinqQL.CodeGeneration
 
         public string? Description => field.Description;
 
-        public string? TypeName => options.TypeResolver.Resolve(field.TypeNode, options);
+        public string? TypeName => options.Resolve(field.TypeNode);
         public string PropertyName => CSharpNaming.GetPropertyName(field.Name);
 
-        public string? DefaultValue => field.DefaultValue == null ? null : options.ValueResolver.Resolve(field.DefaultValue, options);
+        public string? DefaultValue => field.DefaultValue == null ? null : options.Resolve(field.DefaultValue, field.TypeNode);
     }
 }
