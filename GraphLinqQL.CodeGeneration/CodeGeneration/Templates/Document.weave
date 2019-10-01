@@ -20,7 +20,7 @@ namespace {{= model.Namespace}}
 			{
 				{{each scalarType in model.ScalarTypes}}
 					case "{{= scalarType.Label }}":
-						return typeof({{= scalarType.TypeName }});
+						return typeof({{= scalarType.MappedTypeName }});
 				{{/each}}
 				{{each inputObjectType in model.InputObjectTypes}}
 					case "{{= inputObjectType.Label }}":

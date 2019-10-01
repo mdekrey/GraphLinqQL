@@ -1,0 +1,24 @@
+﻿@model EnumTypeContext
+@classname EnumTypeGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{= "" }}
+{{if !string.IsNullOrEmpty(model.Description)}}
+/// <summary>
+/// {{= model.Description.Docblock(indentation) }}
+/// </summary>
+{{/if}}
+public enum {{= model.TypeName }}
+{
+	{{each value in model.EnumValues}}
+		{{if value.IsDeprecated}}
+			[Obsolete({{=value.DeprecationReason}})]
+		{{/if}}
+		{{if !string.IsNullOrEmpty(value.Description)}}
+			/// <summary>
+			/// {{= value.Description.Docblock(indentation) }}
+			/// </summary>
+		{{/if}}
+		{{= value.Name }},
+		{{=""}}
+	{{/each}}
+}

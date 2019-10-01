@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Ast.Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,11 +9,13 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly FieldDefinition field;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public ObjectFieldContext(FieldDefinition field, GraphQLGenerationOptions options)
+        public ObjectFieldContext(FieldDefinition field, GraphQLGenerationOptions options, Document document)
         {
             this.field = field;
             this.options = options;
+            this.document = document;
         }
         public string? Description => field.Description;
 
@@ -20,28 +23,12 @@ namespace GraphLinqQL.CodeGeneration
 
         public string Name => CSharpNaming.GetPropertyName(field.Name);
 
-        public string? DeprecationReason
-        {
-            get
-            {
-                var obsolete = field.Directives.FirstOrDefault(d => d.Name == "Obsolete");
-                if (obsolete != null)
-                {
-                    var reason = obsolete.Arguments.FirstOrDefault(a => a.Name == "reason")?.Value;
-                    if (reason != null)
-                    {
-                        return options.Resolve(reason, new TypeName("String", new LocationRange()));
-                    }
-                    else
-                    {
-                        return "";
-                    }
-                }
-                return null;
-            }
-        }
+        public bool IsDeprecated => field.Directives.FindObsoleteDirective() != null;
+        public string? DeprecationReason => field.Directives.FindObsoleteDirective()?.ObsoleteReason(options);
 
-        public string? TypeName => options.Resolve(field.TypeNode);
+        public string? TypeName => options.Resolve(field.TypeNode, document: document);
+
+        public string IntrospectionType => options.ResolveIntrospection(field.TypeNode);
 
         public IEnumerable<InputValueContext> Arguments
         {

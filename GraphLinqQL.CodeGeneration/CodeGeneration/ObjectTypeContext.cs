@@ -8,12 +8,16 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly ObjectTypeDefinition declaration;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public ObjectTypeContext(ObjectTypeDefinition declaration, GraphQLGenerationOptions options)
+        public ObjectTypeContext(ObjectTypeDefinition declaration, GraphQLGenerationOptions options, Document document)
         {
             this.declaration = declaration;
             this.options = options;
+            this.document = document;
         }
+
+        public GraphQLGenerationOptions Options => options;
 
         public string Label => declaration.Name;
         public string TypeName => CSharpNaming.GetTypeName(declaration.Name);
@@ -42,7 +46,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var field in declaration.Fields)
                 {
-                    yield return new ObjectFieldContext(field, options);
+                    yield return new ObjectFieldContext(field, options, document);
                 }
             }
         }
@@ -58,5 +62,13 @@ namespace GraphLinqQL.CodeGeneration
                 }
             }
         }
+
+        public string TypeKind => "Object";
+
+        public IEnumerable<string>? PossibleTypes => null;
+
+        public IEnumerable<EnumValueContext>? EnumValues => null;
+
+        public IEnumerable<InputObjectFieldContext>? InputFields => null;
     }
 }

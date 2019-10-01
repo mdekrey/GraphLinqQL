@@ -33,13 +33,9 @@ namespace GraphLinqQL.CodeGeneration
         {
             get
             {
-                if (!options.ScalarTypes.Any(t => t.GraphQLType == "ID"))
-                {
-                    yield return new ScalarTypeContext("ID", "string");
-                }
                 foreach (var scalarType in options.ScalarTypes)
                 {
-                    yield return new ScalarTypeContext(scalarType.GraphQLType, ToTypeName(scalarType));
+                    yield return new ScalarTypeContext(scalarType, options);
                 }
             }
         }
@@ -58,14 +54,14 @@ namespace GraphLinqQL.CodeGeneration
 
         public IEnumerable<ITypeDeclaration> GetTypeDeclarations()
         {
-            return document.Children.Select(def => def switch
+            return document.Children.Concat(options.ScalarTypes).Select(def => def switch
             {
-                ObjectTypeDefinition objectTypeDefinition => new ObjectTypeContext(objectTypeDefinition, options) as ITypeDeclaration,
+                ObjectTypeDefinition objectTypeDefinition => new ObjectTypeContext(objectTypeDefinition, options, document) as ITypeDeclaration,
                 InputObjectTypeDefinition inputObjectTypeDefinition => new InputObjectTypeContext(inputObjectTypeDefinition, options) as ITypeDeclaration,
-                InterfaceTypeDefinition interfaceTypeDefinition => new InterfaceTypeContext(interfaceTypeDefinition, options) as ITypeDeclaration,
+                InterfaceTypeDefinition interfaceTypeDefinition => new InterfaceTypeContext(interfaceTypeDefinition, options, document) as ITypeDeclaration,
                 EnumTypeDefinition enumTypeDefinition => new EnumTypeContext(enumTypeDefinition, options) as ITypeDeclaration,
                 UnionTypeDefinition unionTypeDefinition => new UnionTypeContext(unionTypeDefinition, options) as ITypeDeclaration,
-                ScalarTypeDefinition scalarTypeDefinition => new ScalarTypeContext(scalarTypeDefinition) as ITypeDeclaration,
+                ScalarTypeDefinition scalarTypeDefinition => new ScalarTypeContext(scalarTypeDefinition, options) as ITypeDeclaration,
                 _ => null
             })
                 .Where(v => v != null)!;
@@ -109,8 +105,7 @@ namespace GraphLinqQL.CodeGeneration
             get
             {
                 var unreferencedScalarTypes = document.Children.OfType<ScalarTypeDefinition>()
-                    .Where(def => !options.ScalarTypes.Select(scalarType => scalarType.GraphQLType).Contains(def.Name))
-                    .Where(def => def.Name != "ID") // ID is handled with defaults for easy overriding
+                    .Where(def => !options.ScalarTypes.Select(scalarType => scalarType.Name).Contains(def.Name))
                     .ToArray();
                 foreach (var unreferencedScalarType in unreferencedScalarTypes)
                 {

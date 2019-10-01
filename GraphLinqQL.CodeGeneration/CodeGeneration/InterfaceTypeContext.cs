@@ -8,12 +8,16 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly InterfaceTypeDefinition declaration;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public InterfaceTypeContext(InterfaceTypeDefinition interfaceTypeDefinition, GraphQLGenerationOptions options)
+        public InterfaceTypeContext(InterfaceTypeDefinition interfaceTypeDefinition, GraphQLGenerationOptions options, Document document)
         {
             this.declaration = interfaceTypeDefinition;
             this.options = options;
+            this.document = document;
         }
+
+        public GraphQLGenerationOptions Options => options;
 
         public void Write(TextWriter writer, string indentation)
         {
@@ -31,9 +35,19 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var field in declaration.Fields)
                 {
-                    yield return new ObjectFieldContext(field, options);
+                    yield return new ObjectFieldContext(field, options, document);
                 }
             }
         }
+
+        public string TypeKind => "Interface";
+
+        public IEnumerable<string>? ImplementedInterfaces => null;
+
+        public IEnumerable<string>? PossibleTypes => null;
+
+        public IEnumerable<EnumValueContext>? EnumValues => null;
+
+        public IEnumerable<InputObjectFieldContext>? InputFields => null;
     }
 }

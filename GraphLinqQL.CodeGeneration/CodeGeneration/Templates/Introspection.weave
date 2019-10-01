@@ -25,7 +25,7 @@ namespace Introspection
 											{{each arg in directive.Arguments}}
 												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", 
 																				 type: typeof({{=arg.TypeNameNonNull}}), 
-																				 description: @"{{= arg.Description.Replace("\"", "\"\"") }}", 
+																				 description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}}, 
 																				 defaultValue: {{= arg.DefaultValue}}),
 											{{/each}}
                                          },
@@ -48,6 +48,6 @@ namespace Introspection
 	}
 
 	{{each declaration in model.GetTypeDeclarations()}}
-		// TODO - {{= declaration.TypeName}}
+		{{= declaration.IntrospectionDeclaration(writer, indentation)}}
 	{{/each}}
 }

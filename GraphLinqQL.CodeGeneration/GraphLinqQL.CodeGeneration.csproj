@@ -9,9 +9,11 @@
 
   <ItemGroup>
     <None Remove="CodeGeneration\Templates\Document.weave" />
+    <None Remove="CodeGeneration\Templates\EnumType.weave" />
     <None Remove="CodeGeneration\Templates\InputType.weave" />
     <None Remove="CodeGeneration\Templates\InterfaceType.weave" />
     <None Remove="CodeGeneration\Templates\Introspection.weave" />
+    <None Remove="CodeGeneration\Templates\IntrospectionType.weave" />
     <None Remove="CodeGeneration\Templates\ObjectType.weave" />
   </ItemGroup>
 
@@ -30,7 +32,9 @@
 
   <ItemGroup>
     <WeaveTemplate Include="CodeGeneration\Templates\InterfaceType.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\IntrospectionType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\Introspection.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\EnumType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\ObjectType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\InputType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\Document.weave" />

@@ -16,10 +16,24 @@ namespace GraphLinqQL.CodeGeneration
             this.options = options;
         }
 
+        public GraphQLGenerationOptions Options => options;
+
         public string Label => declaration.Name;
         public string TypeName => CSharpNaming.GetTypeName(declaration.Name);
 
         public string? Description => declaration.Description;
+
+        public string TypeKind => "InputObject";
+
+        public IEnumerable<string>? ImplementedInterfaces => null;
+
+        public IEnumerable<string>? PossibleTypes => null;
+
+        IEnumerable<ObjectFieldContext>? ITypeDeclaration.Fields => null;
+
+        public IEnumerable<EnumValueContext>? EnumValues => null;
+
+        public IEnumerable<InputObjectFieldContext>? InputFields => Fields();
 
         public void Write(TextWriter writer, string indentation)
         {

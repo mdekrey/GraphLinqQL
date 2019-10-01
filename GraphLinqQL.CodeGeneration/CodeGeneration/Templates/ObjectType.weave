@@ -12,8 +12,8 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 	private {{= model.TypeName }}() { }
 
 	{{each field in model.Fields}}
-		{{if field.DeprecationReason != null}}
-		[Obsolete({{=field.DeprecationReason}})]
+		{{if field.IsDeprecated}}
+			[Obsolete({{=field.DeprecationReason}})]
 		{{/if}}
 		{{if !string.IsNullOrEmpty(field.Description)}}
 			/// <summary>

@@ -7,7 +7,7 @@
 /// {{= model.Description.Docblock(indentation) }}
 /// </summary>
 {{/if}}
-public interface {{= model.TypeName }}
+public interface {{= model.TypeName }} : IGraphQlResolvable
 {
 	{{each field in model.Fields}}
 		{{if field.DeprecationReason != null}}

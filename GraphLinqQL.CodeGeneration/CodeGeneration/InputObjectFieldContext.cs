@@ -1,4 +1,5 @@
-﻿using GraphLinqQL.Ast.Nodes;
+﻿using System;
+using GraphLinqQL.Ast.Nodes;
 
 namespace GraphLinqQL.CodeGeneration
 {
@@ -13,11 +14,15 @@ namespace GraphLinqQL.CodeGeneration
             this.options = options;
         }
 
+        public string Label => field.Name;
         public string? Description => field.Description;
 
         public string? TypeName => options.Resolve(field.TypeNode);
         public string PropertyName => CSharpNaming.GetPropertyName(field.Name);
 
-        public string? DefaultValue => field.DefaultValue == null ? null : options.Resolve(field.DefaultValue, field.TypeNode);
+        public string? DefaultValue => field.DefaultValue == null ? "null" : options.Resolve(field.DefaultValue, field.TypeNode);
+
+        public string IntrospectionType => options.ResolveIntrospection(field.TypeNode);
+
     }
 }

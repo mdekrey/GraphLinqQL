@@ -1,20 +1,20 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace GraphLinqQL.CodeGeneration
 {
     public interface ITypeDeclaration
     {
+        GraphQLGenerationOptions Options { get; }
         string Label { get; }
         string TypeName { get; }
+        string? Description { get; }
+        string TypeKind { get; }
+        IEnumerable<string>? ImplementedInterfaces { get; }
+        IEnumerable<string>? PossibleTypes { get; }
+        IEnumerable<ObjectFieldContext>? Fields { get; }
+        IEnumerable<EnumValueContext>? EnumValues { get; }
+        IEnumerable<InputObjectFieldContext>? InputFields { get; }
         void Write(TextWriter writer, string indentation);
-    }
-
-    public static class TypeDeclaration
-    {
-        public static string Declaration(this ITypeDeclaration typeDeclaration, TextWriter writer, string indentation)
-        {
-            typeDeclaration.Write(writer, indentation);
-            return "";
-        }
     }
 }

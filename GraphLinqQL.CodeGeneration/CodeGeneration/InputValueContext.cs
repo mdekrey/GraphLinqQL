@@ -23,6 +23,8 @@ namespace GraphLinqQL.CodeGeneration
 
         public string DefaultValue => arg.DefaultValue != null ? options.Resolve(arg.DefaultValue, arg.TypeNode) : "null";
 
+        public string IntrospectionType => options.ResolveIntrospection(arg.TypeNode);
+
         public string GetParameterWithDefault()
         {
             var fieldName = FieldName;

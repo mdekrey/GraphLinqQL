@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using GraphLinqQL.Ast.Nodes;
 
 namespace GraphLinqQL.CodeGeneration
@@ -13,12 +14,37 @@ namespace GraphLinqQL.CodeGeneration
             this.enumTypeDefinition = enumTypeDefinition;
             this.options = options;
         }
+        public GraphQLGenerationOptions Options => options;
+
         public string Label => enumTypeDefinition.Name;
         public string TypeName => CSharpNaming.GetTypeName(enumTypeDefinition.Name);
 
+        public string? Description => enumTypeDefinition.Description;
+
+        public string TypeKind => "Enum";
+
+        public IEnumerable<string>? ImplementedInterfaces => null;
+
+        public IEnumerable<string>? PossibleTypes => null;
+
+        public IEnumerable<ObjectFieldContext>? Fields => null;
+
+        public IEnumerable<EnumValueContext>? EnumValues
+        {
+            get
+            {
+                foreach (var entry in enumTypeDefinition.EnumValues)
+                {
+                    yield return new EnumValueContext(entry, options);
+                }
+            }
+        }
+
+        public IEnumerable<InputObjectFieldContext>? InputFields => null;
+
         public void Write(TextWriter writer, string indentation)
         {
-            writer.WriteLine($"// TODO - enum {TypeName}");
+            Templates.EnumTypeGenerator.RenderEnumType(this, writer, indentation);
         }
     }
 }
