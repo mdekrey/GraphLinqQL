@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.CommonTypes", "GraphLinqQL.CommonTypes\GraphLinqQL.CommonTypes.csproj", "{82E2EEB2-EA8F-4470-B197-A97D172D97DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Demo", "GraphLinqQL.Demo\GraphLinqQL.Demo.csproj", "{EF55CACA-FC01-48BE-B680-192769C334EF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC} = {040B7447-AF92-47E2-9747-3FD8C7F4A0AC}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Demo.Server", "GraphLinqQL.Demo.Server\GraphLinqQL.Demo.Server.csproj", "{4E8BFFD5-C8E1-4358-A2A8-2C5F93BA1CE7}"
 EndProject
@@ -21,8 +24,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Introspection", "GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj", "{76E197C5-9758-4800-9E4E-E7FC05301584}"
+	ProjectSection(ProjectDependencies) = postProject
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC} = {040B7447-AF92-47E2-9747-3FD8C7F4A0AC}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Demo.EntityFramework", "GraphLinqQL.Demo.EntityFramework\GraphLinqQL.Demo.EntityFramework.csproj", "{F8254753-CA00-4E32-990E-206782DB71FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC} = {040B7447-AF92-47E2-9747-3FD8C7F4A0AC}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Execution", "GraphLinqQL.Execution\GraphLinqQL.Execution.csproj", "{2AE5B1E3-9C10-4018-B62B-159F8A359397}"
 EndProject
@@ -37,6 +46,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Ast", "GraphLinqQL.Ast\GraphLinqQL.Ast.csproj", "{E4F84764-6BF2-436A-AB79-093CEF304070}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Ast.Test", "GraphLinqQL.Ast.Test\GraphLinqQL.Ast.Test.csproj", "{4B6BC7BB-5241-4844-BB2A-F53BE102AB75}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.CodeGeneration", "GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj", "{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +107,10 @@ Global
 		{4B6BC7BB-5241-4844-BB2A-F53BE102AB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B6BC7BB-5241-4844-BB2A-F53BE102AB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B6BC7BB-5241-4844-BB2A-F53BE102AB75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

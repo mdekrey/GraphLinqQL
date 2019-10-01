@@ -286,6 +286,17 @@ namespace GraphLinqQL.Ast
             );
         }
 
+        public override INode VisitDirectiveDefinition([NotNull] GraphqlParser.DirectiveDefinitionContext context)
+        {
+            return new DirectiveDefinition(
+                context.name().GetText(),
+                MaybeGetDescription(context.description()),
+                GetDirectiveLocations(context),
+                context.argumentsDefinition()?.inputValueDefinition().Select(Visit).Cast<InputValueDefinition>(),
+                context.Location()
+            );
+        }
+
         public override INode VisitEnumTypeDefinition([NotNull] GraphqlParser.EnumTypeDefinitionContext context)
         {
             return new EnumTypeDefinition(
@@ -347,6 +358,16 @@ namespace GraphLinqQL.Ast
             {
                 yield return (TypeName)Visit(current.typeName());
                 current = current.unionMembers();
+            }
+        }
+
+        private IEnumerable<string> GetDirectiveLocations(GraphqlParser.DirectiveDefinitionContext directive)
+        {
+            var current = directive.directiveLocations();
+            while (current != null)
+            {
+                yield return current.directiveLocation().name().GetText();
+                current = current.directiveLocations();
             }
         }
 

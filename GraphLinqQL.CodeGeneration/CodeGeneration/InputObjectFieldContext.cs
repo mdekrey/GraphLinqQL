@@ -1,0 +1,23 @@
+﻿using GraphLinqQL.Ast.Nodes;
+
+namespace GraphLinqQL.CodeGeneration
+{
+    public readonly struct InputObjectFieldContext
+    {
+        private readonly InputValueDefinition field;
+        private readonly GraphQLGenerationOptions options;
+
+        public InputObjectFieldContext(InputValueDefinition field, GraphQLGenerationOptions options)
+        {
+            this.field = field;
+            this.options = options;
+        }
+
+        public string? Description => field.Description;
+
+        public string? TypeName => options.TypeResolver.Resolve(field.TypeNode, options);
+        public string PropertyName => CSharpNaming.GetPropertyName(field.Name);
+
+        public string? DefaultValue => field.DefaultValue == null ? null : options.ValueResolver.Resolve(field.DefaultValue, options);
+    }
+}

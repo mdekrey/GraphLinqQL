@@ -1,0 +1,24 @@
+﻿@model InterfaceTypeContext
+@classname InterfaceTypeGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{= "" }}
+{{if !string.IsNullOrEmpty(model.Description)}}
+/// <summary>
+/// {{= model.Description.Docblock(indentation) }}
+/// </summary>
+{{/if}}
+public interface {{= model.TypeName }}
+{
+	{{each field in model.Fields}}
+		{{if field.DeprecationReason != null}}
+		[Obsolete({{=field.DeprecationReason}})]
+		{{/if}}
+		{{if !string.IsNullOrEmpty(field.Description)}}
+			/// <summary>
+			/// {{= field.Description.Docblock(indentation) }}
+			/// </summary>
+		{{/if}}
+		IGraphQlResult{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
+		{{=""}}
+	{{/each}}
+}

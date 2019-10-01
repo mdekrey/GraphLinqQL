@@ -1,0 +1,40 @@
+﻿@model DocumentContext
+@classname GenerateGraphQLSchemaCode
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{each ns in model.UsingStatements}}
+using {{= ns }};
+{{/each}}
+{{if model.Nullability}}
+#nullable enable
+#nullable disable warnings
+{{/if}}
+#pragma warning disable CS0618 // Type or member is obsolete. (Don't check these in the generated file because it only calls itself.)
+
+namespace {{= model.Namespace}}
+{
+	public class TypeResolver : IGraphQlTypeResolver
+	{
+		public Type Resolve(string name)
+		{
+			switch (name)
+			{
+				{{each scalarType in model.ScalarTypes}}
+					case "{{= scalarType.Label }}":
+						return typeof({{= scalarType.TypeName }});
+				{{/each}}
+				{{each inputObjectType in model.InputObjectTypes}}
+					case "{{= inputObjectType.Label }}":
+						return typeof({{= inputObjectType.TypeName }});
+				{{/each}}
+				default:
+					throw new ArgumentException("Unknown type " + name, "name");
+			}
+		}
+	}
+
+	{{each declaration in model.GetTypeDeclarations()}}
+		{{= declaration.Declaration(writer, indentation)}}
+	{{/each}}
+
+	{{= model.Introspection(writer, indentation)}}
+}

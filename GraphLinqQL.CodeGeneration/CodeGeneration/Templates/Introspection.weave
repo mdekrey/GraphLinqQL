@@ -1,0 +1,50 @@
+﻿@model DocumentContext
+@classname IntrospectionNamespaceGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+
+
+namespace Introspection
+{
+	public class TypeListing : IGraphQlTypeListing
+	{
+		private static readonly ImmutableDictionary<string, Type> types = new Dictionary<string, Type>
+		{
+			{{each declaration in model.GetTypeDeclarations()}}
+				{ "{{= declaration.Label }}", typeof({{= declaration.TypeName}}) },
+			{{/each}}
+		}.ToImmutableDictionary();
+	    private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
+			{{each directive in model.Directives}}
+				new DirectiveInformation(name: "{{= directive.Label }}",
+                                         locations: new[] { 
+											{{each location in directive.Locations}}
+												DirectiveLocation.{{= location }}, 
+											{{/each}} 
+										 },
+                                         args: new GraphQlInputFieldInformation[] {
+											{{each arg in directive.Arguments}}
+												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", type: typeof({{=arg.TypeNameNonNull}}), description: @"{{= directive.Description.Replace("\"", "\"\"") }}", defaultValue: "{{= arg.DefaultValue}}"),
+											{{/each}}
+                                         },
+                                         description: @"{{= directive.Description.Replace("\"", "\"\"") }}"),
+			{{/each}}
+		};
+		
+		public Type Query { get { return {{= model.QueryTypeName }}; } }
+		public Type{{= model.Nullability ? "?" : ""}} Mutation { get { return {{= model.MutationTypeName }}; } }
+		public Type{{= model.Nullability ? "?" : ""}} Subscription { get { return {{= model.SubscriptionTypeName }}; } }
+
+		public IEnumerable<Type> TypeInformation { get { return types.Values; } }
+		public IEnumerable<DirectiveInformation> DirectiveInformation { get { return directives; } }
+
+		public Type{{= model.Nullability ? "?" : ""}} Type(string name)
+		{
+			Type type;
+			return types.TryGetValue(name, out type) ? type : null;
+		}
+	}
+
+	{{each declaration in model.GetTypeDeclarations()}}
+		// TODO - {{= declaration.TypeName}}
+	{{/each}}
+}

@@ -1,0 +1,51 @@
+﻿@model ObjectTypeContext
+@classname ObjectTypeGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{= "" }}
+{{if !string.IsNullOrEmpty(model.Description)}}
+/// <summary>
+/// {{= model.Description.Docblock(indentation) }}
+/// </summary>
+{{/if}}
+public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
+{
+	private {{= model.TypeName }}() { }
+
+	{{each field in model.Fields}}
+		{{if field.DeprecationReason != null}}
+		[Obsolete({{=field.DeprecationReason}})]
+		{{/if}}
+		{{if !string.IsNullOrEmpty(field.Description)}}
+			/// <summary>
+			/// {{= field.Description.Docblock(indentation) }}
+			/// </summary>
+		{{/if}}
+		public abstract IGraphQlResult{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
+		{{=""}}
+	{{/each}}
+	
+	IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters)
+	{
+		switch (name)
+		{
+			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}");
+			{{each field in model.Fields}}
+				case "{{= field.Label }}":
+					return this.{{= field.Name }}({{each arg in field.Arguments}}
+						{{= arg.GetParameterWithDefault() }}{{delimit}}, {{/each}});
+			{{/each}}
+			default: throw new ArgumentException("Unknown property " + name, "name");
+		};
+	}
+	
+	bool IGraphQlResolvable.IsType(string value)
+	{
+		return {{each validType in model.ValidTypes}}value == "{{= validType }}"{{delimit}} || {{/each}};
+	}
+	
+	public abstract class GraphQlContract<T> : {{= model.TypeName }}, IGraphQlAccepts<T>
+	{
+		public IGraphQlResultFactory<T> Original { get; set; }
+		IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+	}
+}

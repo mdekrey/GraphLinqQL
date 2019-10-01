@@ -15,21 +15,20 @@
     <AvailableItemName Include="GraphLinqQlSchema" DisplayName="GraphQL Schema (GraphLinqQL)" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
-    <PegasusAssemblyPath>$(MSBuildThisFileDirectory)netcoreapp2.0\Pegasus.dll</PegasusAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)netcoreapp3.0\GraphLinqQL.CodeGeneration.dll</GraphLinqQLCodeGenerationAssemblyPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
-    <PegasusAssemblyPath>$(MSBuildThisFileDirectory)net45\Pegasus.exe</PegasusAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)net45\GraphLinqQL.CodeGeneration.exe</GraphLinqQLCodeGenerationAssemblyPath>
   </PropertyGroup>
+  <UsingTask AssemblyFile="$(GraphLinqQLCodeGenerationAssemblyPath)" TaskName="CompileGraphLinqQLSchema" />
 
-  <Target Name="Test">
-    <Message Importance="high" Text="@(GraphLinqQlSchema)" />
+  <Target Name="NodeCompileGraphLinqQl" DependsOnTargets="_NodeCompileGraphLinqQl" Condition=" '@(GraphLinqQlSchema)' != '' ">
   </Target>
 
-  <Target Name="CompileGraphLinqQl" BeforeTargets="PrepareForBuild" AfterTargets="EnsureGraphLinqQlNodeEnv" DependsOnTargets="_CompileGraphLinqQl" Condition=" '@(GraphLinqQlSchema)' != '' ">
+  <Target Name="CompileGraphLinqQl" BeforeTargets="PrepareForBuild" DependsOnTargets="_CompileGraphLinqQl" Condition=" '@(GraphLinqQlSchema)' != '' ">
     <ItemGroup>
       <Compile Include="%(GraphLinqQlSchema.OutputPath)" />
     </ItemGroup>
-    <Message Importance="high" Text="@(Compile)" />
   </Target>
 
   <Target Name="_UpdateGraphLinqQlMetatdata">
@@ -51,6 +50,16 @@
   </Target>
 
   <Target Name="_CompileGraphLinqQl" DependsOnTargets="_UpdateGraphLinqQlMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GraphLinqQlSchema)" Outputs="@(GraphLinqQlSchema -> '%(OutputPath)')">
+    <CompileGraphLinqQLSchema InputFile="%(GraphLinqQlSchema.FullPath)"
+                              OutputFile="$(MSBuildProjectDirectory)/%(GraphLinqQlSchema.OutputPath)"
+                              Options="$(GraphLinqQLArguments)"
+                              Namespace="%(GraphLinqQlSchema.Namespace)"
+                              Condition=" '$(ProjectName)' != 'GraphLinqQL.CodeGeneration' " />
+
+    <Message Text="%(GraphLinqQlSchema.Identity) -> %(GraphLinqQlSchema.OutputPath)" />
+  </Target>
+
+  <Target Name="_NodeCompileGraphLinqQl" DependsOnTargets="_UpdateGraphLinqQlMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GraphLinqQlSchema)" Outputs="@(GraphLinqQlSchema -> '%(OutputPath)')">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />

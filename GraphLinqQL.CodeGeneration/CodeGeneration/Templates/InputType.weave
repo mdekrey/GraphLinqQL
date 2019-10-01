@@ -1,0 +1,20 @@
+﻿@model InputObjectTypeContext
+@classname InputObjectTypeGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{= "" }}
+{{if !string.IsNullOrEmpty(model.Description)}}
+/// <summary>
+/// {{= model.Description.Docblock(indentation) }}
+/// </summary>
+{{/if}}
+public class {{= model.TypeName }}
+{
+	{{each field in model.Fields()}}
+		{{if !string.IsNullOrEmpty(field.Description)}}
+			/// <summary>
+			/// {{= field.Description.Docblock(indentation) }}
+			/// </summary>
+			public {{= field.TypeName ?? "object"}} {{= field.PropertyName}} { get; set; }{{if !string.IsNullOrEmpty(field.DefaultValue)}}= {{= field.DefaultValue}};{{/if}}
+		{{/if}}
+	{{/each}}
+}

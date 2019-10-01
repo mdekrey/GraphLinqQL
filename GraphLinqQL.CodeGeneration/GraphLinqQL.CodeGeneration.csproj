@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CodeGeneration\Templates\Document.weave" />
+    <None Remove="CodeGeneration\Templates\InputType.weave" />
+    <None Remove="CodeGeneration\Templates\InterfaceType.weave" />
+    <None Remove="CodeGeneration\Templates\Introspection.weave" />
+    <None Remove="CodeGeneration\Templates\ObjectType.weave" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="14.3.0" />
+    <PackageReference Include="System.CodeDom" Version="4.4.0" Condition=" '$(TargetFramework)' != 'net45' " />
+    <PackageReference Include="Weave" Version="2.0.1-ci0008">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphLinqQL.Ast\GraphLinqQL.Ast.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WeaveTemplate Include="CodeGeneration\Templates\InterfaceType.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\Introspection.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\ObjectType.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\InputType.weave" />
+    <WeaveTemplate Include="CodeGeneration\Templates\Document.weave" />
+  </ItemGroup>
+
+</Project>

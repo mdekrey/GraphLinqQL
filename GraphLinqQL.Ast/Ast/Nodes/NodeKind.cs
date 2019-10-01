@@ -31,5 +31,6 @@
         SchemaDefinition,
         OperationTypeDefinition,
         ScalarTypeDefinition,
+        DirectiveDefinition,
     }
 }
