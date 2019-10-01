@@ -63,7 +63,7 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 								name: "{{= arg.Label }}",
 								type: typeof({{= arg.IntrospectionType }}),
 								description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
-								defaultValue: {{= arg.DefaultValue }}
+								defaultValue: {{= arg.JsonDefaultValue }}
 							),
 						{{/each}}
 					},
@@ -84,7 +84,7 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 					name: "{{= field.Label }}",
 					type: typeof({{= field.IntrospectionType }}),
 					description: {{if field.Description != null}}@"{{= field.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
-					defaultValue: {{= field.DefaultValue }}
+					defaultValue: {{= field.JsonDefaultValue }}
 				),
 			{{/each}}
 		};

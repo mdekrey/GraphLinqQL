@@ -33,18 +33,18 @@ namespace GraphLinqQL.CodeGeneration
 
         public IEnumerable<EnumValueContext>? EnumValues => null;
 
-        public IEnumerable<InputObjectFieldContext>? InputFields => Fields();
+        public IEnumerable<InputValueContext>? InputFields => Fields();
 
         public void Write(TextWriter writer, string indentation)
         {
             Templates.InputObjectTypeGenerator.RenderInputType(this, writer, indentation);
         }
 
-        public IEnumerable<InputObjectFieldContext> Fields()
+        public IEnumerable<InputValueContext> Fields()
         {
             foreach (var field in declaration.InputValues)
             {
-                yield return new InputObjectFieldContext(field, options);
+                yield return new InputValueContext(field, options);
             }
         }
     }

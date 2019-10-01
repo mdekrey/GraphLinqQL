@@ -26,7 +26,7 @@ namespace Introspection
 												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", 
 																				 type: typeof({{=arg.TypeNameNonNull}}), 
 																				 description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}}, 
-																				 defaultValue: {{= arg.DefaultValue}}),
+																				 defaultValue: {{= arg.JsonDefaultValue}}),
 											{{/each}}
                                          },
                                          description: @"{{= directive.Description.Replace("\"", "\"\"") }}"),

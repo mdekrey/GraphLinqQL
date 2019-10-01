@@ -48,6 +48,6 @@ namespace GraphLinqQL.CodeGeneration
 
         public IEnumerable<EnumValueContext>? EnumValues => null;
 
-        public IEnumerable<InputObjectFieldContext>? InputFields => null;
+        public IEnumerable<InputValueContext>? InputFields => null;
     }
 }

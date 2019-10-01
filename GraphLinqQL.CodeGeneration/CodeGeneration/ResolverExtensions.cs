@@ -18,6 +18,11 @@ namespace GraphLinqQL.CodeGeneration
             return options.ValueResolver.Resolve(value, typeNode, options);
         }
 
+        public static string ResolveJson(this GraphQLGenerationOptions options, IValueNode value, ITypeNode typeNode)
+        {
+            return options.ValueResolver.ResolveJson(value, typeNode, options);
+        }
+
         public static Directive? FindObsoleteDirective(this IReadOnlyList<Directive> directives)
         {
             return directives.FirstOrDefault(d => d.Name == "Obsolete")!;

@@ -14,7 +14,7 @@ namespace GraphLinqQL.CodeGeneration
         IEnumerable<string>? PossibleTypes { get; }
         IEnumerable<ObjectFieldContext>? Fields { get; }
         IEnumerable<EnumValueContext>? EnumValues { get; }
-        IEnumerable<InputObjectFieldContext>? InputFields { get; }
+        IEnumerable<InputValueContext>? InputFields { get; }
         void Write(TextWriter writer, string indentation);
     }
 }
