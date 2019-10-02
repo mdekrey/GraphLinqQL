@@ -264,7 +264,7 @@
                 {
                   "Kind": 5,
                   "Name": "locations",
-                  "Alias": "locations2:",
+                  "Alias": "locations2",
                   "SelectionSet": null,
                   "Arguments": [
                     {

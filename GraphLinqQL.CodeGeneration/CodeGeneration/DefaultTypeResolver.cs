@@ -41,8 +41,6 @@ namespace GraphLinqQL.CodeGeneration
             {
                 NonNullType _ => false,
                 ListType _ => true,
-                //TypeName { Name: var name } when document.Children.OfType<EnumTypeDefinition>().Any(u => u.Name == name) => false,
-                //TypeName { Name: var name } when options.ScalarTypeMappings.ContainsKey(name) => options.ScalarTypeMappings[name].CsharpNullable,
                 TypeName { Name: var name } => true,
                 _ => throw new InvalidOperationException($"Expected known type node, got {typeNode.GetType().FullName}"),
             };

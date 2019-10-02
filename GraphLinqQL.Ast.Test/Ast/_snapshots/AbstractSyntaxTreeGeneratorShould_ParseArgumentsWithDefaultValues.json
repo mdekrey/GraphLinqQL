@@ -225,7 +225,7 @@
                 {
                   "Kind": 5,
                   "Name": "location",
-                  "Alias": "avengersLocation:",
+                  "Alias": "avengersLocation",
                   "SelectionSet": null,
                   "Arguments": [
                     {

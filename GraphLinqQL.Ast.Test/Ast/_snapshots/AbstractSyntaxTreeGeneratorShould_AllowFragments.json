@@ -22,7 +22,7 @@
           {
             "Kind": 5,
             "Name": "hero",
-            "Alias": "leftComparison:",
+            "Alias": "leftComparison",
             "SelectionSet": {
               "Kind": 2,
               "Selections": [
@@ -98,7 +98,7 @@
           {
             "Kind": 5,
             "Name": "hero",
-            "Alias": "rightComparison:",
+            "Alias": "rightComparison",
             "SelectionSet": {
               "Kind": 2,
               "Selections": [

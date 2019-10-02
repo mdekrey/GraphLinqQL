@@ -22,7 +22,7 @@
           {
             "Kind": 5,
             "Name": "hero",
-            "Alias": "empireHero:",
+            "Alias": "empireHero",
             "SelectionSet": {
               "Kind": 2,
               "Selections": [
@@ -101,7 +101,7 @@
           {
             "Kind": 5,
             "Name": "hero",
-            "Alias": "jediHero:",
+            "Alias": "jediHero",
             "SelectionSet": {
               "Kind": 2,
               "Selections": [
