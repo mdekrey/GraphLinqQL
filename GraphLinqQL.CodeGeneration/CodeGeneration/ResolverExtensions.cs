@@ -8,19 +8,19 @@ namespace GraphLinqQL.CodeGeneration
 {
     public static class ResolverExtensions
     {
-        public static string Resolve(this GraphQLGenerationOptions options, ITypeNode typeNode, bool nullable = true, Document? document = null)
+        public static string Resolve(this GraphQLGenerationOptions options, ITypeNode typeNode, Document document, bool nullable = true)
         {
-            return options.TypeResolver.Resolve(typeNode, options, nullable, document);
+            return options.TypeResolver.Resolve(typeNode, options, document, nullable: nullable);
         }
 
-        public static string Resolve(this GraphQLGenerationOptions options, IValueNode value, ITypeNode typeNode)
+        public static string Resolve(this GraphQLGenerationOptions options, IValueNode value, ITypeNode typeNode, Document document)
         {
-            return options.ValueResolver.Resolve(value, typeNode, options);
+            return options.ValueResolver.Resolve(value, typeNode, options, document);
         }
 
-        public static string ResolveJson(this GraphQLGenerationOptions options, IValueNode value, ITypeNode typeNode)
+        public static string ResolveJson(this GraphQLGenerationOptions options, IValueNode value, ITypeNode typeNode, Document document)
         {
-            return options.ValueResolver.ResolveJson(value, typeNode, options);
+            return options.ValueResolver.ResolveJson(value, typeNode, options, document);
         }
 
         public static Directive? FindObsoleteDirective(this IReadOnlyList<Directive> directives)
@@ -28,12 +28,12 @@ namespace GraphLinqQL.CodeGeneration
             return directives.FirstOrDefault(d => d.Name == "Obsolete")!;
         }
 
-        public static string? ObsoleteReason(this Directive obsoleteDirective, GraphQLGenerationOptions options)
+        public static string? ObsoleteReason(this Directive obsoleteDirective, GraphQLGenerationOptions options, Document document)
         {
             var reason = obsoleteDirective.Arguments.FirstOrDefault(a => a.Name == "reason")?.Value;
             if (reason != null)
             {
-                return options.Resolve(reason, new TypeName("String", new LocationRange()));
+                return options.Resolve(reason, new TypeName("String", new LocationRange()), document);
             }
             return null;
         }

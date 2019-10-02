@@ -12,16 +12,16 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(string));
 
-        public virtual string Resolve(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options)
+        public virtual string Resolve(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options, Document document)
         {
             return value switch
             {
                 ArrayValue array when typeNode is ListType list =>
-                    $"new {options.Resolve(list.ElementType)} [] {{ {string.Join(", ", array.Values.Select(v => Resolve(v, list.ElementType, options)))} }}",
+                    $"new {options.Resolve(list.ElementType, document)} [] {{ {string.Join(", ", array.Values.Select(v => Resolve(v, list.ElementType, options, document)))} }}",
                 BooleanValue booleanValue =>
                     booleanValue.TokenValue == true ? "true" : "false",
                 EnumValue enumValue when typeNode is TypeName typeName =>
-                    $"{options.Namespace}.{options.Resolve(typeName, false)}.{enumValue.TokenValue}",
+                    $"{options.Namespace}.{options.Resolve(typeName, document, nullable: false)}.{enumValue.TokenValue}",
                 FloatValue floatValue =>
                     floatValue.TokenValue,
                 IntValue intValue =>
@@ -34,17 +34,17 @@ namespace GraphLinqQL.CodeGeneration
             };
         }
 
-        public virtual string ResolveJson(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options)
+        public virtual string ResolveJson(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options, Document document)
         {
-            return JsonEncode(InternalResolveJson(value, typeNode, options));
+            return JsonEncode(InternalResolveJson(value, typeNode, options, document));
         }
 
-        public virtual string InternalResolveJson(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options)
+        public virtual string InternalResolveJson(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options, Document document)
         {
             return value switch
             {
                 ArrayValue array when typeNode is ListType list =>
-                    $"[ {string.Join(", ", array.Values.Select(v => Resolve(v, list.ElementType, options)))} ]",
+                    $"[ {string.Join(", ", array.Values.Select(v => Resolve(v, list.ElementType, options, document)))} ]",
                 BooleanValue booleanValue =>
                     booleanValue.TokenValue == true ? "true" : "false",
                 EnumValue enumValue when typeNode is TypeName typeName =>

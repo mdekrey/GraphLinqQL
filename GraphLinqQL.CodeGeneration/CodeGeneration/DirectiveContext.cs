@@ -12,11 +12,13 @@ namespace GraphLinqQL.CodeGeneration
 
         private readonly DirectiveDefinition directive;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public DirectiveContext(DirectiveDefinition directive, GraphQLGenerationOptions options)
+        public DirectiveContext(DirectiveDefinition directive, GraphQLGenerationOptions options, Document document)
         {
             this.directive = directive;
             this.options = options;
+            this.document = document;
         }
 
         public string Label => directive.Name;
@@ -36,7 +38,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var arg in directive.Arguments)
                 {
-                    yield return new InputValueContext(arg, options);
+                    yield return new InputValueContext(arg, options, document);
                 }
             }
         }

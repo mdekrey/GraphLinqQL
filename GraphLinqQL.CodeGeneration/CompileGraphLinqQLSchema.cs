@@ -41,6 +41,8 @@ namespace GraphLinqQL
 
         public string Options { get; set; }
 
+        public float LanguageVersion { get; set; }
+
         /// <summary>
         /// Reads and compiles the specified grammars.
         /// </summary>
@@ -48,7 +50,7 @@ namespace GraphLinqQL
         public override bool Execute()
         {
             var inputs = this.InputFile;
-            CompileManager.CompileFile(this.InputFile, this.OutputFile, this.LogError, new GraphQLGenerationOptions { Namespace = Namespace });
+            CompileManager.CompileFile(this.InputFile, this.OutputFile, this.LogError, new GraphQLGenerationOptions { Namespace = Namespace, LanguageVersion = LanguageVersion });
 
             return !this.Log.HasLoggedErrors;
         }

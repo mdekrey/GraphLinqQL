@@ -9,11 +9,13 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly InputObjectTypeDefinition declaration;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public InputObjectTypeContext(InputObjectTypeDefinition declaration, GraphQLGenerationOptions options)
+        public InputObjectTypeContext(InputObjectTypeDefinition declaration, GraphQLGenerationOptions options, Document document)
         {
             this.declaration = declaration;
             this.options = options;
+            this.document = document;
         }
 
         public GraphQLGenerationOptions Options => options;
@@ -44,7 +46,7 @@ namespace GraphLinqQL.CodeGeneration
         {
             foreach (var field in declaration.InputValues)
             {
-                yield return new InputValueContext(field, options);
+                yield return new InputValueContext(field, options, document);
             }
         }
     }

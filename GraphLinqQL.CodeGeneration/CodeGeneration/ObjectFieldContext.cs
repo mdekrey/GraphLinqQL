@@ -24,7 +24,7 @@ namespace GraphLinqQL.CodeGeneration
         public string Name => CSharpNaming.GetPropertyName(field.Name);
 
         public bool IsDeprecated => field.Directives.FindObsoleteDirective() != null;
-        public string? DeprecationReason => field.Directives.FindObsoleteDirective()?.ObsoleteReason(options);
+        public string? DeprecationReason => field.Directives.FindObsoleteDirective()?.ObsoleteReason(options, document);
 
         public string? TypeName => options.Resolve(field.TypeNode, document: document);
 
@@ -36,7 +36,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var arg in field.Arguments)
                 {
-                    yield return new InputValueContext(arg, options);
+                    yield return new InputValueContext(arg, options, document);
                 }
             }
         }

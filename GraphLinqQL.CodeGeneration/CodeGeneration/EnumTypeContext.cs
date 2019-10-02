@@ -8,11 +8,13 @@ namespace GraphLinqQL.CodeGeneration
     {
         private readonly EnumTypeDefinition enumTypeDefinition;
         private readonly GraphQLGenerationOptions options;
+        private readonly Document document;
 
-        public EnumTypeContext(EnumTypeDefinition enumTypeDefinition, GraphQLGenerationOptions options)
+        public EnumTypeContext(EnumTypeDefinition enumTypeDefinition, GraphQLGenerationOptions options, Document document)
         {
             this.enumTypeDefinition = enumTypeDefinition;
             this.options = options;
+            this.document = document;
         }
         public GraphQLGenerationOptions Options => options;
 
@@ -35,7 +37,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var entry in enumTypeDefinition.EnumValues)
                 {
-                    yield return new EnumValueContext(entry, options);
+                    yield return new EnumValueContext(entry, options, document);
                 }
             }
         }

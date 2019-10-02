@@ -52,7 +52,7 @@
   <Target Name="_CompileGraphLinqQl" DependsOnTargets="_UpdateGraphLinqQlMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GraphLinqQlSchema)" Outputs="@(GraphLinqQlSchema -> '%(OutputPath)')">
     <CompileGraphLinqQLSchema InputFile="%(GraphLinqQlSchema.FullPath)"
                               OutputFile="$(MSBuildProjectDirectory)/%(GraphLinqQlSchema.OutputPath)"
-                              Options="$(GraphLinqQLArguments)"
+                              LanguageVersion="$(LangVersion)"
                               Namespace="%(GraphLinqQlSchema.Namespace)"
                               Condition=" '$(ProjectName)' != 'GraphLinqQL.CodeGeneration' " />
 

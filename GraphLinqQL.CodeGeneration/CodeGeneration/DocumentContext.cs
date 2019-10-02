@@ -46,7 +46,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var declaration in document.Children.OfType<InputObjectTypeDefinition>())
                 {
-                    yield return new InputObjectTypeContext(declaration, options);
+                    yield return new InputObjectTypeContext(declaration, options, document);
                 }
                 yield break;
             }
@@ -57,9 +57,9 @@ namespace GraphLinqQL.CodeGeneration
             return document.Children.Concat(options.ScalarTypes).Select(def => def switch
             {
                 ObjectTypeDefinition objectTypeDefinition => new ObjectTypeContext(objectTypeDefinition, options, document) as ITypeDeclaration,
-                InputObjectTypeDefinition inputObjectTypeDefinition => new InputObjectTypeContext(inputObjectTypeDefinition, options) as ITypeDeclaration,
+                InputObjectTypeDefinition inputObjectTypeDefinition => new InputObjectTypeContext(inputObjectTypeDefinition, options, document) as ITypeDeclaration,
                 InterfaceTypeDefinition interfaceTypeDefinition => new InterfaceTypeContext(interfaceTypeDefinition, options, document) as ITypeDeclaration,
-                EnumTypeDefinition enumTypeDefinition => new EnumTypeContext(enumTypeDefinition, options) as ITypeDeclaration,
+                EnumTypeDefinition enumTypeDefinition => new EnumTypeContext(enumTypeDefinition, options, document) as ITypeDeclaration,
                 UnionTypeDefinition unionTypeDefinition => new UnionTypeContext(unionTypeDefinition, options) as ITypeDeclaration,
                 ScalarTypeDefinition scalarTypeDefinition => new ScalarTypeContext(scalarTypeDefinition, options) as ITypeDeclaration,
                 _ => null
@@ -94,7 +94,7 @@ namespace GraphLinqQL.CodeGeneration
 
                 foreach (var directive in document.Children.OfType<DirectiveDefinition>())
                 {
-                    yield return new DirectiveContext(directive, options);
+                    yield return new DirectiveContext(directive, options, document);
                 }
 
             }

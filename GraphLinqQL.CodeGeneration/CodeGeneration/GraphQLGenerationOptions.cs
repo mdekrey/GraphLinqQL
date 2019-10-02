@@ -12,7 +12,7 @@ namespace GraphLinqQL.CodeGeneration
     {
         public string Namespace { get; set; } = "Unspecified";
 
-        public int LanguageVersion { get; set; } = 8;
+        public float LanguageVersion { get; set; } = 8;
 
         public IList<string> UsingStatements { get; set; } = new List<string>
         {

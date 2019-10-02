@@ -6,17 +6,17 @@ namespace GraphLinqQL.CodeGeneration
 {
     public class DefaultTypeResolver : ITypeResolver
     {
-        public string Resolve(ITypeNode typeNode, GraphQLGenerationOptions options, bool nullable = true, Document? document = null)
+        public string Resolve(ITypeNode typeNode, GraphQLGenerationOptions options, Document document, bool nullable = true)
         {
-            return GetTypeName(typeNode, options, nullable, document);
+            return GetTypeName(typeNode, options, document, nullable);
         }
 
-        public virtual string GetTypeName(ITypeNode typeNode, GraphQLGenerationOptions options, bool nullable = true, Document? document = null)
+        public virtual string GetTypeName(ITypeNode typeNode, GraphQLGenerationOptions options, Document document, bool nullable = true)
         {
             var nullability = nullable && options.ShowNullabilityIndicators() ? "?" : "";
             return typeNode switch
             {
-                NonNullType { BaseType: var baseType } => GetTypeName(baseType, options, false, document: document),
+                NonNullType { BaseType: var baseType } => GetTypeName(baseType, options, document, nullable: false),
                 ListType { ElementType: var elementType } => GetTypeName(elementType, options, document: document) switch
                 {
                     "" => $"IEnumerable{nullability}",
@@ -24,6 +24,7 @@ namespace GraphLinqQL.CodeGeneration
                 },
                 TypeName { Name: var name } when options.ScalarTypeMappings.ContainsKey(name) => GetScalarName(options.ScalarTypeMappings[name], options, nullable),
                 TypeName { Name: var name } when document != null && document.Children.OfType<UnionTypeDefinition>().Any(u => u.Name == name) => "",
+                TypeName { Name: var name } when document != null && document.Children.OfType<EnumTypeDefinition>().Any(u => u.Name == name) => CSharpNaming.GetTypeName(name) + (nullable ? "?" : ""),
                 TypeName { Name: var name } => CSharpNaming.GetTypeName(name) + nullability,
                 _ => throw new InvalidOperationException($"Expected known type node, got {typeNode.GetType().FullName}"),
             };
@@ -34,15 +35,15 @@ namespace GraphLinqQL.CodeGeneration
             return targetType.CsharpType + (nullable && (!targetType.CsharpNullable || options.ShowNullabilityIndicators()) ? "?" : "");
         }
 
-        public bool IsNullable(ITypeNode typeNode, GraphQLGenerationOptions options)
+        public bool IsNullable(ITypeNode typeNode, GraphQLGenerationOptions options, Document document)
         {
             return typeNode switch
             {
                 NonNullType _ => false,
                 ListType _ => true,
-                TypeName { Name: var name } => options.ScalarTypeMappings.ContainsKey(name)
-                    ? options.ScalarTypeMappings[name].CsharpNullable
-                    : true,
+                //TypeName { Name: var name } when document.Children.OfType<EnumTypeDefinition>().Any(u => u.Name == name) => false,
+                //TypeName { Name: var name } when options.ScalarTypeMappings.ContainsKey(name) => options.ScalarTypeMappings[name].CsharpNullable,
+                TypeName { Name: var name } => true,
                 _ => throw new InvalidOperationException($"Expected known type node, got {typeNode.GetType().FullName}"),
             };
         }
