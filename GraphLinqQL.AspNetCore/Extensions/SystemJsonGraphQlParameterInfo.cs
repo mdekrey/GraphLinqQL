@@ -24,9 +24,9 @@ namespace Microsoft.AspNetCore.Builder
             JsonSerializerOptions = jsonSerializerOptions;
         }
 
-        public T BindTo<T>(IGraphQlParameterResolver variableResolver)
+        public object? BindTo(Type t)
         {
-            return (T)JsonSerializer.Deserialize(Value.Span, typeof(T), JsonSerializerOptions);
+            return JsonSerializer.Deserialize(Value.Span, t, JsonSerializerOptions);
         }
     }
 }

@@ -10,32 +10,27 @@ namespace GraphLinqQL.Execution
     public class GraphQlParameterInfo : IGraphQlParameterInfo
     {
         private readonly IValueNode valueNode;
+        private readonly GraphQLExecutionContext context;
 
-        public GraphQlParameterInfo(IValueNode valueNode)
+        public GraphQlParameterInfo(IValueNode valueNode, GraphQLExecutionContext context)
         {
-            if (valueNode is Variable)
-            {
-                throw new ArgumentException("Cannot be a variable itself.", nameof(valueNode));
-            }
             this.valueNode = valueNode;
+            this.context = context;
         }
 
-        public T BindTo<T>(IGraphQlParameterResolver variableResolver)
+        public object? BindTo(Type type)
         {
-#pragma warning disable CS8601 // Possible null reference assignment.
-            return (T)ToObject(typeof(T), variableResolver);
-#pragma warning restore CS8601 // Possible null reference assignment.
+            return ToObject(type);
         }
 
-        private object? ToObject(Type type, IGraphQlParameterResolver variableResolver)
+        private object? ToObject(Type type)
         {
-            return Convert(valueNode, type, variableResolver);
+            return Convert(valueNode, type);
         }
 
-        private object? Convert(IValueNode valueNode, Type type, IGraphQlParameterResolver variableResolver)
+        private object? Convert(IValueNode valueNode, Type type)
         {
-            // TODO - variables, nullability
-            return new ValueConverter().Visit(valueNode, new ValueConverterContext(variableResolver.GetParameter<object>), type);
+            return new ValueConverter().Visit(valueNode, new ValueConverterContext((arg, t) => context.Arguments[arg].BindTo(t)), type);
         }
     }
 }

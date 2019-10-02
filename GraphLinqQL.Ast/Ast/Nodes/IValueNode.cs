@@ -12,12 +12,12 @@ namespace GraphLinqQL.Ast.Nodes
     public readonly struct ValueConverterContext
 #pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public ValueConverterContext(Func<string, object?> getVariableValues)
+        public ValueConverterContext(Func<string, Type, object?> getVariableValues)
         {
             GetVariableValues = getVariableValues;
         }
 
-        public Func<string, object?> GetVariableValues { get; }
+        public Func<string, Type, object?> GetVariableValues { get; }
     }
 
     public interface IValueConverter

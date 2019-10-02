@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace GraphLinqQL
 {
@@ -11,9 +12,9 @@ namespace GraphLinqQL
             this.json = json;
         }
 
-        public T BindTo<T>(IGraphQlParameterResolver variableResolver)
+        public object? BindTo(Type t)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject(json, t);
         }
     }
 }

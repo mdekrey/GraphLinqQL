@@ -11,7 +11,7 @@ namespace GraphLinqQL
 
     public interface IGraphQlParameterInfo
     {
-        T BindTo<T>(IGraphQlParameterResolver variableResolver);
+        object? BindTo(Type type);
     }
 
     public interface IGraphQlParameterResolverFactory

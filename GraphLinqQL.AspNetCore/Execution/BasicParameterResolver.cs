@@ -12,7 +12,7 @@ namespace GraphLinqQL.Execution
             this.parameters = parameters.ToImmutableDictionary();
         }
 
-        public T GetParameter<T>(string parameter) => parameters[parameter].BindTo<T>(this);
+        public T GetParameter<T>(string parameter) => (T)parameters[parameter].BindTo(typeof(T))!;
 
         public bool HasParameter(string parameter) => parameters.ContainsKey(parameter);
     }

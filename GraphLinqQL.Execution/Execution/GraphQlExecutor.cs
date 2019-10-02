@@ -95,18 +95,19 @@ namespace GraphLinqQL.Execution
             switch (resultNode)
             {
                 case Field field:
+                    var arguments = ResolveArguments(field.Arguments, context);
                     if (field.SelectionSet != null)
                     {
                         return builder.Add(
                             field.Alias ?? field.Name,
-                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(context.Arguments))
+                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(arguments))
                                         .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
                                 ).Build()
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, context.Arguments);
+                        return builder.Add(field.Alias ?? field.Name, field.Name, arguments);
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,
@@ -142,11 +143,16 @@ namespace GraphLinqQL.Execution
         private TNode? HandleDirective<TNode>(Directive directive, TNode node, GraphQLExecutionContext context)
             where TNode : class, INode
         {
-            var arguments = context.Arguments; //ResolveArguments(directive.Arguments, context);
+            var arguments = ResolveArguments(directive.Arguments, context);
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
             return actualDirective == null
                 ? node
                 : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
+        }
+
+        private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IReadOnlyList<Argument> arguments, GraphQLExecutionContext context)
+        {
+            return arguments.ToDictionary(arg => arg.Name, arg => (IGraphQlParameterInfo)new GraphQlParameterInfo(arg.Value, context));
         }
 
         #region IDisposable Support

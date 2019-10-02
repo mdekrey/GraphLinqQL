@@ -22,7 +22,7 @@ namespace GraphLinqQL.Execution
             this.rawData = rawData;
         }
 
-        public T GetParameter<T>(string parameter) => rawData[parameter].BindTo<T>(this);
+        public T GetParameter<T>(string parameter) => (T)rawData[parameter].BindTo(typeof(T))!;
 
         public bool HasParameter(string parameter) => rawData.ContainsKey(parameter);
     }
