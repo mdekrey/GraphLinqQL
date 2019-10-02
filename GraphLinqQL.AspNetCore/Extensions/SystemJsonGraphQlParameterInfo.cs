@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
         static readonly FieldInfo? JsonDocumentField = typeof(JsonElement).GetField("_parent", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo? JsonDocumentUtf8JsonField = typeof(JsonDocument).GetField("_utf8Json", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        ReadOnlyMemory<byte> Value { get; }
+        string Value { get; }
         JsonSerializerOptions? JsonSerializerOptions { get; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -19,14 +19,13 @@ namespace Microsoft.AspNetCore.Builder
         {
             if (JsonDocumentField == null) throw new InvalidOperationException(nameof(JsonDocumentField));
             if (JsonDocumentUtf8JsonField == null) throw new InvalidOperationException(nameof(JsonDocumentUtf8JsonField));
-            var jsonDocument = JsonDocumentField.GetValue(jsonElement);
-            Value = (ReadOnlyMemory<byte>)JsonDocumentUtf8JsonField.GetValue(jsonDocument)!;
+            Value = jsonElement.GetRawText();
             JsonSerializerOptions = jsonSerializerOptions;
         }
 
         public object? BindTo(Type t)
         {
-            return JsonSerializer.Deserialize(Value.Span, t, JsonSerializerOptions);
+            return JsonSerializer.Deserialize(Value, t, JsonSerializerOptions);
         }
     }
 }
