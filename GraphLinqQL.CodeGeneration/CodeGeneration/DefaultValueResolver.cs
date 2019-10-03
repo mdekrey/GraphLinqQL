@@ -44,7 +44,7 @@ namespace GraphLinqQL.CodeGeneration
             }
             return $@"new {options.Resolve(typeName, document, nullable: false)}
                     {{
-                        {objectValue.Fields.Select(field => $"{CSharpNaming.GetPropertyName(field.Key)} = {GetValue(field)}")}
+                        {objectValue.Fields.Select(field => @$"{CSharpNaming.GetPropertyName(field.Key)} = {GetValue(field)}, ")}
                     }}";
         }
 
@@ -68,10 +68,22 @@ namespace GraphLinqQL.CodeGeneration
                 IntValue intValue =>
                     intValue.TokenValue,
                 NullValue _ => "null",
-                ObjectValue objectValue => throw new NotImplementedException("Unable to cross-reference types with schema"), /* TODO */
+                ObjectValue objectValue when typeNode is TypeName typeName => RenderJsonObject(objectValue, typeName, options, document),
                 IStringValue stringValue => JsonEncode(stringValue.Text),
-                _ => "null /* TODO - add warning */"
+                _ => throw new InvalidOperationException($"Cannot render a JSON representation for the default value of type {value.Kind.ToString("g")} for type {options.Resolve(typeNode, document, nullable: false)}"),
             };
+        }
+
+        private string RenderJsonObject(ObjectValue objectValue, TypeName typeName, GraphQLGenerationOptions options, Document document)
+        {
+            var typeDefinition = document.Children.OfType<InputObjectTypeDefinition>().Single(def => def.Name == typeName.Name);
+            string GetValue(KeyValuePair<string, IValueNode> field)
+            {
+                return InternalResolveJson(field.Value, typeDefinition.InputValues.First(iv => iv.Name == field.Key).TypeNode, options, document);
+            }
+            return $@"{{
+                        {objectValue.Fields.Select(field => $"\"{CSharpNaming.GetPropertyName(field.Key)}\" {GetValue(field)},")}
+                    }}";
         }
 
         private string JsonEncode(string text)
