@@ -5,7 +5,6 @@
 
     <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
     <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
-    <GraphLinqQLArguments>--introspection</GraphLinqQLArguments>
   </PropertyGroup>
   <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
   <ItemGroup>

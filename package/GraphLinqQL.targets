@@ -6,7 +6,6 @@
     <BuildDependsOn>$(BuildDependsOn);CompileGraphLinqQl</BuildDependsOn>
     <CoreBuildDependsOn>$(CoreBuildDependsOn);CompileGraphLinqQl</CoreBuildDependsOn>
     <CleanDependsOn>$(CleanDependsOn);CleanGraphLinqQl</CleanDependsOn>
-    <GraphLinqQLArguments Condition=" '$(GraphLinqQLArguments)' == '' "></GraphLinqQLArguments>
   </PropertyGroup>
 
 

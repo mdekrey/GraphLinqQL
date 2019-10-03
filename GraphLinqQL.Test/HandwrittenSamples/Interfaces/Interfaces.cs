@@ -1,5 +1,4 @@
-﻿using GraphLinqQL.CommonTypes;
-using GraphLinqQL.Introspection;
+﻿using GraphLinqQL.Introspection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
@@ -105,7 +104,7 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
     public abstract class Hero : IGraphQlResolvable
     {
         internal Hero() { }
-        public abstract IGraphQlResult<GraphQlId> Id();
+        public abstract IGraphQlResult<string> Id();
         public abstract IGraphQlResult<string> Name();
         public abstract IGraphQlResult<double> Renown();
         public abstract IGraphQlResult<string> Faction();
@@ -144,7 +143,7 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
     public abstract class Villain : IGraphQlResolvable
     {
         internal Villain() { }
-        public abstract IGraphQlResult<GraphQlId> Id();
+        public abstract IGraphQlResult<string> Id();
         public abstract IGraphQlResult<string> Name();
         public abstract IGraphQlResult<string> Goal();
 

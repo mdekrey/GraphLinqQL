@@ -1,5 +1,4 @@
-﻿using GraphLinqQL.CommonTypes;
-using GraphLinqQL.HandwrittenSamples.Interfaces;
+﻿using GraphLinqQL.HandwrittenSamples.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,8 +62,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
             Original.Join(friends).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlResult<GraphQlId> Id() =>
-            Original.Resolve(hero => new GraphQlId(hero.Id));
+        public override IGraphQlResult<string> Id() =>
+            Original.Resolve(hero => hero.Id);
         public override IGraphQlResult<string> Location(string date) =>
             Original.Resolve(hero => $"Unknown ({date})");
         public override IGraphQlResult<string> Name() =>
@@ -103,8 +102,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(friends).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
             Original.Join(friends).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlResult<GraphQlId> Id() =>
-            Original.Join(hero).Resolve((_, hero) => new GraphQlId(hero.Id));
+        public override IGraphQlResult<string> Id() =>
+            Original.Join(hero).Resolve((_, hero) => hero.Id);
         public override IGraphQlResult<string> Location(string date) =>
             Original.Resolve(hero => $"Unknown ({date})");
         public override IGraphQlResult<string> Name() =>
@@ -118,8 +117,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         public override IGraphQlResult<string> Goal() =>
             Original.Resolve(villain => villain.Goal);
 
-        public override IGraphQlResult<GraphQlId> Id() =>
-            Original.Resolve(villain => new GraphQlId(villain.Id));
+        public override IGraphQlResult<string> Id() =>
+            Original.Resolve(villain => villain.Id);
 
         public override IGraphQlResult<string> Name() =>
             Original.Resolve(villain => villain.Name);

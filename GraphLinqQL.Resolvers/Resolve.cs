@@ -22,7 +22,7 @@ namespace GraphLinqQL
 
         public static object InvokeResult(IGraphQlResult resolved, object input)
         {
-            if (resolved.Joins != null)
+            if (resolved.Joins.Any())
             {
                 throw new InvalidOperationException("Cannot join at the root level");
             }
