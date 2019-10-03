@@ -22,7 +22,10 @@ namespace GraphLinqQL
 
         public static object InvokeResult(IGraphQlResult resolved, object input)
         {
-            // TODO - check if resolved has Joins
+            if (resolved.Joins != null)
+            {
+                throw new InvalidOperationException("Cannot join at the root level");
+            }
             var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
             return func.Compile()();
         }
