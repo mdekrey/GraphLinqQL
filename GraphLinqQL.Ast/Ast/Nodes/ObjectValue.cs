@@ -15,9 +15,9 @@ namespace GraphLinqQL.Ast.Nodes
 
         public IReadOnlyDictionary<string, IValueNode> Fields { get; }
 
-        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        public TResult AcceptConverter<TResult, TContext>(IValueVisitor<TResult, TContext> converter, TContext context)
         {
-            return converter.VisitObject(this, converterContext, expectedType, nullable);
+            return converter.VisitObject(this, context);
         }
     }
 }

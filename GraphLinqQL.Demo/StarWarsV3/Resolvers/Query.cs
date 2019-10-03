@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,5 +40,4 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
         public override IGraphQlResult<Interfaces.Starship?> starship(string id) =>
             Original.Resolve(_ => Domain.Data.starshipLookup[id]).AsContract<Starship>();
     }
-
 }

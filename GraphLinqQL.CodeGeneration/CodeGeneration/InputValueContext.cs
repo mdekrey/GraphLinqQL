@@ -24,7 +24,7 @@ namespace GraphLinqQL.CodeGeneration
         public string FieldName => CSharpNaming.GetFieldName(arg.Name);
         public string PropertyName => CSharpNaming.GetPropertyName(arg.Name);
 
-        public string DefaultValue => arg.DefaultValue != null ? options.Resolve(arg.DefaultValue, arg.TypeNode, document) : "null";
+        public string? DefaultValue => arg.DefaultValue != null ? options.Resolve(arg.DefaultValue, arg.TypeNode, document) : null;
         public string JsonDefaultValue => arg.DefaultValue != null ? options.ResolveJson(arg.DefaultValue, arg.TypeNode, document) : "null";
 
         public string IntrospectionType => options.ResolveIntrospection(arg.TypeNode);

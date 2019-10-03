@@ -15,9 +15,9 @@ namespace GraphLinqQL.Ast.Nodes
 
         public string Text => QuotedStringValue.Substring(3, QuotedStringValue.Length - 6).Replace("\\\"\"\"", "\"\"\"");
 
-        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        public TResult AcceptConverter<TResult, TContext>(IValueVisitor<TResult, TContext> converter, TContext context)
         {
-            return converter.VisitString((IStringValue)this, converterContext, expectedType, nullable);
+            return converter.VisitString((IStringValue)this, context);
         }
     }
 }

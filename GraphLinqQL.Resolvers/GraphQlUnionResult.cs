@@ -42,7 +42,7 @@ namespace GraphLinqQL
             new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
 
 
-        public IGraphQlResult AsContract(Type contract) => throw new NotImplementedException();
+        public IGraphQlResult AsContract(Type contract) => throw new NotSupportedException();
 
         public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<T> =>
             (IGraphQlResult<TContract>)AsContract(typeof(TContract));

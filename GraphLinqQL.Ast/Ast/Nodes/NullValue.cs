@@ -10,9 +10,9 @@ namespace GraphLinqQL.Ast.Nodes
 
         public override NodeKind Kind => NodeKind.NullValue;
 
-        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        public TResult AcceptConverter<TResult, TContext>(IValueVisitor<TResult, TContext> converter, TContext context)
         {
-            return converter.VisitNull(this, converterContext, expectedType, nullable);
+            return converter.VisitNull(this, context);
         }
     }
 }

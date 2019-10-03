@@ -30,7 +30,7 @@ namespace GraphLinqQL.Execution
 
         private object? Convert(IValueNode valueNode, Type type)
         {
-            return new ValueConverter().Visit(valueNode, new ValueConverterContext((arg, t) => context.Arguments[arg].BindTo(t)), type);
+            return new ValueConverter(context).Visit(valueNode, type);
         }
     }
 }

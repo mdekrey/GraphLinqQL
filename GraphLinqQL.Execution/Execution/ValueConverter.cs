@@ -7,24 +7,31 @@ using System.Text;
 
 namespace GraphLinqQL.Execution
 {
-    class ValueConverter : IValueConverter
+    class ValueConverter : IValueVisitor<object?, Type>
     {
-        public object? Visit(IValueNode value, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        private readonly GraphQLExecutionContext executionContext;
+
+        public ValueConverter(GraphQLExecutionContext executionContext)
         {
-            return value.AcceptConverter(this, converterContext, expectedType, nullable);
+            this.executionContext = executionContext;
         }
 
-        public object? VisitArray(ArrayValue arrayValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? Visit(IValueNode value, Type expectedType)
+        {
+            return value.AcceptConverter(this, expectedType);
+        }
+
+        public object? VisitArray(ArrayValue arrayValue, Type expectedType)
         {
             var elementType = TypeSystem.GetElementType(expectedType);
             if (elementType == expectedType)
             {
                 throw new ArgumentException($"Expected an array type, got {expectedType.FullName}", nameof(expectedType));
             }
-            return arrayValue.Values.Select(v => v.AcceptConverter(this, converterContext, expectedType));
+            return arrayValue.Values.Select(v => Visit(v, expectedType)).ToArray();
         }
 
-        public object? VisitBoolean(BooleanValue booleanValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitBoolean(BooleanValue booleanValue, Type expectedType)
         {
             if (expectedType == typeof(bool))
             {
@@ -40,20 +47,24 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        public object? VisitEnum(EnumValue enumValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitEnum(EnumValue enumValue, Type expectedType)
         {
             if (expectedType.IsEnum)
             {
                 return Enum.Parse(expectedType, enumValue.TokenValue);
             }
-            // TODO - nullable enum
-            else
+            else if (expectedType.IsConstructedGenericType && expectedType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                return Convert.ChangeType(enumValue.TokenValue, expectedType, CultureInfo.InvariantCulture);
+                var t = Nullable.GetUnderlyingType(expectedType);
+                if (t.IsEnum)
+                {
+                    return Activator.CreateInstance(expectedType, Enum.Parse(t, enumValue.TokenValue));
+                }
             }
+            return Convert.ChangeType(enumValue.TokenValue, expectedType, CultureInfo.InvariantCulture);
         }
 
-        public object? VisitFloat(FloatValue floatValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitFloat(FloatValue floatValue, Type expectedType)
         {
             if (expectedType == typeof(double))
             {
@@ -69,7 +80,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        public object? VisitInt(IntValue intValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitInt(IntValue intValue, Type expectedType)
         {
             if (expectedType == typeof(int))
             {
@@ -85,17 +96,23 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        public object? VisitNull(NullValue nullValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitNull(NullValue nullValue, Type expectedType)
         {
             return null;
         }
 
-        public object? VisitObject(ObjectValue objectValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitObject(ObjectValue objectValue, Type expectedType)
         {
-            throw new NotImplementedException();
+            var result = Activator.CreateInstance(expectedType);
+            foreach (var field in objectValue.Fields)
+            {
+                var property = expectedType.GetProperty(field.Key);
+                property.SetValue(result, Visit(field.Value, property.PropertyType));
+            }
+            return result;
         }
 
-        public object? VisitString(IStringValue stringValue, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitString(IStringValue stringValue, Type expectedType)
         {
             if (expectedType == typeof(string))
             {
@@ -107,15 +124,9 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        public object? VisitVariable(Variable variable, ValueConverterContext converterContext, Type expectedType, bool nullable)
+        public object? VisitVariable(Variable variable, Type expectedType)
         {
-            var result = converterContext.GetVariableValues(variable.Name, expectedType);
-            if (result == null && !nullable)
-            {
-                throw new ArgumentNullException(nameof(variable));
-            }
-            // TODO - maybe should type check this further?
-            return result;
+            return executionContext.Arguments[variable.Name].BindTo(expectedType);
         }
     }
 }

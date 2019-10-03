@@ -71,7 +71,8 @@ namespace GraphLinqQL.Execution
                 _ => throw new NotSupportedException()
             } ?? throw new NotSupportedException();
 
-            var context = new GraphQLExecutionContext(ast, arguments);
+            var actualArguments = def.Variables.ToDictionary(variable => variable.Variable.Name, variable => arguments.ContainsKey(variable.Variable.Name) ? arguments[variable.Variable.Name] : new GraphQlParameterInfo(variable.DefaultValue!, null!));
+            var context = new GraphQLExecutionContext(ast, actualArguments);
             return serviceProvider.GraphQlRoot(operation, builder =>
             {
                 return Build(builder, def.SelectionSet.Selections, context).Build();

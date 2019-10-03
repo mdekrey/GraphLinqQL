@@ -14,7 +14,7 @@ public class {{= model.TypeName }}
 			/// <summary>
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
-			public {{= field.TypeName ?? "object"}} {{= field.PropertyName}} { get; set; }{{if !string.IsNullOrEmpty(field.DefaultValue)}}= {{= field.DefaultValue}};{{/if}}
 		{{/if}}
+		public {{= field.TypeName ?? "object"}} {{= field.PropertyName}} { get; set; }{{if !string.IsNullOrEmpty(field.DefaultValue)}}= {{= field.DefaultValue}};{{/if}}
 	{{/each}}
 }

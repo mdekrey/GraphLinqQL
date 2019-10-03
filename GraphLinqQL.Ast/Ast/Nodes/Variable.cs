@@ -13,9 +13,9 @@ namespace GraphLinqQL.Ast.Nodes
 
         public string Name { get; }
 
-        public object? AcceptConverter(IValueConverter converter, ValueConverterContext converterContext, Type expectedType, bool nullable = true)
+        public TResult AcceptConverter<TResult, TContext>(IValueVisitor<TResult, TContext> converter, TContext context)
         {
-            return converter.VisitVariable(this, converterContext, expectedType, nullable);
+            return converter.VisitVariable(this, context);
         }
     }
 }
