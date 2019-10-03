@@ -11,3 +11,9 @@ work directly via the command line. The following commands work well:
     dotnet clean /nodeReuse:false
     msbuild /t:Build
     msbuild /t:Rebuild
+
+## Issues Building
+
+* `dotnet build /nodeReuse:false` needs to run twice due to the order it
+launches msbuild nodes. Building the CodeGeneration project first solves the
+issue.
