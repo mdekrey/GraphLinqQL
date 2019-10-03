@@ -80,11 +80,10 @@ namespace GraphLinqQL
         public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
             var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
-            // TODO - prevent non-primitives from being final return after adding. If this result is a non-primitive, client will be getting raw domain value!
-            //if (!IsGraphQlPrimitive(TypeSystem.GetElementType(result.ResultType) ?? result.ResultType))
-            //{
-            //    throw new InvalidOperationException("Cannot use simple resolution for complex type");
-            //}
+            if (result.Contract != null)
+            {
+                throw new InvalidOperationException("Cannot use simple resolution for complex type");
+            }
             return new ComplexResolverBuilder(contract, resolve, expressions
                 .Add(displayName ?? property, result), modelType, parameterResolverFactory);
         }
