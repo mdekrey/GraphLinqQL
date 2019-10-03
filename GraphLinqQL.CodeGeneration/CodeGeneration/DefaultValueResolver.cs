@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -27,11 +28,24 @@ namespace GraphLinqQL.CodeGeneration
                 IntValue intValue =>
                     intValue.TokenValue,
                 NullValue _ => "null",
-                ObjectValue objectValue => throw new NotImplementedException("Unable to cross-reference types with schema"), /* TODO */
+                ObjectValue objectValue when typeNode is TypeName typeName => RenderObjectInstantiation(objectValue, typeName, options, document),
                 StringValue stringValue => $@"@""{stringValue.Text.Replace("\"", "\"\"")}""",
                 TripleQuotedStringValue stringValue => $@"@""{stringValue.Text.Replace("\"", "\"\"")}""",
-                _ => "null /* TODO - add warning */"
+                _ => throw new InvalidOperationException($"Cannot render a C# representation for the default value of type {value.Kind.ToString("g")} for type {options.Resolve(typeNode, document, nullable: false)}"),
             };
+        }
+
+        private string RenderObjectInstantiation(ObjectValue objectValue, TypeName typeName, GraphQLGenerationOptions options, Document document)
+        {
+            var typeDefinition = document.Children.OfType<InputObjectTypeDefinition>().Single(def => def.Name == typeName.Name);
+            string GetValue(KeyValuePair<string, IValueNode> field)
+            {
+                return Resolve(field.Value, typeDefinition.InputValues.First(iv => iv.Name == field.Key).TypeNode, options, document);
+            }
+            return $@"new {options.Resolve(typeName, document, nullable: false)}
+                    {{
+                        {objectValue.Fields.Select(field => $"{CSharpNaming.GetPropertyName(field.Key)} = {GetValue(field)}")}
+                    }}";
         }
 
         public virtual string ResolveJson(IValueNode value, ITypeNode typeNode, GraphQLGenerationOptions options, Document document)
