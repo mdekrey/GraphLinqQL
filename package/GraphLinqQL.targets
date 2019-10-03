@@ -58,27 +58,4 @@
 
     <Message Text="%(GraphLinqQlSchema.Identity) -> %(GraphLinqQlSchema.OutputPath)" />
   </Target>
-
-  <Target Name="_NodeCompileGraphLinqQl" DependsOnTargets="_UpdateGraphLinqQlMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GraphLinqQlSchema)" Outputs="@(GraphLinqQlSchema -> '%(OutputPath)')">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm start -- -i %22%(GraphLinqQlSchema.FullPath)%22 -o %22$(MSBuildProjectDirectory)/%(GraphLinqQlSchema.OutputPath)%22 -n %22%(GraphLinqQlSchema.Namespace)%22 $(GraphLinqQLArguments)" />
-
-    <Message Text="%(GraphLinqQlSchema.Identity) -> %(GraphLinqQlSchema.OutputPath)" />
-  </Target>
-
-  <Target Name="EnsureGraphLinqQlNodeEnv" BeforeTargets="CoreCompile" Condition=" '$(ToolsRootDir)' != '' AND !Exists('$(ToolsRootDir)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(ToolsRootDir)" Command="npm install" />
-  </Target>
-
 </Project>

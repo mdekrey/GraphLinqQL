@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <BuildRootDir>$(MSBuildThisFileDirectory)</BuildRootDir>
-    <ToolsRootDir Condition=" '$(ToolsRootDir)' == '' ">$(MSBuildThisFileDirectory)GraphQlInterfaceGeneration/</ToolsRootDir>
     <RootNamespace>GraphLinqQL</RootNamespace>
     <LangVersion Condition=" '$(LangVersion)' == '' ">8.0</LangVersion>
     <Nullable Condition=" '$(Nullable)' == '' ">enable</Nullable>
