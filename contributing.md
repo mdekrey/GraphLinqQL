@@ -14,6 +14,9 @@ work directly via the command line. The following commands work well:
 
 ## Issues Building
 
-* `dotnet build /nodeReuse:false` needs to run twice due to the order it
-launches msbuild nodes. Building the CodeGeneration project first solves the
-issue.
+* If you use the `dotnet` cli, `dotnet build /nodeReuse:false` needs to run
+twice due to the order it launches msbuild nodes. Building the CodeGeneration
+project first solves the issue.
+* `docker` is required to download the GraphQL grammar and run Antlr. This
+seems like a more reliable path than installing the JDK and managing jar files
+during the msbuild process.
