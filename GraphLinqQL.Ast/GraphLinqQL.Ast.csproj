@@ -2,10 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <AntlrOutput>Antlr</AntlrOutput>
+    <AntlrOutputFile>$(AntlrOutput)/ast.g.cs</AntlrOutputFile>
   </PropertyGroup>
 
   <ItemGroup>
     <GenerationDockerfile Include="Generation\Dockerfile" />
+    <Compile Remove="$(AntlrOutputFile)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,42 +18,33 @@
   </ItemGroup>
 
 
-  <Target Name="CompileAst" BeforeTargets="PrepareForBuild" DependsOnTargets="_CompileAst" Condition=" '@(GenerationDockerfile)' != '' ">
+  <Target Name="ForceCleanAst">
+    <Delete Files="$(AntlrOutputFile)" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="CompileAst" BeforeTargets="PrepareForBuild" DependsOnTargets="_CompileAst">
     <ItemGroup>
-      <Compile Include="$(IntermediateOutputPath)ast.g.cs" />
+      <Compile Include="$(AntlrOutputFile)" />
     </ItemGroup>
     <Message Importance="high" Text="@(Compile)" />
   </Target>
 
-  <Target Name="_UpdateAstMetatdata">
-    <ItemGroup>
-      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Link)' != '' ">
-        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
-      </GenerationDockerfile>
-      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Link)' == '' ">
-        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
-      </GenerationDockerfile>
-      <GenerationDockerfile Condition=" '%(GenerationDockerfile.Namespace)' == '' ">
-        <Namespace>$(RootNamespace).$([System.Text.RegularExpressions.Regex]::Replace(%(GenerationDockerfile.RelativeDir), '[/\\\\]', '.'))Interfaces</Namespace>
-      </GenerationDockerfile>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="CleanAst" BeforeTargets="Clean" DependsOnTargets="_UpdateAstMetatdata">
+  <Target Name="CleanAst" BeforeTargets="Clean">
     <Exec Command="docker image rm graphlinqql-ast" ContinueOnError="true" />
-    <Delete Files="$(IntermediateOutputPath)ast.g.cs" ContinueOnError="true" />
+    <!-- Because not all paths build the file, do not clean it -->
+    <!-- <Delete Files="$(AntlrOutputFile)" ContinueOnError="true" /> -->
   </Target>
 
-  <Target Name="_CompileAst" DependsOnTargets="_UpdateAstMetatdata" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile)" Outputs="$(IntermediateOutputPath)ast.g.cs">
-    <Exec Command="docker --version" ContinueOnError="true">
+  <Target Name="_CompileAst" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile);@(WindowsGenerationDockerfile)" Outputs="$(AntlrOutputFile)">
+    <Exec Command="docker info --format &quot;{{ .OSType }}&quot;" ContinueOnError="true" ConsoleToMSBuild="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="DockerOsVersion" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Docker is required to build and run this project. To continue, please install Docker, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Rebuilding schema" />
-    <Exec WorkingDirectory="%(GenerationDockerfile.RootDir)%(GenerationDockerfile.Directory)" Command="docker build . -t graphlinqql-ast" IgnoreStandardErrorWarningFormat="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)" />
-    <Exec Command="docker run --rm -v %22$(MSBuildProjectDirectory)/$(IntermediateOutputPath):/dest%22 graphlinqql-ast" />
-    <Message Text="%(GenerationDockerfile.Identity) -&gt; $(IntermediateOutputPath)ast.g.cs" />
+    <Warning Condition="'$(DockerOsVersion)' != 'linux'" Text="Docker with linux containers is required to update the AST. To continue, please install Docker, and then restart your command prompt or IDE." />
+    <Exec Condition="'$(DockerOsVersion)' == 'linux'" WorkingDirectory="%(GenerationDockerfile.RootDir)%(GenerationDockerfile.Directory)" Command="docker build . -t graphlinqql-ast" IgnoreStandardErrorWarningFormat="true" />
+    <MakeDir Condition="'$(DockerOsVersion)' == 'linux'" Directories="$(MSBuildProjectDirectory)/$(AntlrOutput)" />
+    <Exec Condition="'$(DockerOsVersion)' == 'linux'" Command="docker run --rm -v %22$(MSBuildProjectDirectory)/$(AntlrOutput):/dest%22 graphlinqql-ast" />
+    <Message Condition="'$(DockerOsVersion)' == 'linux'" Text="antlr -&gt; $(AntlrOutput)" />
   </Target>
 
 </Project>
