@@ -13,12 +13,6 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DockerInstaller@0
-  inputs:
-    dockerVersion: '17.09.0-ce'
-- script: docker info --format '{{ json .OSType }}'
-  displayName: 'check docker OS'
-
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
