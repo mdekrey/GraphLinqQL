@@ -16,6 +16,10 @@ steps:
 - task: DockerInstaller@0
   inputs:
     dockerVersion: '17.09.0-ce'
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '3.0.x'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
