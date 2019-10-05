@@ -61,4 +61,4 @@ stages:
         command: 'push'
         packagesToPush: '$(Pipeline.Workspace)/packages/**/*-$(buildVersion).nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'Test'
+        publishVstsFeed: 'graphlinqql'
