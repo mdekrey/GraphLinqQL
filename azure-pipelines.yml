@@ -24,8 +24,12 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
+- task: CopyFiles@2
+  inputs:
+    contents: './**/*.nupkg'
+    targetFolder: $(Build.ArtifactStagingDirectory)
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: './**/*.nupkg'
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
     ArtifactName: 'packages'
     publishLocation: 'Container'
