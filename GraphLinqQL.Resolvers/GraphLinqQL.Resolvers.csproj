@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>GraphLinqQL Resolvers</Title>
+    <Description>
+      Library for resolving GraphQL queries. Integrates well with Entity Framework Core by helping you create
+      IQueryable objects from the passed GraphQL document and variables.
+
+      Contains MSBuild and dotnet CLI targets for generating GraphLinqQL C# from GraphQL schemas.
+
+      $(Description)
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

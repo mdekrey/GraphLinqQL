@@ -6,6 +6,16 @@
     <LangVersion Condition=" '$(LangVersion)' == '' ">8.0</LangVersion>
     <Nullable Condition=" '$(Nullable)' == '' ">enable</Nullable>
     <NoWarn>NU5105</NoWarn>
+
+    <Authors>Matt DeKrey</Authors>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Description>Part of the GraphLinqQL suite of libraries, which are designed to add C# support for GraphQL via creating LINQ queries.</Description>
+    <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mdekrey/GraphLinqQL</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mdekrey/GraphLinqQL.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>GraphQL;api;json;linq;IQueryable;dynamic;filter;query;generator</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,5 +29,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(BuildRootDir)\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
