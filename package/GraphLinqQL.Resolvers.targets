@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <AvailableItemName Include="GraphLinqQlSchema" DisplayName="GraphQL Schema (GraphLinqQL)" />
+    <GraphLinqQlSchema Include="*.graphql" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
     <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)netstandard2.0\GraphLinqQL.MsBuildTask.dll</GraphLinqQLCodeGenerationAssemblyPath>

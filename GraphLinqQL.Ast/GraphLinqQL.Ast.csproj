@@ -27,7 +27,6 @@
     <ItemGroup>
       <Compile Include="$(AntlrOutputFile)" />
     </ItemGroup>
-    <Message Importance="high" Text="@(Compile)" />
   </Target>
 
   <Target Name="CleanAst" BeforeTargets="Clean">
