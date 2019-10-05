@@ -11,7 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  buildVersion: 0.0.1.$(Build.BuildNumber)-alpha.1
+  buildVersion: 0.0.1-alpha.$(Build.BuildNumber)
 
 steps:
 - task: UseDotNet@2
