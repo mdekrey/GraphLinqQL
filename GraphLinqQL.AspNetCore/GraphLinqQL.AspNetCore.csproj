@@ -7,6 +7,12 @@
     <StartupObject />
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>GraphLinqQL for ASP.Net Core</Title>
+    <Description>
+      Library for integrating GraphLinqQL with ASP.Net Core to easily create GraphQL endpoints with C#.
+
+      $(Description)
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

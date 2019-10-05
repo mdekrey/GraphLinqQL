@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+    <Title>GraphLinqQL Execution Engine</Title>
+    <Description>
+      Library for executing GraphQL queries via GraphLinqQL.
+
+      $(Description)
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

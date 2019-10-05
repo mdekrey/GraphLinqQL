@@ -6,6 +6,12 @@
     <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
     <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>GraphLinqQL Introspection Support</Title>
+    <Description>
+      Library for supporting GraphQL Introspection for GraphLinqQL generated classes.
+
+      $(Description)
+    </Description>
   </PropertyGroup>
 
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />

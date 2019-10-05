@@ -11,7 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  buildVersion: 0.0.1-alpha.$(Build.BuildNumber)
+  buildVersion: ci.$(Build.BuildNumber)
 
 steps:
 - task: UseDotNet@2
@@ -19,9 +19,9 @@ steps:
     packageType: 'sdk'
     version: '3.0.x'
   displayName: 'Install dotnet SDK'
-- script: dotnet build --configuration $(buildConfiguration) -p:Version=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
+- script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
   displayName: 'Build MSBuild task'
-- script: dotnet build --configuration $(buildConfiguration) -p:Version=$(buildVersion)
+- script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion)
   displayName: 'Build rest of solution'
 
 - task: CopyFiles@2
