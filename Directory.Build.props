@@ -5,11 +5,12 @@
     <RootNamespace>GraphLinqQL</RootNamespace>
     <LangVersion Condition=" '$(LangVersion)' == '' ">8.0</LangVersion>
     <Nullable Condition=" '$(Nullable)' == '' ">enable</Nullable>
+    <NoWarn>NU5105</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
-    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)GraphLinqQL.CodeGeneration\bin\Debug\netcoreapp3.0\GraphLinqQL.CodeGeneration.dll</GraphLinqQLCodeGenerationAssemblyPath>
-    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)GraphLinqQL.CodeGeneration\bin\Debug\net45\GraphLinqQL.CodeGeneration.exe</GraphLinqQLCodeGenerationAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)GraphLinqQL.MsBuildTask\bin\$(Configuration)\netstandard2.0\GraphLinqQL.MsBuildTask.dll</GraphLinqQLCodeGenerationAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)GraphLinqQL.MsBuildTask\bin\$(Configuration)\net45\GraphLinqQL.MsBuildTask.dll</GraphLinqQLCodeGenerationAssemblyPath>
   </PropertyGroup>
   <!-- <Import Project="build\common.props" /> -->
 

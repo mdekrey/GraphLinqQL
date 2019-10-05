@@ -6,7 +6,7 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
     <None Remove="sw-schema.3.graphql" />

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,7 +10,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj" ReferenceOutputAssembly="false" PrivateAssets="All" />
   </ItemGroup>
 
+  <Target Name="ExcludeReferences" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="UpdatePackageOutput" BeforeTargets="_GetPackageFiles">
+    <PropertyGroup>
+      <CustomTaskPath>$(BuildRootDir)GraphLinqQL.MsBuildTask/$(OutputPath)</CustomTaskPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Content Include="$(CustomTaskPath)**/*.dll;$(CustomTaskPath)**/*.exe;$(CustomTaskPath)**/*.config;$(CustomTaskPath)**/*.json;$(CustomTaskPath)**/*.xml" Exclude="$(CustomTaskPath)**/Microsoft.Build.*">
+        <Pack>true</Pack>
+        <PackagePath>build/</PackagePath>
+      </Content>
+      <Content Include="$(BuildRootDir)package/**/*">
+        <Pack>true</Pack>
+        <PackagePath>build/</PackagePath>
+      </Content>
+    </ItemGroup>
+  </Target>
 </Project>

@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <AntlrOutput>Antlr</AntlrOutput>
     <AntlrOutputFile>$(AntlrOutput)/ast.g.cs</AntlrOutputFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,17 +27,19 @@
     <ItemGroup>
       <Compile Include="$(AntlrOutputFile)" />
     </ItemGroup>
-    <Message Importance="high" Text="@(Compile)" />
   </Target>
 
   <Target Name="CleanAst" BeforeTargets="Clean">
-    <Exec Command="docker image rm graphlinqql-ast" ContinueOnError="true" />
-    <!-- Because not all paths build the file, do not clean it -->
-    <!-- <Delete Files="$(AntlrOutputFile)" ContinueOnError="true" /> -->
+    <Exec Command="docker info --format &quot;{{ .OSType }}&quot;" ContinueOnError="true" ConsoleToMSBuild="true" StandardOutputImportance="low" StandardErrorImportance="low" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="DockerOsVersion" />
+    </Exec>
+    <Exec Condition="'$(DockerOsVersion)' == 'linux'" Command="docker image rm graphlinqql-ast" ContinueOnError="true" />
+    <Delete Condition="'$(DockerOsVersion)' == 'linux'" Files="$(AntlrOutputFile)" ContinueOnError="true" />
   </Target>
 
   <Target Name="_CompileAst" Inputs="$(MSBuildThisFileFullPath);$(MSBuildProjectFile);@(GenerationDockerfile);@(WindowsGenerationDockerfile)" Outputs="$(AntlrOutputFile)">
-    <Exec Command="docker info --format &quot;{{ .OSType }}&quot;" ContinueOnError="true" ConsoleToMSBuild="true">
+    <Exec Command="docker info --format &quot;{{ .OSType }}&quot;" ContinueOnError="true" ConsoleToMSBuild="true" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
       <Output TaskParameter="ConsoleOutput" PropertyName="DockerOsVersion" />
     </Exec>

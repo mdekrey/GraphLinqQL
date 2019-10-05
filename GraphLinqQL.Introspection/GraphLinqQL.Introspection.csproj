@@ -5,8 +5,10 @@
 
     <InputSchema>$(MSBuildProjectDirectory)/introspection.graphql</InputSchema>
     <OutputFile>$(MSBuildProjectDirectory)/interfaces.generated.cs</OutputFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
+
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>
     <GraphLinqQlSchema Include="Introspection\introspection.graphql" />
   </ItemGroup>
@@ -18,6 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj">
+      <ExcludeAssets>All</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

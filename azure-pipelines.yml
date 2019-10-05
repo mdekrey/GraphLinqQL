@@ -11,15 +11,27 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  buildVersion: 0.0.1-alpha.$(Build.BuildNumber)
 
 steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '3.0.x'
-- task: DotNetCoreCLI@2
+  displayName: 'Install dotnet SDK'
+- script: dotnet build --configuration $(buildConfiguration) -p:Version=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
+  displayName: 'Build MSBuild task'
+- script: dotnet build --configuration $(buildConfiguration) -p:Version=$(buildVersion)
+  displayName: 'Build rest of solution'
+
+- task: CopyFiles@2
   inputs:
-    command: 'build'
-    projects: './GraphLinqQL.CodeGeneration/GraphLinqQL.CodeGeneration.csproj'
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+    contents: '**\*.nupkg'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: 'Copy NuGet packages to staging directory'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
+    ArtifactName: 'packages'
+    publishLocation: 'Container'
+  displayName: 'Upload NuGet packages to pipeline artifacts'

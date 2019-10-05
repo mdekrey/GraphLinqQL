@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
 
   </PropertyGroup>
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.targets" />
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
     <None Remove="StarWarsV4\sw-schema.4.graphql" />

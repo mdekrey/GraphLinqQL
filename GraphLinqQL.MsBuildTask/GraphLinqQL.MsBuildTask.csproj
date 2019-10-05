@@ -19,14 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Weave" Version="2.0.1-ci0008">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="14.3.0" />
+    <PackageReference Include="System.CodeDom" Version="4.4.0" Condition=" '$(TargetFramework)' != 'net45' " />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphLinqQL.Ast\GraphLinqQL.Ast.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj" />
   </ItemGroup>
 
   <ItemGroup>
