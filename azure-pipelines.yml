@@ -6,32 +6,59 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'windows-latest'
-
 variables:
   buildConfiguration: 'Release'
   buildVersion: ci.$(Build.BuildNumber)
 
-steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '3.0.x'
-  displayName: 'Install dotnet SDK'
-- script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
-  displayName: 'Build MSBuild task'
-- script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion)
-  displayName: 'Build rest of solution'
+stages:
+- stage: 'Build'
+  jobs:
+  - job:
+    pool:
+      vmImage: 'windows-latest'
 
-- task: CopyFiles@2
-  inputs:
-    contents: '**\*.nupkg'
-    targetFolder: $(Build.ArtifactStagingDirectory)
-  displayName: 'Copy NuGet packages to staging directory'
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: 'packages'
-    publishLocation: 'Container'
-  displayName: 'Upload NuGet packages to pipeline artifacts'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.0.x'
+      displayName: 'Install dotnet SDK'
+    - script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
+      displayName: 'Build MSBuild task'
+    - script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion)
+      displayName: 'Build rest of solution'
+
+    - task: CopyFiles@2
+      inputs:
+        contents: '**\*.nupkg'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: 'Copy NuGet packages to staging directory'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: $(Build.ArtifactStagingDirectory)
+        ArtifactName: 'packages'
+        publishLocation: 'Container'
+      displayName: 'Upload NuGet packages to pipeline artifacts'
+
+- stage: 'PublishPrereleaseNuGetPackage'
+  displayName: 'Publish Prerelease NuGet Package'
+  dependsOn: 'Build'
+  condition: succeeded()
+  jobs:
+  - job:
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - checkout: none
+
+    - download: current
+      artifact: 'packages'
+
+    - task: NuGetCommand@2
+      displayName: 'Push NuGet Package'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/packages/**/*-$(buildVersion).nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'Test'
