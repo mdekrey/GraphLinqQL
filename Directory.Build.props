@@ -5,6 +5,7 @@
     <RootNamespace>GraphLinqQL</RootNamespace>
     <LangVersion Condition=" '$(LangVersion)' == '' ">8.0</LangVersion>
     <Nullable Condition=" '$(Nullable)' == '' ">enable</Nullable>
+    <NoWarn>NU5105</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

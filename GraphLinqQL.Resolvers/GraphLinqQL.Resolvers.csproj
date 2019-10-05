@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj" ReferenceOutputAssembly="false" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="ExcludeReferences" BeforeTargets="GenerateNuspec">
