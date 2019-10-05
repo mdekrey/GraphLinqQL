@@ -18,7 +18,7 @@ namespace GraphLinqQL.CodeGeneration
         {
             this.document = document;
             UsingStatements = options.UsingStatements.ToArray();
-            Filename = filename;
+            FileName = filename;
             this.options = options;
         }
 
@@ -27,7 +27,7 @@ namespace GraphLinqQL.CodeGeneration
         public bool Nullability => options.ShowNullabilityIndicators();
 
         public string Namespace => options.Namespace;
-        public string Filename { get; }
+        public string FileName { get; }
 
         public IEnumerable<ScalarTypeContext> ScalarTypes
         {
@@ -109,7 +109,7 @@ namespace GraphLinqQL.CodeGeneration
                     .ToArray();
                 foreach (var unreferencedScalarType in unreferencedScalarTypes)
                 {
-                    yield return new CompilerError(Filename, unreferencedScalarType.Location.Start.Line, unreferencedScalarType.Location.Start.Column, UnknownScalarTypeErrorCode, UnknownScalarTypeMessage(unreferencedScalarType.Name))
+                    yield return new CompilerError(FileName, unreferencedScalarType.Location.Start.Line, unreferencedScalarType.Location.Start.Column, UnknownScalarTypeErrorCode, UnknownScalarTypeMessage(unreferencedScalarType.Name))
                     {
                         IsWarning = true
                     };

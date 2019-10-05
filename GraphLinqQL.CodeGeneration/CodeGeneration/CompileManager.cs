@@ -1,6 +1,5 @@
 ﻿using GraphLinqQL.Ast;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -64,11 +63,7 @@ namespace GraphLinqQL.CodeGeneration
             output = Path.GetFullPath(output);
             input = Path.GetFullPath(input);
             var relativeUri = new Uri(output).MakeRelativeUri(new Uri(input));
-            return relativeUri.ToString().IndexOf('/'
-#if !NET45
-                , StringComparison.InvariantCulture
-#endif
-                ) != -1
+            return relativeUri.ToString().IndexOf('/') != -1
                 ? input
                 : Path.GetFileName(input);
         }

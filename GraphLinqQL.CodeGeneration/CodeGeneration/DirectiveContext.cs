@@ -25,12 +25,7 @@ namespace GraphLinqQL.CodeGeneration
         public string? Description => directive.Description;
         public IEnumerable<string> Locations =>
             directive.DirectiveLocations.Select(loc => regex.Replace(loc.ToLowerInvariant(), match =>
-#if !NET45
-                match.Value.Replace("_", "", System.StringComparison.InvariantCulture)
-#else
-                match.Value.Replace("_", "")
-#endif
-                    .ToUpperInvariant()));
+                match.Value.Replace("_", "").ToUpperInvariant()));
 
         public IEnumerable<InputValueContext> Arguments
         {

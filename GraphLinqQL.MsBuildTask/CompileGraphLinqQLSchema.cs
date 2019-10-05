@@ -55,7 +55,7 @@ namespace GraphLinqQL
             return !this.Log.HasLoggedErrors;
         }
 
-        private void LogError(CompilerError error)
+        private void LogError(CodeGeneration.CompilerError error)
         {
             if (error.IsWarning)
             {

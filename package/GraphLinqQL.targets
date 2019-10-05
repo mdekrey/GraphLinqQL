@@ -14,10 +14,10 @@
     <AvailableItemName Include="GraphLinqQlSchema" DisplayName="GraphQL Schema (GraphLinqQL)" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
-    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)netcoreapp3.0\GraphLinqQL.CodeGeneration.dll</GraphLinqQLCodeGenerationAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)netstandard2.0\GraphLinqQL.MsBuildTask.dll</GraphLinqQLCodeGenerationAssemblyPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
-    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)net45\GraphLinqQL.CodeGeneration.exe</GraphLinqQLCodeGenerationAssemblyPath>
+    <GraphLinqQLCodeGenerationAssemblyPath Condition=" '$(GraphLinqQLCodeGenerationAssemblyPath)' == '' ">$(MSBuildThisFileDirectory)net45\GraphLinqQL.MsBuildTask.dll</GraphLinqQLCodeGenerationAssemblyPath>
   </PropertyGroup>
   <UsingTask AssemblyFile="$(GraphLinqQLCodeGenerationAssemblyPath)" TaskName="CompileGraphLinqQLSchema" />
 
@@ -52,8 +52,7 @@
     <CompileGraphLinqQLSchema InputFile="%(GraphLinqQlSchema.FullPath)"
                               OutputFile="$(MSBuildProjectDirectory)/%(GraphLinqQlSchema.OutputPath)"
                               LanguageVersion="$(LangVersion)"
-                              Namespace="%(GraphLinqQlSchema.Namespace)"
-                              Condition=" '$(ProjectName)' != 'GraphLinqQL.CodeGeneration' " />
+                              Namespace="%(GraphLinqQlSchema.Namespace)" />
 
     <Message Text="%(GraphLinqQlSchema.Identity) -> %(GraphLinqQlSchema.OutputPath)" />
   </Target>
