@@ -6,9 +6,9 @@
 
     <Title>GraphLinqQL Execution Engine</Title>
     <Description>
-      Library for executing GraphQL queries via GraphLinqQL.
+Library for executing GraphQL queries via GraphLinqQL.
 
-      $(Description)
+$(Description)
     </Description>
   </PropertyGroup>
 

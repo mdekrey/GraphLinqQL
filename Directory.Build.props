@@ -8,7 +8,7 @@
     <NoWarn>NU5105</NoWarn>
 
     <Authors>Matt DeKrey</Authors>
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>0.0.2</VersionPrefix>
     <Description>Part of the GraphLinqQL suite of libraries, which are designed to add C# support for GraphQL via creating LINQ queries.</Description>
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/mdekrey/GraphLinqQL</PackageProjectUrl>

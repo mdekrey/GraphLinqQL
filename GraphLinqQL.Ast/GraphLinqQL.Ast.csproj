@@ -8,9 +8,9 @@
 
     <Title>GraphQL Abstract Syntax Tree for .Net</Title>
     <Description>
-      Includes a GraphQL AST, Parser, and Lexer based on Antlr4 for .Net Standard and Framework.
+Includes a GraphQL AST, Parser, and Lexer based on Antlr4 for .Net Standard and Framework.
 
-      $(Description)
+$(Description)
     </Description>
   </PropertyGroup>
 
