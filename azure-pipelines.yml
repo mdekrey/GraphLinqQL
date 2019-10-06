@@ -30,7 +30,7 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        contents: '**\*.nupkg'
+        contents: '**/*.nupkg'
         targetFolder: $(Build.ArtifactStagingDirectory)
       displayName: 'Copy NuGet packages to staging directory'
     - task: PublishBuildArtifacts@1
@@ -54,11 +54,12 @@ stages:
 
     - download: current
       artifact: 'packages'
+      displayName: 'Download nuget packages'
 
     - task: NuGetCommand@2
-      displayName: 'Push NuGet Package'
       inputs:
         command: 'push'
-        packagesToPush: '$(Pipeline.Workspace)/packages/**/*-$(buildVersion).nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*-$(buildVersion).nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'graphlinqql'
+        publishVstsFeed: '8010e35a-39ce-486e-bf93-b2d243b6782d'
+      displayName: 'Push Prerelease packages'
