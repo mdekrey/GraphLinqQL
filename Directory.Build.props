@@ -33,6 +33,8 @@
 
   <ItemGroup>
     <None Include="$(BuildRootDir)\icon.png">
+      <InProject>false</InProject>
+      <Visible>false</Visible>
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
