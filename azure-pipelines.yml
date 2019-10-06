@@ -59,7 +59,7 @@ stages:
     - task: NuGetCommand@2
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*-$(buildVersion).nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        packagesToPush: '$(Pipeline.Workspace)/packages/**/*-$(buildVersion).nupkg;!$(Pipeline.Workspace)/packages/**/*.symbols.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: '8010e35a-39ce-486e-bf93-b2d243b6782d'
       displayName: 'Push Prerelease packages'
