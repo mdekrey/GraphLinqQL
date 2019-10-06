@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <PackageType>DotnetCliTool</PackageType>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild Condition="'$(VersionSuffix)' != ''">True</GeneratePackageOnBuild>
     <Title>GraphLinqQL CLI</Title>
     <Description>
       A tool for converting a GraphQL schema to C# on the command line.

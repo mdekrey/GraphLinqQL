@@ -23,10 +23,12 @@ stages:
         packageType: 'sdk'
         version: '3.0.x'
       displayName: 'Install dotnet SDK'
-    - script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
+    - script: dotnet build /nodeReuse:false --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion) ./GraphLinqQL.MsBuildTask/GraphLinqQL.MsBuildTask.csproj
       displayName: 'Build MSBuild task'
-    - script: dotnet build --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion)
+    - script: dotnet build /nodeReuse:false --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion) --version-suffix=$(buildVersion)
       displayName: 'Build rest of solution'
+    - script: dotnet build /nodeReuse:false --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion)
+      displayName: 'Build release versions for solution'
 
     - task: CopyFiles@2
       inputs:
@@ -41,7 +43,7 @@ stages:
       displayName: 'Upload NuGet packages to pipeline artifacts'
 
 - stage: 'PublishPrereleaseNuGetPackage'
-  displayName: 'Publish Prerelease NuGet Package'
+  displayName: 'Publish Prerelease NuGet Packages'
   dependsOn: 'Build'
   condition: succeeded()
   jobs:
