@@ -23,7 +23,7 @@ namespace GraphLinqQL.Execution
             this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
         }
 
-        public object Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
+        public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
             var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
             var ast = astGenerator.ParseDocument(query);
@@ -61,7 +61,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private object Execute(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
+        private ExecutionResult Execute(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             var operation = def.OperationType switch
             {
@@ -96,11 +96,13 @@ namespace GraphLinqQL.Execution
             switch (resultNode)
             {
                 case Field field:
+                    var queryContext = new FieldContext(node.Location.ToQueryLocations());
                     var arguments = ResolveArguments(field.Arguments, context);
                     if (field.SelectionSet != null)
                     {
                         return builder.Add(
                             field.Alias ?? field.Name,
+                            queryContext,
                             b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(arguments))
                                         .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
                                 ).Build()
@@ -108,7 +110,7 @@ namespace GraphLinqQL.Execution
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, arguments);
+                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, arguments);
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,

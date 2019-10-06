@@ -12,7 +12,7 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static object GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
             var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
@@ -20,14 +20,15 @@ namespace GraphLinqQL
             return InvokeResult(resolved, new GraphQlRoot());
         }
 
-        public static object InvokeResult(IGraphQlResult resolved, object input)
+        public static ExecutionResult InvokeResult(IGraphQlResult resolved, object input)
         {
             if (resolved.Joins.Any())
             {
                 throw new InvalidOperationException("Cannot join at the root level");
             }
             var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
-            return func.Compile()();
+            // TODO - get errors here
+            return new ExecutionResult(false, func.Compile()(), EmptyArrayHelper.Empty<GraphQlError>());
         }
 
         public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)

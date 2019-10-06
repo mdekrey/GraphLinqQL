@@ -29,9 +29,9 @@ namespace GraphLinqQL
             this.resolvers = resolvers.ToImmutableList();
         }
 
-        public IComplexResolverBuilder Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)
+        public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(displayName, resolve)));
+            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(displayName, context, resolve)));
         }
 
         public IGraphQlResult Build()
@@ -48,14 +48,14 @@ namespace GraphLinqQL
             return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.IfType(value, typedBuilder)));
         }
 
-        public IComplexResolverBuilder Add(string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, parameters)));
+            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, context, parameters)));
         }
 
-        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, property, parameters)));
+            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, property, context, parameters)));
         }
     }
 }
