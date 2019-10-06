@@ -103,7 +103,7 @@ namespace GraphLinqQL.Execution
                         return builder.Add(
                             field.Alias ?? field.Name,
                             queryContext,
-                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(arguments))
+                            b => Build(b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments))
                                         .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
                                 ).Build()
                         );

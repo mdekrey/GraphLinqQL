@@ -64,27 +64,27 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
     public abstract class Query : IGraphQlResolvable
     {
         private Query() { }
-        public abstract IGraphQlResult<IEnumerable<Hero>> Heroes(int? first);
-        public abstract IGraphQlResult<IEnumerable<Hero>?> Nulls();
-        public abstract IGraphQlResult<Hero> Hero();
-        public abstract IGraphQlResult<Hero> HeroFinalized();
-        public abstract IGraphQlResult<Hero> HeroById(string id);
-        public abstract IGraphQlResult<Hero?> NoHero();
-        public abstract IGraphQlResult<double> Rand();
-        public abstract IGraphQlResult<IEnumerable?> Characters();
+        public abstract IGraphQlResult<IEnumerable<Hero>> Heroes(FieldContext fieldContext, int? first);
+        public abstract IGraphQlResult<IEnumerable<Hero>?> Nulls(FieldContext fieldContext);
+        public abstract IGraphQlResult<Hero> Hero(FieldContext fieldContext);
+        public abstract IGraphQlResult<Hero> HeroFinalized(FieldContext fieldContext);
+        public abstract IGraphQlResult<Hero> HeroById(FieldContext fieldContext, string id);
+        public abstract IGraphQlResult<Hero?> NoHero(FieldContext fieldContext);
+        public abstract IGraphQlResult<double> Rand(FieldContext fieldContext);
+        public abstract IGraphQlResult<IEnumerable?> Characters(FieldContext fieldContext);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Query"),
-                "characters" => Characters(),
-                "heroes" => Heroes(first: (parameters.HasParameter("first") ? parameters.GetParameter<int?>("first") : null)),
-                "nulls" => Nulls(),
-                "nohero" => NoHero(),
-                "hero" => Hero(),
-                "heroFinalized" => HeroFinalized(),
-                "heroById" => HeroById(id: (parameters.GetParameter<string>("id"))),
-                "rand" => Rand(),
+                "characters" => Characters(fieldContext),
+                "heroes" => Heroes(fieldContext, first: (parameters.HasParameter("first") ? parameters.GetParameter<int?>("first") : null)),
+                "nulls" => Nulls(fieldContext),
+                "nohero" => NoHero(fieldContext),
+                "hero" => Hero(fieldContext),
+                "heroFinalized" => HeroFinalized(fieldContext),
+                "heroById" => HeroById(fieldContext, id: (parameters.GetParameter<string>("id"))),
+                "rand" => Rand(fieldContext),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
 
@@ -104,25 +104,25 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
     public abstract class Hero : IGraphQlResolvable
     {
         internal Hero() { }
-        public abstract IGraphQlResult<string> Id();
-        public abstract IGraphQlResult<string> Name();
-        public abstract IGraphQlResult<double> Renown();
-        public abstract IGraphQlResult<string> Faction();
-        public abstract IGraphQlResult<IEnumerable<Hero>> Friends();
-        public abstract IGraphQlResult<IEnumerable<Hero>> FriendsDeferred();
-        public abstract IGraphQlResult<string> Location(string date);
+        public abstract IGraphQlResult<string> Id(FieldContext fieldContext);
+        public abstract IGraphQlResult<string> Name(FieldContext fieldContext);
+        public abstract IGraphQlResult<double> Renown(FieldContext fieldContext);
+        public abstract IGraphQlResult<string> Faction(FieldContext fieldContext);
+        public abstract IGraphQlResult<IEnumerable<Hero>> Friends(FieldContext fieldContext);
+        public abstract IGraphQlResult<IEnumerable<Hero>> FriendsDeferred(FieldContext fieldContext);
+        public abstract IGraphQlResult<string> Location(FieldContext fieldContext, string date);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Hero"),
-                "id" => Id(),
-                "name" => Name(),
-                "renown" => Renown(),
-                "faction" => Faction(),
-                "friends" => Friends(),
-                "friendsDeferred" => FriendsDeferred(),
-                "location" => Location(date: (parameters.HasParameter("date") ? parameters.GetParameter<string>("date") : null) ?? "2019-04-22"),
+                "id" => Id(fieldContext),
+                "name" => Name(fieldContext),
+                "renown" => Renown(fieldContext),
+                "faction" => Faction(fieldContext),
+                "friends" => Friends(fieldContext),
+                "friendsDeferred" => FriendsDeferred(fieldContext),
+                "location" => Location(fieldContext, date: (parameters.HasParameter("date") ? parameters.GetParameter<string>("date") : null) ?? "2019-04-22"),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
 
@@ -143,17 +143,17 @@ namespace GraphLinqQL.HandwrittenSamples.Interfaces
     public abstract class Villain : IGraphQlResolvable
     {
         internal Villain() { }
-        public abstract IGraphQlResult<string> Id();
-        public abstract IGraphQlResult<string> Name();
-        public abstract IGraphQlResult<string> Goal();
+        public abstract IGraphQlResult<string> Id(FieldContext fieldContext);
+        public abstract IGraphQlResult<string> Name(FieldContext fieldContext);
+        public abstract IGraphQlResult<string> Goal(FieldContext fieldContext);
 
-        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__typename" => GraphQlConstantResult.Construct("Villain"),
-                "id" => Id(),
-                "name" => Name(),
-                "goal" => Goal(),
+                "id" => Id(fieldContext),
+                "name" => Name(fieldContext),
+                "goal" => Goal(fieldContext),
                 _ => throw new ArgumentException("Unknown property " + name, nameof(name))
             };
 

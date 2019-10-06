@@ -114,7 +114,7 @@ namespace GraphLinqQL
             return GraphQlFinalizerResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
-        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
-            target.ResolveQuery(name, new NoParameterResolver());
+        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
+            target.ResolveQuery(name, fieldContext, new NoParameterResolver());
     }
 }

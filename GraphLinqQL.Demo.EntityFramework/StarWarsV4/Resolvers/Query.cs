@@ -18,68 +18,68 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
             dbContext.Database.EnsureCreated();
         }
 
-        public override IGraphQlResult<Interfaces.FilmsConnection?> allFilms(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<Interfaces.FilmsConnection?> allFilms(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             return Original.Resolve(_ => (IQueryable<Domain.Film>)dbContext.Films.AsNoTracking()).AsContract<FilmsConnection>();
         }
 
-        public override IGraphQlResult<PeopleConnection?> allPeople(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<PeopleConnection?> allPeople(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<PlanetsConnection?> allPlanets(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<PlanetsConnection?> allPlanets(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<SpeciesConnection?> allSpecies(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<SpeciesConnection?> allSpecies(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<StarshipsConnection?> allStarships(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<StarshipsConnection?> allStarships(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<VehiclesConnection?> allVehicles(string? after, int? first, string? before, int? last)
+        public override IGraphQlResult<VehiclesConnection?> allVehicles(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Interfaces.Film?> film(string? id, string? filmID)
+        public override IGraphQlResult<Interfaces.Film?> film(FieldContext fieldContext, string? id, string? filmID)
         {
             var episodeId = int.Parse(id ?? filmID!, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             return Original.Resolve(_ => dbContext.Films.Where(film => film.EpisodeId == episodeId)).Nullable(_ => _.List(_ => _.AsContract<Film>()).Only());
         }
 
-        public override IGraphQlResult<Node?> node(string id)
+        public override IGraphQlResult<Node?> node(FieldContext fieldContext, string id)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Interfaces.Person?> person(string? id, string? personID)
+        public override IGraphQlResult<Interfaces.Person?> person(FieldContext fieldContext, string? id, string? personID)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Planet?> planet(string? id, string? planetID)
+        public override IGraphQlResult<Planet?> planet(FieldContext fieldContext, string? id, string? planetID)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Species?> species(string? id, string? speciesID)
+        public override IGraphQlResult<Species?> species(FieldContext fieldContext, string? id, string? speciesID)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Starship?> starship(string? id, string? starshipID)
+        public override IGraphQlResult<Starship?> starship(FieldContext fieldContext, string? id, string? starshipID)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Vehicle?> vehicle(string? id, string? vehicleID)
+        public override IGraphQlResult<Vehicle?> vehicle(FieldContext fieldContext, string? id, string? vehicleID)
         {
             throw new NotImplementedException();
         }

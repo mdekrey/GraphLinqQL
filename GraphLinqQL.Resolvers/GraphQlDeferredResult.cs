@@ -36,6 +36,6 @@ namespace GraphLinqQL
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
             new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
 
-        private Expression<Func<object, object>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input);
+        private Expression<Func<object, object>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input).Data;
     }
 }

@@ -79,7 +79,7 @@ namespace GraphLinqQL
 
         public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
+            var result = contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
             if (result.Contract != null)
             {
                 throw new InvalidOperationException("Cannot use simple resolution for complex type");
