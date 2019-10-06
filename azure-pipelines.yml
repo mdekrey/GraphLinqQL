@@ -43,7 +43,7 @@ stages:
       displayName: 'Upload NuGet packages to pipeline artifacts'
 
 - stage: 'PublishPrereleaseNuGetPackage'
-  displayName: 'Publish Prerelease NuGet Package'
+  displayName: 'Publish Prerelease NuGet Packages'
   dependsOn: 'Build'
   condition: succeeded()
   jobs:
@@ -65,3 +65,25 @@ stages:
         nuGetFeedType: 'internal'
         publishVstsFeed: '8010e35a-39ce-486e-bf93-b2d243b6782d'
       displayName: 'Push Prerelease packages'
+
+
+- stage: 'PublishReleaseNuGetPackage'
+  displayName: 'Publish Release NuGet Packages'
+  dependsOn: 'PublishPrereleaseNuGetPackage'
+  condition: succeeded()
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'Public NuGet'
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - task: NuGetCommand@2
+           displayName: 'Push NuGet Packages'
+           inputs:
+             command: 'push'
+             packagesToPush: '$(Pipeline.Workspace)/packages/**/*.nupkg;!$(Pipeline.Workspace)/packages/**/*-$(buildVersion).nupkg;!$(Pipeline.Workspace)/packages/**/*.symbols.nupkg'
+             nuGetFeedType: 'external'
+             publishFeedCredentials: 'mdekrey NuGet'
