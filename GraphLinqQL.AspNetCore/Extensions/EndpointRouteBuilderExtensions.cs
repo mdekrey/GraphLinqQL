@@ -42,7 +42,10 @@ namespace Microsoft.AspNetCore.Builder
 
                     executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
                 }
-                await JsonSerializer.SerializeAsync(context.Response.Body, (IDictionary<string, object?>)executionResult, JsonOptions).ConfigureAwait(false);
+                await JsonSerializer.SerializeAsync(context.Response.Body, new Dictionary<string, object>
+                {
+                    { "data", executionResult }
+                }, JsonOptions).ConfigureAwait(false);
             });
         }
     }
