@@ -15,9 +15,13 @@ work directly via the command line. The following commands work well:
 ## Issues Building
 
 * If you use the `dotnet` cli, `dotnet build /nodeReuse:false` needs to run
-twice due to the order it launches msbuild nodes. Building the CodeGeneration
+twice due to the order it launches msbuild nodes. Building the MsBuildTask
 project first solves the issue.
 * `docker` with Linux containers is required to download the GraphQL grammar
 and run Antlr. This has been moved out to a separate target, with the generated
 file checked-in to reduce difficulties for most developers as well as build
 times.
+
+# Releases
+
+To release, we use Azure DevOps [GraphLinqQL build pipeline](https://dev.azure.com/graphlinqql/GraphLinqQl/_build) and release pipelines. Releases should be built from tagged versions. After the tag, the version in `Directory.Build.props` should be updated immediately for a patch version, even if that patch is unreleased and a minor version is used later. This also ensures the prerelease feed has correct version numbers.
