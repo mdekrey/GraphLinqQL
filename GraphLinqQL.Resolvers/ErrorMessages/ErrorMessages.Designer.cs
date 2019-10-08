@@ -79,6 +79,15 @@ namespace GraphLinqQL.ErrorMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not parse query: {0}.
+        /// </summary>
+        internal static string parseError {
+            get {
+                return ResourceManager.GetString("parseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field &quot;{0}&quot; of type &quot;{1}&quot; must have a selection of subfields. Did you mean &quot;{0} {{ ... }}&quot;?.
         /// </summary>
         internal static string requiredSubselection {

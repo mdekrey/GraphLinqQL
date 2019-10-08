@@ -42,7 +42,7 @@ namespace GraphLinqQL.Ast
         {
             if (context.exception != null)
             {
-                yield return new GraphqlParseException($"Unable to parse, could not match {context.GetType().Name} at {context.Start.Line}:{context.Start.Column}", context.exception);
+                yield return new GraphqlParseException($"Unable to parse, could not match {context.GetType().Name} at {context.Start.Line}:{context.Start.Column}", context.Location(), context.exception);
             }
             if (context.children != null)
             {

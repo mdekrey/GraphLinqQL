@@ -40,6 +40,7 @@ namespace GraphLinqQL.Execution
             }
             catch (Exception ex)
             {
+                ex.ConvertAstExceptions();
                 if (ex.HasGraphQlErrors(out var errors))
                 {
                     return new ExecutionResult(true, null, errors);

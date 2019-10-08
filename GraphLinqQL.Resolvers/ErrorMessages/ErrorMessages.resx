@@ -124,6 +124,10 @@
     <value>Field "{0}" must not have a selection since type "{1}" has no subfields.</value>
     <comment>[fieldName, type]</comment>
   </data>
+  <data name="parseError" xml:space="preserve">
+    <value>Could not parse query: {0}</value>
+    <comment>[innerMessage]</comment>
+  </data>
   <data name="requiredSubselection" xml:space="preserve">
     <value>Field "{0}" of type "{1}" must have a selection of subfields. Did you mean "{0} {{ ... }}"?</value>
     <comment>[fieldName, type]</comment>
