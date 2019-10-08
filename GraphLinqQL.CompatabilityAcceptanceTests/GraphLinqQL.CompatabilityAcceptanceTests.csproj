@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- CAT stands for Compatibility Acceptance Test - from https://github.com/graphql-cats/graphql-cats -->
+    <CatZipUrl>https://github.com/graphql-cats/graphql-cats/archive/master.zip</CatZipUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="YamlDotNet" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
+  </ItemGroup>
+
+  <Target Name="CompileAst" BeforeTargets="PrepareForBuild" DependsOnTargets="_ExtractCat">
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)\cat\unzipped\graphql-cats-master\**\*.yaml" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource>
+        <LogicalName>$([System.Text.RegularExpressions.Regex]::Replace(%(RecursiveDir)%(Filename)%(Extension), '[\\/]', '.'))</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+    <Message Text="Added resource: %(EmbeddedResource.LogicalName)" Importance="high" />
+  </Target>
+
+  <UsingTask TaskName="UnzipCat" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <InputFile ParameterType="System.String" Required="true" />
+      <OutputFolder ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+ZipFile.ExtractToDirectory(InputFile, OutputFolder);
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="_ExtractCat" Inputs="$(MSBuildThisFileFullPath);$(IntermediateOutputPath)\cat\cat.zip" Outputs="$(IntermediateOutputPath)\cat\unzipped\**\*">
+    <RemoveDir Directories="$(IntermediateOutputPath)\cat\unzipped" />
+    <UnzipCat InputFile="$(IntermediateOutputPath)\cat\cat.zip" OutputFolder="$(IntermediateOutputPath)\cat\unzipped" />
+  </Target>
+
+  <Target Name="_DownloadCat" Inputs="$(MSBuildThisFileFullPath)" Outputs="$(IntermediateOutputPath)\cat\cat.zip">
+    <DownloadFile SourceUrl="$(CatZipUrl)" DestinationFolder="$(IntermediateOutputPath)\cat\" DestinationFileName="cat.zip">
+    </DownloadFile>
+  </Target>
+
+</Project>
