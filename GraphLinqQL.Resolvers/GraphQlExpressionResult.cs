@@ -25,6 +25,8 @@ namespace GraphLinqQL
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         public Type? Contract { get; }
+        
+        public bool ShouldSubselect => Contract != null;
 
         public GraphQlExpressionResult(
             IGraphQlParameterResolverFactory parameterResolverFactory,

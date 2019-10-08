@@ -11,6 +11,7 @@ namespace GraphLinqQL
         IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
         LambdaExpression UntypedResolver { get; }
         Type? Contract { get; }
+        bool ShouldSubselect { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext queryContext);

@@ -32,6 +32,8 @@ namespace GraphLinqQL
 
         public Type? Contract => null;
 
+        public bool ShouldSubselect => true;
+
 #if NETFRAMEWORK
         public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyJoinArrayContainer.Joins;
 #else

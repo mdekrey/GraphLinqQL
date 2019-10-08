@@ -25,6 +25,8 @@ namespace GraphLinqQL
 
         public Type? Contract => inner.Contract;
 
+        public bool ShouldSubselect => inner.ShouldSubselect;
+
         public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
 
         public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
