@@ -6,6 +6,8 @@ namespace GraphLinqQL
 {
     public interface IGraphQlTypeResolver
     {
-        Type Resolve(string name);
+        Type ResolveForInput(string name);
+
+        Type IntrospectionTypeListing { get; }
     }
 }

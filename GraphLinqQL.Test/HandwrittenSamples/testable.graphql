@@ -1,0 +1,29 @@
+﻿
+type Villain {
+    id: ID!
+    name: String!
+    goal: String!
+}
+type Hero {
+    id: ID!
+    name: String!
+    renown: Float!
+    faction: String!
+    friends: [Hero!]!
+    friendsDeferred: [Hero!]!
+    location(date: String = "2019-04-22"): String!;
+}
+union Character = Hero | Villain
+type Query {
+    characters: [Character!]!
+    heroes(first: Int): [Hero!]!
+    nulls: [Hero!]
+    nohero: Hero
+    hero: Hero!
+    heroFinalized: Hero!
+    heroById(id: String!): Hero
+    rand: Float!
+}
+schema {
+    query: Query
+}

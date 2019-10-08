@@ -52,7 +52,8 @@ namespace GraphLinqQL
         {
             if (Contract == null)
             {
-                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, fieldContext.Locations, new { fieldName = fieldContext.Name, type = "TODO - GraphQL Type" });
+                // FIXME: Maybe somehow get the creating contract info here, knowing that some reuslts are created so don't have a root?
+                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, fieldContext.Locations, new { fieldName = fieldContext.Name, type = "(May be root type)" });
             }
 
             return new ComplexResolverBuilder(

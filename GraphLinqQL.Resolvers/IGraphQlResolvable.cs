@@ -5,6 +5,7 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResolvable
     {
+        string GraphQlTypeName { get; }
         IGraphQlResult ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters);
         bool IsType(string value);
     }

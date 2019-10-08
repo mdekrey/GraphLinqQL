@@ -36,9 +36,9 @@ namespace GraphLinqQL
                 op.UseSqlServer(Configuration["DefaultConnection"]);
             });
 
-            services.AddGraphQl<Query, Query, StarWarsV4.Interfaces.TypeResolver>(options =>
+            services.AddGraphQl<StarWarsV4.Interfaces.TypeResolver>(typeof(Query), options =>
             {
-                options.AddIntrospection<StarWarsV4.Interfaces.Introspection.TypeListing>();
+                options.AddIntrospection();
             });
         }
 

@@ -39,10 +39,10 @@ namespace GraphLinqQL
 
         public IGraphQlTypeListing GetTypeListing()
         {
-            return (IGraphQlTypeListing)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, options.TypeListing);
+            return (IGraphQlTypeListing)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, GetTypeResolver().IntrospectionTypeListing);
         }
 
-        public IGraphQlTypeResolver? GetTypeResolver()
+        public IGraphQlTypeResolver GetTypeResolver()
         {
             return (IGraphQlTypeResolver)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, options.TypeResolver);
         }

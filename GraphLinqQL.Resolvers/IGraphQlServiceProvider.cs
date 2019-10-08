@@ -10,7 +10,7 @@ namespace GraphLinqQL
         IGraphQlParameterResolverFactory GetParameterResolverFactory();
         IGraphQlResolvable GetResolverContract(Type contract);
         Introspection.IGraphQlTypeListing GetTypeListing();
-        IGraphQlTypeResolver? GetTypeResolver();
+        IGraphQlTypeResolver GetTypeResolver();
         IGraphQlTypeInformation? TryGetTypeInformation(Type? type);
     }
 }

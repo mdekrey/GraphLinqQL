@@ -81,7 +81,7 @@ namespace GraphLinqQL.Execution
                     var listType = GetTypeFromGraphQlType(listNode.ElementType);
                     return typeof(IEnumerable<>).MakeGenericType(listType);
                 case TypeName namedType:
-                    return options.TypeResolver.Resolve(namedType.Name);
+                    return options.TypeResolver.ResolveForInput(namedType.Name);
                 default:
                     throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
             }
@@ -130,9 +130,16 @@ namespace GraphLinqQL.Execution
                         return builder.Add(
                             field.Alias ?? field.Name,
                             queryContext,
-                            b => Build(b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments))
-                                        .ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
-                                ).Build()
+                            b =>
+                            {
+                                var result = b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments));
+                                if (result.Contract == null)
+                                {
+                                    throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
+                                }
+                                return Build(result.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
+                                    ).Build();
+                            }
                         );
                     }
                     else

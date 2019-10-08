@@ -11,6 +11,8 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 {
 	private {{= model.TypeName }}() { }
 
+	public string GraphQlTypeName { get { return "{{= model.Label }}"; } }
+
 	{{each field in model.Fields}}
 		{{if field.IsDeprecated}}
 			[Obsolete({{=field.DeprecationReason}})]
@@ -34,7 +36,7 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 					return this.{{= field.Name }}(fieldContext{{each arg in field.Arguments}},
 						{{= arg.GetParameterWithDefault() }}{{/each}});
 			{{/each}}
-			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, fieldContext.Locations, new { fieldName, type = "{{= model.Label }}" });
+			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, fieldContext.Locations, new { fieldName, type = GraphQlTypeName });
 		};
 	}
 

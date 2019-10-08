@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HandwrittenSamples\testable.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <GraphLinqQlSchema Include="HandwrittenSamples\testable.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
@@ -27,4 +35,6 @@
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
   </ItemGroup>
 
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  
 </Project>

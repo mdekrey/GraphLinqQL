@@ -31,6 +31,9 @@ namespace GraphLinqQL.Introspection
             }
         }
         IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
+
+        public string GraphQlTypeName => originalQuery.GraphQlTypeName;
+
         public bool IsType(string value) => originalQuery.IsType(value);
 
         internal IGraphQlResult<Schema> schema(FieldContext fieldContext) =>
