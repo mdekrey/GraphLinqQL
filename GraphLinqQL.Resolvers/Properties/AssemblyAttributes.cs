@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Resources;
 using System.Text;
 
-namespace GraphLinqQL.Properties
-{
-    public static class AssemblyAttributes
-    {
-    }
-}
+[assembly: NeutralResourcesLanguage("en-US")]

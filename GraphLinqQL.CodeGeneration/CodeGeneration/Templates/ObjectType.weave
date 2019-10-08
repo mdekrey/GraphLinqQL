@@ -24,9 +24,9 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 		{{=""}}
 	{{/each}}
 
-	IGraphQlResult IGraphQlResolvable.ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters)
+	IGraphQlResult IGraphQlResolvable.ResolveQuery(string fieldName, FieldContext fieldContext, IGraphQlParameterResolver parameters)
 	{
-		switch (name)
+		switch (fieldName)
 		{
 			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}");
 			{{each field in model.Fields}}
@@ -34,7 +34,7 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 					return this.{{= field.Name }}(fieldContext{{each arg in field.Arguments}},
 						{{= arg.GetParameterWithDefault() }}{{/each}});
 			{{/each}}
-			default: throw new ArgumentException("Unknown property " + name, "name");
+			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, fieldContext.Locations, new { fieldName, type = "{{= model.Label }}" });
 		};
 	}
 

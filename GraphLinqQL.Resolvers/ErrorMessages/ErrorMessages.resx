@@ -128,4 +128,8 @@
     <value>Field "{0}" of type "{1}" must have a selection of subfields. Did you mean "{0} {{ ... }}"?</value>
     <comment>[fieldName, type]</comment>
   </data>
+  <data name="undefinedField" xml:space="preserve">
+    <value>Cannot query field "{0}" on type "{1}".</value>
+    <comment>[fieldName, type]</comment>
+  </data>
 </root>

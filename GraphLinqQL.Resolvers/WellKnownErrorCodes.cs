@@ -14,6 +14,7 @@ namespace GraphLinqQL
         public const string NoOperation = "noOperationFound";
         public const string RequiredSubselection = "requiredSubselection";
         public const string NoSubselectionAllowed = "noSubselectionAllowed";
+        public const string UndefinedField = "undefinedField";
 
         private static readonly IReadOnlyDictionary<string, MessageResolver> messages = ConstructMessages();
 
@@ -23,6 +24,7 @@ namespace GraphLinqQL
             builder.Add(NoOperation, args => ErrorMessages.ErrorMessages.noOperationFound);
             builder.Add(RequiredSubselection, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.requiredSubselection, args["fieldName"], args["type"]));
             builder.Add(NoSubselectionAllowed, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.noSubselectionAllowed, args["fieldName"], args["type"]));
+            builder.Add(UndefinedField, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.undefinedField, args["fieldName"], args["type"]));
             return builder.ToImmutable();
         }
 

@@ -86,5 +86,14 @@ namespace GraphLinqQL.ErrorMessages {
                 return ResourceManager.GetString("requiredSubselection", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot query field &quot;{0}&quot; on type &quot;{1}&quot;..
+        /// </summary>
+        internal static string undefinedField {
+            get {
+                return ResourceManager.GetString("undefinedField", resourceCulture);
+            }
+        }
     }
 }
