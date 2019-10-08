@@ -12,15 +12,21 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
-            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
-            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
-            var resolved = resolver(resultFactory.Resolve(a => a).AsContract(t).ResolveComplex(serviceProvider));
+            IGraphQlResult resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
             return InvokeResult(resolved, new GraphQlRoot());
         }
 
-        public static ExecutionResult InvokeResult(IGraphQlResult resolved, object input)
+        public static IGraphQlResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        {
+            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
+            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(parameterResolverFactory);
+            var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
+            return resolved;
+        }
+
+        public static ExecutionResult InvokeResult(this IGraphQlResult resolved, object input)
         {
             if (resolved.Joins.Any())
             {

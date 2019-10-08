@@ -25,19 +25,45 @@ namespace GraphLinqQL.Execution
 
         public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
-            var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
-            var ast = astGenerator.ParseDocument(query);
-            var def = ast.Children.OfType<OperationDefinition>().First();
-            if (def == null)
+            IGraphQlResult result;
+            try
             {
-                throw new ArgumentException("Query did not contain a document", nameof(query));
+                var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
+                var ast = astGenerator.ParseDocument(query);
+                var def = ast.Children.OfType<OperationDefinition>().FirstOrDefault();
+                if (def == null)
+                {
+                    throw new ArgumentException("Query did not contain a document", nameof(query)).AddGraphQlError(WellKnownErrorCodes.NoOperation, ast.Location.ToQueryLocations());
+                }
+
+                result = Resolve(ast, def, actualArguments);
             }
-
-            //var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
-            //    ?? ImmutableDictionary<string, Type>.Empty;
-
-            var executionResult = Execute(ast, def, actualArguments);
-            return executionResult;
+            catch (Exception ex)
+            {
+                if (ex.HasGraphQlErrors(out var errors))
+                {
+                    return new ExecutionResult(true, null, errors);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            try
+            {
+                return result.InvokeResult(new GraphQlRoot());
+            }
+            catch (Exception ex)
+            {
+                if (ex.HasGraphQlErrors(out var errors))
+                {
+                    return new ExecutionResult(false, new { }, errors);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         private Type GetTypeFromGraphQlType(ITypeNode arg)
@@ -61,7 +87,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private ExecutionResult Execute(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
+        private IGraphQlResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             var operation = def.OperationType switch
             {
@@ -73,10 +99,11 @@ namespace GraphLinqQL.Execution
 
             var actualArguments = def.Variables.ToDictionary(variable => variable.Variable.Name, variable => arguments.ContainsKey(variable.Variable.Name) ? arguments[variable.Variable.Name] : new GraphQlParameterInfo(variable.DefaultValue!, null!));
             var context = new GraphQLExecutionContext(ast, actualArguments);
-            return serviceProvider.GraphQlRoot(operation, builder =>
+            var result = serviceProvider.GetResult<GraphQlRoot>(operation, builder =>
             {
                 return Build(builder, def.SelectionSet.Selections, context).Build();
             });
+            return result;
         }
 
         private IComplexResolverBuilder Build(IComplexResolverBuilder builder, IEnumerable<ISelection> selections, GraphQLExecutionContext context)
@@ -96,7 +123,7 @@ namespace GraphLinqQL.Execution
             switch (resultNode)
             {
                 case Field field:
-                    var queryContext = new FieldContext(node.Location.ToQueryLocations());
+                    var queryContext = new FieldContext(field.Name, node.Location.ToQueryLocations());
                     var arguments = ResolveArguments(field.Arguments, context);
                     if (field.SelectionSet != null)
                     {
@@ -104,7 +131,7 @@ namespace GraphLinqQL.Execution
                             field.Alias ?? field.Name,
                             queryContext,
                             b => Build(b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments))
-                                        .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
+                                        .ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
                                 ).Build()
                         );
                     }

@@ -346,6 +346,24 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
+
+        [Fact]
+        public void HandleNonExistingDocuments()
+        {
+            using var executor = CreateExecutor();
+            var result = executor.Execute(@"
+fragment HeroPrimary on Hero {
+  id
+  name
+}");
+
+            Assert.True(result.ErrorDuringParse);
+            Assert.Null(result.Data);
+            var error = Assert.Single(result.Errors);
+            Assert.Equal("noOperationFound", error.ErrorCode);
+            Assert.Empty(error.Arguments);
+            Assert.Single(error.Locations);
+        }
     }
 
 }

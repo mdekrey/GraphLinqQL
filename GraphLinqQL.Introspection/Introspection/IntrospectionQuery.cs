@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+#pragma warning disable CA1801
 
 namespace GraphLinqQL.Introspection
 {

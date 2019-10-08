@@ -1,10 +1,13 @@
 ﻿using GraphLinqQL;
+using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -30,9 +33,10 @@ namespace Microsoft.AspNetCore.Builder
             return endpoints.MapPost(pattern, async context =>
             {
                 var executor = context.RequestServices.GetRequiredService<IGraphQlExecutorFactory>().Create(name);
+                var messageResolver = context.RequestServices.GetRequiredService<IMessageResolver>();
                 context.Response.RegisterForDispose(executor);
                 
-                object executionResult;
+                ExecutionResult executionResult;
                 using (var body = await JsonDocument.ParseAsync(context.Request.Body).ConfigureAwait(false))
                 {
                     var query = body.RootElement.GetProperty("query").GetString();
@@ -42,10 +46,28 @@ namespace Microsoft.AspNetCore.Builder
 
                     executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
                 }
-                await JsonSerializer.SerializeAsync(context.Response.Body, new Dictionary<string, object>
+                var responseObj = executionResult.ErrorDuringParse
+                    ? new Dictionary<string, object?>
+                    {
+                        { "errors", BuildErrors(executionResult.Errors) },
+                    }
+                    : new Dictionary<string, object?>
+                    {
+                        { "data", executionResult.Data },
+                        { "errors", BuildErrors(executionResult.Errors) },
+                    };
+                await JsonSerializer.SerializeAsync(context.Response.Body, responseObj, JsonOptions, context.RequestAborted).ConfigureAwait(false);
+
+                IReadOnlyList<object> BuildErrors(IReadOnlyList<GraphQlError> errors)
                 {
-                    { "data", executionResult }
-                }, JsonOptions).ConfigureAwait(false);
+                    return errors.Select(err => new
+                    {
+                        message = messageResolver.GetMessage(err.ErrorCode, err.Arguments),
+                        errorCode = err.ErrorCode,
+                        locations = err.Locations,
+                        arguments = err.Arguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                    }).ToArray();
+                }
             });
         }
     }

@@ -33,9 +33,9 @@ namespace GraphLinqQL
         public IGraphQlResult AsContract(Type contract) =>
             (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlDeferredResult<>).MakeGenericType(contract), new object[] { inner.AsContract(contract), outer });
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
-            new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
+            new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider, fieldContext), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
 
-        private Expression<Func<object, object>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input).Data;
+        private Expression<Func<object, object?>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input).Data;
     }
 }

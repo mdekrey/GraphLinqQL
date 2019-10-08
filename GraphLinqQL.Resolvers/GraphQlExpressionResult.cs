@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
-#if NET45
+#if NETFRAMEWORK
     internal static class EmptyObjectArrayContainer
     {
         public static readonly object[] Objects = new object[0];
@@ -48,13 +48,13 @@ namespace GraphLinqQL
             }
         }
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider)
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext)
         {
             if (Contract == null)
             {
-                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects");
+                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, fieldContext.Locations, new { fieldName = fieldContext.Name, type = "TODO - GraphQL Type" });
             }
-            
+
             return new ComplexResolverBuilder(
                 Contract!,
                 serviceProvider,
@@ -63,7 +63,7 @@ namespace GraphLinqQL
                 ParameterResolverFactory
             );
         }
-        
+
         private IGraphQlResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
         {
             var modelType = visitor.ModelType!;
@@ -88,7 +88,7 @@ namespace GraphLinqQL
         public IGraphQlResult AsContract(Type contract)
         {
             var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
-#if NET45
+#if NETFRAMEWORK
             return (IGraphQlResult)method.Invoke(this, EmptyObjectArrayContainer.Objects)!;
 #else
             return (IGraphQlResult)method.Invoke(this, Array.Empty<object>())!;

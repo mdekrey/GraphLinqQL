@@ -1,5 +1,6 @@
 ﻿using GraphLinqQL;
 using GraphLinqQL.Ast;
+using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -25,6 +26,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddScoped<IGraphQlExecutionServiceProvider>(sp => sp.GetRequiredService<GraphQlCurrentServiceProvider>().CurrentServiceProvider!);
             services.TryAddScoped<IGraphQlServiceProvider>(sp => sp.GetRequiredService<IGraphQlExecutionServiceProvider>());
             services.TryAddSingleton<IAbstractSyntaxTreeGenerator, AbstractSyntaxTreeGenerator>();
+            services.TryAddSingleton<IMessageResolver, MessageResolver>();
+            services.AddSingleton<IMessageProvider, WellKnownErrorCodes>();
         }
 
         public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, Action<GraphQlOptions>? optionFactory = null)

@@ -82,7 +82,7 @@ namespace GraphLinqQL
             var result = contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
             if (result.Contract != null)
             {
-                throw new InvalidOperationException("Cannot use simple resolution for complex type");
+                throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = "TODO - GraphQL Type" });
             }
             return new ComplexResolverBuilder(contract, resolve, expressions
                 .Add(displayName ?? property, result), modelType, parameterResolverFactory);

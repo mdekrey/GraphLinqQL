@@ -13,7 +13,7 @@ namespace GraphLinqQL
         Type? Contract { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider);
+        IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext queryContext);
 
         IGraphQlResult AsContract(Type contract);
     }

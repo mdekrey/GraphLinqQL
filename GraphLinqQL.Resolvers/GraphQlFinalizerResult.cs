@@ -34,7 +34,7 @@ namespace GraphLinqQL
         public IGraphQlResult AsContract(Type contract) =>
             (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlFinalizerResult<>).MakeGenericType(contract), new object[] { original.AsContract(contract), postProcess });
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
-            new PostResolveComplexResolverBuilder(original.ResolveComplex(serviceProvider), newResult => new GraphQlFinalizerResult<TReturnType>(newResult, postProcess));
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
+            new PostResolveComplexResolverBuilder(original.ResolveComplex(serviceProvider, fieldContext), newResult => new GraphQlFinalizerResult<TReturnType>(newResult, postProcess));
     }
 }

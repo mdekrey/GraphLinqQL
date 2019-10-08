@@ -13,6 +13,9 @@ Includes a GraphQL AST, Parser, and Lexer based on Antlr4 for .Net Standard and 
 $(Description)
     </Description>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <GenerationDockerfile Include="Generation\Dockerfile" />

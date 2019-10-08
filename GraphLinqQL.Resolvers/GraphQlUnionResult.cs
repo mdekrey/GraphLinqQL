@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace GraphLinqQL
 {
-#if NET45
+#if NETFRAMEWORK
     internal static class EmptyJoinArrayContainer
     {
         public static readonly IReadOnlyCollection<IGraphQlJoin> Joins = new IGraphQlJoin[0];
@@ -18,7 +18,7 @@ namespace GraphLinqQL
         {
             if (allResults == null || allResults.Count == 0)
             {
-                throw new ArgumentException("Must provide at least one list to union.", nameof(allResults));
+                throw new ArgumentException("Must provide at least one result of a list to union.", nameof(allResults));
             }
             this.ParameterResolverFactory = parameterResolverFactory;
             this.Results = allResults;
@@ -32,14 +32,14 @@ namespace GraphLinqQL
 
         public Type? Contract => null;
 
-#if NET45
+#if NETFRAMEWORK
         public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyJoinArrayContainer.Joins;
 #else
         public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
 #endif
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider) =>
-            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider);
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
+            new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider, fieldContext);
 
 
         public IGraphQlResult AsContract(Type contract) => throw new NotSupportedException();

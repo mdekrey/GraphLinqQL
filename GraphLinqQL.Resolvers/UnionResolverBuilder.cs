@@ -18,8 +18,8 @@ namespace GraphLinqQL
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
         private readonly ImmutableList<IComplexResolverBuilder> resolvers;
 
-        public UnionResolverBuilder(IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult, IGraphQlServiceProvider serviceProvider)
-            : this(serviceProvider.GetParameterResolverFactory(), unionResult.Results.Select(result => result.ResolveComplex(serviceProvider)))
+        public UnionResolverBuilder(IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult, IGraphQlServiceProvider serviceProvider, FieldContext queryContext)
+            : this(serviceProvider.GetParameterResolverFactory(), unionResult.Results.Select(result => result.ResolveComplex(serviceProvider, queryContext)))
         {
         }
 

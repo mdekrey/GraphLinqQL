@@ -16,6 +16,11 @@
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>GraphQL;api;json;linq;IQueryable;dynamic;filter;query;generator</PackageTags>
+
+    <SupportedFrameworkVersion>net45</SupportedFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(SupportedFrameworkVersion)' ">
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>

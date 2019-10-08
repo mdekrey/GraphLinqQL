@@ -13,10 +13,10 @@ using GraphLinqQL.CodeGeneration;
 
 namespace GraphLinqQL
 {
-#if DEBUG 
+#if DEBUG
     [LoadInSeparateAppDomain]
 #endif
-#if NET45 && DEBUG
+#if NETFRAMEWORK && DEBUG
     public class CompileGraphLinqQLSchema : AppDomainIsolatedTask
 #else
     public class CompileGraphLinqQLSchema : Task

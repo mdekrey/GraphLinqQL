@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>$(SupportedFrameworkVersion)</TargetFramework>
     <LangVersion>5.0</LangVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
