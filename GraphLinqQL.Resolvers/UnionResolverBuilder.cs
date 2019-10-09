@@ -32,13 +32,13 @@ namespace GraphLinqQL
             return new UnionResolverBuilder(resolvers.Select(r => r.Add(displayName, context, resolve)));
         }
 
-        public IGraphQlResult Build()
+        public IGraphQlScalarResult Build()
         {
             var results = resolvers.Select(r => r.Build()).ToArray();
             var param = results[0].UntypedResolver.Parameters[0];
             var expressions = results.Select(e => e.UntypedResolver.Inline(param)).ToArray();
             var lambda = Expression.Lambda(expressions.Skip(1).Aggregate(expressions[0], (prev, next) => Expression.Call(QueryableUnion, prev, next)), param);
-            return new GraphQlExpressionResult<object>(lambda);
+            return new GraphQlExpressionScalarResult<object>(lambda);
         }
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)

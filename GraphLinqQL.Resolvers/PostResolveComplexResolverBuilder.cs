@@ -6,9 +6,9 @@ namespace GraphLinqQL
     internal class PostResolveComplexResolverBuilder : IComplexResolverBuilder
     {
         private IComplexResolverBuilder original;
-        private readonly Func<IGraphQlResult, IGraphQlResult> postResolve;
+        private readonly Func<IGraphQlScalarResult, IGraphQlScalarResult> postResolve;
 
-        public PostResolveComplexResolverBuilder(IComplexResolverBuilder complexResolverBuilder, Func<IGraphQlResult, IGraphQlResult> postResolve)
+        public PostResolveComplexResolverBuilder(IComplexResolverBuilder complexResolverBuilder, Func<IGraphQlScalarResult, IGraphQlScalarResult> postResolve)
         {
             this.original = complexResolverBuilder;
             this.postResolve = postResolve;
@@ -23,7 +23,7 @@ namespace GraphLinqQL
         public IComplexResolverBuilder Add(string displayName, string propertyName, FieldContext context, IGraphQlParameterResolver? parameters = null) =>
             new PostResolveComplexResolverBuilder(original.Add(displayName, propertyName, context, parameters), postResolve);
 
-        public IGraphQlResult Build() => this.postResolve(original.Build());
+        public IGraphQlScalarResult Build() => this.postResolve(original.Build());
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder) =>
             new PostResolveComplexResolverBuilder(original.IfType(value, typedBuilder), postResolve);

@@ -7,28 +7,61 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
-#if NETFRAMEWORK
-    internal static class EmptyObjectArrayContainer
+    class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
-        public static readonly object[] Objects = new object[0];
-    }
-#endif
+        public bool ShouldSubselect => false;
 
-    class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
-    {
         public LambdaExpression UntypedResolver { get; }
-
-        private readonly GraphQlContractExpressionReplaceVisitor visitor;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        public Type? Contract { get; }
-        
-        public bool ShouldSubselect => Contract != null;
-
-        public GraphQlExpressionResult(
+        public GraphQlExpressionScalarResult(
             LambdaExpression untypedResolver,
-            Type? contract = null,
+            IReadOnlyCollection<IGraphQlJoin>? joins = null)
+        {
+            this.UntypedResolver = untypedResolver;
+            this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
+
+            var visitor = new GraphQlContractExpressionReplaceVisitor();
+            visitor.Visit(this.UntypedResolver);
+            if (visitor.ModelType != null)
+            {
+                throw new ArgumentException("Was given a model but intended for a scalar.", nameof(untypedResolver));
+            }
+        }
+
+        public IGraphQlObjectResult AsContract(Type contract)
+        {
+            var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
+            return (IGraphQlObjectResult)method.Invoke(this, EmptyArrayHelper.Empty<object>())!;
+        }
+
+        public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
+            UnsafeAsContract<TContract>();
+
+        private IGraphQlObjectResult<TContract> UnsafeAsContract<TContract>()
+        {
+            var contract = typeof(TContract);
+            var currentReturnType = UntypedResolver.ReturnType;
+            var acceptsInterface = contract.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
+                .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
+                .FirstOrDefault();
+            if (acceptsInterface == null)
+            {
+                throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
+            }
+            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
+            return new GraphQlExpressionObjectResult<TContract>(newResolver, contract);
+        }
+    }
+
+    class GraphQlExpressionObjectResult<TReturnType> : IGraphQlObjectResult<TReturnType>
+    {
+        private readonly GraphQlContractExpressionReplaceVisitor visitor;
+
+        public GraphQlExpressionObjectResult(
+            LambdaExpression untypedResolver,
+            Type contract,
             IReadOnlyCollection<IGraphQlJoin>? joins = null)
         {
             this.UntypedResolver = untypedResolver;
@@ -40,20 +73,23 @@ namespace GraphLinqQL
             if (visitor.ModelType == null && contract != null)
             {
                 throw new ArgumentException("The provided resolver did not have a contract.", nameof(untypedResolver));
-            } else if (contract == null && visitor.ModelType != null)
+            }
+            else if (contract == null && visitor.ModelType != null)
             {
                 throw new ArgumentException("Expected a contract but had none.", nameof(untypedResolver));
             }
         }
 
+        public Type Contract { get; }
+
+        public bool ShouldSubselect => true;
+
+        public LambdaExpression UntypedResolver { get; }
+
+        public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
+
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext)
         {
-            if (Contract == null)
-            {
-                // FIXME: Maybe somehow get the creating contract info here, knowing that some reuslts are created so don't have a root?
-                throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, fieldContext.Locations, new { fieldName = fieldContext.Name, type = "(May be root type)" });
-            }
-
             return new ComplexResolverBuilder(
                 Contract!,
                 serviceProvider,
@@ -62,7 +98,7 @@ namespace GraphLinqQL
             );
         }
 
-        private IGraphQlResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
+        private IGraphQlScalarResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
         {
             var modelType = visitor.ModelType!;
 
@@ -70,7 +106,7 @@ namespace GraphLinqQL
             var returnResult = visitor.Visit(this.UntypedResolver.Body);
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<object>(resultFunc, joins: this.Joins);
+            return new GraphQlExpressionScalarResult<object>(resultFunc, joins: this.Joins);
         }
 
         private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
@@ -83,44 +119,13 @@ namespace GraphLinqQL
             return mainSelector;
         }
 
-        public IGraphQlResult AsContract(Type contract)
-        {
-            var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
-#if NETFRAMEWORK
-            return (IGraphQlResult)method.Invoke(this, EmptyObjectArrayContainer.Objects)!;
-#else
-            return (IGraphQlResult)method.Invoke(this, Array.Empty<object>())!;
-#endif
-        }
-
-        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            UnsafeAsContract<TContract>();
-
-        private IGraphQlResult<TContract> UnsafeAsContract<TContract>()
-        {
-            if (Contract != null)
-            {
-                throw new InvalidOperationException($"Can't put a contract on top of a contract; already was assigned {Contract.FullName}");
-            }
-            var contract = typeof(TContract);
-            var currentReturnType = UntypedResolver.ReturnType;
-            var acceptsInterface = contract.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
-                .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
-                .FirstOrDefault();
-            if (acceptsInterface == null)
-            {
-                throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
-            }
-            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<TContract>(newResolver, contract);
-        }
     }
 
     static class GraphQlExpressionResult
     {
-        public static IGraphQlResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
+        public static IGraphQlScalarResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
-            return (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlExpressionResult<>).MakeGenericType(returnType), func, joins)!;
+            return (IGraphQlScalarResult)Activator.CreateInstance(typeof(GraphQlExpressionScalarResult<>).MakeGenericType(returnType), func, joins)!;
         }
     }
 

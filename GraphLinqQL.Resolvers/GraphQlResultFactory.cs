@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
-    internal class GraphQlResultFactory<TValue> : GraphQlExpressionResult<TValue>, IGraphQlResultFactory<TValue>
+    internal class GraphQlResultFactory<TValue> : GraphQlExpressionScalarResult<TValue>, IGraphQlResultFactory<TValue>
     {
         public GraphQlResultFactory()
             : base((Expression<Func<TValue, TValue>>)(_ => _))
@@ -19,9 +19,9 @@ namespace GraphLinqQL
             return new GraphQlResultJoinedFactory<TValue, TJoinedType>(join);
         }
 
-        IGraphQlResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
+        IGraphQlScalarResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
         {
-            return new GraphQlExpressionResult<TDomainResult>(resolver);
+            return new GraphQlExpressionScalarResult<TDomainResult>(resolver);
         }
 
     }

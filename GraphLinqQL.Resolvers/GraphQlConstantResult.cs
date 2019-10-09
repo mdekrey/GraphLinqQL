@@ -5,9 +5,9 @@ namespace GraphLinqQL
 {
     public static class GraphQlConstantResult
     {
-        public static IGraphQlResult<TReturnType> Construct<TReturnType>(TReturnType result)
+        public static IGraphQlScalarResult<TReturnType> Construct<TReturnType>(TReturnType result)
         {
-            return new GraphQlExpressionResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result));
+            return new GraphQlExpressionScalarResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result));
         }
 
     }

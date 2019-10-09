@@ -13,10 +13,10 @@ namespace GraphLinqQL
             this.join = join;
         }
 
-        public IGraphQlResult<TDomainResult> Resolve<TDomainResult>(Expression<Func<TValue, TJoinedType, TDomainResult>> resolver)
+        public IGraphQlScalarResult<TDomainResult> Resolve<TDomainResult>(Expression<Func<TValue, TJoinedType, TDomainResult>> resolver)
         {
             var newFunc = Expression.Lambda<Func<TValue, TDomainResult>>(resolver.Body.Replace(resolver.Parameters[1], join.Placeholder), resolver.Parameters[0]);
-            return new GraphQlExpressionResult<TDomainResult>(newFunc, null, ImmutableHashSet.Create<IGraphQlJoin>(join));
+            return new GraphQlExpressionScalarResult<TDomainResult>(newFunc, ImmutableHashSet.Create<IGraphQlJoin>(join));
         }
     }
 }

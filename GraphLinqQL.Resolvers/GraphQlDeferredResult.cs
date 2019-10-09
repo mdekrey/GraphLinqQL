@@ -5,14 +5,43 @@ using System.Linq.Expressions;
 
 namespace GraphLinqQL
 {
-    class GraphQlDeferredResult<TReturnType> : IGraphQlResult<TReturnType>
+    class GraphQlDeferredScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
-        private readonly IGraphQlResult inner;
-        private readonly IGraphQlResult outer;
+        private readonly IGraphQlScalarResult inner;
+        private readonly IGraphQlScalarResult outer;
 
-        public GraphQlDeferredResult(
-            IGraphQlResult inner,
-            IGraphQlResult outer)
+        public GraphQlDeferredScalarResult(
+            IGraphQlScalarResult inner,
+            IGraphQlScalarResult outer)
+        {
+            this.inner = inner;
+            this.outer = outer;
+        }
+
+        public bool ShouldSubselect => false;
+
+        public LambdaExpression UntypedResolver =>
+            Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
+
+        public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
+
+        public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
+            new GraphQlDeferredObjectResult<TContract>(inner.AsContract(typeof(TContract)), outer);
+
+        public IGraphQlObjectResult AsContract(Type contract) =>
+            (IGraphQlObjectResult)Activator.CreateInstance(typeof(GraphQlDeferredObjectResult<>).MakeGenericType(contract), new object[] { inner.AsContract(contract), outer });
+
+        private Expression<Func<object, object?>> ResolveDeferredExpression => input => Execution.GraphQlResultExtensions.InvokeResult(inner, input).Data;
+    }
+
+    class GraphQlDeferredObjectResult<TReturnType> : IGraphQlObjectResult<TReturnType>
+    {
+        private readonly IGraphQlObjectResult inner;
+        private readonly IGraphQlScalarResult outer;
+
+        public GraphQlDeferredObjectResult(
+            IGraphQlObjectResult inner,
+            IGraphQlScalarResult outer)
         {
             this.inner = inner;
             this.outer = outer;
@@ -21,21 +50,17 @@ namespace GraphLinqQL
         public LambdaExpression UntypedResolver =>
             Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 
-        public Type? Contract => inner.Contract;
+        public Type Contract => inner.Contract;
 
-        public bool ShouldSubselect => inner.ShouldSubselect;
+        public bool ShouldSubselect => true;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
 
-        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            new GraphQlDeferredResult<TContract>(inner.AsContract(typeof(TContract)), outer);
-
-        public IGraphQlResult AsContract(Type contract) =>
-            (IGraphQlResult)Activator.CreateInstance(typeof(GraphQlDeferredResult<>).MakeGenericType(contract), new object[] { inner.AsContract(contract), outer });
-
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
-            new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider, fieldContext), newResult => new GraphQlDeferredResult<TReturnType>(newResult, outer));
+            new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider, fieldContext), newResult =>
+                new GraphQlDeferredScalarResult<TReturnType>(newResult, outer)
+            );
 
-        private Expression<Func<object, object?>> ResolveDeferredExpression => input => Resolve.InvokeResult(inner, input).Data;
+        private Expression<Func<object, object?>> ResolveDeferredExpression => input => Execution.GraphQlResultExtensions.InvokeResult(inner, input).Data;
     }
 }

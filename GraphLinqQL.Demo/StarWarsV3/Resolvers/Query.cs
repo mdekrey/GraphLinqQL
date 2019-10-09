@@ -9,9 +9,10 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
     public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
         public override IGraphQlResult<Character?> character(FieldContext fieldContext, string id) =>
+            // FIXME - This a is terrible example, as the resolution is done out of band instead of part of the resolution
             Domain.Data.humanLookup.TryGetValue(id, out var human) ? Original.Resolve(_ => human).AsContract<Human>()
             : Domain.Data.droidLookup.TryGetValue(id, out var droid) ? Original.Resolve(_ => droid).AsContract<Droid>()
-            : Original.Resolve(_ => (Character?)null);
+            : (IGraphQlResult<Character?>)Original.Resolve(_ => (Character?)null);
 
         public override IGraphQlResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id) =>
             Original.Resolve(_ => Domain.Data.droidLookup[id]).AsContract<Droid>();

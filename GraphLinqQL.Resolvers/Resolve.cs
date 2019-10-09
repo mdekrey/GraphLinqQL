@@ -16,7 +16,7 @@ namespace GraphLinqQL
         public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
             IGraphQlResult resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
-            return InvokeResult(resolved, new GraphQlRoot());
+            return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot());
         }
 
         public static IGraphQlResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
@@ -26,21 +26,10 @@ namespace GraphLinqQL
             return resolved;
         }
 
-        public static ExecutionResult InvokeResult(this IGraphQlResult resolved, object input)
-        {
-            if (resolved.Joins.Any())
-            {
-                throw new InvalidOperationException("Cannot join at the root level");
-            }
-            var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
-            // TODO - get errors here
-            return new ExecutionResult(false, func.Compile()(), EmptyArrayHelper.Empty<GraphQlError>());
-        }
-
-        public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
+        public static IGraphQlObjectResult<T> Union<T>(this IGraphQlObjectResult<T> graphQlResult, IGraphQlObjectResult<T> graphQlResult2)
             where T : IEnumerable<IGraphQlResolvable?>?
         {
-            var allResults = new List<IGraphQlResult<T>>();
+            var allResults = new List<IGraphQlObjectResult<T>>();
             if (graphQlResult is IUnionGraphQlResult<T> union)
             {
                 allResults.AddRange(union.Results);
@@ -61,12 +50,8 @@ namespace GraphLinqQL
             return new GraphQlUnionResult<T>(allResults);
         }
 
-        public static IGraphQlResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlResult<IEnumerable<TInput>> original, Func<IGraphQlResult<TInput>, IGraphQlResult<TContract>> func)
+        public static IGraphQlScalarResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlScalarResult<TContract>> func)
         {
-            if (original.Contract != null)
-            {
-                throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
-            }
             var newResult = func(new GraphQlResultFactory<TInput>());
 
             var getList = original.UntypedResolver.Body;
@@ -83,49 +68,75 @@ namespace GraphLinqQL
             {
                 throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
             }
-            return new GraphQlExpressionResult<IEnumerable<TContract>>(newResolver, newResult.Contract, original.Joins);
+            return new GraphQlExpressionScalarResult<IEnumerable<TContract>>(newResolver, original.Joins);
         }
 
-        public static IGraphQlResult<TContract?> Nullable<TInput, TContract>(this IGraphQlResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlResult<TContract>> func)
+        public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)
+        {
+            var newResult = func(new GraphQlResultFactory<TInput>());
+
+            var getList = original.UntypedResolver.Body;
+            if (!typeof(IQueryable<>).MakeGenericType(typeof(TInput)).IsAssignableFrom(getList.Type))
+            {
+                getList = Expression.Call(asQueryable.MakeGenericMethod(typeof(TInput)), getList);
+            }
+
+            var newResolver = Expression.Lambda(
+                getList.CallQueryableSelect(newResult.UntypedResolver),
+                original.UntypedResolver.Parameters
+            );
+            if (newResult.Joins.Count > 0)
+            {
+                throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
+            }
+            return new GraphQlExpressionObjectResult<IEnumerable<TContract>>(newResolver, newResult.Contract, original.Joins);
+        }
+
+        public static IGraphQlScalarResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
             where TInput : class
             where TContract : class
         {
-            if (original.Contract != null)
-            {
-                throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
-            }
             var newResult = func(new GraphQlResultFactory<TInput>());
 
-            return new GraphQlFinalizerResult<TContract>(newResult, 
+            return new GraphQlFinalizerScalarResult<TContract>(newResult, 
                 newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
         }
 
-        public static IGraphQlResult<TContract> Defer<TInput, TContract>(this IGraphQlResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlResult<TContract>> func)
+        public static IGraphQlObjectResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
+            where TInput : class
+            where TContract : class
         {
-            if (original.Contract != null)
-            {
-                throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
-            }
             var newResult = func(new GraphQlResultFactory<TInput>());
 
-            return new GraphQlDeferredResult<TContract>(newResult, original);
+            return new GraphQlFinalizerObjectResult<TContract>(newResult,
+                newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
         }
 
-        public static IGraphQlResult<TContract> Only<TContract>(this IGraphQlResult<IEnumerable<TContract>> original)
+        public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
         {
-            if (original.Contract == null)
-            {
-                throw new ArgumentException($"Finalizers should only be applied after contracts.");
-            }
-            return GraphQlFinalizerResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
+            var newResult = func(new GraphQlResultFactory<TInput>());
+
+            return new GraphQlDeferredScalarResult<TContract>(newResult, original);
         }
 
-        public static IGraphQlResult<Task<TDomainResult>> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
+        public static IGraphQlObjectResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
+        {
+            var newResult = func(new GraphQlResultFactory<TInput>());
+
+            return new GraphQlDeferredObjectResult<TContract>(newResult, original);
+        }
+
+        public static IGraphQlObjectResult<TContract> Only<TContract>(this IGraphQlObjectResult<IEnumerable<TContract>> original)
+        {
+            return GraphQlFinalizerObjectResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
+        }
+
+        public static IGraphQlScalarResult<Task<TDomainResult>> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
         {
             return original.Resolve(value => resolveAsync(value));
         }
 
-        public static IGraphQlResult<TContract> ResolveTask<TInputType, TDomainResult, TContract>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync, Func<IGraphQlResult<TDomainResult>, IGraphQlResult<TContract>> func)
+        public static IGraphQlObjectResult<TContract> ResolveTask<TInputType, TDomainResult, TContract>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync, Func<IGraphQlScalarResult<TDomainResult>, IGraphQlObjectResult<TContract>> func)
         {
             return original.ResolveTask(resolveAsync)
                 // FIXME - this should not use .Result if we can help it

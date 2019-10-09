@@ -137,11 +137,11 @@ namespace GraphLinqQL.Execution
                             b =>
                             {
                                 var result = b.ResolveQuery(field.Name, queryContext, new BasicParameterResolver(arguments));
-                                if (!result.ShouldSubselect)
+                                if (!(result is IGraphQlObjectResult objectResult))
                                 {
                                     throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
                                 }
-                                return Build(result.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
+                                return Build(objectResult.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
                                     ).Build();
                             }
                         );

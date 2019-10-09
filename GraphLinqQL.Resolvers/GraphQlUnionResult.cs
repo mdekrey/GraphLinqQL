@@ -4,17 +4,10 @@ using System.Linq.Expressions;
 
 namespace GraphLinqQL
 {
-#if NETFRAMEWORK
-    internal static class EmptyJoinArrayContainer
-    {
-        public static readonly IReadOnlyCollection<IGraphQlJoin> Joins = new IGraphQlJoin[0];
-    }
-#endif
-
     internal class GraphQlUnionResult<T> : IUnionGraphQlResult<T>
         where T : IEnumerable<IGraphQlResolvable?>?
     {
-        public GraphQlUnionResult(List<IGraphQlResult<T>> allResults)
+        public GraphQlUnionResult(List<IGraphQlObjectResult<T>> allResults)
         {
             if (allResults == null || allResults.Count == 0)
             {
@@ -23,33 +16,23 @@ namespace GraphLinqQL
             this.Results = allResults;
         }
 
-        public IReadOnlyList<IGraphQlResult<T>> Results { get; }
+        public IReadOnlyList<IGraphQlObjectResult<T>> Results { get; }
 
         public LambdaExpression UntypedResolver => throw new InvalidOperationException();
 
-        public Type? Contract => null;
+        public Type Contract => null!; // TODO - this could be implemented via an interface!?
 
         public bool ShouldSubselect => true;
 
-#if NETFRAMEWORK
-        public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyJoinArrayContainer.Joins;
-#else
-        public IReadOnlyCollection<IGraphQlJoin> Joins => Array.Empty<IGraphQlJoin>();
-#endif
+        public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyArrayHelper.Empty<IGraphQlJoin>();
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
             new UnionResolverBuilder((IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>>)this, serviceProvider, fieldContext);
-
-
-        public IGraphQlResult AsContract(Type contract) => throw new NotSupportedException();
-
-        public IGraphQlResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<T> =>
-            (IGraphQlResult<TContract>)AsContract(typeof(TContract));
     }
 
-    internal interface IUnionGraphQlResult<out T> : IGraphQlResult<T>
+    internal interface IUnionGraphQlResult<out T> : IGraphQlObjectResult<T>
         where T : IEnumerable<IGraphQlResolvable?>?
     {
-        public IReadOnlyList<IGraphQlResult<T>> Results { get; }
+        public IReadOnlyList<IGraphQlObjectResult<T>> Results { get; }
     }
 }
