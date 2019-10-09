@@ -19,16 +19,15 @@ namespace GraphLinqQL.Execution
 
                 executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
             }
-            var responseObj = executionResult.ErrorDuringParse
-                ? new Dictionary<string, object?>
-                {
-                        { "errors", BuildErrors(executionResult.Errors) },
-                }
-                : new Dictionary<string, object?>
-                {
-                        { "data", executionResult.Data },
-                        { "errors", BuildErrors(executionResult.Errors) },
-                };
+            var responseObj = new Dictionary<string, object?>();
+            if (!executionResult.ErrorDuringParse)
+            {
+                responseObj["data"] = executionResult.Data;
+            }
+            if (executionResult.Errors != null && executionResult.Errors.Any())
+            {
+                responseObj["errors"] = BuildErrors(executionResult.Errors);
+            }
             return responseObj;
 
             IReadOnlyList<object> BuildErrors(IReadOnlyList<GraphQlError> errors)

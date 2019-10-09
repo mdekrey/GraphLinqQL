@@ -17,8 +17,7 @@ tests:
                 "droid": {
                     "name": "C-3PO"
                 }
-            },
-            "errors": []
+            }
         }
 
   - name: Missing parameter on Droid
@@ -71,6 +70,5 @@ tests:
                 "droid": {
                     "name": "C-3PO"
                 }
-            },
-            "errors": []
+            }
         }
