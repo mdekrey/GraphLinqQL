@@ -4,7 +4,7 @@ namespace GraphLinqQL.Ast.Nodes
 {
     public static class EmptyArrayHelper
     {
-#if NET45
+#if NETFRAMEWORK
         private static class EmptyArray<T>
         {
 #pragma warning disable CA1825 // this is the replacement implementation of Array.Empty<T>()
@@ -15,7 +15,7 @@ namespace GraphLinqQL.Ast.Nodes
 
         public static T[] Empty<T>()
         {
-#if NET45
+#if NETFRAMEWORK
             return EmptyArray<T>.Value;
 #else
             return Array.Empty<T>();

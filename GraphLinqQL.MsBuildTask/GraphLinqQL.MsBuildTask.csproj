@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;$(SupportedFrameworkVersion)</TargetFrameworks>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="14.3.0" />
-    <PackageReference Include="System.CodeDom" Version="4.4.0" Condition=" '$(TargetFramework)' != 'net45' " />
+    <PackageReference Include="System.CodeDom" Version="4.4.0" Condition=" '$(TargetFramework)' != '$(SupportedFrameworkVersion)' " />
   </ItemGroup>
 
   <ItemGroup>

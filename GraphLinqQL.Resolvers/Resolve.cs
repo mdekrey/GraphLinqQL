@@ -12,22 +12,29 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static object GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type t, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
-            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
-            IGraphQlResultFactory<GraphQlRoot> resultFactory = new GraphQlResultFactory<GraphQlRoot>(parameterResolverFactory);
-            var resolved = resolver(resultFactory.Resolve(a => a).AsContract(t).ResolveComplex(serviceProvider));
+            IGraphQlResult resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
             return InvokeResult(resolved, new GraphQlRoot());
         }
 
-        public static object InvokeResult(IGraphQlResult resolved, object input)
+        public static IGraphQlResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        {
+            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
+            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(parameterResolverFactory);
+            var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
+            return resolved;
+        }
+
+        public static ExecutionResult InvokeResult(this IGraphQlResult resolved, object input)
         {
             if (resolved.Joins.Any())
             {
                 throw new InvalidOperationException("Cannot join at the root level");
             }
             var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
-            return func.Compile()();
+            // TODO - get errors here
+            return new ExecutionResult(false, func.Compile()(), EmptyArrayHelper.Empty<GraphQlError>());
         }
 
         public static IGraphQlResult<T> Union<T>(this IGraphQlResult<T> graphQlResult, IGraphQlResult<T> graphQlResult2)
@@ -113,7 +120,7 @@ namespace GraphLinqQL
             return GraphQlFinalizerResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
-        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
-            target.ResolveQuery(name, new NoParameterResolver());
+        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
+            target.ResolveQuery(name, fieldContext, new NoParameterResolver());
     }
 }

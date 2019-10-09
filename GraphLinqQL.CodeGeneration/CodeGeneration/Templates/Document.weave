@@ -14,7 +14,7 @@ namespace {{= model.Namespace}}
 {
 	public class TypeResolver : IGraphQlTypeResolver
 	{
-		public Type Resolve(string name)
+		public Type ResolveForInput(string name)
 		{
 			switch (name)
 			{
@@ -30,6 +30,8 @@ namespace {{= model.Namespace}}
 					throw new ArgumentException("Unknown type " + name, "name");
 			}
 		}
+
+		public Type IntrospectionTypeListing { get { return typeof(Introspection.TypeListing); } }
 	}
 
 	{{each declaration in model.GetTypeDeclarations()}}

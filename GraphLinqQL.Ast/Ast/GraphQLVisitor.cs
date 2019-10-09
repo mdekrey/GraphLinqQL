@@ -12,7 +12,6 @@ namespace GraphLinqQL.Ast
     {
         public override INode VisitDocument([NotNull] GraphqlParser.DocumentContext context)
         {
-            
             return new Document(
                 context.definition().Select(this.Visit).Cast<IDefinitionNode>(),
                 context.Location()
@@ -21,9 +20,6 @@ namespace GraphLinqQL.Ast
 
         public override INode VisitOperationDefinition([NotNull] GraphqlParser.OperationDefinitionContext context)
         {
-            var op = GetOperationType(context.operationType());
-            var name = context.NAME()?.GetText();
-
             return new OperationDefinition(
                 GetOperationType(context.operationType()), 
                 context.NAME()?.GetText(), 
@@ -371,11 +367,19 @@ namespace GraphLinqQL.Ast
             }
         }
 
-        private void AssertNoException(Antlr4.Runtime.ParserRuleContext context)
+        private void AssertNoException(Antlr4.Runtime.ParserRuleContext? context)
         {
-            if (context.exception != null)
+            if (context?.exception != null)
             {
-                throw new GraphqlParseException($"Unable to parse, could not match {context.GetType().Name} at {context.Start.Line}:{context.Start.Column}", context.exception);
+                throw new GraphqlParseException($"Unable to parse, could not match {context.GetType().Name} at {context.Start.Line}:{context.Start.Column}", context.Location(), context.exception);
+            }
+        }
+
+        private void AssertNoException(Antlr4.Runtime.ParserRuleContext?[] context)
+        {
+            foreach (var c in context)
+            {
+                AssertNoException(c);
             }
         }
 

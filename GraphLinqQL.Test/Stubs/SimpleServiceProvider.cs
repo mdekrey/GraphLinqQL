@@ -24,7 +24,7 @@ namespace GraphLinqQL.Stubs
             throw new NotImplementedException();
         }
 
-        public IGraphQlTypeResolver? GetTypeResolver()
+        public IGraphQlTypeResolver GetTypeResolver()
         {
             throw new NotImplementedException();
         }

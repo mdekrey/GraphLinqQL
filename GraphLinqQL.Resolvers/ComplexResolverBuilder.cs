@@ -51,7 +51,7 @@ namespace GraphLinqQL
             return contract;
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, Func<IGraphQlResolvable, IGraphQlResult> resolve)
+        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
             return new ComplexResolverBuilder(contract, this.resolve, expressions
                 .Add(displayName, resolve(contract)), modelType, parameterResolverFactory);
@@ -74,15 +74,15 @@ namespace GraphLinqQL
             return resolve(func, allJoins);
         }
 
-        public IComplexResolverBuilder Add(string property, IDictionary<string, IGraphQlParameterInfo>? parameters) =>
-            Add(property, property, parameters);
+        public IComplexResolverBuilder Add(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters) =>
+            Add(property, property, context, parameters);
 
-        public IComplexResolverBuilder Add(string displayName, string property, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            var result = contract.ResolveQuery(property, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
+            var result = contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
             if (result.Contract != null)
             {
-                throw new InvalidOperationException("Cannot use simple resolution for complex type");
+                throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
             }
             return new ComplexResolverBuilder(contract, resolve, expressions
                 .Add(displayName ?? property, result), modelType, parameterResolverFactory);

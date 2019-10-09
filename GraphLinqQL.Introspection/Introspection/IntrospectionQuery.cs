@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+#pragma warning disable CA1801
 
 namespace GraphLinqQL.Introspection
 {
@@ -30,20 +31,23 @@ namespace GraphLinqQL.Introspection
             }
         }
         IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
+
+        public string GraphQlTypeName => originalQuery.GraphQlTypeName;
+
         public bool IsType(string value) => originalQuery.IsType(value);
 
-        internal IGraphQlResult<Schema> schema() =>
+        internal IGraphQlResult<Schema> schema(FieldContext fieldContext) =>
             original!.Resolve(_ => typeListing).AsContract<Schema>();
 
-        internal IGraphQlResult<GraphQlType?> type(string name) =>
+        internal IGraphQlResult<GraphQlType?> type(FieldContext fieldContext, string name) =>
             original!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
+        public IGraphQlResult ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
             name switch
             {
-                "__schema" => this.schema(),
-                "__type" => this.type(name: parameters.GetParameter<string>("name")),
-                _ => originalQuery.ResolveQuery(name, parameters)
+                "__schema" => this.schema(fieldContext),
+                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name")),
+                _ => originalQuery.ResolveQuery(name, fieldContext, parameters)
             };
     }
 }

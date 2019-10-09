@@ -1,5 +1,6 @@
 ﻿using GraphLinqQL;
 using GraphLinqQL.Ast;
+using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -25,19 +26,21 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddScoped<IGraphQlExecutionServiceProvider>(sp => sp.GetRequiredService<GraphQlCurrentServiceProvider>().CurrentServiceProvider!);
             services.TryAddScoped<IGraphQlServiceProvider>(sp => sp.GetRequiredService<IGraphQlExecutionServiceProvider>());
             services.TryAddSingleton<IAbstractSyntaxTreeGenerator, AbstractSyntaxTreeGenerator>();
+            services.TryAddSingleton<IMessageResolver, MessageResolver>();
+            services.AddSingleton<IMessageProvider, WellKnownErrorCodes>();
         }
 
-        public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, Action<GraphQlOptions>? optionFactory = null)
+        public static void AddGraphQl<TGraphQlTypeResolver>(this IServiceCollection services, Type queryType, Action<GraphQlOptions>? optionFactory = null)
+            where TGraphQlTypeResolver : IGraphQlTypeResolver
         {
-            services.AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(Microsoft.Extensions.Options.Options.DefaultName, optionFactory);
+            services.AddGraphQl<TGraphQlTypeResolver>(Microsoft.Extensions.Options.Options.DefaultName, queryType, optionFactory);
         }
 
-        public static void AddGraphQl<TQuery, TMutation, TGraphQlTypeResolver>(this IServiceCollection services, string optionsName, Action<GraphQlOptions>? optionFactory = null)
+        public static void AddGraphQl<TGraphQlTypeResolver>(this IServiceCollection services, string optionsName, Type queryType, Action<GraphQlOptions>? optionFactory = null)
         {
             services.AddGraphQl(optionsName, options =>
             {
-                options.Query = typeof(TQuery);
-                options.Mutation = typeof(TMutation);
+                options.Query = queryType;
                 options.TypeResolver = typeof(TGraphQlTypeResolver);
                 optionFactory?.Invoke(options);
             });

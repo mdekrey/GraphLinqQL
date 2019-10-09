@@ -55,7 +55,7 @@ namespace GraphLinqQL.CodeGeneration
         {
             get
             {
-                yield return TypeName;
+                yield return declaration.Name;
                 foreach (var iface in ImplementedInterfaces)
                 {
                     yield return iface;

@@ -28,23 +28,23 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
         }
 
 
-        public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters() =>
+        public override IGraphQlResult<IEnumerable<Interfaces.Person?>?> characters(FieldContext fieldContext) =>
             Original.Resolve((c) => c.Paginated.Select(fc => fc.Character)).List(_ => _.AsContract<Person>());
         //Original.Resolve((c) => from fc in dbContext.FilmCharacters
         //                            where fc.EpisodeId == c.EpisodeId
         //                            select fc.Character).ConvertableList().As<Person>();
 
-        public override IGraphQlResult<IEnumerable<Interfaces.FilmCharactersEdge?>?> edges()
+        public override IGraphQlResult<IEnumerable<Interfaces.FilmCharactersEdge?>?> edges(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<PageInfo> pageInfo()
+        public override IGraphQlResult<PageInfo> pageInfo(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<int?> totalCount() =>
+        public override IGraphQlResult<int?> totalCount(FieldContext fieldContext) =>
             Original.Resolve((c) => (int?)(c.Unpaginated.Count()));
         //Original.Resolve((c) => (int?)(from fc in dbContext.FilmCharacters
         //                                   where fc.EpisodeId == c.EpisodeId

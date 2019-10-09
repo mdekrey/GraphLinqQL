@@ -18,7 +18,7 @@ public interface {{= model.TypeName }} : IGraphQlResolvable
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
 		{{/if}}
-		IGraphQlResult{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
+		IGraphQlResult{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}(FieldContext fieldContext{{each arg in field.Arguments}}, {{= arg.TypeName}} {{= arg.FieldName }}{{/each}});
 		{{=""}}
 	{{/each}}
 }

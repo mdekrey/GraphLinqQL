@@ -23,21 +23,48 @@ namespace GraphLinqQL.Execution
             this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
         }
 
-        public object Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
+        public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
-            var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
-            var ast = astGenerator.ParseDocument(query);
-            var def = ast.Children.OfType<OperationDefinition>().First();
-            if (def == null)
+            IGraphQlResult result;
+            try
             {
-                throw new ArgumentException("Query did not contain a document", nameof(query));
+                var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
+                var ast = astGenerator.ParseDocument(query);
+                var def = ast.Children.OfType<OperationDefinition>().FirstOrDefault();
+                if (def == null)
+                {
+                    throw new ArgumentException("Query did not contain a document", nameof(query)).AddGraphQlError(WellKnownErrorCodes.NoOperation, ast.Location.ToQueryLocations());
+                }
+
+                result = Resolve(ast, def, actualArguments);
             }
-
-            //var variableDefinitions = def.VariableDefinitions?.ToImmutableDictionary(v => v.Variable.Name.Value, v => GetTypeFromGraphQlType(v.Type))
-            //    ?? ImmutableDictionary<string, Type>.Empty;
-
-            var executionResult = Execute(ast, def, actualArguments);
-            return executionResult;
+            catch (Exception ex)
+            {
+                ex.ConvertAstExceptions();
+                if (ex.HasGraphQlErrors(out var errors))
+                {
+                    return new ExecutionResult(true, null, errors);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            try
+            {
+                return result.InvokeResult(new GraphQlRoot());
+            }
+            catch (Exception ex)
+            {
+                if (ex.HasGraphQlErrors(out var errors))
+                {
+                    return new ExecutionResult(false, new { }, errors);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         private Type GetTypeFromGraphQlType(ITypeNode arg)
@@ -55,13 +82,13 @@ namespace GraphLinqQL.Execution
                     var listType = GetTypeFromGraphQlType(listNode.ElementType);
                     return typeof(IEnumerable<>).MakeGenericType(listType);
                 case TypeName namedType:
-                    return options.TypeResolver.Resolve(namedType.Name);
+                    return options.TypeResolver.ResolveForInput(namedType.Name);
                 default:
                     throw new InvalidOperationException("Variable type was not a list, not-null, or named.");
             }
         }
 
-        private object Execute(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
+        private IGraphQlResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             var operation = def.OperationType switch
             {
@@ -73,10 +100,11 @@ namespace GraphLinqQL.Execution
 
             var actualArguments = def.Variables.ToDictionary(variable => variable.Variable.Name, variable => arguments.ContainsKey(variable.Variable.Name) ? arguments[variable.Variable.Name] : new GraphQlParameterInfo(variable.DefaultValue!, null!));
             var context = new GraphQLExecutionContext(ast, actualArguments);
-            return serviceProvider.GraphQlRoot(operation, builder =>
+            var result = serviceProvider.GetResult<GraphQlRoot>(operation, builder =>
             {
                 return Build(builder, def.SelectionSet.Selections, context).Build();
             });
+            return result;
         }
 
         private IComplexResolverBuilder Build(IComplexResolverBuilder builder, IEnumerable<ISelection> selections, GraphQLExecutionContext context)
@@ -96,19 +124,28 @@ namespace GraphLinqQL.Execution
             switch (resultNode)
             {
                 case Field field:
+                    var queryContext = new FieldContext(field.Name, node.Location.ToQueryLocations());
                     var arguments = ResolveArguments(field.Arguments, context);
                     if (field.SelectionSet != null)
                     {
                         return builder.Add(
                             field.Alias ?? field.Name,
-                            b => Build(b.ResolveQuery(field.Name, parameterResolverFactory.FromParameterData(arguments))
-                                        .ResolveComplex(serviceProvider), field.SelectionSet.Selections, context
-                                ).Build()
+                            queryContext,
+                            b =>
+                            {
+                                var result = b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments));
+                                if (!result.ShouldSubselect)
+                                {
+                                    throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
+                                }
+                                return Build(result.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
+                                    ).Build();
+                            }
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, arguments);
+                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, arguments);
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,

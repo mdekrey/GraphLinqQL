@@ -7,12 +7,12 @@ namespace Introspection
 {
 	public class TypeListing : IGraphQlTypeListing
 	{
-		private static readonly ImmutableDictionary<string, Type> types = new Dictionary<string, Type>
+		private static readonly Dictionary<string, Type> types = new Dictionary<string, Type>
 		{
 			{{each declaration in model.GetTypeDeclarations()}}
 				{ "{{= declaration.Label }}", typeof(Introspection.{{= declaration.TypeName}}) },
 			{{/each}}
-		}.ToImmutableDictionary();
+		};
 	    private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
 			{{each directive in model.Directives}}
 				new DirectiveInformation(name: "{{= directive.Label }}",

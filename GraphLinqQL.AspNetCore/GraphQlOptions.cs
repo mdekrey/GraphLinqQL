@@ -13,7 +13,6 @@ namespace GraphLinqQL
             typeof(IncludeDirective),
             typeof(SkipDirective)
         };
-        private Type? typeListing;
         private Type? query;
         private Type? mutation;
         private Type? subscription;
@@ -70,19 +69,6 @@ namespace GraphLinqQL
                     throw new ArgumentException(nameof(value) + " must be assignable to " + typeof(IGraphQlTypeResolver), nameof(value));
                 }
                 typeResolver = value;
-            }
-        }
-
-        public Type? TypeListing
-        {
-            get { return typeListing; }
-            set
-            {
-                if (!typeof(Introspection.IGraphQlTypeListing).IsAssignableFrom(value))
-                {
-                    throw new ArgumentException(nameof(value) + " must be assignable to " + typeof(Introspection.IGraphQlTypeListing), nameof(value));
-                }
-                typeListing = value;
             }
         }
 
