@@ -29,8 +29,12 @@ namespace GraphLinqQL.EFCore.Test
 
         private StarWarsContext CreateStarWarsContext()
         {
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            var inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            inMemorySqlite.Open();
             var options = new DbContextOptionsBuilder<StarWarsContext>()
-                   .UseInMemoryDatabase(databaseName: "Add_writes_to_database")
+                   .UseSqlite(inMemorySqlite)
                    .Options;
 
             var result = new StarWarsContext(options);

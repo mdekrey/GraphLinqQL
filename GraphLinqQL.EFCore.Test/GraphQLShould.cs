@@ -3,28 +3,35 @@ using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.TestFramework;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable CA1063 // Implement IDisposable Correctly
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
 namespace GraphLinqQL
 {
-    public class GraphQLShould
+    public sealed class GraphQLShould : IDisposable
     {
         private readonly ServiceProvider serviceProvider;
+        private readonly SqliteConnection inMemorySqlite;
 
         public GraphQLShould()
         {
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            inMemorySqlite.Open();
+
             var services = new ServiceCollection();
-            services.AddDbContext<StarWarsContext>(options => options.UseInMemoryDatabase("persistent-db-context"));
+            services.AddDbContext<StarWarsContext>(options => options.UseSqlite(inMemorySqlite));
             services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options => options.AddIntrospection());
             services.AddLogging();
             serviceProvider = services.BuildServiceProvider();
@@ -103,6 +110,12 @@ namespace GraphLinqQL
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
             return executor;
+        }
+
+        public void Dispose()
+        {
+            serviceProvider.Dispose();
+            inMemorySqlite.Dispose();
         }
     }
 }

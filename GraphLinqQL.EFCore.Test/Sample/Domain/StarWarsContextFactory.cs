@@ -17,7 +17,8 @@ namespace GraphLinqQL.Sample.Domain
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<StarWarsContext>();
-            optionsBuilder.UseInMemoryDatabase("StarWars");
+            optionsBuilder
+                   .UseSqlite("Data Source=:memory:");
 
             return new StarWarsContext(optionsBuilder.Options);
         }
