@@ -16,6 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.AspNetCore", "G
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25326AB9-A3CA-4A05-B646-F958571A8F1C}"
 	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
 		Directory.Build.props = Directory.Build.props
 		readme.md = readme.md
 	EndProjectSection
@@ -46,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.Ast.Test", "Gra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.CodeGeneration", "GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj", "{040B7447-AF92-47E2-9747-3FD8C7F4A0AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-graphlinqql", "dotnet-graphlinqql\dotnet-graphlinqql.csproj", "{B8B1DC8B-EB00-4247-8DBB-5C0CEC8360C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-graphlinqql", "dotnet-graphlinqql\dotnet-graphlinqql.csproj", "{B8B1DC8B-EB00-4247-8DBB-5C0CEC8360C3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.MsBuildTask", "GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj", "{8295CD67-B457-419F-8684-E2BB9AC84695}"
 EndProject
