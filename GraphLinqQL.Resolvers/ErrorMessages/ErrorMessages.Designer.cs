@@ -61,6 +61,15 @@ namespace GraphLinqQL.ErrorMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An unhandled error occurred within resolve method for field &quot;{0}&quot; on type &quot;{1}&quot;. See server logs for details..
+        /// </summary>
+        internal static string errorInResolver {
+            get {
+                return ResourceManager.GetString("errorInResolver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No operation was found in provided GraphQL document.
         /// </summary>
         internal static string noOperationFound {

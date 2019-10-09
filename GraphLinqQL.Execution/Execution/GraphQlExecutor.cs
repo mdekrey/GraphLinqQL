@@ -1,26 +1,29 @@
 ﻿using GraphLinqQL.Ast;
 using GraphLinqQL.Ast.Nodes;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 
 namespace GraphLinqQL.Execution
 {
+
     public class GraphQlExecutor : IGraphQlExecutor
     {
         private readonly IGraphQlServiceProvider serviceProvider;
         private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IGraphQlExecutionOptions options;
         private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
+        private readonly ILogger<GraphQlExecutor> logger;
 
-        public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options)
+        public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options, ILoggerFactory loggerFactory)
         {
             this.serviceProvider = serviceProvider;
             this.astGenerator = astGenerator;
             this.options = options;
             this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
+            this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
         }
 
         public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
@@ -43,6 +46,7 @@ namespace GraphLinqQL.Execution
                 ex.ConvertAstExceptions();
                 if (ex.HasGraphQlErrors(out var errors))
                 {
+                    logger.LogWarning(new EventId(10001, "GraphQLParse"), ex, "Caught exception with GraphQL errors during parse");
                     return new ExecutionResult(true, null, errors);
                 }
                 else
@@ -58,6 +62,7 @@ namespace GraphLinqQL.Execution
             {
                 if (ex.HasGraphQlErrors(out var errors))
                 {
+                    logger.LogWarning(new EventId(10002, "GraphQLExecution"), ex, "Caught exception with GraphQL errors during execution");
                     return new ExecutionResult(false, new { }, errors);
                 }
                 else

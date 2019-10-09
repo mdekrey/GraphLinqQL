@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using GraphLinqQL.Execution;
 using GraphLinqQL.Stubs;
 using GraphLinqQL.Ast;
+using Microsoft.Extensions.Logging;
 
 namespace GraphLinqQL.Execution
 {
@@ -34,7 +35,7 @@ namespace GraphLinqQL.Execution
         private static IGraphQlExecutor CreateExecutor()
         {
             using var serviceProvider = new SimpleServiceProvider();
-            return new GraphQlExecutor(serviceProvider, new AbstractSyntaxTreeGenerator(), new GraphQlExecutionOptions());
+            return new GraphQlExecutor(serviceProvider, new AbstractSyntaxTreeGenerator(), new GraphQlExecutionOptions(), new LoggerFactory());
         }
 
         [Fact]
