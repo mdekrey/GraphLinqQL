@@ -79,13 +79,26 @@ namespace GraphLinqQL
 
         public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
         {
-            var result = contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
+            IGraphQlResult result = SafeResolve(property, context, parameters);
             if (result.Contract != null)
             {
                 throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
             }
             return new ComplexResolverBuilder(contract, resolve, expressions
                 .Add(displayName ?? property, result), modelType, parameterResolverFactory);
+        }
+
+        private IGraphQlResult SafeResolve(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        {
+            try
+            {
+                return contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
+            }
+            catch (Exception ex)
+            {
+                ex.AddGraphQlError(WellKnownErrorCodes.ErrorInResolver, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
+                throw;
+            }
         }
 
         public bool IsType(string value) =>

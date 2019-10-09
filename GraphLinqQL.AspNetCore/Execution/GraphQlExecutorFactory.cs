@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Immutable;
 using GraphLinqQL.Ast;
+using Microsoft.Extensions.Logging;
 
 namespace GraphLinqQL.Execution
 {
@@ -13,12 +14,14 @@ namespace GraphLinqQL.Execution
         private readonly IGraphQlServiceProviderFactory serviceProviderFactory;
         private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IOptionsMonitor<GraphQlOptions> options;
+        private readonly ILoggerFactory loggerFactory;
 
-        public GraphQlExecutorFactory(IGraphQlServiceProviderFactory serviceProviderFactory, IAbstractSyntaxTreeGenerator astGenerator, IOptionsMonitor<GraphQlOptions> options)
+        public GraphQlExecutorFactory(IGraphQlServiceProviderFactory serviceProviderFactory, IAbstractSyntaxTreeGenerator astGenerator, IOptionsMonitor<GraphQlOptions> options, ILoggerFactory loggerFactory)
         {
             this.serviceProviderFactory = serviceProviderFactory;
             this.astGenerator = astGenerator;
             this.options = options;
+            this.loggerFactory = loggerFactory;
         }
 
         public IGraphQlExecutor Create() =>
@@ -38,7 +41,7 @@ namespace GraphLinqQL.Execution
                 Subscription = options.Subscription,
                 Directives = options.Directives.Select(directiveType => serviceProvider.GetDirective(directiveType)).ToImmutableList(),
                 TypeResolver = serviceProvider.GetTypeResolver()
-            });
+            }, loggerFactory);
         }
 
         private class GraphQlExecutionOptions : IGraphQlExecutionOptions

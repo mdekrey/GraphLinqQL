@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="errorInResolver" xml:space="preserve">
+    <value>An unhandled error occurred within resolve method for field "{0}" on type "{1}". See server logs for details.</value>
+    <comment>[fieldName, type]</comment>
+  </data>
   <data name="noOperationFound" xml:space="preserve">
     <value>No operation was found in provided GraphQL document</value>
   </data>
