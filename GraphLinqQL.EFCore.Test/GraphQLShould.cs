@@ -1,4 +1,5 @@
-﻿using GraphLinqQL.ErrorMessages;
+﻿using GraphLinqQL.Ast;
+using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.TestFramework;
@@ -38,12 +39,33 @@ namespace GraphLinqQL
             using var scope = serviceProvider.CreateScope();
             switch (scenario)
             {
+                case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: true } }:
+                    await ParseSuccess(scope.ServiceProvider, query);
+                    return;
+                case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: false } }:
+                    await DetectParsingErrors(scope.ServiceProvider, query);
+                    return;
                 case { Given: { Query: var query }, When: { Execute: true }, Then: { MatchResult: var expected } }:
                     await Execute(scope.ServiceProvider, query, expected);
                     return;
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        private async Task ParseSuccess(IServiceProvider serviceProvider, string query)
+        {
+            await Task.Yield();
+            var astFactory = serviceProvider.GetRequiredService<IAbstractSyntaxTreeGenerator>();
+            var document = astFactory.ParseDocument(query);
+            Assert.NotNull(document);
+        }
+
+        private async Task DetectParsingErrors(IServiceProvider serviceProvider, string query)
+        {
+            await Task.Yield();
+            var astFactory = serviceProvider.GetRequiredService<IAbstractSyntaxTreeGenerator>();
+            Assert.Throws<GraphqlParseException>(() => astFactory.ParseDocument(query));
         }
 
         private async Task Execute(IServiceProvider serviceProvider, string query, string expected)

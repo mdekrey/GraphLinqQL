@@ -10,6 +10,9 @@
     <EmbeddedResource Include="**/*.yaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Scenarios\QueryParsing.yaml" />
+  </ItemGroup>
+  <ItemGroup>
     <GraphLinqQlSchema Include="Sample\sw-schema.3.graphql" />
   </ItemGroup>
 
