@@ -6,6 +6,7 @@ using System.Text;
 using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.Sample.Interfaces;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CA1307 // Specify StringComparison
 
 namespace GraphLinqQL.Sample.Implementations
 {
@@ -33,7 +34,7 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlResult<Interfaces.Human?> human(FieldContext fieldContext, string id) =>
             // This intentionally has a different implementation from the droid for various implementations
-            Original.Resolve(_ => dbContext.Humans.Where(human => human.Id == id)).Nullable(_ => _.List(_ => _.AsContract<Implementations.Human>()).Only());
+            Original.Resolve(_ => dbContext.Humans.Where(human => human.Id == id)).List(_ => _.AsContract<Implementations.Human>()).Only();
 
         public override IGraphQlResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
         {
@@ -42,7 +43,9 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlResult<IEnumerable?> search(FieldContext fieldContext, string? text)
         {
-            throw new NotImplementedException();
+            return Original.Resolve(_ => dbContext.Humans.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Human>())
+                .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => dbContext.Droids.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Droid>()));
+                //.Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
         }
 
         public override IGraphQlResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)

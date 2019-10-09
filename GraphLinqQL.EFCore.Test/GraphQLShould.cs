@@ -5,6 +5,7 @@ using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.TestFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

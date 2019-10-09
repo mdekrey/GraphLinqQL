@@ -19,6 +19,48 @@ tests:
                 }
             }
         }
+        
+  - name: Parameterized Query on a Human
+    given:
+      query: |
+        {
+          human(id: "1000") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker"
+                }
+            }
+        }
+        
+  - name: Renaming parameters on a Droid
+    given:
+      query: |
+        {
+          droid(id: "2000") {
+            id
+            droidName: name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "droid": {
+                    "id": "2000",
+                    "droidName": "C-3PO"
+                }
+            }
+        }
 
   - name: Missing parameter on Droid
     given:
@@ -54,7 +96,7 @@ tests:
   - name: Parameterized Query with Variables on a Droid
     given:
       query: |
-        query ($id: String!) {
+        query ($id: ID!) {
           droid(id: $id) {
             name
           }
@@ -72,3 +114,24 @@ tests:
                 }
             }
         }
+
+  - name: Search list results
+    given:
+      query: |
+        {
+          search(text: "Luke") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Luke Skywalker"
+                }]
+            }
+        }
+        
