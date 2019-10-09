@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-graphlinqql", "dotne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphLinqQL.MsBuildTask", "GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj", "{8295CD67-B457-419F-8684-E2BB9AC84695}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLinqQL.EFCore.Test", "GraphLinqQL.EFCore.Test\GraphLinqQL.EFCore.Test.csproj", "{025724E7-BB9B-4405-BD69-F7FE47A68CF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{8295CD67-B457-419F-8684-E2BB9AC84695}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8295CD67-B457-419F-8684-E2BB9AC84695}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8295CD67-B457-419F-8684-E2BB9AC84695}.Release|Any CPU.Build.0 = Release|Any CPU
+		{025724E7-BB9B-4405-BD69-F7FE47A68CF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{025724E7-BB9B-4405-BD69-F7FE47A68CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{025724E7-BB9B-4405-BD69-F7FE47A68CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{025724E7-BB9B-4405-BD69-F7FE47A68CF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +130,7 @@ Global
 		{F8254753-CA00-4E32-990E-206782DB71FB} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
 		{6C6D794D-F913-4643-8192-4BED2CEDC936} = {D27178A6-5E6C-4491-81A6-6738AEC82BEC}
 		{4B6BC7BB-5241-4844-BB2A-F53BE102AB75} = {1BD68627-7F2F-41A6-AB71-9B76F58E0CD1}
+		{025724E7-BB9B-4405-BD69-F7FE47A68CF9} = {1BD68627-7F2F-41A6-AB71-9B76F58E0CD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B05A32A-DACC-4EAA-98CE-3462557D2258}
