@@ -16,8 +16,6 @@ namespace GraphLinqQL
 
     class GraphQlExpressionResult<TReturnType> : IGraphQlResult<TReturnType>
     {
-        public IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
-
         public LambdaExpression UntypedResolver { get; }
 
         private readonly GraphQlContractExpressionReplaceVisitor visitor;
@@ -29,12 +27,10 @@ namespace GraphLinqQL
         public bool ShouldSubselect => Contract != null;
 
         public GraphQlExpressionResult(
-            IGraphQlParameterResolverFactory parameterResolverFactory,
             LambdaExpression untypedResolver,
             Type? contract = null,
             IReadOnlyCollection<IGraphQlJoin>? joins = null)
         {
-            this.ParameterResolverFactory = parameterResolverFactory;
             this.UntypedResolver = untypedResolver;
             this.Contract = contract;
             this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
@@ -62,8 +58,7 @@ namespace GraphLinqQL
                 Contract!,
                 serviceProvider,
                 ToResult,
-                visitor.ModelType!,
-                ParameterResolverFactory
+                visitor.ModelType!
             );
         }
 
@@ -75,7 +70,7 @@ namespace GraphLinqQL
             var returnResult = visitor.Visit(this.UntypedResolver.Body);
 
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<object>(ParameterResolverFactory, resultFunc, joins: this.Joins);
+            return new GraphQlExpressionResult<object>(resultFunc, joins: this.Joins);
         }
 
         private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
@@ -117,7 +112,7 @@ namespace GraphLinqQL
                 throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
             }
             var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
-            return new GraphQlExpressionResult<TContract>(ParameterResolverFactory, newResolver, contract);
+            return new GraphQlExpressionResult<TContract>(newResolver, contract);
         }
     }
 

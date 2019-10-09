@@ -21,7 +21,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure(optionsName, optionFactory);
             services.TryAddSingleton<IGraphQlServiceProviderFactory, GraphQlServiceProviderFactory>();
             services.TryAddSingleton<IGraphQlExecutorFactory, GraphQlExecutorFactory>();
-            services.TryAddSingleton<IGraphQlParameterResolverFactory, BasicParameterResolverFactory>();
             services.AddScoped<GraphQlCurrentServiceProvider>();
             services.TryAddScoped<IGraphQlExecutionServiceProvider>(sp => sp.GetRequiredService<GraphQlCurrentServiceProvider>().CurrentServiceProvider!);
             services.TryAddScoped<IGraphQlServiceProvider>(sp => sp.GetRequiredService<IGraphQlExecutionServiceProvider>());

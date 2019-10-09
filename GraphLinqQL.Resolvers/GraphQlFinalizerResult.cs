@@ -20,8 +20,6 @@ namespace GraphLinqQL
             return new GraphQlFinalizerResult<TReturnType>(original, original => Expression.Lambda(expreesionToInline.Inline(original.Body), original.Parameters));
         }
 
-        public IGraphQlParameterResolverFactory ParameterResolverFactory => original.ParameterResolverFactory;
-
         public LambdaExpression UntypedResolver => postProcess(original.UntypedResolver);
 
         public Type? Contract => original.Contract;

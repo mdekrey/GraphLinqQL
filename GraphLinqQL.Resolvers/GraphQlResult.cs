@@ -8,7 +8,6 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResult
     {
-        IGraphQlParameterResolverFactory ParameterResolverFactory { get; }
         LambdaExpression UntypedResolver { get; }
         Type? Contract { get; }
         bool ShouldSubselect { get; }

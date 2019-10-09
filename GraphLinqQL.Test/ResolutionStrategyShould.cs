@@ -351,7 +351,7 @@ namespace GraphLinqQL
                                                                 .Add("id", queryContext)
                                                                 .Add("name", queryContext)
                                                                 .Add("location", queryContext)
-                                                                .Add("oldLocation", "location", queryContext, new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } })
+                                                                .Add("oldLocation", "location", queryContext, new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } }))
                                                                 .Build())
                     .Build());
 

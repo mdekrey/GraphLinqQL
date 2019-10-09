@@ -18,8 +18,6 @@ namespace GraphLinqQL
             this.outer = outer;
         }
 
-        public IGraphQlParameterResolverFactory ParameterResolverFactory => outer.ParameterResolverFactory;
-
         public LambdaExpression UntypedResolver =>
             Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 

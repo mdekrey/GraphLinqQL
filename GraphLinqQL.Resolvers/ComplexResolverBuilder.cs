@@ -13,29 +13,25 @@ namespace GraphLinqQL
         private readonly Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve;
         private readonly Type modelType;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
-        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
 
         protected ComplexResolverBuilder(
             IGraphQlResolvable contract,
             Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
             ImmutableDictionary<string, IGraphQlResult> expressions,
-            Type modelType,
-            IGraphQlParameterResolverFactory parameterResolverFactory)
+            Type modelType)
         {
             this.contract = contract;
             this.resolve = resolve;
             this.modelType = modelType;
             this.expressions = expressions;
-            this.parameterResolverFactory = parameterResolverFactory;
         }
 
         public ComplexResolverBuilder(
             Type contractType,
             IGraphQlServiceProvider serviceProvider,
             Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlResult> resolve,
-            Type modelType,
-            IGraphQlParameterResolverFactory parameterResolverFactory)
-            : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType, parameterResolverFactory)
+            Type modelType)
+            : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType)
         {
         }
 
@@ -47,14 +43,14 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException("Contract does not accept an input type");
             }
-            accepts.Original = GraphQlResultFactory.Construct(modelType, serviceProvider);
+            accepts.Original = GraphQlResultFactory.Construct(modelType);
             return contract;
         }
 
         IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
             return new ComplexResolverBuilder(contract, this.resolve, expressions
-                .Add(displayName, resolve(contract)), modelType, parameterResolverFactory);
+                .Add(displayName, resolve(contract)), modelType);
         }
 
         public IGraphQlResult Build()
@@ -74,10 +70,10 @@ namespace GraphLinqQL
             return resolve(func, allJoins);
         }
 
-        public IComplexResolverBuilder Add(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters) =>
+        public IComplexResolverBuilder Add(string property, FieldContext context, IGraphQlParameterResolver? parameters) =>
             Add(property, property, context, parameters);
 
-        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
             IGraphQlResult result = SafeResolve(property, context, parameters);
             if (result.Contract != null)
@@ -85,14 +81,14 @@ namespace GraphLinqQL
                 throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
             }
             return new ComplexResolverBuilder(contract, resolve, expressions
-                .Add(displayName ?? property, result), modelType, parameterResolverFactory);
+                .Add(displayName ?? property, result), modelType);
         }
 
-        private IGraphQlResult SafeResolve(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        private IGraphQlResult SafeResolve(string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
             try
             {
-                return contract.ResolveQuery(property, context, parameters: parameterResolverFactory.FromParameterData(parameters ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty));
+                return contract.ResolveQuery(property, context, parameters: parameters ?? BasicParameterResolver.Empty);
             }
             catch (Exception ex)
             {

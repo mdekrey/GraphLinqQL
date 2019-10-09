@@ -17,10 +17,10 @@ namespace GraphLinqQL
         public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve) =>
             new PostResolveComplexResolverBuilder(original.Add(displayName, context, resolve), postResolve);
 
-        public IComplexResolverBuilder Add(string propertyName, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters = null) =>
+        public IComplexResolverBuilder Add(string propertyName, FieldContext context, IGraphQlParameterResolver? parameters = null) =>
             new PostResolveComplexResolverBuilder(original.Add(propertyName, context, parameters), postResolve);
 
-        public IComplexResolverBuilder Add(string displayName, string propertyName, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters = null) =>
+        public IComplexResolverBuilder Add(string displayName, string propertyName, FieldContext context, IGraphQlParameterResolver? parameters = null) =>
             new PostResolveComplexResolverBuilder(original.Add(displayName, propertyName, context, parameters), postResolve);
 
         public IGraphQlResult Build() => this.postResolve(original.Build());

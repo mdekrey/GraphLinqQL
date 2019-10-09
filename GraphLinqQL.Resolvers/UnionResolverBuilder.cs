@@ -15,23 +15,21 @@ namespace GraphLinqQL
                     .Where(m => m.GetParameters().Length == 2)
                     .Select(m => m.MakeGenericMethod(typeof(object)))
                     .Single();
-        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
         private readonly ImmutableList<IComplexResolverBuilder> resolvers;
 
         public UnionResolverBuilder(IUnionGraphQlResult<IEnumerable<IGraphQlResolvable>> unionResult, IGraphQlServiceProvider serviceProvider, FieldContext queryContext)
-            : this(serviceProvider.GetParameterResolverFactory(), unionResult.Results.Select(result => result.ResolveComplex(serviceProvider, queryContext)))
+            : this(unionResult.Results.Select(result => result.ResolveComplex(serviceProvider, queryContext)))
         {
         }
 
-        public UnionResolverBuilder(IGraphQlParameterResolverFactory parameterResolverFactory, IEnumerable<IComplexResolverBuilder> resolvers)
+        public UnionResolverBuilder(IEnumerable<IComplexResolverBuilder> resolvers)
         {
-            this.parameterResolverFactory = parameterResolverFactory;
             this.resolvers = resolvers.ToImmutableList();
         }
 
         public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(displayName, context, resolve)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(displayName, context, resolve)));
         }
 
         public IGraphQlResult Build()
@@ -40,22 +38,22 @@ namespace GraphLinqQL
             var param = results[0].UntypedResolver.Parameters[0];
             var expressions = results.Select(e => e.UntypedResolver.Inline(param)).ToArray();
             var lambda = Expression.Lambda(expressions.Skip(1).Aggregate(expressions[0], (prev, next) => Expression.Call(QueryableUnion, prev, next)), param);
-            return new GraphQlExpressionResult<object>(parameterResolverFactory, lambda);
+            return new GraphQlExpressionResult<object>(lambda);
         }
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.IfType(value, typedBuilder)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.IfType(value, typedBuilder)));
         }
 
-        public IComplexResolverBuilder Add(string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, context, parameters)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(property, context, parameters)));
         }
 
-        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IDictionary<string, IGraphQlParameterInfo>? parameters)
+        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
-            return new UnionResolverBuilder(parameterResolverFactory, resolvers.Select(r => r.Add(property, property, context, parameters)));
+            return new UnionResolverBuilder(resolvers.Select(r => r.Add(property, property, context, parameters)));
         }
     }
 }

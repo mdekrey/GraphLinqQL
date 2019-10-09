@@ -27,11 +27,6 @@ namespace GraphLinqQL
             return (IGraphQlDirective)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, directive);
         }
 
-        public IGraphQlParameterResolverFactory GetParameterResolverFactory()
-        {
-            return serviceProvider.GetRequiredService<IGraphQlParameterResolverFactory>();
-        }
-
         public IGraphQlResolvable GetResolverContract(Type contract)
         {
             return (IGraphQlResolvable)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, contract);

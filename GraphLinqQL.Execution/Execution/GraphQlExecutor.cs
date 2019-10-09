@@ -14,7 +14,6 @@ namespace GraphLinqQL.Execution
         private readonly IGraphQlServiceProvider serviceProvider;
         private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IGraphQlExecutionOptions options;
-        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
         private readonly ILogger<GraphQlExecutor> logger;
 
         public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options, ILoggerFactory loggerFactory)
@@ -22,7 +21,6 @@ namespace GraphLinqQL.Execution
             this.serviceProvider = serviceProvider;
             this.astGenerator = astGenerator;
             this.options = options;
-            this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
         }
 
@@ -138,7 +136,7 @@ namespace GraphLinqQL.Execution
                             queryContext,
                             b =>
                             {
-                                var result = b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments));
+                                var result = b.ResolveQuery(field.Name, queryContext, new BasicParameterResolver(arguments));
                                 if (!result.ShouldSubselect)
                                 {
                                     throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
@@ -150,7 +148,7 @@ namespace GraphLinqQL.Execution
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, arguments);
+                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, new BasicParameterResolver(arguments));
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,
@@ -190,7 +188,7 @@ namespace GraphLinqQL.Execution
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
             return actualDirective == null
                 ? node
-                : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
+                : actualDirective.HandleDirective(node, new BasicParameterResolver(arguments), context);
         }
 
         private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IReadOnlyList<Argument> arguments, GraphQLExecutionContext context)

@@ -21,8 +21,7 @@ namespace GraphLinqQL
 
         public static IGraphQlResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
         {
-            var parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
-            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(parameterResolverFactory);
+            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
             var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
             return resolved;
         }
@@ -59,7 +58,7 @@ namespace GraphLinqQL
                 allResults.Add(graphQlResult2);
             }
 
-            return new GraphQlUnionResult<T>(graphQlResult.ParameterResolverFactory, allResults);
+            return new GraphQlUnionResult<T>(allResults);
         }
 
         public static IGraphQlResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlResult<IEnumerable<TInput>> original, Func<IGraphQlResult<TInput>, IGraphQlResult<TContract>> func)
@@ -68,7 +67,7 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
             }
-            var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
+            var newResult = func(new GraphQlResultFactory<TInput>());
 
             var getList = original.UntypedResolver.Body;
             if (!typeof(IQueryable<>).MakeGenericType(typeof(TInput)).IsAssignableFrom(getList.Type))
@@ -84,7 +83,7 @@ namespace GraphLinqQL
             {
                 throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
             }
-            return new GraphQlExpressionResult<IEnumerable<TContract>>(original.ParameterResolverFactory, newResolver, newResult.Contract, original.Joins);
+            return new GraphQlExpressionResult<IEnumerable<TContract>>(newResolver, newResult.Contract, original.Joins);
         }
 
         public static IGraphQlResult<TContract?> Nullable<TInput, TContract>(this IGraphQlResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlResult<TContract>> func)
@@ -95,7 +94,7 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
             }
-            var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
+            var newResult = func(new GraphQlResultFactory<TInput>());
 
             return new GraphQlFinalizerResult<TContract>(newResult, 
                 newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
@@ -107,7 +106,7 @@ namespace GraphLinqQL
             {
                 throw new ArgumentException($"Original cannot already have a contract, but had {original.Contract.FullName}.");
             }
-            var newResult = func(new GraphQlResultFactory<TInput>(original.ParameterResolverFactory));
+            var newResult = func(new GraphQlResultFactory<TInput>());
 
             return new GraphQlDeferredResult<TContract>(newResult, original);
         }
