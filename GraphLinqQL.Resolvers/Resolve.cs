@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace GraphLinqQL
 {
@@ -118,6 +119,18 @@ namespace GraphLinqQL
                 throw new ArgumentException($"Finalizers should only be applied after contracts.");
             }
             return GraphQlFinalizerResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
+        }
+
+        public static IGraphQlResult<Task<TDomainResult>> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
+        {
+            return original.Resolve(value => resolveAsync(value));
+        }
+
+        public static IGraphQlResult<TContract> ResolveTask<TInputType, TDomainResult, TContract>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync, Func<IGraphQlResult<TDomainResult>, IGraphQlResult<TContract>> func)
+        {
+            return original.ResolveTask(resolveAsync)
+                // FIXME - this should not use .Result if we can help it
+                .Defer(r => func(r.Resolve(t => t.Result)));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>

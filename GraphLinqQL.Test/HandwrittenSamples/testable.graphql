@@ -11,6 +11,7 @@ type Hero {
     faction: String!
     friends: [Hero!]!
     friendsDeferred: [Hero!]!
+	friendsTask: [Hero!]!
     location(date: String = "2019-04-22"): String!;
 }
 union Character = Hero | Villain

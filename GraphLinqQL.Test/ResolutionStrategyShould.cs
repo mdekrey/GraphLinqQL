@@ -274,6 +274,36 @@ namespace GraphLinqQL
         }
 
         [Fact]
+        public void BeAbleToUseTasksToAccessFields()
+        {
+            // {
+            //   heroes {
+            //     id
+            //     name
+            //     friends {
+            //       id
+            //       name
+            //     }
+            //   }
+            // }
+
+            using var sp = new SimpleServiceProvider();
+            var queryContext = FieldContext.Empty;
+            var result = sp.GraphQlRoot(typeof(Implementations.QueryContract), root =>
+                root.Add("heroes", queryContext, q => q.ResolveQuery(queryContext, "heroes").ResolveComplex(sp, queryContext)
+                                                                .Add("id", queryContext)
+                                                                .Add("name", queryContext)
+                                                                .Add("friends", queryContext, hero => hero.ResolveQuery(queryContext, "friendsTask").ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                                                                .Build())
+                    .Build());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
+            var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"friends\":[],\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"friends\":[{\"name\":\"Captain America\",\"id\":\"AVENGERS-1\"}],\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"friends\":[{\"name\":\"Thor\",\"id\":\"ASGUARD-3\"}],\"id\":\"AVENGERS-1\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentComplexStructures()
         {
             // {

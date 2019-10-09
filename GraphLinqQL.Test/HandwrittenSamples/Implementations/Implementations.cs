@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GraphLinqQL.HandwrittenSamples.Implementations
 {
@@ -62,6 +63,15 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> friendsDeferred(FieldContext fieldContext) =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> friendsTask(FieldContext fieldContext) =>
+            Original.ResolveTask(async hero =>
+            {
+                await Task.Yield();
+                return (from friendId in Domain.DomainData.friends
+                        where hero.Id == friendId.Id1
+                        join friend in Domain.DomainData.heroes on friendId.Id2 equals friend.Id
+                        select friend).ToArray();
+            }, r => r.List(item => item.AsContract<Hero>()));
         public override IGraphQlResult<string> id(FieldContext fieldContext) =>
             Original.Resolve(hero => hero.Id);
         public override IGraphQlResult<string> location(FieldContext fieldContext, string? date) =>
@@ -102,6 +112,8 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
         public override IGraphQlResult<IEnumerable<Interfaces.Hero>> friendsDeferred(FieldContext fieldContext) =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
+        public override IGraphQlResult<IEnumerable<Interfaces.Hero>> friendsTask(FieldContext fieldContext) =>
+            throw new NotImplementedException();
         public override IGraphQlResult<string> id(FieldContext fieldContext) =>
             Original.Join(heroJoin).Resolve((_, hero) => hero.Id);
         public override IGraphQlResult<string> location(FieldContext fieldContext, string? date) =>
