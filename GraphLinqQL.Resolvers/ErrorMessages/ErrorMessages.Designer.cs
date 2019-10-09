@@ -70,6 +70,15 @@ namespace GraphLinqQL.ErrorMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing argument &quot;{1}&quot; for field &quot;{0}&quot;..
+        /// </summary>
+        internal static string missingArgument {
+            get {
+                return ResourceManager.GetString("missingArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No operation was found in provided GraphQL document.
         /// </summary>
         internal static string noOperationFound {

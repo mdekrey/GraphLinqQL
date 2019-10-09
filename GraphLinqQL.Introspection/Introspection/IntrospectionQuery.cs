@@ -46,7 +46,7 @@ namespace GraphLinqQL.Introspection
             name switch
             {
                 "__schema" => this.schema(fieldContext),
-                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name")),
+                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name", fieldContext)),
                 _ => originalQuery.ResolveQuery(name, fieldContext, parameters)
             };
     }

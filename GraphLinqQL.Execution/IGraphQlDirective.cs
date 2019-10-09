@@ -9,7 +9,7 @@ namespace GraphLinqQL
     public interface IGraphQlDirective
     {
         string Name { get; }
-        TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context)
+        TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, FieldContext fieldContext, GraphQLExecutionContext context)
             where TNode : class, INode;
     }
 }

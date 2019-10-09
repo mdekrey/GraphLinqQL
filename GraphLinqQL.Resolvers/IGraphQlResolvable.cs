@@ -19,22 +19,6 @@ namespace GraphLinqQL
     public interface IGraphQlParameterResolver
     {
         bool HasParameter(string parameter);
-        T GetParameter<T>(string parameter);
-    }
-
-    public class BasicParameterResolver : IGraphQlParameterResolver
-    {
-        public static readonly IGraphQlParameterResolver Empty = new BasicParameterResolver(ImmutableDictionary<string, IGraphQlParameterInfo>.Empty);
-
-        private readonly IDictionary<string, IGraphQlParameterInfo> parameters;
-
-        public BasicParameterResolver(IDictionary<string, IGraphQlParameterInfo> parameters)
-        {
-            this.parameters = parameters.ToImmutableDictionary();
-        }
-
-        public T GetParameter<T>(string parameter) => (T)parameters[parameter].BindTo(typeof(T))!;
-
-        public bool HasParameter(string parameter) => parameters.ContainsKey(parameter);
+        T GetParameter<T>(string parameter, FieldContext fieldContext);
     }
 }

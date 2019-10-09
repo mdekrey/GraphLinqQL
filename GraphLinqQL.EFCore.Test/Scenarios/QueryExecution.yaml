@@ -20,3 +20,34 @@ tests:
             },
             "errors": []
         }
+  - name: Missing parameter on Droid
+    given:
+      query: |
+        {
+          droid {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "errors": [
+            {
+              "message": "Missing argument \u0022id\u0022 for field \u0022droid\u0022.",
+              "errorCode": "missingArgument",
+              "locations": [
+                {
+                  "Line": 2,
+                  "Column": 2
+                }
+              ],
+              "arguments": {
+                "fieldName": "droid",
+                "argument": "id"
+              }
+            }
+          ]
+        }
+

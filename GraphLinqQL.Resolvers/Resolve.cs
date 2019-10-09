@@ -144,6 +144,6 @@ namespace GraphLinqQL
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
-            target.ResolveQuery(name, fieldContext, new NoParameterResolver());
+            target.ResolveQuery(name, fieldContext, BasicParameterResolver.Empty);
     }
 }

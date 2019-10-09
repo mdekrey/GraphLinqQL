@@ -186,9 +186,10 @@ namespace GraphLinqQL.Execution
         {
             var arguments = ResolveArguments(directive.Arguments, context);
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
+            var fieldContext = new FieldContext(directive.Name, node.Location.ToQueryLocations());
             return actualDirective == null
                 ? node
-                : actualDirective.HandleDirective(node, new BasicParameterResolver(arguments), context);
+                : actualDirective.HandleDirective(node, new BasicParameterResolver(arguments), fieldContext, context);
         }
 
         private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IReadOnlyList<Argument> arguments, GraphQLExecutionContext context)
