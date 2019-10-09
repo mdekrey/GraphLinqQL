@@ -20,6 +20,7 @@ tests:
             },
             "errors": []
         }
+
   - name: Missing parameter on Droid
     given:
       query: |
@@ -51,3 +52,25 @@ tests:
           ]
         }
 
+  - name: Parameterized Query with Variables on a Droid
+    given:
+      query: |
+        query ($id: String!) {
+          droid(id: $id) {
+            name
+          }
+        }
+      variables:
+        id: "2000"
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "droid": {
+                    "name": "C-3PO"
+                }
+            },
+            "errors": []
+        }
