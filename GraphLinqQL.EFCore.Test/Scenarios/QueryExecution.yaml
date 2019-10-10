@@ -195,6 +195,28 @@ tests:
             }
         }
         
+  - name: Search list results with multiple matches
+    given:
+      query: |
+        {
+          search(text: "L") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Luke Skywalker"
+                }, {
+                    "name": "Leia Organa"
+                }]
+            }
+        }
+        
   - name: Named multiple queries
     given:
       query: |
