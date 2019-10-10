@@ -42,9 +42,11 @@ namespace GraphLinqQL.TestFramework
 
                 var scenario = (IScenarioData)deserializer.Deserialize(reader, scenarioType)!;
 
-                foreach (var test in scenario.Tests)
+                var len = scenario.Tests.Length.ToString().Length;
+                for (var i = 0; i < scenario.Tests.Length; i++)
                 {
-                    yield return new[] { test };
+                    scenario.Tests[i].Name = $"{scenario.Scenario} - {(i + 1).ToString().PadLeft(len, '0')} {scenario.Tests[i].Name}";
+                    yield return new[] { scenario.Tests[i] };
                 }
             }
         }

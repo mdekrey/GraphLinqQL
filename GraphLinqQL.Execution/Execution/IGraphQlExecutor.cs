@@ -6,6 +6,6 @@ namespace GraphLinqQL.Execution
 {
     public interface IGraphQlExecutor : IDisposable
     {
-        ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null);
+        ExecutionResult Execute(string query, string? operationName = null, IDictionary<string, IGraphQlParameterInfo>? arguments = null);
     }
 }

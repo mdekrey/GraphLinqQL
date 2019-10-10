@@ -1,5 +1,65 @@
-﻿scenario: Schema Parser
+﻿scenario: Query Execution
 tests:
+  - name: Unnamed simple query
+    given:
+      query: |
+        {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+        
+  - name: Unnamed simple query with operation type
+    given:
+      query: |
+        query {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+        
+  - name: Named simple query
+    given:
+      query: |
+        query OverallHero {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+
   - name: Parameterized Query on a Droid
     given:
       query: |
@@ -135,3 +195,28 @@ tests:
             }
         }
         
+  - name: Named multiple queries
+    given:
+      query: |
+        query SpecificDroid ($id: ID!) {
+          droid(id: $id) {
+            name
+          }
+        }
+        query OverallHero {
+          hero {
+            name
+          }
+        }
+      operation: OverallHero
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }

@@ -14,10 +14,11 @@ namespace GraphLinqQL.Execution
             using (var body = await JsonDocument.ParseAsync(bodyStream).ConfigureAwait(false))
             {
                 var query = body.RootElement.GetProperty("query").GetString();
+                var operationName = body.RootElement.TryGetProperty("operationName", out var op) ? op.GetString() : null;
                 var variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
 
 
-                executionResult = executor.Execute(query, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
+                executionResult = executor.Execute(query, operationName, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
             }
             var responseObj = new Dictionary<string, object?>();
             if (!executionResult.ErrorDuringParse)

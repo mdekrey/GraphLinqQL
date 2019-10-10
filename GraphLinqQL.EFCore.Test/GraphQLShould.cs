@@ -51,11 +51,17 @@ namespace GraphLinqQL
                 case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: false } }:
                     await DetectParsingErrors(scope.ServiceProvider, query);
                     return;
-                case { Given: { Query: var query, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, query, expected);
+                case { Given: { Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, new { query }, expected);
                     return;
-                case { Given: { Query: var query, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, query, variables, expected);
+                case { Given: { Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, new { query, variables }, expected);
+                    return;
+                case { Given: { Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, new { query, operationName }, expected);
+                    return;
+                case { Given: { Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, new { query, operationName, variables }, expected);
                     return;
                 default:
                     throw new NotSupportedException();
@@ -77,28 +83,12 @@ namespace GraphLinqQL
             Assert.Throws<GraphqlParseException>(() => astFactory.ParseDocument(query));
         }
 
-        private async Task Execute(IServiceProvider serviceProvider, string query, string expected)
-        {
-            var request = new { query };
-            
+        private async Task Execute(IServiceProvider serviceProvider, object request, string expected)
+        {   
             using var memoryStream = new MemoryStream();
-            await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request);
+            await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
             memoryStream.Position = 0;
-            IGraphQlExecutor executor = await ExecuteFromStream(serviceProvider, expected, memoryStream);
-        }
 
-        private async Task Execute(IServiceProvider serviceProvider, string query, Dictionary<string, object> variables, string expected)
-        {
-            var request = new { query, variables };
-
-            using var memoryStream = new MemoryStream();
-            await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request);
-            memoryStream.Position = 0;
-            IGraphQlExecutor executor = await ExecuteFromStream(serviceProvider, expected, memoryStream);
-        }
-
-        private static async Task<IGraphQlExecutor> ExecuteFromStream(IServiceProvider serviceProvider, string expected, MemoryStream memoryStream)
-        {
             var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
             var messageResolver = serviceProvider.GetRequiredService<IMessageResolver>();
 
@@ -107,7 +97,6 @@ namespace GraphLinqQL
             var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
-            return executor;
         }
 
         public void Dispose()

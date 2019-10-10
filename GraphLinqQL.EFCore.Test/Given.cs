@@ -8,6 +8,7 @@ namespace GraphLinqQL
 
 #nullable disable warnings
         public string Query { get; set; }
+        public string? Operation { get; set; }
         public Dictionary<string, object>? Variables { get; set; }
 #nullable restore
     }

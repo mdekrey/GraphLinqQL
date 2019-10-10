@@ -8,6 +8,6 @@
 #nullable restore
 
         string IScenarioData.Scenario => Scenario;
-        object[] IScenarioData.Tests => Tests;
+        IScenario[] IScenarioData.Tests => Tests;
     }
 }

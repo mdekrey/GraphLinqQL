@@ -30,10 +30,10 @@ namespace GraphLinqQL.Sample.Implementations
             return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask(), droidResult => droidResult.Nullable(_ => _.AsContract<Implementations.Droid>()));
         }
 
-        public override IGraphQlResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
+            episode == null
+                ? droid(fieldContext, "2001")
+                : throw new NotImplementedException();
 
         public override IGraphQlResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
         {

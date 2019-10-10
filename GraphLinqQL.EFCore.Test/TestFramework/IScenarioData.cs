@@ -3,6 +3,6 @@
     interface IScenarioData
     {
         string Scenario { get; }
-        object[] Tests { get; }
+        IScenario[] Tests { get; }
     }
 }

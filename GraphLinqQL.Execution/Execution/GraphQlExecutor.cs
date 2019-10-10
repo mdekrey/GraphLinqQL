@@ -24,14 +24,16 @@ namespace GraphLinqQL.Execution
             this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
         }
 
-        public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
+        public ExecutionResult Execute(string query, string? operationName, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
             IGraphQlResult result;
             try
             {
                 var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
                 var ast = astGenerator.ParseDocument(query);
-                var def = ast.Children.OfType<OperationDefinition>().FirstOrDefault();
+                var def = operationName == null
+                    ? ast.Children.OfType<OperationDefinition>().SingleOrDefault()
+                    : ast.Children.OfType<OperationDefinition>().SingleOrDefault(op => op.Name == operationName);
                 if (def == null)
                 {
                     throw new ArgumentException("Query did not contain a document", nameof(query)).AddGraphQlError(WellKnownErrorCodes.NoOperation, ast.Location.ToQueryLocations());

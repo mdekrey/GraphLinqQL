@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 namespace GraphLinqQL.TestFramework
 {
 
-    public class ScenarioDataNode<TGiven, TWhen, TThen> : IXunitSerializable
+    public class ScenarioDataNode<TGiven, TWhen, TThen> : IXunitSerializable, IScenario
     {
 #nullable disable
         public string Name { get; set; }
