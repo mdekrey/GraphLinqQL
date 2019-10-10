@@ -37,7 +37,7 @@ namespace GraphLinqQL.CodeGeneration
 
         public void Write(TextWriter writer, string indentation)
         {
-            writer.WriteLine("// Union - ${Label}");
+            Templates.UnionTypeGenerator.RenderUnionType(this, writer, indentation);
         }
     }
 }

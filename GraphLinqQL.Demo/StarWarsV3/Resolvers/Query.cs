@@ -31,10 +31,10 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
             return Original.Resolve(_ => Domain.Data.reviews[domainEpisode]).List(_ => _.AsContract<Review>());
         }
 
-        public override IGraphQlResult<IEnumerable?> search(FieldContext fieldContext, string? text)
+        public override IGraphQlResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
         {
             return Original.Resolve(_ => Domain.Data.humans.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Human>())
-                .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Droid>()))
+                .Union<IEnumerable<SearchResult?>?>(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Droid>()))
                 .Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
         }
 
