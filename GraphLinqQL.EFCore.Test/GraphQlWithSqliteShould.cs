@@ -18,12 +18,12 @@ using Xunit;
 
 namespace GraphLinqQL
 {
-    public sealed class GraphQLShould : IDisposable
+    public sealed class GraphQlWithSqliteShould : IDisposable
     {
         private readonly ServiceProvider serviceProvider;
         private readonly SqliteConnection inMemorySqlite;
 
-        public GraphQLShould()
+        public GraphQlWithSqliteShould()
         {
             inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
             inMemorySqlite.Open();

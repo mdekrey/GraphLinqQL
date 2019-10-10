@@ -18,7 +18,7 @@ namespace GraphLinqQL
 
         public IReadOnlyList<IGraphQlObjectResult<T>> Results { get; }
 
-        public LambdaExpression UntypedResolver => throw new InvalidOperationException();
+        public LambdaExpression UntypedResolver => throw new InvalidOperationException("This can only be used directly when there's a simple type, and Unions are not simple types.");
 
         public Type Contract => null!; // TODO - this could be implemented via an interface!?
 

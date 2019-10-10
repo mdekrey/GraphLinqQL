@@ -9,8 +9,8 @@ namespace GraphLinqQL
 {
     internal class UnionResolverBuilder : IComplexResolverBuilder
     {
-
-        private static readonly MethodInfo QueryableUnion = typeof(System.Linq.Queryable).GetMethods()
+        // due to efcore 16243, I'm downgrading this to use the Enumerable union
+        private static readonly MethodInfo QueryableUnion = typeof(System.Linq.Enumerable).GetMethods()
                     .Where(m => m.Name == nameof(System.Linq.Queryable.Union))
                     .Where(m => m.GetParameters().Length == 2)
                     .Select(m => m.MakeGenericMethod(typeof(object)))

@@ -59,12 +59,12 @@ namespace GraphLinqQL
 
             var allJoins = expressions.SelectMany(e => e.Value.Joins).ToImmutableHashSet();
 
-            var resultDictionary = Expression.Convert(Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
+            var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
             {
                 var inputResolver = result.Value.UntypedResolver;
                 var resolveBody = inputResolver.Inline(modelParameter);
-                return Expression.ElementInit(addMethod, Expression.Constant(result.Key), Expression.Convert(resolveBody, typeof(object)));
-            })), typeof(object));
+                return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody.Box());
+            }));
             var func = Expression.Lambda(resultDictionary, modelParameter);
 
             return resolve(func, allJoins);

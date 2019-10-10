@@ -49,9 +49,9 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlResult<IEnumerable?> search(FieldContext fieldContext, string? text)
         {
-            return Original.Resolve(_ => dbContext.Humans.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Human>());
-                //.Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => dbContext.Droids.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Droid>()));
-                //.Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
+            return Original.Resolve(_ => dbContext.Humans.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Human>())
+                .Union<IEnumerable<IGraphQlResolvable>?>(Original.Resolve(_ => dbContext.Droids.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Droid>()));
+            //.Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
         }
 
         public override IGraphQlResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)
