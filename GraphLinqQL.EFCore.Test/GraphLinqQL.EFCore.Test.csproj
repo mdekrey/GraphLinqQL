@@ -10,6 +10,7 @@
     <EmbeddedResource Include="**/*.yaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Sample\Implementations\.editorconfig" />
     <None Remove="Scenarios\QueryParsing.yaml" />
   </ItemGroup>
   <ItemGroup>

@@ -25,7 +25,7 @@ namespace GraphLinqQL.Sample.Implementations
         }
 
         public override IGraphQlResult<string> id(FieldContext fieldContext) =>
-            Original.Resolve(droid => droid.Id);
+            Original.Resolve(droid => droid.Id.ToString());
 
         public override IGraphQlResult<string> name(FieldContext fieldContext) =>
             Original.Resolve(droid => droid.Name);

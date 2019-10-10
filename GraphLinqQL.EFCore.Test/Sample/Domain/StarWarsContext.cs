@@ -21,13 +21,13 @@ namespace GraphLinqQL.Sample.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var lukeSkywalker = "1000";
-            var darthVader = "1001";
-            var hanSolo = "1002";
-            var leiaOrgana = "1003";
-            var wilhuffTarkin = "1004";
-            var c3p0 = "2000";
-            var r2d2 = "2001";
+            var lukeSkywalker = 1000;
+            var darthVader = 1001;
+            var hanSolo = 1002;
+            var leiaOrgana = 1003;
+            var wilhuffTarkin = 1004;
+            var c3p0 = 2000;
+            var r2d2 = 2001;
 
             modelBuilder.Entity<Character>(b =>
             {
@@ -114,8 +114,8 @@ namespace GraphLinqQL.Sample.Domain
             modelBuilder.Entity<Friendship>(b =>
             {
                 b.HasKey(f => new { f.FromId, f.ToId });
-                b.HasOne<Character>(f => f.From).WithMany(c => c.Friendships).HasForeignKey(f => f.FromId).HasPrincipalKey(c => c.Id);
-                b.HasOne<Character>(f => f.To).WithMany(/* friendships */).HasForeignKey(f => f.ToId).HasPrincipalKey(c => c.Id);
+                b.HasOne<Character>(f => f.From).WithMany(c => c.Friendships).HasForeignKey(f => f.FromId).HasPrincipalKey(c => c.Id).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne<Character>(f => f.To).WithMany(/* friendships */).HasForeignKey(f => f.ToId).HasPrincipalKey(c => c.Id).OnDelete(DeleteBehavior.Restrict);
                 b.HasData((from character in new[]
                             {
                                 new { @from = lukeSkywalker, to = new[] { hanSolo, leiaOrgana, c3p0, r2d2 } },

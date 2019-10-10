@@ -25,9 +25,7 @@ namespace GraphLinqQL
 
         public GraphQLShould()
         {
-#pragma warning disable CA2000 // Dispose objects before losing scope
             inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2000 // Dispose objects before losing scope
             inMemorySqlite.Open();
 
             var services = new ServiceCollection();
@@ -114,8 +112,8 @@ namespace GraphLinqQL
 
         public void Dispose()
         {
-            serviceProvider.Dispose();
-            inMemorySqlite.Dispose();
+            serviceProvider?.Dispose();
+            inMemorySqlite?.Dispose();
         }
     }
 }

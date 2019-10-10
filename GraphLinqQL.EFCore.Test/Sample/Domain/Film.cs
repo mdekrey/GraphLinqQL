@@ -11,7 +11,7 @@ namespace GraphLinqQL.Sample.Domain
 
         public string Title { get; set; }
 
-        public string HeroId { get; set; }
+        public int HeroId { get; set; }
         public Character? Hero { get; set; }
     }
 }

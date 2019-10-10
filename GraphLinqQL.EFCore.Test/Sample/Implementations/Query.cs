@@ -24,17 +24,23 @@ namespace GraphLinqQL.Sample.Implementations
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id) =>
-            Original.ResolveTask(_ => dbContext.Droids.FindAsync(id).AsTask(), droidResult => droidResult.Nullable(_ => _.AsContract<Implementations.Droid>()));
+        public override IGraphQlResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
+        {
+            var intId = int.Parse(id);
+            return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask(), droidResult => droidResult.Nullable(_ => _.AsContract<Implementations.Droid>()));
+        }
 
         public override IGraphQlResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<Interfaces.Human?> human(FieldContext fieldContext, string id) =>
+        public override IGraphQlResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
+        {
+            var intId = int.Parse(id);
             // This intentionally has a different implementation from the droid for various implementations
-            Original.Resolve(_ => dbContext.Humans.Where(human => human.Id == id)).List(_ => _.AsContract<Implementations.Human>()).Only();
+            return Original.Resolve(_ => dbContext.Humans.Where(human => human.Id == intId)).List(_ => _.AsContract<Implementations.Human>()).Only();
+        }
 
         public override IGraphQlResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
         {
