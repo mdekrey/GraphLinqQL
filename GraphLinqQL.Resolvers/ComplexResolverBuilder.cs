@@ -10,13 +10,13 @@ namespace GraphLinqQL
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod(nameof(IDictionary<string, object>.Add))!;
         private readonly IGraphQlResolvable contract;
-        private readonly Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlScalarResult> resolve;
+        private readonly Func<LambdaExpression, IGraphQlScalarResult> resolve;
         private readonly Type modelType;
         private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
 
         protected ComplexResolverBuilder(
             IGraphQlResolvable contract,
-            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlScalarResult> resolve,
+            Func<LambdaExpression, IGraphQlScalarResult> resolve,
             ImmutableDictionary<string, IGraphQlResult> expressions,
             Type modelType)
         {
@@ -29,7 +29,7 @@ namespace GraphLinqQL
         public ComplexResolverBuilder(
             Type contractType,
             IGraphQlServiceProvider serviceProvider,
-            Func<LambdaExpression, ImmutableHashSet<IGraphQlJoin>, IGraphQlScalarResult> resolve,
+            Func<LambdaExpression, IGraphQlScalarResult> resolve,
             Type modelType)
             : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType)
         {
@@ -67,7 +67,17 @@ namespace GraphLinqQL
             }));
             var func = Expression.Lambda(resultDictionary, modelParameter);
 
-            return resolve(func, allJoins);
+            return resolve(BuildJoinedSelector(func, allJoins, modelType));
+        }
+
+        private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
+        {
+            var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
+
+            var mainBody = resultSelector.Inline(originalParameter)
+                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
+            var mainSelector = Expression.Lambda(mainBody, originalParameter);
+            return mainSelector;
         }
 
         public IComplexResolverBuilder Add(string property, FieldContext context, IGraphQlParameterResolver? parameters) =>

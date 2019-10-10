@@ -94,25 +94,12 @@ namespace GraphLinqQL
             );
         }
 
-        private IGraphQlScalarResult ToResult(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins)
+        private IGraphQlScalarResult ToResult(LambdaExpression joinedSelector)
         {
-            var modelType = visitor.ModelType!;
-
-            visitor.NewOperation = BuildJoinedSelector(resultSelector, joins, modelType);
+            visitor.NewOperation = joinedSelector;
             var returnResult = visitor.Visit(this.UntypedResolver.Body);
-
             var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
             return new GraphQlExpressionScalarResult<object>(resultFunc, joins: this.Joins);
-        }
-
-        private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
-        {
-            var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
-
-            var mainBody = resultSelector.Inline(originalParameter)
-                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
-            var mainSelector = Expression.Lambda(mainBody, originalParameter);
-            return mainSelector;
         }
 
     }
