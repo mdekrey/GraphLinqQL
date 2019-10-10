@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GraphLinqQL
 {
-    public static class Resolve
+    public static class ResolveExtensions
     {
         internal static MethodInfo asQueryable = typeof(Queryable).GetMethods()
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
@@ -24,6 +24,11 @@ namespace GraphLinqQL
             IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
             var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
             return resolved;
+        }
+
+        public static IGraphQlScalarResult<TDomainResult> Resolve<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> source, TDomainResult result)
+        {
+            return source.Resolve(_ => result);
         }
 
         public static IGraphQlObjectResult<T> Union<T>(this IGraphQlObjectResult<T> graphQlResult, IGraphQlObjectResult<T> graphQlResult2)
@@ -138,7 +143,7 @@ namespace GraphLinqQL
 
         public static IGraphQlObjectResult<TContract> ResolveTask<TInputType, TDomainResult, TContract>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync, Func<IGraphQlScalarResult<TDomainResult>, IGraphQlObjectResult<TContract>> func)
         {
-            return original.ResolveTask(resolveAsync)
+            return original.Resolve(value => resolveAsync(value))
                 // FIXME - this should not use .Result if we can help it
                 .Defer(r => func(r.Resolve(t => t.Result)));
         }

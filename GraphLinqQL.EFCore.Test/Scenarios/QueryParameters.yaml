@@ -1,4 +1,4 @@
-﻿scenario: Query Execution
+﻿scenario: Query Parameters
 tests:
   - name: Parameterized Query on a Droid
     given:
