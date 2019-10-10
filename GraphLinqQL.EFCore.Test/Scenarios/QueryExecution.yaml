@@ -242,3 +242,27 @@ tests:
                 }
             }
         }
+        
+  # TODO
+  # - name: Search list results with multiple types
+  #   given:
+  #     query: |
+  #       {
+  #         search(text: "D") {
+  #           name
+  #         }
+  #       }
+  #   when:
+  #     execute: true
+  #   then:
+  #     match-result: |
+  #       {
+  #           "data": {
+  #               "search": [{
+  #                   "name": "Darth Vader"
+  #               }, {
+  #                   "name": "R2-D2"
+  #               }]
+  #           }
+  #       }
+        
