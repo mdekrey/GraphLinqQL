@@ -97,26 +97,6 @@ namespace GraphLinqQL
             return new GraphQlExpressionObjectResult<IEnumerable<TContract>>(newResolver, newResult.Contract, original.Joins);
         }
 
-        public static IGraphQlScalarResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
-            where TInput : class
-            where TContract : class
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-
-            return new GraphQlFinalizerScalarResult<TContract>(newResult, 
-                newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
-        }
-
-        public static IGraphQlObjectResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
-            where TInput : class
-            where TContract : class
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-
-            return new GraphQlFinalizerObjectResult<TContract>(newResult,
-                newResultResolver => Expression.Lambda(original.UntypedResolver.Body.IfNotNull(newResultResolver.Inline(original.UntypedResolver.Body)), original.UntypedResolver.Parameters));
-        }
-
         public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
         {
             var newResult = func(new GraphQlResultFactory<TInput>());
