@@ -8,7 +8,6 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResult
     {
-        bool ShouldSubselect { get; }
         LambdaExpression UntypedResolver { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
     }

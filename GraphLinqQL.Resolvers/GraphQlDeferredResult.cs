@@ -18,8 +18,6 @@ namespace GraphLinqQL
             this.outer = outer;
         }
 
-        public bool ShouldSubselect => false;
-
         public LambdaExpression UntypedResolver =>
             Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 
@@ -51,8 +49,6 @@ namespace GraphLinqQL
             Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
 
         public Type Contract => inner.Contract;
-
-        public bool ShouldSubselect => true;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
 

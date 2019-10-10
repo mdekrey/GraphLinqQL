@@ -22,8 +22,6 @@ namespace GraphLinqQL
 
         public Type Contract => null!; // TODO - this could be implemented via an interface!?
 
-        public bool ShouldSubselect => true;
-
         public IReadOnlyCollection<IGraphQlJoin> Joins => EmptyArrayHelper.Empty<IGraphQlJoin>();
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>

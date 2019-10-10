@@ -9,8 +9,6 @@ namespace GraphLinqQL
 {
     class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
-        public bool ShouldSubselect => false;
-
         public LambdaExpression UntypedResolver { get; }
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
@@ -81,8 +79,6 @@ namespace GraphLinqQL
         }
 
         public Type Contract { get; }
-
-        public bool ShouldSubselect => true;
 
         public LambdaExpression UntypedResolver { get; }
 

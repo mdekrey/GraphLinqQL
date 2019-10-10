@@ -15,8 +15,6 @@ namespace GraphLinqQL
             this.postProcess = postProcess;
         }
 
-        public bool ShouldSubselect => false;
-
         public LambdaExpression UntypedResolver => postProcess(original.UntypedResolver);
 
         public IReadOnlyCollection<IGraphQlJoin> Joins => original.Joins;
@@ -45,8 +43,6 @@ namespace GraphLinqQL
         }
 
         public Type Contract => original.Contract;
-
-        public bool ShouldSubselect => true;
 
         public LambdaExpression UntypedResolver => postProcess(original.UntypedResolver);
 

@@ -76,7 +76,7 @@ namespace GraphLinqQL
         public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
             IGraphQlResult result = SafeResolve(property, context, parameters);
-            if (result.ShouldSubselect)
+            if (result is IGraphQlObjectResult)
             {
                 throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
             }
