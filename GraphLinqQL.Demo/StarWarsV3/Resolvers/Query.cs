@@ -33,9 +33,10 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
 
         public override IGraphQlResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
         {
-            return Original.Resolve(_ => Domain.Data.humans.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Human>())
-                .Union<IEnumerable<SearchResult?>?>(Original.Resolve(_ => Domain.Data.droids.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Droid>()))
-                .Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
+            return Original.Resolve(_ =>
+                (Domain.Data.humans.Where(v => v.Name.Contains(text))).Union<object>
+                (Domain.Data.droids.Where(v => v.Name.Contains(text))).Union
+                (Domain.Data.starships.Where(v => v.Name.Contains(text)))).List(_ => _.AsUnion<SearchResult>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>().Add<Domain.Starship, Starship>()));
         }
 
         public override IGraphQlResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id) =>

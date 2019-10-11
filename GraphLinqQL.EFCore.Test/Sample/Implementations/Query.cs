@@ -21,7 +21,13 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
-            throw new NotImplementedException();
+            var intId = int.Parse(id);
+            return Original.ResolveTask(_ => dbContext.Characters.FindAsync(intId).AsTask(), _ => _.Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping)));
+        }
+
+        private static UnionContractBuilder<Interfaces.Character> CharacterTypeMapping(UnionContractBuilder<Interfaces.Character> builder)
+        {
+            return builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>();
         }
 
         public override IGraphQlResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
@@ -49,9 +55,10 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
         {
-            return Original.Resolve(_ => dbContext.Humans.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Human>())
-                .Union<IEnumerable<SearchResult?>?>(Original.Resolve(_ => dbContext.Droids.Where(v => v.Name.Contains(text!))).List(_ => _.AsContract<Droid>()));
-            //.Union(Original.Resolve(_ => Domain.Data.starships.Where(v => v.Name.Contains(text))).List(_ => _.AsContract<Starship>()));
+            return Original.Resolve(_ =>
+                (from human in dbContext.Humans where human.Name.Contains(text!) select (object)human).Concat
+                (from droid in dbContext.Droids where droid.Name.Contains(text!) select droid)
+            ).List(_ => _.AsUnion<SearchResult>(builder => builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>()));
         }
 
         public override IGraphQlResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)

@@ -31,11 +31,12 @@ namespace GraphLinqQL
             return source.Resolve(_ => result);
         }
 
-        [Obsolete("Whole new way of doing this should be written")]
-        public static IGraphQlObjectResult<T> Union<T>(this IGraphQlObjectResult<T> graphQlResult, IGraphQlObjectResult<T> graphQlResult2)
-            where T : IEnumerable<IGraphQlResolvable?>?
+        public static IGraphQlObjectResult<T> AsUnion<T>(this IGraphQlScalarResult graphQlResult, Func<UnionContractBuilder<T>, UnionContractBuilder<T>> contractOptions)
+            where T : IGraphQlResolvable
         {
-            throw new NotSupportedException();
+            var builder = contractOptions(new UnionContractBuilder<T>());
+
+            return null;
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)
