@@ -7,6 +7,33 @@ using System.Reflection;
 
 namespace GraphLinqQL
 {
+    /// <summary>
+    /// <p>
+    /// GraphQL Results are assembled with 2 phases: preamble and body. Typically, the preamble and the
+    /// body are conjoined and flow from one into the next. That isn't always the case, however. We use 
+    /// placeholders in the Expressions to handle the dynamic swapping. Placeholders allow us to nest the final lambda
+    /// inside other expressions rather than needing to rely on the return result.
+    /// </p>
+    /// 
+    /// <p>
+    /// The preamble is not allowed to be modified after the link to the body is set. This allows us to
+    /// have a known type outgoing from the preamble into the body. The goal of the preamble is to have
+    /// simple enough Expressions that it can be handled by EF Core's SQL generation visitors, and allow us to move
+    /// any portions that cannot be handled by EF Core to the body.
+    /// </p>
+    /// 
+    /// <p>
+    /// For the body placeholder, we use <see cref="GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod" />
+    /// when returning a GraphQL Object. This returns a C# object, which is appropriate after complex resolution.
+    /// Scalar results do not use this placeholder. The return result of the body is the returned result of the
+    /// GraphQL Result.
+    /// </p>
+    /// 
+    /// <p>
+    /// Joins are provided to a parent Object Result in order to share expressions between properties. This is intended
+    /// to share information for before the preamble itself so that EF Core can produce a better overall query.
+    /// </p>
+    /// </summary>
     class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
         public LambdaExpression UntypedResolver { get; }

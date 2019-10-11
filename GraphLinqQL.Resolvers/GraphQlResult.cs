@@ -8,8 +8,8 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResult
     {
-        LambdaExpression UntypedResolver { get; }
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
+        LambdaExpression UntypedResolver { get; }
     }
 
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult

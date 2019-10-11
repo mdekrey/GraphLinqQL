@@ -12,12 +12,12 @@ namespace GraphLinqQL
         private readonly IGraphQlResolvable contract;
         private readonly Func<LambdaExpression, IGraphQlScalarResult> resolve;
         private readonly Type modelType;
-        private readonly ImmutableDictionary<string, IGraphQlResult> expressions;
+        private readonly ImmutableDictionary<string, IGraphQlScalarResult> expressions;
 
         protected ComplexResolverBuilder(
             IGraphQlResolvable contract,
             Func<LambdaExpression, IGraphQlScalarResult> resolve,
-            ImmutableDictionary<string, IGraphQlResult> expressions,
+            ImmutableDictionary<string, IGraphQlScalarResult> expressions,
             Type modelType)
         {
             this.contract = contract;
@@ -31,7 +31,7 @@ namespace GraphLinqQL
             IGraphQlServiceProvider serviceProvider,
             Func<LambdaExpression, IGraphQlScalarResult> resolve,
             Type modelType)
-            : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlResult>.Empty, modelType)
+            : this(CreateContract(contractType, serviceProvider, modelType), resolve, ImmutableDictionary<string, IGraphQlScalarResult>.Empty, modelType)
         {
         }
 
@@ -47,7 +47,7 @@ namespace GraphLinqQL
             return contract;
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
+        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult> resolve)
         {
             return new ComplexResolverBuilder(contract, this.resolve, expressions
                 .Add(displayName, resolve(contract)), modelType);
@@ -86,12 +86,12 @@ namespace GraphLinqQL
         public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IGraphQlParameterResolver? parameters)
         {
             IGraphQlResult result = SafeResolve(property, context, parameters);
-            if (result is IGraphQlObjectResult)
+            if (result is IGraphQlScalarResult scalarResult)
             {
-                throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
+                return new ComplexResolverBuilder(contract, resolve, expressions
+                    .Add(displayName ?? property, scalarResult), modelType);
             }
-            return new ComplexResolverBuilder(contract, resolve, expressions
-                .Add(displayName ?? property, result), modelType);
+            throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
         }
 
         private IGraphQlResult SafeResolve(string property, FieldContext context, IGraphQlParameterResolver? parameters)

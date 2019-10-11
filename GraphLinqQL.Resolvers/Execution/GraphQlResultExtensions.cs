@@ -8,7 +8,7 @@ namespace GraphLinqQL.Execution
 {
     public static class GraphQlResultExtensions
     {
-        public static ExecutionResult InvokeResult(this IGraphQlResult resolved, object input)
+        public static ExecutionResult InvokeResult(this IGraphQlScalarResult resolved, object input)
         {
             if (resolved.Joins.Any())
             {

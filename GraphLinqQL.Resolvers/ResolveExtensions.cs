@@ -13,13 +13,13 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
         {
-            IGraphQlResult resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
+            var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
             return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot());
         }
 
-        public static IGraphQlResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlResult> resolver)
+        public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
         {
             IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
             var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
@@ -71,7 +71,7 @@ namespace GraphLinqQL
             );
             if (newResult.Joins.Count > 0)
             {
-                throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
+                throw new NotSupportedException($"Inner result of {nameof(List)} cannot provide joins.");
             }
             return new GraphQlExpressionScalarResult<IEnumerable<TContract>>(newResolver, original.Joins);
         }
@@ -90,10 +90,6 @@ namespace GraphLinqQL
                 getList.CallQueryableSelect(newResult.UntypedResolver),
                 original.UntypedResolver.Parameters
             );
-            if (newResult.Joins.Count > 0)
-            {
-                throw new NotSupportedException($"Inner result of {nameof(Nullable)} cannot provide joins.");
-            }
             return new GraphQlExpressionObjectResult<IEnumerable<TContract>>(newResolver, newResult.Contract, original.Joins);
         }
 

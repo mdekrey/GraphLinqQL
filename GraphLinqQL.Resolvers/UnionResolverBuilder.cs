@@ -27,7 +27,7 @@ namespace GraphLinqQL
             this.resolvers = resolvers.ToImmutableList();
         }
 
-        public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve)
+        public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult> resolve)
         {
             return new UnionResolverBuilder(resolvers.Select(r => r.Add(displayName, context, resolve)));
         }

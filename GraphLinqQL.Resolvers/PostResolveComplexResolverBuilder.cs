@@ -14,7 +14,7 @@ namespace GraphLinqQL
             this.postResolve = postResolve;
         }
 
-        public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlResult> resolve) =>
+        public IComplexResolverBuilder Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult> resolve) =>
             new PostResolveComplexResolverBuilder(original.Add(displayName, context, resolve), postResolve);
 
         public IComplexResolverBuilder Add(string propertyName, FieldContext context, IGraphQlParameterResolver? parameters = null) =>

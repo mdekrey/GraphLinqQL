@@ -26,7 +26,7 @@ namespace GraphLinqQL.Execution
 
         public ExecutionResult Execute(string query, string? operationName, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
         {
-            IGraphQlResult result;
+            IGraphQlScalarResult result;
             try
             {
                 var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
@@ -93,7 +93,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private IGraphQlResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
+        private IGraphQlScalarResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             var operation = def.OperationType switch
             {
