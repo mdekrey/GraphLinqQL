@@ -8,7 +8,7 @@ namespace GraphLinqQL
     {
         public static IGraphQlObjectResult<TReturnType> Inline(IGraphQlObjectResult original, LambdaExpression expressionToInline)
         {
-            return new GraphQlExpressionObjectResult<TReturnType>(Inline(original.Resolution, expressionToInline), original.Contract);
+            return original.AdjustResolution<TReturnType>(resolution => Inline(resolution, expressionToInline));
         }
 
         private static IGraphQlScalarResult Inline(IGraphQlScalarResult original, LambdaExpression expressionToInline)

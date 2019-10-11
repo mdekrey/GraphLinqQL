@@ -22,14 +22,11 @@ namespace GraphLinqQL
         // FIXME - if we can not expose these as interface members it would be better
         LambdaExpression Body { get; }
 
-
-
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
-        IGraphQlObjectResult AsContract(Type contract);
+        IGraphQlObjectResult<T> AsContract<T>(IContract contract);
 
         // TODO - should prefer this to preamble/body
         //IGraphQlScalarResult<T> UpdateCurrent<T>(Func<LambdaExpression, LambdaExpression> resolveAdjust);
-        IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust);
         IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust);
         IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust);
     }
@@ -43,7 +40,8 @@ namespace GraphLinqQL
     public interface IGraphQlObjectResult : IGraphQlResult
     {
         IGraphQlScalarResult Resolution { get; }
-        Type Contract { get; }
+
+        IGraphQlObjectResult<T> AdjustResolution<T>(Func<IGraphQlScalarResult, IGraphQlScalarResult> p);
         IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext);
     }
 

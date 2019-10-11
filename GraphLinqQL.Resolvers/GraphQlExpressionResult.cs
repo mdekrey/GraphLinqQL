@@ -58,28 +58,26 @@ namespace GraphLinqQL
             }
         }
 
-        public IGraphQlObjectResult AsContract(Type contract)
+        public IGraphQlObjectResult<T> AsContract<T>(IContract contract)
         {
-            var method = this.GetType().GetMethod(nameof(UnsafeAsContract), BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(contract);
-            return (IGraphQlObjectResult)method.Invoke(this, EmptyArrayHelper.Empty<object>())!;
+            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, Body.Body), Body.Parameters);
+            return new GraphQlExpressionObjectResult<T>(new GraphQlExpressionScalarResult<object>(Preamble, newResolver, Joins), contract);
         }
 
         public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            UnsafeAsContract<TContract>();
+            AsContract<TContract>(SafeContract(typeof(TContract)));
 
-        private IGraphQlObjectResult<TContract> UnsafeAsContract<TContract>()
+        private IContract SafeContract(Type contractType)
         {
-            var contract = typeof(TContract);
             var currentReturnType = Body.ReturnType;
-            var acceptsInterface = contract.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
+            var acceptsInterface = contractType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
                 .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
                 .FirstOrDefault();
             if (acceptsInterface == null)
             {
-                throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
+                throw new InvalidOperationException($"Given contract {contractType.FullName} does not accept type {currentReturnType.FullName}");
             }
-            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, Body.Body), Body.Parameters);
-            return new GraphQlExpressionObjectResult<TContract>(new GraphQlExpressionScalarResult<object>(Preamble, newResolver, Joins), contract);
+            return new ContractMapping(contractType);
         }
 
         public LambdaExpression ConstructResult()
@@ -94,11 +92,6 @@ namespace GraphLinqQL
             return visitor.Exchanged
                 ? result
                 : Expression.Lambda(Body.Inline(Preamble.Body), Preamble.Parameters);
-        }
-
-        public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)
-        {
-            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), this.Joins);
         }
 
         public IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust)
@@ -133,7 +126,7 @@ namespace GraphLinqQL
 
         public GraphQlExpressionObjectResult(
             IGraphQlScalarResult resolution,
-            Type contract)
+            IContract contract)
         {
             if (contract == null)
             {
@@ -150,9 +143,14 @@ namespace GraphLinqQL
             }
         }
 
-        public Type Contract { get; }
+        public IContract Contract { get; }
 
         public IGraphQlScalarResult Resolution { get; }
+
+        public IGraphQlObjectResult<T> AdjustResolution<T>(Func<IGraphQlScalarResult, IGraphQlScalarResult> p)
+        {
+            return new GraphQlExpressionObjectResult<T>(p(Resolution), Contract);
+        }
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext)
         {
@@ -160,7 +158,8 @@ namespace GraphLinqQL
                 Contract!,
                 serviceProvider,
                 ToResult,
-                visitor.ModelType!
+                visitor.ModelType!,
+                fieldContext
             );
         }
 

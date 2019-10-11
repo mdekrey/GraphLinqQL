@@ -22,7 +22,7 @@ namespace GraphLinqQL
         public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
         {
             IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
-            var resolved = resolver(resultFactory.Resolve(a => a).AsContract(contract).ResolveComplex(serviceProvider, FieldContext.Empty));
+            var resolved = resolver(resultFactory.Resolve(a => a).AsContract<object>(new ContractMapping(contract)).ResolveComplex(serviceProvider, FieldContext.Empty));
             return resolved;
         }
 
@@ -36,7 +36,7 @@ namespace GraphLinqQL
         {
             var builder = contractOptions(new UnionContractBuilder<T>());
 
-            return null;
+            return graphQlResult.AsContract<T>(builder.CreateContractMapping());
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)
@@ -58,7 +58,7 @@ namespace GraphLinqQL
                 );
                 return newResolver;
             });
-            return new GraphQlExpressionObjectResult<IEnumerable<TContract>>(newScalar, newResult.Contract);
+            return newResult.AdjustResolution<IEnumerable<TContract>>(_ => newScalar);
         }
 
         public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
@@ -83,7 +83,7 @@ namespace GraphLinqQL
                 Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction).Data;
                 return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, GraphQlPreambleExpressionReplaceVisitor.BodyPlaceholderExpression), preambleLambda.Parameters);
             }, deferredLambda => constructedDeferred);
-            return new GraphQlExpressionObjectResult<TContract>(newScalar, newResult.Contract);
+            return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
 
         public static IGraphQlObjectResult<TContract> Only<TContract>(this IGraphQlObjectResult<IEnumerable<TContract>> original)

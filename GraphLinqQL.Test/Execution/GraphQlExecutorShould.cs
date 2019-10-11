@@ -328,8 +328,7 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
     id
     name
     ... on Hero {
-      renown
-      faction
+      location
     }
     ... on Villain {
       goal
@@ -339,7 +338,7 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
 ");
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
-            var expected = "{\"characters\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"},{\"name\":\"Thanos\",\"goal\":\"Snap\",\"id\":\"THANOS\"}]}";
+            var expected = "{\"characters\":[{\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"ASGUARD-3\",\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"AVENGERS-1\",\"name\":\"Captain America\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"THANOS\",\"name\":\"Thanos\",\"goal\":\"Snap\"}]}";
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }

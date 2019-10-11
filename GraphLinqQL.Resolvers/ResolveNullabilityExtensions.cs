@@ -27,7 +27,7 @@ namespace GraphLinqQL
             {
                 return NullableCheck(constructedDeferred, getListLamba);
             });
-            return new GraphQlExpressionObjectResult<TContract?>(newScalar, newResult.Contract);
+            return newResult.AdjustResolution<TContract?>(_ => newScalar);
         }
 
         private static LambdaExpression NullableCheck(LambdaExpression newResultResolver, LambdaExpression original)
