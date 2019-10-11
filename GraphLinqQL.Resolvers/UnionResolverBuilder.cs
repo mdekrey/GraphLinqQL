@@ -38,7 +38,7 @@ namespace GraphLinqQL
             var param = results[0].UntypedResolver.Parameters[0];
             var expressions = results.Select(e => e.UntypedResolver.Inline(param)).ToArray();
             var lambda = Expression.Lambda(expressions.Skip(1).Aggregate(expressions[0], (prev, next) => Expression.Call(QueryableUnion, prev, next)), param);
-            return new GraphQlExpressionScalarResult<object>(lambda);
+            return new GraphQlExpressionScalarResult<object>(lambda, EmptyArrayHelper.Empty<IGraphQlJoin>());
         }
 
         public IComplexResolverBuilder IfType(string value, Func<IComplexResolverBuilder, IComplexResolverBuilder> typedBuilder)

@@ -15,10 +15,10 @@ namespace GraphLinqQL
 
         public GraphQlExpressionScalarResult(
             LambdaExpression untypedResolver,
-            IReadOnlyCollection<IGraphQlJoin>? joins = null)
+            IReadOnlyCollection<IGraphQlJoin> joins)
         {
             this.UntypedResolver = untypedResolver;
-            this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
+            this.Joins = joins;
 
             var visitor = new GraphQlContractExpressionReplaceVisitor();
             visitor.Visit(this.UntypedResolver);
@@ -49,7 +49,7 @@ namespace GraphLinqQL
                 throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
             }
             var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
-            return new GraphQlExpressionObjectResult<TContract>(newResolver, contract);
+            return new GraphQlExpressionObjectResult<TContract>(newResolver, contract, this.Joins);
         }
     }
 
@@ -60,11 +60,11 @@ namespace GraphLinqQL
         public GraphQlExpressionObjectResult(
             LambdaExpression untypedResolver,
             Type contract,
-            IReadOnlyCollection<IGraphQlJoin>? joins = null)
+            IReadOnlyCollection<IGraphQlJoin> joins)
         {
             this.UntypedResolver = untypedResolver;
             this.Contract = contract;
-            this.Joins = joins ?? ImmutableHashSet<IGraphQlJoin>.Empty;
+            this.Joins = joins;
 
             visitor = new GraphQlContractExpressionReplaceVisitor();
             visitor.Visit(this.UntypedResolver);

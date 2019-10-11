@@ -9,7 +9,7 @@ namespace GraphLinqQL
     internal class GraphQlResultFactory<TValue> : GraphQlExpressionScalarResult<TValue>, IGraphQlResultFactory<TValue>
     {
         public GraphQlResultFactory()
-            : base((Expression<Func<TValue, TValue>>)(_ => _))
+            : base((Expression<Func<TValue, TValue>>)(_ => _), System.Collections.Immutable.ImmutableHashSet<IGraphQlJoin>.Empty)
         {
 
         }
@@ -21,7 +21,7 @@ namespace GraphLinqQL
 
         IGraphQlScalarResult<TDomainResult> IGraphQlResultFactory<TValue>.Resolve<TDomainResult>(Expression<Func<TValue, TDomainResult>> resolver)
         {
-            return new GraphQlExpressionScalarResult<TDomainResult>(resolver);
+            return new GraphQlExpressionScalarResult<TDomainResult>(resolver, System.Collections.Immutable.ImmutableHashSet<IGraphQlJoin>.Empty);
         }
 
     }

@@ -35,26 +35,26 @@ namespace GraphLinqQL
     class GraphQlDeferredObjectResult<TReturnType> : IGraphQlObjectResult<TReturnType>
     {
         private readonly IGraphQlObjectResult inner;
-        private readonly IGraphQlScalarResult outer;
+        private readonly IGraphQlScalarResult initial;
 
         public GraphQlDeferredObjectResult(
             IGraphQlObjectResult inner,
-            IGraphQlScalarResult outer)
+            IGraphQlScalarResult initial)
         {
             this.inner = inner;
-            this.outer = outer;
+            this.initial = initial;
         }
 
         public LambdaExpression UntypedResolver =>
-            Expression.Lambda(ResolveDeferredExpression.Inline(outer.UntypedResolver.Body), outer.UntypedResolver.Parameters);
+            Expression.Lambda(ResolveDeferredExpression.Inline(initial.UntypedResolver.Body), initial.UntypedResolver.Parameters);
 
         public Type Contract => inner.Contract;
 
-        public IReadOnlyCollection<IGraphQlJoin> Joins => outer.Joins;
+        public IReadOnlyCollection<IGraphQlJoin> Joins => initial.Joins;
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext) =>
             new PostResolveComplexResolverBuilder(inner.ResolveComplex(serviceProvider, fieldContext), newResult =>
-                new GraphQlDeferredScalarResult<TReturnType>(newResult, outer)
+                new GraphQlDeferredScalarResult<TReturnType>(newResult, initial)
             );
 
         private Expression<Func<object, object?>> ResolveDeferredExpression => input => Execution.GraphQlResultExtensions.InvokeResult(inner, input).Data;
