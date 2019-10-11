@@ -61,23 +61,18 @@ namespace GraphLinqQL
 
             var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
             {
-                var inputResolver = result.Value.UntypedResolver;
+                var inputResolver = result.Value.ConstructResult();
                 var resolveBody = inputResolver.Inline(modelParameter);
                 return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody.Box());
             }));
-            var func = Expression.Lambda(resultDictionary, modelParameter);
+            var resultSelector = Expression.Lambda(resultDictionary, modelParameter);
 
-            return resolve(BuildJoinedSelector(func, allJoins, modelType));
-        }
-
-        private static LambdaExpression BuildJoinedSelector(LambdaExpression resultSelector, ImmutableHashSet<IGraphQlJoin> joins, Type modelType)
-        {
             var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
 
             var mainBody = resultSelector.Inline(originalParameter)
-                .Replace(joins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
+                .Replace(allJoins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
             var mainSelector = Expression.Lambda(mainBody, originalParameter);
-            return mainSelector;
+            return resolve(mainSelector);
         }
 
         public IComplexResolverBuilder Add(string property, FieldContext context, IGraphQlParameterResolver? parameters) =>

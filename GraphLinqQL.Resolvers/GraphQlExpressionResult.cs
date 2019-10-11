@@ -36,22 +36,25 @@ namespace GraphLinqQL
     /// </summary>
     class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
-        public LambdaExpression UntypedResolver { get; }
+        public LambdaExpression Preamble { get; }
+        public LambdaExpression Body { get; }
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        public GraphQlExpressionScalarResult(
-            LambdaExpression untypedResolver,
+        protected GraphQlExpressionScalarResult(
+            LambdaExpression preamble,
+            LambdaExpression body,
             IReadOnlyCollection<IGraphQlJoin> joins)
         {
-            this.UntypedResolver = untypedResolver;
+            this.Preamble = preamble;
+            this.Body = body;
             this.Joins = joins;
 
-            var visitor = new GraphQlContractExpressionReplaceVisitor();
-            visitor.Visit(this.UntypedResolver);
-            if (visitor.ModelType != null)
+            var visitor = new GraphQlPreambleExpressionReplaceVisitor(Body);
+            var result = (LambdaExpression)visitor.Visit(Preamble);
+            if (!typeof(TReturnType).IsAssignableFrom(result.ReturnType))
             {
-                throw new ArgumentException("Was given a model but intended for a scalar.", nameof(untypedResolver));
+                throw new InvalidOperationException($"ScalarResult claimed to return '{typeof(TReturnType).FullName}' but is returning '{result.ReturnType.FullName}'");
             }
         }
 
@@ -67,7 +70,7 @@ namespace GraphLinqQL
         private IGraphQlObjectResult<TContract> UnsafeAsContract<TContract>()
         {
             var contract = typeof(TContract);
-            var currentReturnType = UntypedResolver.ReturnType;
+            var currentReturnType = Body.ReturnType;
             var acceptsInterface = contract.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
                 .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
                 .FirstOrDefault();
@@ -75,8 +78,52 @@ namespace GraphLinqQL
             {
                 throw new InvalidOperationException($"Given contract {contract.FullName} does not accept type {currentReturnType.FullName}");
             }
-            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, UntypedResolver.Body), UntypedResolver.Parameters);
-            return new GraphQlExpressionObjectResult<TContract>(newResolver, contract, this.Joins);
+            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, Body.Body), Body.Parameters);
+            return new GraphQlExpressionObjectResult<TContract>(new GraphQlExpressionScalarResult<object>(Preamble, newResolver, Joins), contract);
+        }
+
+        public LambdaExpression ConstructResult()
+        {
+            // Cases:
+            // 1. Nothing special, Preamble return is inlined into Body's parameter
+            // 2. Preamble has placeholder for "return" value that is passed to Body, which is inlined
+            // 3. Preamble has quoted lambda for full Body lambda expression
+
+            var visitor = new GraphQlPreambleExpressionReplaceVisitor(Body);
+            var result = (LambdaExpression)visitor.Visit(Preamble);
+            return visitor.Exchanged
+                ? result
+                : Expression.Lambda(Body.Inline(Preamble.Body), Preamble.Parameters);
+        }
+
+        public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)
+        {
+            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), this.Joins);
+        }
+
+        public IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust)
+        {
+            return new GraphQlExpressionScalarResult<T>(Preamble, bodyAdjust(Body), this.Joins);
+        }
+
+        public IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust)
+        {
+            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), bodyAdjust(Body), this.Joins);
+        }
+
+        internal static IGraphQlScalarResult<TReturnType> Constant(TReturnType result)
+        {
+            return new GraphQlExpressionScalarResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result), (Expression<Func<TReturnType, TReturnType>>)(_ => _), ImmutableHashSet<IGraphQlJoin>.Empty);
+        }
+
+        internal static IGraphQlScalarResult<TReturnType> Simple(LambdaExpression newFunc)
+        {
+            return new GraphQlExpressionScalarResult<TReturnType>(newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), ImmutableHashSet<IGraphQlJoin>.Empty);
+        }
+
+        internal static IGraphQlScalarResult<TReturnType> CreateJoin(LambdaExpression newFunc, IGraphQlJoin join)
+        {
+            return new GraphQlExpressionScalarResult<TReturnType>(newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), ImmutableHashSet.Create(join));
         }
     }
 
@@ -85,31 +132,27 @@ namespace GraphLinqQL
         private readonly GraphQlContractExpressionReplaceVisitor visitor;
 
         public GraphQlExpressionObjectResult(
-            LambdaExpression untypedResolver,
-            Type contract,
-            IReadOnlyCollection<IGraphQlJoin> joins)
+            IGraphQlScalarResult resolution,
+            Type contract)
         {
-            this.UntypedResolver = untypedResolver;
+            if (contract == null)
+            {
+                throw new ArgumentException("Expected a contract but had none.", nameof(resolution));
+            }
+            this.Resolution = resolution;
             this.Contract = contract;
-            this.Joins = joins;
 
             visitor = new GraphQlContractExpressionReplaceVisitor();
-            visitor.Visit(this.UntypedResolver);
-            if (visitor.ModelType == null && contract != null)
+            visitor.Visit(resolution.Body);
+            if (visitor.ModelType == null)
             {
-                throw new ArgumentException("The provided resolver did not have a contract.", nameof(untypedResolver));
-            }
-            else if (contract == null && visitor.ModelType != null)
-            {
-                throw new ArgumentException("Expected a contract but had none.", nameof(untypedResolver));
+                throw new ArgumentException("The provided resolver did not have a contract.", nameof(resolution));
             }
         }
 
         public Type Contract { get; }
 
-        public LambdaExpression UntypedResolver { get; }
-
-        public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
+        public IGraphQlScalarResult Resolution { get; }
 
         public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext)
         {
@@ -124,9 +167,11 @@ namespace GraphLinqQL
         private IGraphQlScalarResult ToResult(LambdaExpression joinedSelector)
         {
             visitor.NewOperation = joinedSelector;
-            var returnResult = visitor.Visit(this.UntypedResolver.Body);
-            var resultFunc = Expression.Lambda(returnResult, this.UntypedResolver.Parameters);
-            return new GraphQlExpressionScalarResult<object>(resultFunc, joins: this.Joins);
+            return Resolution.UpdateBody<object>(body =>
+            {
+                var returnResult = visitor.Visit(body.Body);
+                return Expression.Lambda(returnResult, body.Parameters);
+            });
         }
 
     }
@@ -136,32 +181,6 @@ namespace GraphLinqQL
         public static IGraphQlScalarResult Construct(Type returnType, LambdaExpression func, IReadOnlyCollection<IGraphQlJoin> joins)
         {
             return (IGraphQlScalarResult)Activator.CreateInstance(typeof(GraphQlExpressionScalarResult<>).MakeGenericType(returnType), func, joins)!;
-        }
-    }
-
-    class GraphQlContractExpressionReplaceVisitor : ExpressionVisitor
-    {
-        public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpressionReplaceVisitor).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic)!;
-
-#pragma warning disable CA1801 // Remove unused parameter - this parameter is used in Expression manipulation
-        private static object? ContractPlaceholder(object input) => null;
-#pragma warning restore CA1801 // Remove unused parameter
-
-        public LambdaExpression? NewOperation { get; set; }
-
-        public Type? ModelType { get; set; }
-
-        protected override Expression VisitMethodCall(MethodCallExpression node)
-        {
-            if (node.Method == ContractPlaceholderMethod)
-            {
-                ModelType = node.Arguments[0].Type;
-                if (NewOperation != null)
-                {
-                    return Visit(NewOperation.Inline(node.Arguments[0]));
-                }
-            }
-            return base.VisitMethodCall(node);
         }
     }
 }

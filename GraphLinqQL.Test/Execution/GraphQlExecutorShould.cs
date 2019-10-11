@@ -39,6 +39,22 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
+        public void BeAbleToRepresentVeryBasicStructures()
+        {
+            using var executor = CreateExecutor();
+            var result = executor.Execute(@"
+{
+  rand
+}
+");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
+            var expected = "{\"rand\":5}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public void BeAbleToRepresentUntypedSimpleStructures()
         {
             using var executor = CreateExecutor();

@@ -8,18 +8,30 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResult
     {
-        IReadOnlyCollection<IGraphQlJoin> Joins { get; }
-        LambdaExpression UntypedResolver { get; }
     }
 
+    // TODO - this interface should be removed and update code generation
     public interface IGraphQlResult<out TReturnType> : IGraphQlResult
     {
-
     }
 
     public interface IGraphQlScalarResult : IGraphQlResult
     {
+        LambdaExpression ConstructResult();
+
+        // FIXME - if we can not expose these as interface members it would be better
+        LambdaExpression Body { get; }
+
+
+
+        IReadOnlyCollection<IGraphQlJoin> Joins { get; }
         IGraphQlObjectResult AsContract(Type contract);
+
+        // TODO - should prefer this to preamble/body
+        //IGraphQlScalarResult<T> UpdateCurrent<T>(Func<LambdaExpression, LambdaExpression> resolveAdjust);
+        IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust);
+        IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust);
+        IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust);
     }
 
     public interface IGraphQlScalarResult<out TReturnType> : IGraphQlScalarResult, IGraphQlResult<TReturnType>
@@ -30,6 +42,7 @@ namespace GraphLinqQL
 
     public interface IGraphQlObjectResult : IGraphQlResult
     {
+        IGraphQlScalarResult Resolution { get; }
         Type Contract { get; }
         IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext);
     }

@@ -16,7 +16,7 @@ namespace GraphLinqQL
         public IGraphQlScalarResult<TDomainResult> Resolve<TDomainResult>(Expression<Func<TValue, TJoinedType, TDomainResult>> resolver)
         {
             var newFunc = Expression.Lambda<Func<TValue, TDomainResult>>(resolver.Body.Replace(resolver.Parameters[1], join.Placeholder), resolver.Parameters[0]);
-            return new GraphQlExpressionScalarResult<TDomainResult>(newFunc, ImmutableHashSet.Create<IGraphQlJoin>(join));
+            return GraphQlExpressionScalarResult<TDomainResult>.CreateJoin(newFunc, join);
         }
     }
 }

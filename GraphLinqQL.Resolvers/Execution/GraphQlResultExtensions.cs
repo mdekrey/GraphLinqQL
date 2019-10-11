@@ -14,10 +14,15 @@ namespace GraphLinqQL.Execution
             {
                 throw new InvalidOperationException("Cannot join at the root level");
             }
-            var func = Expression.Lambda<Func<object>>(resolved.UntypedResolver.Inline(Expression.Constant(input)));
+            var constructedResult = resolved.ConstructResult();
+            return InvokeExpression(input, constructedResult);
+        }
+
+        internal static ExecutionResult InvokeExpression(object input, LambdaExpression constructedResult)
+        {
+            var func = Expression.Lambda<Func<object>>(constructedResult.Inline(Expression.Constant(input)));
             // TODO - get errors here
             return new ExecutionResult(false, func.Compile()(), EmptyArrayHelper.Empty<GraphQlError>());
         }
-
     }
 }
