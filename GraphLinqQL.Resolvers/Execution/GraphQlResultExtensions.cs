@@ -19,63 +19,35 @@ namespace GraphLinqQL.Execution
             }
             var constructedResult = resolved.ConstructResult();
             var result = InvokeExpression(input, constructedResult);
-            return new ExecutionResult(result.ErrorDuringParse, await UnrollResults(result.Data, cancellationToken).ConfigureAwait(false), result.Errors);
+            var finalizerContext = new FinalizerContext(cancellationToken);
+            return new ExecutionResult(result.ErrorDuringParse, await UnrollResults(result.Data, finalizerContext).ConfigureAwait(false), result.Errors);
         }
 
-        private static async Task<object?> UnrollResults(object? data, CancellationToken cancellationToken)
+        private static async Task<object?> UnrollResults(object? data, FinalizerContext finalizerContext)
         {
             switch (data)
             {
-                case Task task:
-                    await task.ConfigureAwait(false);
-                    var type = GetTaskType(task.GetType());
-                    if (type != null)
-                    {
-                        return await UnrollResults(GetResultFrom(task, type), cancellationToken).ConfigureAwait(false);
-                    }
-                    break;
+                case IFinalizer finalizer:
+                    var value = await finalizer.GetValue(finalizerContext).ConfigureAwait(false);
+                    return await UnrollResults(value, finalizerContext).ConfigureAwait(false);
                 case IDictionary<string, object?> complex:
                     foreach (var entry in complex.Keys.ToArray())
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        complex[entry] = await UnrollResults(complex[entry], cancellationToken).ConfigureAwait(false);
+                        finalizerContext.CancellationToken.ThrowIfCancellationRequested();
+                        complex[entry] = await UnrollResults(complex[entry], finalizerContext).ConfigureAwait(false);
                     }
                     break;
                 case IEnumerable<object?> list:
                     var items = list.ToArray();
                     for (var i = 0; i < items.Length; i++)
                     {
-                        items[i] = await UnrollResults(items[i], cancellationToken).ConfigureAwait(false);
+                        items[i] = await UnrollResults(items[i], finalizerContext).ConfigureAwait(false);
                     }
                     return items;
                 default:
                     break;
             }
             return data;
-        }
-
-        private static Type? GetTaskType(Type type)
-        {
-            if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-            else if (type.BaseType != null && typeof(Task).IsAssignableFrom(type.BaseType))
-            {
-                return GetTaskType(type.BaseType);
-            }
-            return null;
-        }
-
-        private static object? GetResultFrom(Task task, Type type)
-        {
-            return TypedGetResultFromMethod.MakeGenericMethod(type).Invoke(null, new object[] { task });
-        }
-
-        public static readonly MethodInfo TypedGetResultFromMethod = typeof(GraphQlResultExtensions).GetMethod(nameof(TypedGetResultFrom), BindingFlags.Static | BindingFlags.NonPublic)!;
-        private static object? TypedGetResultFrom<T>(Task<T> task)
-        {
-            return task.Result;
         }
 
         internal static ExecutionResult InvokeExpression(object input, LambdaExpression constructedResult)

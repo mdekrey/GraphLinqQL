@@ -100,7 +100,7 @@ namespace GraphLinqQL
             Expression<Func<Task<TDomainResult>, Task>> temp = task => task.ContinueWith(t => PreamblePlaceholders.BodyInvocationPlaceholder(t.Result));
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
             return original.Resolve(value => resolveAsync(value))
-                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(temp.Inline(preamble.Body), preamble.Parameters));
+                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(Expression.New(TaskFinalizer.ConstructorInfo, temp.Inline(preamble.Body)), preamble.Parameters));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
