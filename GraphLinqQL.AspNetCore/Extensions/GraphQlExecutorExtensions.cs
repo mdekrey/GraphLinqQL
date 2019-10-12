@@ -8,7 +8,7 @@ namespace GraphLinqQL.Execution
 {
     public static class GraphQlExecutorExtensions
     {
-        public static async System.Threading.Tasks.Task<Dictionary<string, object?>> ExecuteQuery(this IGraphQlExecutor executor, System.IO.Stream bodyStream, IMessageResolver? messageResolver = null)
+        public static async System.Threading.Tasks.Task<Dictionary<string, object?>> ExecuteQuery(this IGraphQlExecutor executor, System.IO.Stream bodyStream, IMessageResolver? messageResolver = null, System.Threading.CancellationToken cancellationToken = default)
         {
             ExecutionResult executionResult;
             using (var body = await JsonDocument.ParseAsync(bodyStream).ConfigureAwait(false))
@@ -18,7 +18,7 @@ namespace GraphLinqQL.Execution
                 var variables = body.RootElement.TryGetProperty("variables", out var vars) ? vars : (JsonElement?)null;
 
 
-                executionResult = executor.Execute(query, operationName, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)));
+                executionResult = await executor.ExecuteAsync(query, operationName, variables?.EnumerateObject().ToDictionary(p => p.Name, p => (IGraphQlParameterInfo)new SystemJsonGraphQlParameterInfo(p.Value)), cancellationToken).ConfigureAwait(false);
             }
             var responseObj = new Dictionary<string, object?>();
             if (!executionResult.ErrorDuringParse)

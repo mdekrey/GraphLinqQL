@@ -73,7 +73,7 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
                         where hero.Id == friendId.Id1
                         join friend in Domain.DomainData.heroes on friendId.Id2 equals friend.Id
                         select friend).ToArray();
-            }, r => r.List(item => item.AsContract<Hero>()));
+            }).List(item => item.AsContract<Hero>());
         public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
             Original.Resolve(hero => hero.Id);
         public override IGraphQlScalarResult<string> location(FieldContext fieldContext, string? date) =>

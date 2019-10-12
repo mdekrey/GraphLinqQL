@@ -35,7 +35,7 @@ namespace Microsoft.AspNetCore.Builder
 
                 var bodyStream = context.Request.Body;
                 context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
-                var responseObj = await executor.ExecuteQuery(bodyStream, messageResolver).ConfigureAwait(false);
+                var responseObj = await executor.ExecuteQuery(bodyStream, messageResolver, context.RequestAborted).ConfigureAwait(false);
                 await JsonSerializer.SerializeAsync(context.Response.Body, responseObj, JsonOptions, context.RequestAborted).ConfigureAwait(false);
 
             });

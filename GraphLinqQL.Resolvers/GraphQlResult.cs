@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GraphLinqQL
 {
@@ -24,6 +25,7 @@ namespace GraphLinqQL
 
         // TODO - should prefer this to preamble/body
         //IGraphQlScalarResult<T> UpdateCurrent<T>(Func<LambdaExpression, LambdaExpression> resolveAdjust);
+        IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust);
         IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust);
         IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust);
     }

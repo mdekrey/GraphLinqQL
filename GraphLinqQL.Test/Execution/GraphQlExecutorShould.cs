@@ -9,6 +9,8 @@ using GraphLinqQL.Execution;
 using GraphLinqQL.Stubs;
 using GraphLinqQL.Ast;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
 
 namespace GraphLinqQL.Execution
 {
@@ -39,10 +41,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentVeryBasicStructures()
+        public async Task BeAbleToRepresentVeryBasicStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   rand
 }
@@ -55,10 +57,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentUntypedSimpleStructures()
+        public async Task BeAbleToRepresentUntypedSimpleStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   hero {
     id
@@ -75,10 +77,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentUntypedSimpleListStructures()
+        public async Task BeAbleToRepresentUntypedSimpleListStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -95,10 +97,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentNestedStructures()
+        public async Task BeAbleToRepresentNestedStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -118,10 +120,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToUseStructureFragments()
+        public async Task BeAbleToUseStructureFragments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 fragment HeroPrimary on Hero {
   id
   name
@@ -144,10 +146,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToRepresentComplexStructures()
+        public async Task BeAbleToRepresentComplexStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -165,10 +167,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassParameters()
+        public async Task BeAbleToPassParameters()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -186,10 +188,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassParametersWithNonStringTypes()
+        public async Task BeAbleToPassParametersWithNonStringTypes()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes(first: 1) {
     id
@@ -207,10 +209,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassArguments()
+        public async Task BeAbleToPassArguments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 query Heroes($date: String!) {
   heroes {
     id
@@ -227,10 +229,10 @@ query Heroes($date: String!) {
         }
 
         [Fact]
-        public void BeAbleToPassArgumentsWithDefaultValues()
+        public async Task BeAbleToPassArgumentsWithDefaultValues()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
   heroes {
     id
@@ -248,10 +250,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseDirectives()
+        public async Task BeAbleToUseDirectives()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -269,10 +271,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseInlineFragments()
+        public async Task BeAbleToUseInlineFragments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -292,10 +294,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseInlineFragmentsWithTypeConditions()
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditions()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -319,10 +321,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
 
 
         [Fact]
-        public void BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   characters {
     id
@@ -344,10 +346,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToGetTypenames()
+        public async Task BeAbleToGetTypenames()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   characters {
     id
@@ -364,10 +366,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void HandleNonExistingDocuments()
+        public async Task HandleNonExistingDocuments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 fragment HeroPrimary on Hero {
   id
   name

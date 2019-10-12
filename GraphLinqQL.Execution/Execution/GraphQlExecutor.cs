@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GraphLinqQL.Execution
 {
@@ -24,7 +26,7 @@ namespace GraphLinqQL.Execution
             this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
         }
 
-        public ExecutionResult Execute(string query, string? operationName, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
+        public Task<ExecutionResult> ExecuteAsync(string query, string? operationName, IDictionary<string, IGraphQlParameterInfo>? arguments = null, CancellationToken cancellationToken = default)
         {
             IGraphQlScalarResult result;
             try
@@ -47,7 +49,7 @@ namespace GraphLinqQL.Execution
                 if (ex.HasGraphQlErrors(out var errors))
                 {
                     logger.LogWarning(new EventId(10001, "GraphQLParse"), ex, "Caught exception with GraphQL errors during parse");
-                    return new ExecutionResult(true, null, errors);
+                    return Task.FromResult(new ExecutionResult(true, null, errors));
                 }
                 else
                 {
@@ -56,14 +58,14 @@ namespace GraphLinqQL.Execution
             }
             try
             {
-                return result.InvokeResult(new GraphQlRoot());
+                return result.InvokeResult(new GraphQlRoot(), cancellationToken);
             }
             catch (Exception ex)
             {
                 if (ex.HasGraphQlErrors(out var errors))
                 {
                     logger.LogWarning(new EventId(10002, "GraphQLExecution"), ex, "Caught exception with GraphQL errors during execution");
-                    return new ExecutionResult(false, new { }, errors);
+                    return Task.FromResult(new ExecutionResult(false, new { }, errors));
                 }
                 else
                 {

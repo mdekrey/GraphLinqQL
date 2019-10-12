@@ -52,8 +52,9 @@ namespace GraphLinqQL
 
             var visitor = new GraphQlPreambleExpressionReplaceVisitor(Body);
             var result = (LambdaExpression)visitor.Visit(Preamble);
-            if (!typeof(TReturnType).IsAssignableFrom(result.ReturnType))
+            if (!typeof(TReturnType).IsAssignableFrom(body.Parameters[0].Type))
             {
+                visitor.Visit(Preamble);
                 throw new InvalidOperationException($"ScalarResult claimed to return '{typeof(TReturnType).FullName}' but is returning '{result.ReturnType.FullName}'");
             }
         }
@@ -92,6 +93,11 @@ namespace GraphLinqQL
             return visitor.Exchanged
                 ? result
                 : Expression.Lambda(Body.Inline(Preamble.Body), Preamble.Parameters);
+        }
+
+        public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)
+        {
+            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), this.Joins);
         }
 
         public IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust)

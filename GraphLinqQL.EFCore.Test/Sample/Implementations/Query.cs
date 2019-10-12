@@ -22,7 +22,7 @@ namespace GraphLinqQL.Sample.Implementations
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
-            return Original.ResolveTask(_ => dbContext.Characters.FindAsync(intId).AsTask(), _ => _.Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping)));
+            return Original.ResolveTask(_ => dbContext.Characters.FindAsync(intId).AsTask()).Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping));
         }
 
         private static UnionContractBuilder<Interfaces.Character> CharacterTypeMapping(UnionContractBuilder<Interfaces.Character> builder)
@@ -33,7 +33,7 @@ namespace GraphLinqQL.Sample.Implementations
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
-            return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask(), droidResult => droidResult.Nullable(_ => _.AsContract<Droid>()));
+            return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask()).Nullable(_ => _.AsContract<Droid>());
         }
 
         public override IGraphQlObjectResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>

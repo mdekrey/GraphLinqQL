@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GraphLinqQL
@@ -13,10 +14,10 @@ namespace GraphLinqQL
             .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
             .Single();
 
-        public static ExecutionResult GraphQlRoot(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
+        public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver, CancellationToken cancellationToken = default)
         {
             var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
-            return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot());
+            return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot(), cancellationToken);
         }
 
         public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
@@ -68,8 +69,9 @@ namespace GraphLinqQL
 
             return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
             {
+                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
                 Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction).Data;
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, GraphQlPreambleExpressionReplaceVisitor.BodyPlaceholderExpression), preambleLambda.Parameters);
+                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
             }, deferredLambda => constructedDeferred);
         }
 
@@ -80,8 +82,9 @@ namespace GraphLinqQL
 
             var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
             {
+                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
                 Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction).Data;
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, GraphQlPreambleExpressionReplaceVisitor.BodyPlaceholderExpression), preambleLambda.Parameters);
+                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
             }, deferredLambda => constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
@@ -91,16 +94,13 @@ namespace GraphLinqQL
             return GraphQlFinalizerObjectResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
         }
 
-        public static IGraphQlScalarResult<Task<TDomainResult>> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
+        public static IGraphQlScalarResult<TDomainResult> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
         {
-            return original.Resolve(value => resolveAsync(value));
-        }
-
-        public static IGraphQlObjectResult<TContract> ResolveTask<TInputType, TDomainResult, TContract>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync, Func<IGraphQlScalarResult<TDomainResult>, IGraphQlObjectResult<TContract>> func)
-        {
+#pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
+            Expression<Func<Task<TDomainResult>, Task>> temp = task => task.ContinueWith(t => PreamblePlaceholders.BodyInvocationPlaceholder(t.Result));
+#pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
             return original.Resolve(value => resolveAsync(value))
-                // FIXME - this should not use .Result if we can help it
-                .Defer(r => func(r.Resolve(t => t.Result)));
+                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(temp.Inline(preamble.Body), preamble.Parameters));
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
