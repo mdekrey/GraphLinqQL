@@ -15,7 +15,7 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlResult<Interfaces.FilmCharactersConnection?> characterConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<Interfaces.FilmCharactersConnection?> characterConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             var query = from fc in dbContext.FilmCharacters
                         orderby fc.PersonId
@@ -48,63 +48,63 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
             }
         }
 
-        public override IGraphQlResult<string?> created(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> created(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> director(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> director(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> edited(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> edited(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<int?> episodeID(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<int?> episodeID(FieldContext fieldContext) =>
             Original.Resolve(film => (int?)film.EpisodeId);
 
-        public override IGraphQlResult<string> id(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string> id(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> openingCrawl(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> openingCrawl(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<FilmPlanetsConnection?> planetConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<FilmPlanetsConnection?> planetConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<IEnumerable<string?>?> producers(FieldContext fieldContext)
+        public override IGraphQlScalarResult<IEnumerable<string?>?> producers(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> releaseDate(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> releaseDate(FieldContext fieldContext)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<FilmSpeciesConnection?> speciesConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<FilmSpeciesConnection?> speciesConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<FilmStarshipsConnection?> starshipConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<FilmStarshipsConnection?> starshipConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> title(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> title(FieldContext fieldContext) =>
             Original.Resolve(film => film.Title);
 
-        public override IGraphQlResult<FilmVehiclesConnection?> vehicleConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<FilmVehiclesConnection?> vehicleConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new NotImplementedException();
         }

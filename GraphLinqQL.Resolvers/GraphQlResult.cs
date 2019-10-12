@@ -6,12 +6,9 @@ using System.Text;
 
 namespace GraphLinqQL
 {
+#pragma warning disable CA1040 // Avoid empty interfaces - this is indicated as a Union type, essentially.
     public interface IGraphQlResult
-    {
-    }
-
-    // TODO - this interface should be removed and update code generation
-    public interface IGraphQlResult<out TReturnType> : IGraphQlResult
+#pragma warning restore CA1040 // Avoid empty interfaces
     {
     }
 
@@ -31,7 +28,7 @@ namespace GraphLinqQL
         IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust);
     }
 
-    public interface IGraphQlScalarResult<out TReturnType> : IGraphQlScalarResult, IGraphQlResult<TReturnType>
+    public interface IGraphQlScalarResult<out TReturnType> : IGraphQlScalarResult, IGraphQlResult
     {
         IGraphQlObjectResult<TContract> AsContract<TContract>()
             where TContract : IGraphQlAccepts<TReturnType>;
@@ -45,7 +42,7 @@ namespace GraphLinqQL
         IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext);
     }
 
-    public interface IGraphQlObjectResult<out TContract> : IGraphQlObjectResult, IGraphQlResult<TContract>
+    public interface IGraphQlObjectResult<out TContract> : IGraphQlObjectResult, IGraphQlResult
     {
     }
 

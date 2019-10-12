@@ -27,6 +27,30 @@ namespace GraphLinqQL.CodeGeneration
         public string? DeprecationReason => field.Directives.FindObsoleteDirective()?.ObsoleteReason(options, document);
 
         public string? TypeName => options.Resolve(field.TypeNode, document: document);
+        public bool IsScalar => IsScalarField(field.TypeNode, document);
+
+        private static bool IsScalarField(ITypeNode typeNode, Document document)
+        {
+            return typeNode switch
+            {
+                NonNullType { BaseType: var baseType } => IsScalarField(baseType, document),
+                ListType { ElementType: var elementType } => IsScalarField(elementType, document),
+                TypeName { Name: var name } => !document.Children.Any(def => IsObjectDefinitionOfName(def, name)),
+                _ => false
+            };
+        }
+
+        private static bool IsObjectDefinitionOfName(IDefinitionNode def, string name)
+        {
+            return def switch
+            {
+                ObjectTypeDefinition { Name: var defName } when defName == name => true,
+                InputObjectTypeDefinition { Name: var defName } when defName == name => true,
+                InterfaceTypeDefinition { Name: var defName } when defName == name => true,
+                UnionTypeDefinition { Name: var defName } when defName == name => true,
+                _ => false
+            };
+        }
 
         public string IntrospectionType => options.ResolveIntrospection(field.TypeNode);
 

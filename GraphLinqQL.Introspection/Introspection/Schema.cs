@@ -20,19 +20,19 @@ namespace GraphLinqQL.Introspection
                     typeof(Introspection.Interfaces.Introspection.__DirectiveLocation),
                 };
 
-        public override IGraphQlResult<IEnumerable<__Directive>> directives(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__Directive>> directives(FieldContext fieldContext) =>
             Original.Resolve(types => types.DirectiveInformation).List(_ => _.AsContract<DirectiveDefinition>());
 
-        public override IGraphQlResult<__Type?> mutationType(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<__Type?> mutationType(FieldContext fieldContext) =>
             Original.Resolve(types => types.Mutation).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlResult<__Type> queryType(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<__Type> queryType(FieldContext fieldContext) =>
             Original.Resolve(types => types.Query).AsContract<GraphQlType>();
 
-        public override IGraphQlResult<__Type?> subscriptionType(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<__Type?> subscriptionType(FieldContext fieldContext) =>
             Original.Resolve(types => types.Subscription).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlResult<IEnumerable<__Type>> types(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__Type>> types(FieldContext fieldContext) =>
             Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).List(_ => _.AsContract<GraphQlType>());
 
     }

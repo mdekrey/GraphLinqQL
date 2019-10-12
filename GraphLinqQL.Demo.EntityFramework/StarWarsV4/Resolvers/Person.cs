@@ -5,78 +5,78 @@ namespace GraphLinqQL.StarWarsV4.Resolvers
 {
     internal class Person : Interfaces.Person.GraphQlContract<Domain.Person>
     {
-        public override IGraphQlResult<string?> birthYear(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> birthYear(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> created(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> created(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> edited(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> edited(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> eyeColor(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> eyeColor(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<PersonFilmsConnection?> filmConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<PersonFilmsConnection?> filmConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> gender(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> gender(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> hairColor(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> hairColor(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<int?> height(FieldContext fieldContext)
+        public override IGraphQlScalarResult<int?> height(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<Planet?> homeworld(FieldContext fieldContext)
+        public override IGraphQlObjectResult<Planet?> homeworld(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
             Original.Resolve(p => p.Id.ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
 
-        public override IGraphQlResult<double?> mass(FieldContext fieldContext)
+        public override IGraphQlScalarResult<double?> mass(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<string?> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> name(FieldContext fieldContext) =>
             Original.Resolve(p => p.Name);
 
-        public override IGraphQlResult<string?> skinColor(FieldContext fieldContext)
+        public override IGraphQlScalarResult<string?> skinColor(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<Species?> species(FieldContext fieldContext)
+        public override IGraphQlObjectResult<Species?> species(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<PersonStarshipsConnection?> starshipConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<PersonStarshipsConnection?> starshipConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlResult<PersonVehiclesConnection?> vehicleConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
+        public override IGraphQlObjectResult<PersonVehiclesConnection?> vehicleConnection(FieldContext fieldContext, string? after, int? first, string? before, int? last)
         {
             throw new System.NotImplementedException();
         }

@@ -19,7 +19,7 @@ namespace GraphLinqQL.Sample.Implementations
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
+        public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
             return Original.ResolveTask(_ => dbContext.Characters.FindAsync(intId).AsTask(), _ => _.Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping)));
@@ -30,30 +30,30 @@ namespace GraphLinqQL.Sample.Implementations
             return builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>();
         }
 
-        public override IGraphQlResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
+        public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
             return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask(), droidResult => droidResult.Nullable(_ => _.AsContract<Droid>()));
         }
 
-        public override IGraphQlResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
+        public override IGraphQlObjectResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
             episode == null
                 ? droid(fieldContext, "2001")
                 : throw new NotImplementedException();
 
-        public override IGraphQlResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
+        public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
             // This intentionally has a different implementation from the droid for various implementations
             return Original.Resolve(dbContext.Humans.Where(human => human.Id == intId)).List(_ => _.AsContract<Human>()).Only();
         }
 
-        public override IGraphQlResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
         {
             throw new NotImplementedException();
         }
 
-        public override IGraphQlResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
+        public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
         {
             // FIXME - this is a bad example of doing unions due to the .ToList(). Find another way, since this evaluates the list immediately before selection.
             return Original.Resolve(_ =>
@@ -62,7 +62,7 @@ namespace GraphLinqQL.Sample.Implementations
             ).List(_ => _.AsUnion<SearchResult>(builder => builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>()));
         }
 
-        public override IGraphQlResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)
+        public override IGraphQlObjectResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)
         {
             throw new NotImplementedException();
         }
