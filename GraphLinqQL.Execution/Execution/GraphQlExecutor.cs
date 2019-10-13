@@ -13,14 +13,15 @@ namespace GraphLinqQL.Execution
 
     public class GraphQlExecutor : IGraphQlExecutor
     {
-        private readonly IGraphQlServiceProvider serviceProvider;
         private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IGraphQlExecutionOptions options;
         private readonly ILogger<GraphQlExecutor> logger;
 
+        public IGraphQlServiceProvider ServiceProvider { get; }
+
         public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options, ILoggerFactory loggerFactory)
         {
-            this.serviceProvider = serviceProvider;
+            this.ServiceProvider = serviceProvider;
             this.astGenerator = astGenerator;
             this.options = options;
             this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
@@ -107,7 +108,7 @@ namespace GraphLinqQL.Execution
 
             var actualArguments = def.Variables.ToDictionary(variable => variable.Variable.Name, variable => arguments.ContainsKey(variable.Variable.Name) ? arguments[variable.Variable.Name] : new GraphQlParameterInfo(variable.DefaultValue!, null!));
             var context = new GraphQLExecutionContext(ast, actualArguments);
-            var result = serviceProvider.GetResult<GraphQlRoot>(operation, builder =>
+            var result = ServiceProvider.GetResult<GraphQlRoot>(operation, builder =>
             {
                 return Build(builder, def.SelectionSet.Selections, context).Build();
             });
@@ -145,7 +146,7 @@ namespace GraphLinqQL.Execution
                                 {
                                     throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
                                 }
-                                return Build(objectResult.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
+                                return Build(objectResult.ResolveComplex(ServiceProvider, queryContext), field.SelectionSet.Selections, context
                                     ).Build();
                             }
                         );
@@ -210,7 +211,7 @@ namespace GraphLinqQL.Execution
             {
                 if (disposing)
                 {
-                    serviceProvider.Dispose();
+                    ServiceProvider.Dispose();
                 }
                 disposedValue = true;
             }
