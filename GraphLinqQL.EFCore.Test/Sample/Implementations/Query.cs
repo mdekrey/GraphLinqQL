@@ -63,11 +63,10 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
         {
-            // FIXME - this is a bad example of doing unions due to the .ToList(). Find another way, since this evaluates the list immediately before selection.
-            return Original.Resolve(_ =>
-                (from human in dbContext.Humans where human.Name.Contains(text!) select (object)human).ToList().Concat
-                (from droid in dbContext.Droids where droid.Name.Contains(text!) select droid).ToList()
-            ).List(_ => _.AsUnion<SearchResult>(builder => builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>()));
+            return Original.Union(
+                _ => _.Resolve(from human in dbContext.Humans where human.Name.Contains(text!) select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<SearchResult?>),
+                _ => _.Resolve(from droid in dbContext.Droids where droid.Name.Contains(text!) select droid).List(_ => _.AsContract<Droid>())
+            );
         }
 
         public override IGraphQlObjectResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)

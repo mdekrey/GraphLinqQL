@@ -346,6 +346,33 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditionsOnUnionsWithJoins()
+        {
+            using var executor = CreateExecutor();
+            var result = await executor.ExecuteAsync(@"
+{
+  characters {
+    id
+    name
+    ... on Hero {
+      location
+      faction
+      renown
+    }
+    ... on Villain {
+      goal
+    }
+  }
+}
+");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
+            var expected = "{\"characters\":[{\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Guardians of the Galaxy\",\"renown\":5},{\"id\":\"ASGUARD-3\",\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Asgardians\",\"renown\":50},{\"id\":\"AVENGERS-1\",\"name\":\"Captain America\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Avengers\",\"renown\":100},{\"id\":\"THANOS\",\"name\":\"Thanos\",\"goal\":\"Snap\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
         public async Task BeAbleToGetTypenames()
         {
             using var executor = CreateExecutor();

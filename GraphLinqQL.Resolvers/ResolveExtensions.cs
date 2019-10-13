@@ -32,6 +32,23 @@ namespace GraphLinqQL
             return source.Resolve(_ => result);
         }
 
+        public static IGraphQlObjectResult<IEnumerable<TContractResult>> Union<TInputType, TContractResult>(this IGraphQlResultFactory<TInputType> source, params Func<IGraphQlResultFactory<TInputType>, IGraphQlObjectResult<IEnumerable<TContractResult>>>[] funcs)
+        {
+            var objectResults = funcs.Select(f => f(source)).ToArray();
+            return new MultiObjectResult<IEnumerable<TContractResult>>(objectResults, ConcatAll);
+        }
+
+        private static LambdaExpression ConcatAll(IReadOnlyList<LambdaExpression> resolvers)
+        {
+            var param = resolvers[0].Parameters[0];
+            var concat = (Expression<Func<IEnumerable<object>, IEnumerable<object>, IEnumerable<object>>>)((a, b) => Enumerable.Concat(a, b));
+            var listResolvers = resolvers.Select(r => (Expression)Expression.Convert(r.Inline(param), typeof(IEnumerable<object>)));
+
+            // assumes each arg is a list
+            var fullResolve = listResolvers.Skip(1).Aggregate(listResolvers.First(), (prev, next) => concat.Inline(prev, next));
+            return Expression.Lambda(fullResolve, param);
+        }
+
         public static IGraphQlObjectResult<T> AsUnion<T>(this IGraphQlScalarResult graphQlResult, Func<UnionContractBuilder<T>, UnionContractBuilder<T>> contractOptions)
             where T : IGraphQlResolvable
         {
@@ -70,7 +87,7 @@ namespace GraphLinqQL
             return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
             {
                 // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction).Data;
+                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
                 return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
             }, deferredLambda => constructedDeferred);
         }
@@ -83,7 +100,7 @@ namespace GraphLinqQL
             var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
             {
                 // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction).Data;
+                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
                 return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
             }, deferredLambda => constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);

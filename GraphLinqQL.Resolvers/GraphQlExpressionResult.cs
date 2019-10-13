@@ -41,7 +41,7 @@ namespace GraphLinqQL
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
-        protected GraphQlExpressionScalarResult(
+        internal protected GraphQlExpressionScalarResult(
             LambdaExpression preamble,
             LambdaExpression body,
             IReadOnlyCollection<IGraphQlJoin> joins)

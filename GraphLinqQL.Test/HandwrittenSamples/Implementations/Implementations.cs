@@ -33,11 +33,11 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         public override IGraphQlScalarResult<double> rand(FieldContext fieldContext) =>
             Original.Resolve(root => 5.0);
 
-        public override IGraphQlObjectResult<IEnumerable<Character>> characters(FieldContext fieldContext) => 
-            Original.Resolve(_ =>
-                 (Domain.DomainData.heroes).Union<object>
-                 (Domain.DomainData.villains))
-            .List(_ => _.AsUnion<Character>(builder => builder.Add<Domain.Hero, Hero>().Add<Domain.Villain, Villain>()));
+        public override IGraphQlObjectResult<IEnumerable<Character>> characters(FieldContext fieldContext) =>
+            Original.Union(
+                _ => _.Resolve(Domain.DomainData.heroes).List(_ => _.AsContract<Hero>() as IGraphQlObjectResult<Character>),
+                _ => _.Resolve(Domain.DomainData.villains).List(_ => _.AsContract<Villain>())
+            );
     }
 
     public class Hero : Interfaces.Hero.GraphQlContract<Domain.Hero>

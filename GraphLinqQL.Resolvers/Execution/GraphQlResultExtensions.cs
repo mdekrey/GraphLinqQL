@@ -20,7 +20,8 @@ namespace GraphLinqQL.Execution
             var constructedResult = resolved.ConstructResult();
             var result = InvokeExpression(input, constructedResult);
             var finalizerContext = new FinalizerContext(cancellationToken);
-            return new ExecutionResult(result.ErrorDuringParse, await UnrollResults(result.Data, finalizerContext).ConfigureAwait(false), result.Errors);
+            var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
+            return new ExecutionResult(false, finalizedResult, /*finalizedResult.Errors*/ EmptyArrayHelper.Empty<GraphQlError>());
         }
 
         private static async Task<object?> UnrollResults(object? data, FinalizerContext finalizerContext)
@@ -50,11 +51,10 @@ namespace GraphLinqQL.Execution
             return data;
         }
 
-        internal static ExecutionResult InvokeExpression(object input, LambdaExpression constructedResult)
+        internal static object InvokeExpression(object input, LambdaExpression constructedResult)
         {
             var func = Expression.Lambda<Func<object>>(constructedResult.Inline(Expression.Constant(input)));
-            // TODO - get errors here
-            return new ExecutionResult(false, func.Compile()(), EmptyArrayHelper.Empty<GraphQlError>());
+            return func.Compile()();
         }
     }
 }
