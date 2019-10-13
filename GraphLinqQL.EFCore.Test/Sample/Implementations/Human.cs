@@ -17,7 +17,10 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn(FieldContext fieldContext)
         {
-            throw new System.NotImplementedException();
+            return Original.Resolve(human => from appearance in dbContext.Appearances
+                                             where appearance.CharacterId == human.Id
+                                             orderby appearance.EpisodeId
+                                             select (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId));
         }
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)

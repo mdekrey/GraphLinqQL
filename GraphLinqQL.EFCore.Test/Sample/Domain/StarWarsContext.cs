@@ -18,6 +18,7 @@ namespace GraphLinqQL.Sample.Domain
         public DbSet<Droid> Droids { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Film> Films { get; set; }
+        public DbSet<Appearance> Appearances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,7 +61,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = hanSolo,
                       Name = "Han Solo",
-                      //Friends = new[] { lukeSkywalker, leiaOrgana, r2d2 },
                       //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       Height = 1.8,
                       Mass = 80,
@@ -70,7 +70,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = leiaOrgana,
                       Name = "Leia Organa",
-                      //Friends = new[] { lukeSkywalker, hanSolo, c3p0, r2d2 },
                       //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       HomePlanet = "Alderaan",
                       Height = 1.5,
@@ -81,7 +80,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = wilhuffTarkin,
                       Name = "Wilhuff Tarkin",
-                      //Friends = new[] { darthVader },
                       //AppearsIn = new[] { Episode.NewHope },
                       Height = 1.8,
                       Mass = null,
@@ -96,7 +94,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = c3p0,
                       Name = "C-3PO",
-                      //Friends = new[] { lukeSkywalker, hanSolo, leiaOrgana, r2d2 },
                       //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       PrimaryFunction = "Protocol",
                   },
@@ -104,7 +101,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = r2d2,
                       Name = "R2-D2",
-                      //Friends = new[] { lukeSkywalker, hanSolo, leiaOrgana },
                       //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       PrimaryFunction = "Astromech",
                   }
@@ -137,6 +133,25 @@ namespace GraphLinqQL.Sample.Domain
                 b.HasData(new Film { EpisodeId = Episode.NewHope, Title = "A New Hope", HeroId = r2d2 },
                     new Film { EpisodeId = Episode.Empire, Title = "The Empire Strikes Back", HeroId = lukeSkywalker },
                     new Film { EpisodeId = Episode.Jedi, Title = "The Return of the Jedi", HeroId = r2d2 });
+            });
+
+            modelBuilder.Entity<Appearance>(b =>
+            {
+                b.HasKey(a => new { a.EpisodeId, a.CharacterId });
+                b.HasOne(a => a.Film).WithMany().HasForeignKey(a => a.EpisodeId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne(a => a.Character).WithMany().HasForeignKey(a => a.CharacterId).OnDelete(DeleteBehavior.Restrict);
+                b.HasData((from character in new[]
+                            {
+                                new { id = lukeSkywalker, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                                new { id = darthVader, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                                new { id = hanSolo, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                                new { id = leiaOrgana, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                                new { id = wilhuffTarkin, films = new[] { Episode.NewHope } },
+                                new { id = c3p0, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                                new { id = r2d2, films = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi } },
+                            }
+                           from appearance in character.films
+                           select new Appearance { CharacterId = character.id, EpisodeId = appearance }).ToArray());
             });
 
             base.OnModelCreating(modelBuilder);

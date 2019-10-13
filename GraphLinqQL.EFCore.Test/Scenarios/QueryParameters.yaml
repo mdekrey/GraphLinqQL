@@ -295,3 +295,47 @@ tests:
           }
         }
         
+  - name: Get friends of a human and their appearances via the character interface
+    given:
+      query: |
+        {
+          character(id: "1001") {
+            id
+            name
+            appearsIn
+            friends {
+                __typename
+                id
+                name
+                appearsIn
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "character": {
+              "id": "1001",
+              "name": "Darth Vader",
+              "appearsIn": [
+                "NEWHOPE",
+                "EMPIRE",
+                "JEDI"
+              ],
+              "friends": [
+                {
+                  "__typename": "Human",
+                  "id": "1004",
+                  "name": "Wilhuff Tarkin",
+                  "appearsIn": [
+                    "NEWHOPE"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+        
