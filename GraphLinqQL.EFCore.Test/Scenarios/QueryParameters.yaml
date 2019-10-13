@@ -183,3 +183,115 @@ tests:
             }
         }
         
+  - name: More details on a Human
+    given:
+      query: |
+        {
+          human(id: "1000") {
+            id
+            name
+            height
+            homePlanet
+            mass
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "id": "1000",
+                    "name": "Luke Skywalker",
+                    "height": 1.72,
+                    "homePlanet": "Tatooine",
+                    "mass": 77
+                }
+            }
+        }
+        
+  - name: More details on a Human via the Character interface
+    given:
+      query: |
+        {
+          character(id: "1000") {
+            id
+            name
+            height
+            homePlanet
+            mass
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "errors": [
+            {
+              "message": "An unhandled error occurred within resolve method for field \u0022height\u0022 on type \u0022Droid\u0022. See server logs for details.",
+              "errorCode": "errorInResolver",
+              "locations": [
+                {
+                  "Line": 5,
+                  "Column": 4
+                }
+              ],
+              "arguments": {
+                "fieldName": "height",
+                "type": "Droid"
+              }
+            }
+          ]
+        }
+        
+  - name: Get friends of a human via the character interface
+    given:
+      query: |
+        {
+          character(id: "1000") {
+            id
+            name
+            friends {
+                __typename
+                id
+                name
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "character": {
+              "id": "1000",
+              "name": "Luke Skywalker",
+              "friends": [
+                {
+                  "__typename": "Human",
+                  "id": "1002",
+                  "name": "Han Solo"
+                },
+                {
+                  "__typename": "Human",
+                  "id": "1003",
+                  "name": "Leia Organa"
+                },
+                {
+                  "__typename": "Droid",
+                  "id": "2000",
+                  "name": "C-3PO"
+                },
+                {
+                  "__typename": "Droid",
+                  "id": "2001",
+                  "name": "R2-D2"
+                }
+              ]
+            }
+          }
+        }
+        
