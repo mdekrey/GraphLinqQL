@@ -22,7 +22,7 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
-            return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping));
+            return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(UnionMappings.CharacterTypeMapping));
         }
 
         private async Task<object> FindCharacterById(string id)
@@ -31,11 +31,6 @@ namespace GraphLinqQL.Sample.Implementations
             var intId = int.Parse(id);
             return (object)await dbContext.Humans.FindAsync(intId) 
                 ?? await dbContext.Droids.FindAsync(intId);
-        }
-
-        private static UnionContractBuilder<Interfaces.Character> CharacterTypeMapping(UnionContractBuilder<Interfaces.Character> builder)
-        {
-            return builder.Add<Domain.Droid, Droid>().Add<Domain.Human, Human>();
         }
 
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)

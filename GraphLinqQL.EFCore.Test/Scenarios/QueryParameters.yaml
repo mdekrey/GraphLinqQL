@@ -114,3 +114,72 @@ tests:
                 }
             }
         }
+        
+  - name: Default parameter on a Human
+    given:
+      query: |
+        {
+          human(id: "1000") {
+            name
+            height
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 1.72
+                }
+            }
+        }
+        
+  - name: Inline enum parameter on a Human
+    given:
+      query: |
+        {
+          human(id: "1000") {
+            name
+            height(unit: FOOT)
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 5.6430448
+                }
+            }
+        }
+        
+  - name: Variable enum parameter on a Human
+    given:
+      query: |
+        query ($unit: LengthUnit!) {
+          human(id: "1000") {
+            name
+            height(unit: $unit)
+          }
+        }
+      variables:
+        unit: "FOOT"
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 5.6430448
+                }
+            }
+        }
+        

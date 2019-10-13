@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.Sample.Interfaces;
 
@@ -6,6 +7,14 @@ namespace GraphLinqQL.Sample.Implementations
 {
     internal class Human : Interfaces.Human.GraphQlContract<Domain.Human>
     {
+        private readonly StarWarsContext dbContext;
+        private const double MetersToFeet = 3.28084;
+
+        public Human(StarWarsContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
         public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn(FieldContext fieldContext)
         {
             throw new System.NotImplementedException();
@@ -13,7 +22,9 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)
         {
-            throw new System.NotImplementedException();
+            return Original.Resolve(human => from friendship in dbContext.Friendships
+                                             where friendship.FromId == human.Id
+                                             select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
         public override IGraphQlObjectResult<FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
@@ -23,21 +34,28 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlScalarResult<double?> height(FieldContext fieldContext, LengthUnit? unit)
         {
-            throw new System.NotImplementedException();
+            if (unit == LengthUnit.FOOT)
+            {
+                return Original.Resolve(human => (double?)(human.Height * MetersToFeet));
+            }
+            else
+            {
+                return Original.Resolve(human => (double?)human.Height);
+            }
         }
 
         public override IGraphQlScalarResult<string?> homePlanet(FieldContext fieldContext) =>
-            Original.Resolve(droid => droid.Name);
+            Original.Resolve(human => human.HomePlanet);
 
 
         public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
-            Original.Resolve(droid => droid.Id.ToString());
+            Original.Resolve(human => human.Id.ToString());
 
         public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
-            Original.Resolve(droid => droid.Name);
+            Original.Resolve(human => human.Name);
 
         public override IGraphQlScalarResult<double?> mass(FieldContext fieldContext) =>
-            Original.Resolve(droid => (double?)droid.Mass);
+            Original.Resolve(human => (double?)human.Mass);
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> starships(FieldContext fieldContext)
         {
