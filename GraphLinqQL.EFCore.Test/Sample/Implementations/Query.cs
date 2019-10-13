@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using GraphLinqQL.Sample.Domain;
 using GraphLinqQL.Sample.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +22,15 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
+            return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping));
+        }
+
+        private async Task<object> FindCharacterById(string id)
+        {
+            // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
             var intId = int.Parse(id);
-            return Original.ResolveTask(_ => dbContext.Characters.FindAsync(intId).AsTask()).Nullable(_ => _.AsUnion<Interfaces.Character>(CharacterTypeMapping));
+            return (object)await dbContext.Humans.FindAsync(intId) 
+                ?? await dbContext.Droids.FindAsync(intId);
         }
 
         private static UnionContractBuilder<Interfaces.Character> CharacterTypeMapping(UnionContractBuilder<Interfaces.Character> builder)
@@ -38,7 +46,7 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
             episode == null
-                ? droid(fieldContext, "2001")
+                ? character(fieldContext, "2001")
                 : throw new NotImplementedException();
 
         public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
