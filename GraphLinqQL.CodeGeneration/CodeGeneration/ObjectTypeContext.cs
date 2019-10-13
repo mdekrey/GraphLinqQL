@@ -1,6 +1,7 @@
 ﻿using GraphLinqQL.Ast.Nodes;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace GraphLinqQL.CodeGeneration
 {
@@ -33,9 +34,17 @@ namespace GraphLinqQL.CodeGeneration
         {
             get
             {
+                var declaration = this.declaration;
                 foreach (var iface in declaration.Interfaces)
                 {
                     yield return CSharpNaming.GetTypeName(iface.Name);
+                }
+                foreach (var union in document.Children.OfType<UnionTypeDefinition>())
+                {
+                    if (union.UnionMembers.Any(m => m.Name == declaration.Name))
+                    {
+                        yield return CSharpNaming.GetTypeName(union.Name);
+                    }
                 }
             }
         }

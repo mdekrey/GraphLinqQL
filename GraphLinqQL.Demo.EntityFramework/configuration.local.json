@@ -1,3 +1,0 @@
-{
-  "DefaultConnection": "Server=WHITERUN\\SQLEXPRESS;Database=sw_develop;Trusted_Connection=True;MultipleActiveResultSets=True"
-}

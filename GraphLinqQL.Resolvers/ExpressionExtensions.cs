@@ -44,7 +44,12 @@ namespace GraphLinqQL
                 throw new InvalidOperationException($"Expected single input parameter of type {typeof(TInput).FullName}, got {string.Join(", ", expression.Parameters.Select(p => p.Type.FullName))}");
             }
             
-            return Expression.Lambda<Func<TInput, object>>(expression.Body.Type.IsValueType ? Expression.Convert(expression.Body, typeof(object)) : expression.Body, expression.Parameters);
+            return Expression.Lambda<Func<TInput, object>>(expression.Body.Box(), expression.Parameters);
+        }
+
+        public static Expression Box(this Expression body)
+        {
+            return body.Type.IsValueType ? Expression.Convert(body, typeof(object)) : body;
         }
 
         internal static MethodCallExpression CallQueryableSelect(this Expression list, LambdaExpression selector)

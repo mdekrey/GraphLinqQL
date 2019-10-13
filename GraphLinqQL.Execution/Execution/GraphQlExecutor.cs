@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GraphLinqQL.Execution
 {
@@ -14,7 +16,6 @@ namespace GraphLinqQL.Execution
         private readonly IGraphQlServiceProvider serviceProvider;
         private readonly IAbstractSyntaxTreeGenerator astGenerator;
         private readonly IGraphQlExecutionOptions options;
-        private readonly IGraphQlParameterResolverFactory parameterResolverFactory;
         private readonly ILogger<GraphQlExecutor> logger;
 
         public GraphQlExecutor(IGraphQlServiceProvider serviceProvider, IAbstractSyntaxTreeGenerator astGenerator, IGraphQlExecutionOptions options, ILoggerFactory loggerFactory)
@@ -22,18 +23,19 @@ namespace GraphLinqQL.Execution
             this.serviceProvider = serviceProvider;
             this.astGenerator = astGenerator;
             this.options = options;
-            this.parameterResolverFactory = serviceProvider.GetParameterResolverFactory();
             this.logger = loggerFactory.CreateLogger<GraphLinqQL.Execution.GraphQlExecutor>();
         }
 
-        public ExecutionResult Execute(string query, IDictionary<string, IGraphQlParameterInfo>? arguments = null)
+        public Task<ExecutionResult> ExecuteAsync(string query, string? operationName, IDictionary<string, IGraphQlParameterInfo>? arguments = null, CancellationToken cancellationToken = default)
         {
-            IGraphQlResult result;
+            IGraphQlScalarResult result;
             try
             {
                 var actualArguments = arguments ?? ImmutableDictionary<string, IGraphQlParameterInfo>.Empty;
                 var ast = astGenerator.ParseDocument(query);
-                var def = ast.Children.OfType<OperationDefinition>().FirstOrDefault();
+                var def = operationName == null
+                    ? ast.Children.OfType<OperationDefinition>().SingleOrDefault()
+                    : ast.Children.OfType<OperationDefinition>().SingleOrDefault(op => op.Name == operationName);
                 if (def == null)
                 {
                     throw new ArgumentException("Query did not contain a document", nameof(query)).AddGraphQlError(WellKnownErrorCodes.NoOperation, ast.Location.ToQueryLocations());
@@ -47,7 +49,7 @@ namespace GraphLinqQL.Execution
                 if (ex.HasGraphQlErrors(out var errors))
                 {
                     logger.LogWarning(new EventId(10001, "GraphQLParse"), ex, "Caught exception with GraphQL errors during parse");
-                    return new ExecutionResult(true, null, errors);
+                    return Task.FromResult(new ExecutionResult(true, null, errors));
                 }
                 else
                 {
@@ -56,14 +58,14 @@ namespace GraphLinqQL.Execution
             }
             try
             {
-                return result.InvokeResult(new GraphQlRoot());
+                return result.InvokeResult(new GraphQlRoot(), cancellationToken);
             }
             catch (Exception ex)
             {
                 if (ex.HasGraphQlErrors(out var errors))
                 {
                     logger.LogWarning(new EventId(10002, "GraphQLExecution"), ex, "Caught exception with GraphQL errors during execution");
-                    return new ExecutionResult(false, new { }, errors);
+                    return Task.FromResult(new ExecutionResult(false, new { }, errors));
                 }
                 else
                 {
@@ -93,7 +95,7 @@ namespace GraphLinqQL.Execution
             }
         }
 
-        private IGraphQlResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
+        private IGraphQlScalarResult Resolve(Document ast, OperationDefinition def, IDictionary<string, IGraphQlParameterInfo> arguments)
         {
             var operation = def.OperationType switch
             {
@@ -138,19 +140,19 @@ namespace GraphLinqQL.Execution
                             queryContext,
                             b =>
                             {
-                                var result = b.ResolveQuery(field.Name, queryContext, parameterResolverFactory.FromParameterData(arguments));
-                                if (!result.ShouldSubselect)
+                                var result = b.ResolveQuery(field.Name, queryContext, new BasicParameterResolver(arguments));
+                                if (!(result is IGraphQlObjectResult objectResult))
                                 {
                                     throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
                                 }
-                                return Build(result.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
+                                return Build(objectResult.ResolveComplex(serviceProvider, queryContext), field.SelectionSet.Selections, context
                                     ).Build();
                             }
                         );
                     }
                     else
                     {
-                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, arguments);
+                        return builder.Add(field.Alias ?? field.Name, field.Name, queryContext, new BasicParameterResolver(arguments));
                     }
                 case FragmentSpread fragmentSpread:
                     return Build(builder,
@@ -188,9 +190,10 @@ namespace GraphLinqQL.Execution
         {
             var arguments = ResolveArguments(directive.Arguments, context);
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
+            var fieldContext = new FieldContext(directive.Name, node.Location.ToQueryLocations());
             return actualDirective == null
                 ? node
-                : actualDirective.HandleDirective(node, parameterResolverFactory.FromParameterData(arguments), context);
+                : actualDirective.HandleDirective(node, new BasicParameterResolver(arguments), fieldContext, context);
         }
 
         private static IDictionary<string, IGraphQlParameterInfo> ResolveArguments(IReadOnlyList<Argument> arguments, GraphQLExecutionContext context)

@@ -121,6 +121,10 @@
     <value>An unhandled error occurred within resolve method for field "{0}" on type "{1}". See server logs for details.</value>
     <comment>[fieldName, type]</comment>
   </data>
+  <data name="missingArgument" xml:space="preserve">
+    <value>Missing argument "{1}" for field "{0}".</value>
+    <comment>[fieldName, argument]</comment>
+  </data>
   <data name="noOperationFound" xml:space="preserve">
     <value>No operation was found in provided GraphQL document</value>
   </data>

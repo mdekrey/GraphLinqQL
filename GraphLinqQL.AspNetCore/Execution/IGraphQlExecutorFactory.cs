@@ -1,6 +1,6 @@
 ﻿namespace GraphLinqQL.Execution
 {
-    internal interface IGraphQlExecutorFactory
+    public interface IGraphQlExecutorFactory
     {
         IGraphQlExecutor Create();
         IGraphQlExecutor Create(string name);

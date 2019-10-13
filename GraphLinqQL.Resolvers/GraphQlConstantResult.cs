@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 namespace GraphLinqQL
 {
     public static class GraphQlConstantResult
     {
-        public static IGraphQlResult<TReturnType> Construct<TReturnType>(TReturnType result)
+        public static IGraphQlScalarResult<TReturnType> Construct<TReturnType>(TReturnType result)
         {
-            return new GraphQlExpressionResult<TReturnType>(null!, (Expression<Func<object?, TReturnType>>)(_ => result));
+            return GraphQlExpressionScalarResult<TReturnType>.Constant(result);
         }
 
     }

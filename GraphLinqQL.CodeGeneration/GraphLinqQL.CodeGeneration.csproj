@@ -16,6 +16,7 @@
     <None Remove="CodeGeneration\Templates\Introspection.weave" />
     <None Remove="CodeGeneration\Templates\IntrospectionType.weave" />
     <None Remove="CodeGeneration\Templates\ObjectType.weave" />
+    <None Remove="CodeGeneration\Templates\UnionType.weave" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <WeaveTemplate Include="CodeGeneration\Templates\UnionType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\InterfaceType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\IntrospectionType.weave" />
     <WeaveTemplate Include="CodeGeneration\Templates\Introspection.weave" />

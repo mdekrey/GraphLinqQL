@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace GraphLinqQL
 {
@@ -15,14 +16,9 @@ namespace GraphLinqQL
         object? BindTo(Type type);
     }
 
-    public interface IGraphQlParameterResolverFactory
-    {
-        IGraphQlParameterResolver FromParameterData(IDictionary<string, IGraphQlParameterInfo> rawData);
-    }
-
     public interface IGraphQlParameterResolver
     {
         bool HasParameter(string parameter);
-        T GetParameter<T>(string parameter);
+        T GetParameter<T>(string parameter, FieldContext fieldContext);
     }
 }

@@ -1,0 +1,12 @@
+﻿@model UnionTypeContext
+@classname UnionTypeGenerator
+@namespace GraphLinqQL.CodeGeneration.Templates
+{{= "" }}
+{{if !string.IsNullOrEmpty(model.Description)}}
+/// <summary>
+/// {{= model.Description.Docblock(indentation) }}
+/// </summary>
+{{/if}}
+public interface {{= model.TypeName }} : IGraphQlResolvable
+{
+}

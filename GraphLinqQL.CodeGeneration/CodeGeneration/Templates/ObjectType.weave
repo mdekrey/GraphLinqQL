@@ -22,7 +22,7 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
 		{{/if}}
-		public abstract IGraphQlResult{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}(FieldContext fieldContext{{each arg in field.Arguments}}, {{= arg.TypeName}} {{= arg.FieldName }}{{/each}});
+		public abstract IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}(FieldContext fieldContext{{each arg in field.Arguments}}, {{= arg.TypeName}} {{= arg.FieldName }}{{/each}});
 		{{=""}}
 	{{/each}}
 

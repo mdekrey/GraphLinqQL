@@ -367,7 +367,7 @@ namespace GraphLinqQL.Ast
             }
         }
 
-        private void AssertNoException(Antlr4.Runtime.ParserRuleContext? context)
+        private static void AssertNoException(Antlr4.Runtime.ParserRuleContext? context)
         {
             if (context?.exception != null)
             {

@@ -9,6 +9,8 @@ using GraphLinqQL.Execution;
 using GraphLinqQL.Stubs;
 using GraphLinqQL.Ast;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
 
 namespace GraphLinqQL.Execution
 {
@@ -39,10 +41,26 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentUntypedSimpleStructures()
+        public async Task BeAbleToRepresentVeryBasicStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
+{
+  rand
+}
+");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
+            var expected = "{\"rand\":5}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public async Task BeAbleToRepresentUntypedSimpleStructures()
+        {
+            using var executor = CreateExecutor();
+            var result = await executor.ExecuteAsync(@"
 {
   hero {
     id
@@ -59,10 +77,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentUntypedSimpleListStructures()
+        public async Task BeAbleToRepresentUntypedSimpleListStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -79,10 +97,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToRepresentNestedStructures()
+        public async Task BeAbleToRepresentNestedStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -102,10 +120,10 @@ namespace GraphLinqQL.Execution
         }
 
         [Fact]
-        public void BeAbleToUseStructureFragments()
+        public async Task BeAbleToUseStructureFragments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 fragment HeroPrimary on Hero {
   id
   name
@@ -128,10 +146,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToRepresentComplexStructures()
+        public async Task BeAbleToRepresentComplexStructures()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -149,10 +167,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassParameters()
+        public async Task BeAbleToPassParameters()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -170,10 +188,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassParametersWithNonStringTypes()
+        public async Task BeAbleToPassParametersWithNonStringTypes()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes(first: 1) {
     id
@@ -191,10 +209,10 @@ fragment HeroPrimary on Hero {
         }
 
         [Fact]
-        public void BeAbleToPassArguments()
+        public async Task BeAbleToPassArguments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 query Heroes($date: String!) {
   heroes {
     id
@@ -202,7 +220,7 @@ query Heroes($date: String!) {
     location(date: $date)
   }
 }
-", new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
+", arguments: new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
             var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"AVENGERS-1\"}]}";
@@ -211,10 +229,10 @@ query Heroes($date: String!) {
         }
 
         [Fact]
-        public void BeAbleToPassArgumentsWithDefaultValues()
+        public async Task BeAbleToPassArgumentsWithDefaultValues()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
   heroes {
     id
@@ -223,7 +241,7 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
     avengersLocation: location(date: $date2)
   }
 }
-", new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
+", arguments: new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } });
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
             //var expected = "{\"heroes\":[{\"name\":\"Starlord\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"location\":\"Unknown (2008-05-02)\",\"id\":\"ASGUARD-3\"}]}";
@@ -232,10 +250,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseDirectives()
+        public async Task BeAbleToUseDirectives()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -253,10 +271,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseInlineFragments()
+        public async Task BeAbleToUseInlineFragments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -276,10 +294,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void BeAbleToUseInlineFragmentsWithTypeConditions()
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditions()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   heroes {
     id
@@ -303,17 +321,16 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
 
 
         [Fact]
-        public void BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditionsOnUnions()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 {
   characters {
     id
     name
     ... on Hero {
-      renown
-      faction
+      location
     }
     ... on Villain {
       goal
@@ -323,16 +340,43 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
 ");
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
-            var expected = "{\"characters\":[{\"name\":\"Starlord\",\"renown\":5,\"faction\":\"Guardians of the Galaxy\",\"id\":\"GUARDIANS-1\"},{\"name\":\"Thor\",\"renown\":50,\"faction\":\"Asgardians\",\"id\":\"ASGUARD-3\"},{\"name\":\"Captain America\",\"renown\":100,\"faction\":\"Avengers\",\"id\":\"AVENGERS-1\"},{\"name\":\"Thanos\",\"goal\":\"Snap\",\"id\":\"THANOS\"}]}";
+            var expected = "{\"characters\":[{\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"ASGUARD-3\",\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"AVENGERS-1\",\"name\":\"Captain America\",\"location\":\"Unknown (2019-04-22)\"},{\"id\":\"THANOS\",\"name\":\"Thanos\",\"goal\":\"Snap\"}]}";
 
             Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
         }
 
         [Fact]
-        public void BeAbleToGetTypenames()
+        public async Task BeAbleToUseInlineFragmentsWithTypeConditionsOnUnionsWithJoins()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
+{
+  characters {
+    id
+    name
+    ... on Hero {
+      location
+      faction
+      renown
+    }
+    ... on Villain {
+      goal
+    }
+  }
+}
+");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
+            var expected = "{\"characters\":[{\"id\":\"GUARDIANS-1\",\"name\":\"Starlord\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Guardians of the Galaxy\",\"renown\":5},{\"id\":\"ASGUARD-3\",\"name\":\"Thor\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Asgardians\",\"renown\":50},{\"id\":\"AVENGERS-1\",\"name\":\"Captain America\",\"location\":\"Unknown (2019-04-22)\",\"faction\":\"Avengers\",\"renown\":100},{\"id\":\"THANOS\",\"name\":\"Thanos\",\"goal\":\"Snap\"}]}";
+
+            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)));
+        }
+
+        [Fact]
+        public async Task BeAbleToGetTypenames()
+        {
+            using var executor = CreateExecutor();
+            var result = await executor.ExecuteAsync(@"
 {
   characters {
     id
@@ -349,10 +393,10 @@ query Heroes($date: String = ""2019-04-22"", $date2: String = ""2012-05-04"") {
         }
 
         [Fact]
-        public void HandleNonExistingDocuments()
+        public async Task HandleNonExistingDocuments()
         {
             using var executor = CreateExecutor();
-            var result = executor.Execute(@"
+            var result = await executor.ExecuteAsync(@"
 fragment HeroPrimary on Hero {
   id
   name

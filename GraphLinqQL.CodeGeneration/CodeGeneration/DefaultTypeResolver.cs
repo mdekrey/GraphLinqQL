@@ -23,7 +23,6 @@ namespace GraphLinqQL.CodeGeneration
                     var name => $"IEnumerable<{name}>{nullability}"
                 },
                 TypeName { Name: var name } when options.ScalarTypeMappings.ContainsKey(name) => GetScalarName(options.ScalarTypeMappings[name], options, nullable),
-                TypeName { Name: var name } when document != null && document.Children.OfType<UnionTypeDefinition>().Any(u => u.Name == name) => "",
                 TypeName { Name: var name } when document != null && document.Children.OfType<EnumTypeDefinition>().Any(u => u.Name == name) => CSharpNaming.GetTypeName(name) + (nullable ? "?" : ""),
                 TypeName { Name: var name } => CSharpNaming.GetTypeName(name) + nullability,
                 _ => throw new InvalidOperationException($"Expected known type node, got {typeNode.GetType().FullName}"),

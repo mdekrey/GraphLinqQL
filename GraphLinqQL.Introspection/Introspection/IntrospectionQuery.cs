@@ -36,17 +36,17 @@ namespace GraphLinqQL.Introspection
 
         public bool IsType(string value) => originalQuery.IsType(value);
 
-        internal IGraphQlResult<Schema> schema(FieldContext fieldContext) =>
+        internal IGraphQlObjectResult<Schema> schema(FieldContext fieldContext) =>
             original!.Resolve(_ => typeListing).AsContract<Schema>();
 
-        internal IGraphQlResult<GraphQlType?> type(FieldContext fieldContext, string name) =>
+        internal IGraphQlObjectResult<GraphQlType?> type(FieldContext fieldContext, string name) =>
             original!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.AsContract<GraphQlType>());
 
         public IGraphQlResult ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
             name switch
             {
                 "__schema" => this.schema(fieldContext),
-                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name")),
+                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name", fieldContext)),
                 _ => originalQuery.ResolveQuery(name, fieldContext, parameters)
             };
     }
