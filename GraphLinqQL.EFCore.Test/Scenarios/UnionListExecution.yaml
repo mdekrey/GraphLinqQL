@@ -47,6 +47,7 @@ tests:
       query: |
         {
           search(text: "D") {
+            __typename
             name
           }
         }
@@ -57,9 +58,41 @@ tests:
         {
             "data": {
                 "search": [{
+                    "__typename": "Human",
                     "name": "Darth Vader"
                 }, {
+                    "__typename": "Droid",
                     "name": "R2-D2"
+                }]
+            }
+        }
+        
+  - name: Search list results with multiple types and fragments
+    given:
+      query: |
+        {
+          search(text: "D") {
+            name
+            ... on Droid {
+              primaryFunction
+            }
+            ... on Human {
+              mass
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Darth Vader",
+                    "mass": 136
+                }, {
+                    "name": "R2-D2",
+                    "primaryFunction": "Astromech"
                 }]
             }
         }
