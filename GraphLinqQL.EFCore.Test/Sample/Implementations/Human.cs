@@ -8,7 +8,6 @@ namespace GraphLinqQL.Sample.Implementations
     internal class Human : Interfaces.Human.GraphQlContract<Domain.Human>
     {
         private readonly StarWarsContext dbContext;
-        private const double MetersToFeet = 3.28084;
 
         public Human(StarWarsContext dbContext)
         {
@@ -39,7 +38,7 @@ namespace GraphLinqQL.Sample.Implementations
         {
             if (unit == LengthUnit.FOOT)
             {
-                return Original.Resolve(human => (double?)(human.Height * MetersToFeet));
+                return Original.Resolve(human => (double?)Conversions.MetersToFeet(human.Height));
             }
             else
             {
@@ -62,7 +61,9 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> starships(FieldContext fieldContext)
         {
-            throw new System.NotImplementedException();
+            return Original.Resolve(human => from pilot in dbContext.Pilots
+                                             where pilot.CharacterId == human.Id
+                                             select pilot.Starship).List(_ => _.AsContract<Starship>());
         }
     }
 }

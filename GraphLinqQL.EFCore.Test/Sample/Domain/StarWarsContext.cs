@@ -19,6 +19,8 @@ namespace GraphLinqQL.Sample.Domain
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Film> Films { get; set; }
         public DbSet<Appearance> Appearances { get; set; }
+        public DbSet<Starship> Starships { get; set; }
+        public DbSet<Pilot> Pilots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +31,10 @@ namespace GraphLinqQL.Sample.Domain
             var wilhuffTarkin = 1004;
             var c3p0 = 2000;
             var r2d2 = 2001;
+            var milleniumFalcon = 3000;
+            var xWing = 3001;
+            var tieAdvanced = 3002;
+            var imperialShuttle = 3003;
 
             modelBuilder.Entity<Character>(b =>
             {
@@ -41,36 +47,32 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = lukeSkywalker,
                       Name = "Luke Skywalker",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       HomePlanet = "Tatooine",
                       Height = 1.72,
                       Mass = 77,
-                      //Starships = new[] { "3001", "3003" },
+                      //Starships = new[] { xWing, imperialShuttle },
                   },
                   new Human
                   {
                       Id = darthVader,
                       Name = "Darth Vader",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       HomePlanet = "Tatooine",
                       Height = 2.02,
                       Mass = 136,
-                      //Starships = new[] { "3002" },
+                      //Starships = new[] { tieAdvanced },
                   },
                   new Human
                   {
                       Id = hanSolo,
                       Name = "Han Solo",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       Height = 1.8,
                       Mass = 80,
-                      //Starships = new[] { "3000", "3003" },
+                      //Starships = new[] { milleniumFalcon, imperialShuttle },
                   },
                   new Human
                   {
                       Id = leiaOrgana,
                       Name = "Leia Organa",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       HomePlanet = "Alderaan",
                       Height = 1.5,
                       Mass = 49,
@@ -80,7 +82,6 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = wilhuffTarkin,
                       Name = "Wilhuff Tarkin",
-                      //AppearsIn = new[] { Episode.NewHope },
                       Height = 1.8,
                       Mass = null,
                       //Starships = Array.Empty<string>(),
@@ -94,15 +95,44 @@ namespace GraphLinqQL.Sample.Domain
                   {
                       Id = c3p0,
                       Name = "C-3PO",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       PrimaryFunction = "Protocol",
                   },
                   new Droid
                   {
                       Id = r2d2,
                       Name = "R2-D2",
-                      //AppearsIn = new[] { Episode.NewHope, Episode.Empire, Episode.Jedi },
                       PrimaryFunction = "Astromech",
+                  }
+                );
+            });
+
+            modelBuilder.Entity<Starship>(b =>
+            {
+                b.HasKey(s => s.Id);
+                b.HasData(
+                  new Starship
+                  {
+                      Id = milleniumFalcon,
+                      Name = "Millenium Falcon",
+                      Length = 34.37,
+                  },
+                  new Starship
+                  {
+                      Id = xWing,
+                      Name = "X-Wing",
+                      Length = 12.5,
+                  },
+                  new Starship
+                  {
+                      Id = tieAdvanced,
+                      Name = "TIE Advanced x1",
+                      Length = 9.2,
+                  },
+                  new Starship
+                  {
+                      Id = imperialShuttle,
+                      Name = "Imperial Shuttle",
+                      Length = 20,
                   }
                 );
             });
@@ -152,6 +182,20 @@ namespace GraphLinqQL.Sample.Domain
                             }
                            from appearance in character.films
                            select new Appearance { CharacterId = character.id, EpisodeId = appearance }).ToArray());
+            });
+
+            modelBuilder.Entity<Pilot>(b =>
+            {
+                b.HasKey(p => new { p.CharacterId, p.StarshipId });
+                b.HasOne(p => p.Character).WithMany().HasForeignKey(a => a.CharacterId).OnDelete(DeleteBehavior.Restrict);
+                b.HasData((from character in new[]
+                            {
+                                new { id = lukeSkywalker, starships = new[] { xWing, imperialShuttle } },
+                                new { id = darthVader, starships = new[] { tieAdvanced } },
+                                new { id = hanSolo, starships = new[] { milleniumFalcon, imperialShuttle } },
+                            }
+                           from starship in character.starships
+                           select new Pilot { CharacterId = character.id, StarshipId = starship }).ToArray());
             });
 
             base.OnModelCreating(modelBuilder);

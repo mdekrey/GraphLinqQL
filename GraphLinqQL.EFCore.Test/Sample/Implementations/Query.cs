@@ -22,6 +22,7 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
+            // TODO - single-item union result
             return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(UnionMappings.CharacterTypeMapping));
         }
 
@@ -29,14 +30,22 @@ namespace GraphLinqQL.Sample.Implementations
         {
             // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
             var intId = int.Parse(id);
-            return (object)await dbContext.Humans.FindAsync(intId) 
+            return (object)await dbContext.Humans.FindAsync(intId)
                 ?? await dbContext.Droids.FindAsync(intId);
         }
 
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
-            return Original.ResolveTask(_ => dbContext.Droids.FindAsync(intId).AsTask()).Nullable(_ => _.AsContract<Droid>());
+            // This intentionally has a different implementation from the human/starship for various implementations
+            return Original.ResolveTask(_ => FindDroidById(id)).Nullable(_ => _.AsContract<Droid>());
+        }
+
+        private async Task<Domain.Droid> FindDroidById(string id)
+        {
+            // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
+            var intId = int.Parse(id);
+            return await dbContext.Droids.FindAsync(intId);
         }
 
         public override IGraphQlObjectResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
@@ -47,7 +56,6 @@ namespace GraphLinqQL.Sample.Implementations
         public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
-            // This intentionally has a different implementation from the droid for various implementations
             return Original.Resolve(dbContext.Humans.Where(human => human.Id == intId)).List(_ => _.AsContract<Human>()).Only();
         }
 
@@ -60,13 +68,15 @@ namespace GraphLinqQL.Sample.Implementations
         {
             return Original.Union(
                 _ => _.Resolve(from human in dbContext.Humans where human.Name.Contains(text!) select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<SearchResult?>),
-                _ => _.Resolve(from droid in dbContext.Droids where droid.Name.Contains(text!) select droid).List(_ => _.AsContract<Droid>())
+                _ => _.Resolve(from droid in dbContext.Droids where droid.Name.Contains(text!) select droid).List(_ => _.AsContract<Droid>()),
+                _ => _.Resolve(from starship in dbContext.Starships where starship.Name.Contains(text!) select starship).List(_ => _.AsContract<Starship>())
             );
         }
 
         public override IGraphQlObjectResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id)
         {
-            throw new NotImplementedException();
+            var intId = int.Parse(id);
+            return Original.Resolve(dbContext.Starships.Where(starship => starship.Id == intId)).List(_ => _.AsContract<Starship>()).Only();
         }
     }
 }

@@ -1,0 +1,70 @@
+﻿scenario: Query Search
+tests:
+  - name: Search for All 3
+    given:
+      query: |
+        {
+          search(text: "S") {
+            name
+            ... on Human {
+              starships {
+                name
+              }
+            }
+            ... on Starship {
+              coordinates
+            }
+            ... on Droid {
+              primaryFunction
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "search": [
+              {
+                "name": "Luke Skywalker",
+                "starships": [
+                  {
+                    "name": "X-Wing"
+                  },
+                  {
+                    "name": "Imperial Shuttle"
+                  }
+                ]
+              },
+              {
+                "name": "Han Solo",
+                "starships": [
+                  {
+                    "name": "Millenium Falcon"
+                  },
+                  {
+                    "name": "Imperial Shuttle"
+                  }
+                ]
+              },
+              {
+                "name": "Imperial Shuttle",
+                "coordinates": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ]
+              }
+            ]
+          }
+        }
+      sqlite:
+        - SELECT "s"."Name" FROM "Starships" AS "s" WHERE ((@__text_0 = '') AND @__text_0 IS NOT NULL) OR (instr("s"."Name", @__text_0) > 0)
+        - SELECT "c"."Name", "c"."PrimaryFunction" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Droid') AND (((@__text_0 = '') AND @__text_0 IS NOT NULL) OR (instr("c"."Name", @__text_0) > 0))
+        - SELECT "c"."Name", "c"."Id", "t"."Name", "t"."CharacterId", "t"."StarshipId", "t"."Id" FROM "Characters" AS "c" LEFT JOIN ( SELECT "s"."Name", "p"."CharacterId", "p"."StarshipId", "s"."Id" FROM "Pilots" AS "p" INNER JOIN "Starships" AS "s" ON "p"."StarshipId" = "s"."Id" ) AS "t" ON "c"."Id" = "t"."CharacterId" WHERE ("c"."Discriminator" = 'Human') AND (((@__text_0 = '') AND @__text_0 IS NOT NULL) OR (instr("c"."Name", @__text_0) > 0)) ORDER BY "c"."Id", "t"."CharacterId", "t"."StarshipId", "t"."Id"

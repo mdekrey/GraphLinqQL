@@ -32,8 +32,7 @@ namespace GraphLinqQL
 
         private static LambdaExpression NullableCheck(LambdaExpression newResultResolver, LambdaExpression original)
         {
-            return newResultResolver;
-            //return Expression.Lambda(original.Body.IfNotNull(newResultResolver.Inline(original.Body)), original.Parameters);
+            return Expression.Lambda(original.Body.IfNotNull(newResultResolver.Inline(original.Body)), original.Parameters);
         }
     }
 }
