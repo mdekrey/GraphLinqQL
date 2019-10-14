@@ -23,7 +23,10 @@ namespace GraphLinqQL
         public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
         {
             IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
-            var resolved = resolver(resultFactory.Resolve(a => a).AsContract<object>(new ContractMapping(contract)).ResolveComplex(serviceProvider, FieldContext.Empty));
+            var contractBuilder = resultFactory
+                .Resolve(a => a).AsContract<object>(new ContractMapping(contract, typeof(TRoot)), body => GraphQlContractExpression.ResolveContract(body, 0))
+                .ResolveComplex(serviceProvider, FieldContext.Empty);
+            var resolved = resolver(contractBuilder);
             return resolved;
         }
 
@@ -54,7 +57,12 @@ namespace GraphLinqQL
         {
             var builder = contractOptions(new UnionContractBuilder<T>());
 
-            return graphQlResult.AsContract<T>(builder.CreateContractMapping());
+            var temp = builder.Conditions.Select((e, index) => new { index, e.DomainType }).ToArray();
+            return graphQlResult.AsContract<T>(builder.CreateContractMapping(), body =>
+                temp.Length == 1 ? GraphQlContractExpression.ResolveContract(body, 0) :
+                    temp.Skip(1).Aggregate(GraphQlContractExpression.ResolveContract(Expression.Convert(body, temp[0].DomainType), 0),
+                        (prev, next) => Expression.Condition(Expression.TypeIs(body, next.DomainType), GraphQlContractExpression.ResolveContract(Expression.Convert(body, next.DomainType), next.index), prev))
+            );
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)

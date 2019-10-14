@@ -59,14 +59,14 @@ namespace GraphLinqQL
             }
         }
 
-        public IGraphQlObjectResult<T> AsContract<T>(IContract contract)
+        public IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper)
         {
-            var newResolver = Expression.Lambda(Expression.Call(GraphQlContractExpressionReplaceVisitor.ContractPlaceholderMethod, Body.Body), Body.Parameters);
+            var newResolver = Expression.Lambda(bodyWrapper(Body.Body), Body.Parameters);
             return new GraphQlExpressionObjectResult<T>(new GraphQlExpressionScalarResult<object>(Preamble, newResolver, Joins), contract);
         }
 
         public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            AsContract<TContract>(SafeContract(typeof(TContract)));
+            AsContract<TContract>(SafeContract(typeof(TContract)), body => GraphQlContractExpression.ResolveContract(body, 0));
 
         private IContract SafeContract(Type contractType)
         {
@@ -78,7 +78,7 @@ namespace GraphLinqQL
             {
                 throw new InvalidOperationException($"Given contract {contractType.FullName} does not accept type {currentReturnType.FullName}");
             }
-            return new ContractMapping(contractType);
+            return new ContractMapping(contractType, currentReturnType);
         }
 
         public LambdaExpression ConstructResult()
@@ -169,9 +169,9 @@ namespace GraphLinqQL
             );
         }
 
-        private IGraphQlScalarResult ToResult(LambdaExpression joinedSelector)
+        private IGraphQlScalarResult ToResult(IReadOnlyList<LambdaExpression> joinedSelector)
         {
-            visitor.NewOperation = joinedSelector;
+            visitor.NewOperations = joinedSelector;
             return Resolution.UpdateBody<object>(body =>
             {
                 var returnResult = visitor.Visit(body.Body);

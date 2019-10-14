@@ -1,8 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GraphLinqQL
 {
+    public class ContractMappingCondition
+    {
+        public ContractMappingCondition(Type domainType, Type contractType)
+        {
+            DomainType = domainType;
+            ContractType = contractType;
+        }
+
+        public Type DomainType { get; }
+        public Type ContractType { get; }
+    }
+
     public class UnionContractBuilder<T> where T : IGraphQlResolvable
     {
         private readonly List<ContractMappingCondition> conditions = new List<ContractMappingCondition>();
@@ -16,7 +29,9 @@ namespace GraphLinqQL
 
         internal ContractMapping CreateContractMapping()
         {
-            return new ContractMapping(conditions.ToArray());
+            return new ContractMapping(conditions.Select(c => new ContractEntry(c.ContractType, c.DomainType)).ToArray());
         }
+
+        public IReadOnlyList<ContractMappingCondition> Conditions => conditions.AsReadOnly();
     }
 }

@@ -21,7 +21,7 @@ namespace GraphLinqQL
         LambdaExpression Body { get; }
 
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
-        IGraphQlObjectResult<T> AsContract<T>(IContract contract);
+        IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper);
 
         // TODO - should prefer this to preamble/body
         //IGraphQlScalarResult<T> UpdateCurrent<T>(Func<LambdaExpression, LambdaExpression> resolveAdjust);

@@ -20,6 +20,15 @@ namespace GraphLinqQL.Sample.Implementations
             this.dbContext = dbContext;
         }
 
+        //public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
+        //{
+        //    var intId = int.Parse(id);
+        //    return Original.Union(
+        //        _ => _.Resolve(from human in dbContext.Humans where human.Id == intId select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Interfaces.Character?>),
+        //        _ => _.Resolve(from droid in dbContext.Droids where droid.Id == intId select droid).List(_ => _.AsContract<Droid>())
+        //    ).Only();
+        //}
+
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
             // TODO - single-item union result
