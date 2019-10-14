@@ -73,8 +73,9 @@ namespace GraphLinqQL
 
         public IGraphQlScalarResult Build()
         {
-            var resultDictionary = resolvers.Select(r =>
+            var mainSelectors = resolvers.Select(r =>
             {
+                var allJoins = r.Results.Values.SelectMany(v => v.Joins).ToImmutableHashSet();
                 var expressions = r.Results.ToDictionary(result => result.Key, result => result.Value.ConstructResult());
                 var inputParam = Expression.Parameter(r.DomainType);
                 var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
@@ -82,20 +83,9 @@ namespace GraphLinqQL
                     var inputResolver = result.Value.Inline(inputParam);
                     return Expression.ElementInit(addMethod, Expression.Constant(result.Key), inputResolver.Box());
                 }));
-                return Expression.Lambda(resultDictionary, inputParam);
+                var resultLambda = Expression.Lambda(resultDictionary, inputParam);
+                return Expression.Lambda(resultLambda.Body.Replace(allJoins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(resultLambda.Parameters[0]))), resultLambda.Parameters);
             }).ToArray();
-            // TODO - should log an error instead of just adding a null to the array - what if it is a not-null array?
-
-            if (resolvers.SelectMany(r => r.Results.Values).SelectMany(v => v.Joins).Any() && resultDictionary.Length > 1)
-            {
-                throw new NotImplementedException("GraphLinqQL does not currently support joins within unions");
-            }
-
-            var allJoins = resolvers.SelectMany(r => r.Results.Values).SelectMany(v => v.Joins).ToImmutableHashSet();
-
-            var mainSelectors = resultDictionary
-                .Select(r => Expression.Lambda(r.Body.Replace(allJoins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(r.Parameters[0]))), r.Parameters))
-                .ToArray();
             return resolve(mainSelectors);
         }
 
