@@ -9,17 +9,23 @@ namespace GraphLinqQL.Sample.Implementations
     {
         private readonly StarWarsContext dbContext;
 
+        private readonly GraphQlJoin<Domain.Human, IEnumerable<Domain.Appearance>> appearancesJoin;
+
         public Human(StarWarsContext dbContext)
         {
             this.dbContext = dbContext;
+
+            appearancesJoin =
+                GraphQlJoin.JoinSingle<Domain.Human, IEnumerable<Domain.Appearance>>((original) => from appearance in dbContext.Appearances
+                                                                                                   where appearance.CharacterId == original.Id
+                                                                                                   orderby appearance.EpisodeId
+                                                                                                   select appearance);
         }
 
         public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn(FieldContext fieldContext)
         {
-            return Original.Resolve(human => from appearance in dbContext.Appearances
-                                             where appearance.CharacterId == human.Id
-                                             orderby appearance.EpisodeId
-                                             select (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId));
+            // using a Join instead of inline Linq to show how reuse could be done
+            return Original.Join(appearancesJoin).Resolve((human, appearances) => appearances.Select(appearance => (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId)));
         }
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)
