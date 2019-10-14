@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GraphLinqQL.Sample.Domain;
-using GraphLinqQL.Sample.Interfaces;
 
 namespace GraphLinqQL.Sample.Implementations
 {
@@ -35,14 +36,14 @@ namespace GraphLinqQL.Sample.Implementations
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
         {
             throw new System.NotImplementedException();
         }
 
-        public override IGraphQlScalarResult<double?> height(FieldContext fieldContext, LengthUnit? unit)
+        public override IGraphQlScalarResult<double?> height(FieldContext fieldContext, Interfaces.LengthUnit? unit)
         {
-            if (unit == LengthUnit.FOOT)
+            if (unit == Interfaces.LengthUnit.FOOT)
             {
                 return Original.Resolve(human => (double?)Conversions.MetersToFeet(human.Height));
             }

@@ -107,26 +107,34 @@ namespace GraphLinqQL
 
             var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
 
-            var result = await executor.ExecuteQuery(memoryStream, messageResolver);
-
-            var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
-
-            var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
-
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
-
-            if (expectedSql != null)
+            try
             {
-                expectedSql = expectedSql.Select(CleanSql).ToArray();
-                foreach (var sql in allSql)
-                {
-                    Assert.True(expectedSql.Contains(sql), $"Full SQL should be: \n{string.Join("\n", allSql.Select(s => "- " + s))}");
-                }
+                var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
-                foreach (var sql in expectedSql)
+                var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+
+                var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
+
+                Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
+
+                if (expectedSql != null)
                 {
-                    Assert.True(allSql.Contains(sql), $"Full SQL should be: \n{string.Join("\n", allSql.Select(s => "- " + s))}");
+                    expectedSql = expectedSql.Select(CleanSql).ToArray();
+                    foreach (var sql in allSql)
+                    {
+                        Assert.True(expectedSql.Contains(sql), $"Full SQL should be: \n{string.Join("\n", allSql.Select(s => "- " + s))}");
+                    }
+
+                    foreach (var sql in expectedSql)
+                    {
+                        Assert.True(allSql.Contains(sql), $"Full SQL should be: \n{string.Join("\n", allSql.Select(s => "- " + s))}");
+                    }
                 }
+            }
+            finally
+            {
+                var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
+
             }
         }
 

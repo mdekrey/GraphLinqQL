@@ -10,10 +10,6 @@ namespace GraphLinqQL
 {
     public static class ResolveExtensions
     {
-        internal static MethodInfo asQueryable = typeof(Queryable).GetMethods()
-            .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
-            .Single();
-
         public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver, CancellationToken cancellationToken = default)
         {
             var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
@@ -91,13 +87,8 @@ namespace GraphLinqQL
             var newScalar = original.UpdateBody<object>(getListLamba =>
             {
                 var getList = getListLamba.Body;
-                if (!typeof(IQueryable<>).MakeGenericType(typeof(TInput)).IsAssignableFrom(getList.Type))
-                {
-                    getList = Expression.Call(asQueryable.MakeGenericMethod(typeof(TInput)), getList);
-                }
-
                 var newResolver = Expression.Lambda(
-                    getList.CallQueryableSelect(constructedDeferred),
+                    getList.CallSelect(constructedDeferred),
                     getListLamba.Parameters
                 );
                 return newResolver;
@@ -125,9 +116,10 @@ namespace GraphLinqQL
 
             var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
             {
-                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
                 Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
+                var replacement = new PreambleReplacement(Expression.Lambda(newPreamble.Inline(original.Body.Parameters[0], PreamblePlaceholders.BodyPlaceholderExpression), original.Body.Parameters));
+                var result = replacement.Replace(preambleLambda);
+                return result;
             }, deferredLambda => constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);
         }

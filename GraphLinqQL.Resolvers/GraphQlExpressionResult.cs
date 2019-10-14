@@ -50,13 +50,13 @@ namespace GraphLinqQL
             this.Body = body;
             this.Joins = joins;
 
-            var visitor = new GraphQlPreambleExpressionReplaceVisitor(Body);
-            var result = (LambdaExpression)visitor.Visit(Preamble);
-            if (!typeof(TReturnType).IsAssignableFrom(body.Parameters[0].Type))
-            {
-                visitor.Visit(Preamble);
-                throw new InvalidOperationException($"ScalarResult claimed to return '{typeof(TReturnType).FullName}' but is returning '{result.ReturnType.FullName}'");
-            }
+            var visitor = new PreambleReplacement(Body);
+            var result = (LambdaExpression)visitor.Replace(Preamble);
+            // TODO - do some more type checking here
+            //if (!typeof(TReturnType).IsAssignableFrom(body.Parameters[0].Type))
+            //{
+            //    throw new InvalidOperationException($"ScalarResult claimed to return '{typeof(TReturnType).FullName}' but is returning '{result.ReturnType.FullName}'");
+            //}
         }
 
         public IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper)
@@ -88,11 +88,8 @@ namespace GraphLinqQL
             // 2. Preamble has placeholder for "return" value that is passed to Body, which is inlined
             // 3. Preamble has quoted lambda for full Body lambda expression
 
-            var visitor = new GraphQlPreambleExpressionReplaceVisitor(Body);
-            var result = (LambdaExpression)visitor.Visit(Preamble);
-            return visitor.Exchanged
-                ? result
-                : Expression.Lambda(Body.Inline(Preamble.Body), Preamble.Parameters);
+            var result = new PreambleReplacement(Body).Replace(Preamble);
+            return result;
         }
 
         public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)

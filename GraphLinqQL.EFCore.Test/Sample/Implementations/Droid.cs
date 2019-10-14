@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GraphLinqQL.Sample.Domain;
-using GraphLinqQL.Sample.Interfaces;
 
 namespace GraphLinqQL.Sample.Implementations
 {
@@ -32,7 +31,7 @@ namespace GraphLinqQL.Sample.Implementations
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
         {
             throw new NotImplementedException();
         }

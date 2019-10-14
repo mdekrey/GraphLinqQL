@@ -52,6 +52,19 @@ namespace GraphLinqQL
             return body.Type.IsValueType ? Expression.Convert(body, typeof(object)) : body;
         }
 
+        internal static MethodCallExpression CallSelect(this Expression list, LambdaExpression selector)
+        {
+            return list.IsQueryable()
+                ? list.CallQueryableSelect(selector)
+                : list.CallEnumerableSelect(selector);
+        }
+
+        internal static bool IsQueryable(this Expression list)
+        {
+            var elementType = TypeSystem.GetElementType(list.Type);
+            return typeof(IQueryable<>).MakeGenericType(elementType).IsAssignableFrom(list.Type);
+        }
+
         internal static MethodCallExpression CallQueryableSelect(this Expression list, LambdaExpression selector)
         {
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
