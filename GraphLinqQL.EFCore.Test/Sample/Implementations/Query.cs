@@ -29,20 +29,6 @@ namespace GraphLinqQL.Sample.Implementations
             ).Only();
         }
 
-        //public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
-        //{
-        //    // TODO - single-item union result
-        //    return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(UnionMappings.CharacterTypeMapping));
-        //}
-
-        //private async Task<object> FindCharacterById(string id)
-        //{
-        //    // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
-        //    var intId = int.Parse(id);
-        //    return (object)await dbContext.Humans.FindAsync(intId)
-        //        ?? await dbContext.Droids.FindAsync(intId);
-        //}
-
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
         {
             var intId = int.Parse(id);
