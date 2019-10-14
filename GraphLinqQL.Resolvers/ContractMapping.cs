@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GraphLinqQL
 {
-    class ContractMapping : IContract
+    public class ContractMapping : IContract
     {
         public IReadOnlyList<ContractEntry> Resolvables { get; }
 

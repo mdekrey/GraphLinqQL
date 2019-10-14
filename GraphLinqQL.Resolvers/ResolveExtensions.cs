@@ -38,7 +38,25 @@ namespace GraphLinqQL
         public static IGraphQlObjectResult<IEnumerable<TContractResult>> Union<TInputType, TContractResult>(this IGraphQlResultFactory<TInputType> source, params Func<IGraphQlResultFactory<TInputType>, IGraphQlObjectResult<IEnumerable<TContractResult>>>[] funcs)
         {
             var objectResults = funcs.Select(f => f(source)).ToArray();
-            return new MultiObjectResult<IEnumerable<TContractResult>>(objectResults, ConcatAll);
+            var aggregate = objectResults.Aggregate(new 
+            { 
+                Resolvables = EmptyArrayHelper.Empty<ContractEntry>(), 
+                Resolvers = EmptyArrayHelper.Empty<LambdaExpression>(),
+            }, (prev, next) =>
+            {
+                var lambda = next.Resolution.ConstructResult();
+
+                var visitor = new GraphQlContractExpressionReplaceVisitor();
+                var param = Expression.Parameter(typeof(object));
+                visitor.NewOperations = next.Contract.Resolvables.Select((_, index) => Expression.Lambda(GraphQlContractExpression.ResolveContract(param, index + prev.Resolvables.Length), param)).ToArray();
+                var resultLambda = (LambdaExpression)visitor.Visit(lambda);
+
+                return new { Resolvables = prev.Resolvables.Concat(next.Contract.Resolvables).ToArray(), Resolvers = prev.Resolvers.Concat(new[] { resultLambda }).ToArray() };
+            });
+            return source.AsContract<IEnumerable<TContractResult>>(
+                    new ContractMapping(aggregate.Resolvables),
+                    _ => ConcatAll(aggregate.Resolvers).Inline(_)
+                );
         }
 
         private static LambdaExpression ConcatAll(IReadOnlyList<LambdaExpression> resolvers)

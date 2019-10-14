@@ -15,11 +15,12 @@ namespace GraphLinqQL
         {
             if (node.Method == GraphQlContractExpression.ContractPlaceholderMethod)
             {
-                ModelType = node.Arguments[0].Type;
+                var arg0 = Visit(node.Arguments[0]);
+                ModelType = arg0.Type;
                 if (NewOperations != null)
                 {
                     var arg = node.Arguments[1];
-                    return Visit(NewOperations[(int)((ConstantExpression)arg).Value].Inline(node.Arguments[0]));
+                    return NewOperations[(int)((ConstantExpression)arg).Value].Inline(arg0);
                 }
             }
             return base.VisitMethodCall(node);

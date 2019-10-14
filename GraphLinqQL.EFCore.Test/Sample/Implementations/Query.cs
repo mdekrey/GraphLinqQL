@@ -20,28 +20,28 @@ namespace GraphLinqQL.Sample.Implementations
             this.dbContext = dbContext;
         }
 
-        //public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
-        //{
-        //    var intId = int.Parse(id);
-        //    return Original.Union(
-        //        _ => _.Resolve(from human in dbContext.Humans where human.Id == intId select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Interfaces.Character?>),
-        //        _ => _.Resolve(from droid in dbContext.Droids where droid.Id == intId select droid).List(_ => _.AsContract<Droid>())
-        //    ).Only();
-        //}
-
         public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
         {
-            // TODO - single-item union result
-            return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(UnionMappings.CharacterTypeMapping));
+            var intId = int.Parse(id);
+            return Original.Union(
+                _ => _.Resolve(from human in dbContext.Humans where human.Id == intId select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Interfaces.Character?>),
+                _ => _.Resolve(from droid in dbContext.Droids where droid.Id == intId select droid).List(_ => _.AsContract<Droid>())
+            ).Only();
         }
 
-        private async Task<object> FindCharacterById(string id)
-        {
-            // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
-            var intId = int.Parse(id);
-            return (object)await dbContext.Humans.FindAsync(intId)
-                ?? await dbContext.Droids.FindAsync(intId);
-        }
+        //public override IGraphQlObjectResult<Interfaces.Character?> character(FieldContext fieldContext, string id)
+        //{
+        //    // TODO - single-item union result
+        //    return Original.ResolveTask(async _ => await FindCharacterById(id).ConfigureAwait(false)).Nullable(_ => _.AsUnion<Interfaces.Character>(UnionMappings.CharacterTypeMapping));
+        //}
+
+        //private async Task<object> FindCharacterById(string id)
+        //{
+        //    // This could use dbContext.Characters.FindAsync, but this demonstrates using async/await
+        //    var intId = int.Parse(id);
+        //    return (object)await dbContext.Humans.FindAsync(intId)
+        //        ?? await dbContext.Droids.FindAsync(intId);
+        //}
 
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id)
         {
