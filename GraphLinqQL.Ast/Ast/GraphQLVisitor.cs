@@ -375,14 +375,6 @@ namespace GraphLinqQL.Ast
             }
         }
 
-        private void AssertNoException(Antlr4.Runtime.ParserRuleContext?[] context)
-        {
-            foreach (var c in context)
-            {
-                AssertNoException(c);
-            }
-        }
-
         private string? MaybeGetDescription(GraphqlParser.DescriptionContext? description)
         {
             return ((IStringValue?)description?.Accept(this))?.Text;
