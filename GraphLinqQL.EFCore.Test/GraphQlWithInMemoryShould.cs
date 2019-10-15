@@ -1,7 +1,7 @@
 ﻿using GraphLinqQL.Ast;
 using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
-using GraphLinqQL.Sample.Domain;
+using GraphLinqQL.StarWars.Domain;
 using GraphLinqQL.TestFramework;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +27,9 @@ namespace GraphLinqQL
         {
             var services = new ServiceCollection();
             services.AddDbContext<StarWarsContext>(options => options.UseInMemoryDatabase(nameof(GraphQlWithInMemoryShould)));
-            services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options =>
+            services.AddGraphQl<StarWars.Interfaces.TypeResolver>(typeof(StarWars.Implementations.Query), options =>
             {
-                options.Mutation = typeof(Sample.Implementations.Mutation);
+                options.Mutation = typeof(StarWars.Implementations.Mutation);
                 options.AddIntrospection();
             });
             services.AddLogging();

@@ -22,8 +22,6 @@ namespace GraphLinqQL
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile(
-                        "configuration.local.json", optional: false, reloadOnChange: false);
                     config.AddCommandLine(args);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>

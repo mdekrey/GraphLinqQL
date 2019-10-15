@@ -5,12 +5,10 @@
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>
     <EmbeddedResource Include="**/*.yaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Sample\Implementations\.editorconfig" />
     <None Remove="Scenarios\QueryPagination.yaml" />
     <None Remove="Scenarios\QueryParameters.yaml" />
     <None Remove="Scenarios\QueryParsing.yaml" />
@@ -18,18 +16,8 @@
     <None Remove="Scenarios\Reviews.yaml" />
     <None Remove="Scenarios\UnionListExecution.yaml" />
   </ItemGroup>
-  <ItemGroup>
-    <GraphLinqQlSchema Include="Sample\sw-schema.3.graphql" />
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -40,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
-    <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.StarWars.EFCore\GraphLinqQL.StarWars.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

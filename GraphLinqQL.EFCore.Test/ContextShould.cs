@@ -1,4 +1,4 @@
-using GraphLinqQL.Sample.Domain;
+using GraphLinqQL.StarWars.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
