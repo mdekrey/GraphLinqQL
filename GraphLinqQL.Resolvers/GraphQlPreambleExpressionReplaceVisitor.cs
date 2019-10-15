@@ -37,7 +37,7 @@ namespace GraphLinqQL
                         UnaryExpression { Operand: var actual, NodeType: ExpressionType.Convert } => actual,
                         var original => original
                     };
-                    return body.Inline(argument);
+                    return body.Inline(argument.Box());
                 }
                 return base.VisitMethodCall(node);
             }

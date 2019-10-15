@@ -23,6 +23,8 @@ namespace GraphLinqQL
         IReadOnlyCollection<IGraphQlJoin> Joins { get; }
         IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper);
 
+        IGraphQlScalarResult AddPostBuild(Func<LambdaExpression, LambdaExpression> postBuild);
+
         // TODO - should prefer this to preamble/body
         //IGraphQlScalarResult<T> UpdateCurrent<T>(Func<LambdaExpression, LambdaExpression> resolveAdjust);
         IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust);

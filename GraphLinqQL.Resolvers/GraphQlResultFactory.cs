@@ -8,8 +8,10 @@ namespace GraphLinqQL
 {
     internal class GraphQlResultFactory<TValue> : GraphQlExpressionScalarResult<TValue>, IGraphQlResultFactory<TValue>
     {
+        private static readonly Expression<Func<TValue, TValue>> identity = _ => _;
+
         public GraphQlResultFactory()
-            : base((Expression<Func<TValue, TValue>>)(_ => _), (Expression<Func<TValue, TValue>>)(_ => _), System.Collections.Immutable.ImmutableHashSet<IGraphQlJoin>.Empty)
+            : base(identity, identity, EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), EmptyArrayHelper.Empty<IGraphQlJoin>())
         {
 
         }

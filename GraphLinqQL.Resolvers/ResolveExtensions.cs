@@ -96,34 +96,6 @@ namespace GraphLinqQL
             return newResult.AdjustResolution<IEnumerable<TContract>>(_ => newScalar);
         }
 
-        public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-            var constructedDeferred = newResult.ConstructResult();
-
-            return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
-            {
-                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
-            }, deferredLambda => constructedDeferred);
-        }
-
-        public static IGraphQlObjectResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-            var constructedDeferred = newResult.Resolution.ConstructResult();
-
-            var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
-            {
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
-                var replacement = new PreambleReplacement(Expression.Lambda(newPreamble.Inline(original.Body.Parameters[0], PreamblePlaceholders.BodyPlaceholderExpression), original.Body.Parameters));
-                var result = replacement.Replace(preambleLambda);
-                return result;
-            }, deferredLambda => constructedDeferred);
-            return newResult.AdjustResolution<TContract>(_ => newScalar);
-        }
-
         public static IGraphQlObjectResult<TContract> Only<TContract>(this IGraphQlObjectResult<IEnumerable<TContract>> original)
         {
             return GraphQlFinalizerObjectResult<TContract>.Inline(original, (Expression<Func<IEnumerable<object>, object>>)(_ => _.FirstOrDefault()));
