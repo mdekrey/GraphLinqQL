@@ -16,7 +16,7 @@ $(Description)
 
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>
-    <GraphLinqQlSchema Include="Introspection\introspection.graphql" />
+    <GraphLinqQlSchema Include="Introspection\Interfaces\introspection.graphql" />
   </ItemGroup>
 
   <ItemGroup>

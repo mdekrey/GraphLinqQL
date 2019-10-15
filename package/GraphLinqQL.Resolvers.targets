@@ -34,13 +34,14 @@
   <Target Name="_UpdateGraphLinqQlMetatdata">
     <ItemGroup>
       <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Link)' != '' ">
-        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+        <WorkingOutputPath>$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</WorkingOutputPath>
       </GraphLinqQlSchema>
       <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Link)' == '' ">
-        <OutputPath>$(IntermediateOutputPath)$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</OutputPath>
+        <WorkingOutputPath>$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__')).g.cs</WorkingOutputPath>
       </GraphLinqQlSchema>
-      <GraphLinqQlSchema Condition=" '%(GraphLinqQlSchema.Namespace)' == '' ">
-        <Namespace>$(RootNamespace).$([System.Text.RegularExpressions.Regex]::Replace(%(GraphLinqQlSchema.RelativeDir), '[/\\\\]', '.'))Interfaces</Namespace>
+      <GraphLinqQlSchema>
+        <OutputPath>$(IntermediateOutputPath)%(GraphLinqQlSchema.WorkingOutputPath)</OutputPath>
+        <Namespace Condition=" '%(GraphLinqQlSchema.Namespace)' == '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(GraphLinqQlSchema.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
       </GraphLinqQlSchema>
     </ItemGroup>
   </Target>

@@ -7,15 +7,15 @@
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
-    <None Remove="StarWarsV3\sw-schema.3.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <GraphLinqQlSchema Include="StarWarsV3\sw-schema.3.graphql" />
+    <GraphLinqQlSchema Include="..\GraphLinqQL.StarWars.EFCore\StarWars\Interfaces\sw-schema.3.graphql" Link="StarWarsV3\Interfaces\sw-schema.3.graphql" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="StarWarsV3\Interfaces\" />
   </ItemGroup>
 
 </Project>

@@ -6,10 +6,7 @@
   </PropertyGroup>
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>
-    <None Remove="StarWars\sw-schema.3.graphql" />
-  </ItemGroup>
-  <ItemGroup>
-    <GraphLinqQlSchema Include="StarWars\sw-schema.3.graphql" />
+    <GraphLinqQlSchema Include="StarWars\Interfaces\sw-schema.3.graphql" />
   </ItemGroup>
 
   <ItemGroup>

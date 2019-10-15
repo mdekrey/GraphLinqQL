@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <GraphLinqQlSchema Include="HandwrittenSamples\testable.graphql" />
+    <GraphLinqQlSchema Include="HandwrittenSamples\Interfaces\testable.graphql" />
   </ItemGroup>
 
   <ItemGroup>
