@@ -6,6 +6,12 @@
   </PropertyGroup>
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>
+    <None Remove=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
     <GraphLinqQlSchema Include="StarWars\Interfaces\sw-schema.3.graphql" />
   </ItemGroup>
 

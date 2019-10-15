@@ -8,6 +8,7 @@ using GraphLinqQL.StarWars.Domain;
 using GraphLinqQL.StarWars.Interfaces;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable CA1307 // Specify StringComparison
+#pragma warning disable CA1724
 
 namespace GraphLinqQL.StarWars.Implementations
 {

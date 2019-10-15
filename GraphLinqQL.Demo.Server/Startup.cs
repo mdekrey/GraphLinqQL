@@ -23,6 +23,7 @@ namespace GraphLinqQL.Demo.Server
         {
             services.AddGraphQl<StarWarsV3.Interfaces.TypeResolver>(typeof(Query), options =>
             {
+                options.Mutation = typeof(Mutation);
                 options.AddIntrospection();
             });
         }

@@ -18,10 +18,8 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
                                         ? (object)Domain.Data.humanLookup[id] 
                                         : Domain.Data.droidLookup[id]).List(_ => _.AsUnion<Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()));
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
-        {
-            throw new NotImplementedException();
-        }
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after) =>
+            Original.Resolve(droid => new FriendsConnection.Data(droid.Friends, first, after)).AsContract<FriendsConnection>();
 
         public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
             Original.Resolve(droid => droid.Id);

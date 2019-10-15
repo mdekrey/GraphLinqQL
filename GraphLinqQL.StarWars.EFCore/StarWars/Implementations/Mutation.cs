@@ -18,7 +18,7 @@ namespace GraphLinqQL.StarWars.Implementations
         {
             return Original.ResolveTask(async _ =>
             {
-                var newReview = new Domain.Review { Stars = review.stars, Episode = InterfaceToDomain.ConvertEpisode(episode.Value), Commentary = review.commentary };
+                var newReview = new Domain.Review { Stars = review.stars, Episode = InterfaceToDomain.ConvertEpisode(episode!.Value), Commentary = review.commentary };
                 dbContext.Add(newReview);
                 await dbContext.SaveChangesAsync().ConfigureAwait(false);
                 return newReview;
