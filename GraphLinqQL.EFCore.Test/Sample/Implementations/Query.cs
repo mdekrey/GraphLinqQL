@@ -44,9 +44,14 @@ namespace GraphLinqQL.Sample.Implementations
         }
 
         public override IGraphQlObjectResult<Interfaces.Character?> hero(FieldContext fieldContext, Interfaces.Episode? episode) =>
-            episode == null
-                ? character(fieldContext, "2001")
-                : throw new NotImplementedException();
+            episode switch
+            {
+                null => character(fieldContext, "2001"),
+                Interfaces.Episode ep => Original
+                    .Resolve(_ => dbContext.Films.Where(f => f.EpisodeId == InterfaceToDomain.ConvertEpisode(ep)).Select(f => f.Hero))
+                    .List(_ => _.AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()))
+                    .Only()
+            };
 
         public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id)
         {
