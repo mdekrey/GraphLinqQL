@@ -15,6 +15,7 @@
     <None Remove="Scenarios\QueryParameters.yaml" />
     <None Remove="Scenarios\QueryParsing.yaml" />
     <None Remove="Scenarios\QuerySearch.yaml" />
+    <None Remove="Scenarios\Reviews.yaml" />
     <None Remove="Scenarios\UnionListExecution.yaml" />
   </ItemGroup>
   <ItemGroup>

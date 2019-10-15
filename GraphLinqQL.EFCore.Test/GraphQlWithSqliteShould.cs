@@ -41,7 +41,11 @@ namespace GraphLinqQL
                 options.UseSqlite(inMemorySqlite);
                 options.AddInterceptors(sqlLogs);
             });
-            services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options => options.AddIntrospection());
+            services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options =>
+            {
+                options.Mutation = typeof(Sample.Implementations.Mutation);
+                options.AddIntrospection();
+            });
             services.AddLogging();
             serviceProvider = services.BuildServiceProvider();
 
@@ -64,17 +68,17 @@ namespace GraphLinqQL
                 case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: false } }:
                     await DetectParsingErrors(scope.ServiceProvider, query);
                     return;
-                case { Given: { Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, new { query }, expected, sqlite);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
+                    await Execute(scope.ServiceProvider, setup, new { query }, expected, sqlite);
                     return;
-                case { Given: { Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, new { query, variables }, expected, sqlite);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, variables }, expected, sqlite);
                     return;
-                case { Given: { Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, new { query, operationName }, expected, sqlite);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, operationName }, expected, sqlite);
                     return;
-                case { Given: { Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, new { query, operationName, variables }, expected, sqlite);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, operationName, variables }, expected, sqlite);
                     return;
                 default:
                     throw new NotSupportedException();
@@ -96,19 +100,30 @@ namespace GraphLinqQL
             Assert.Throws<GraphqlParseException>(() => astFactory.ParseDocument(query));
         }
 
-        private async Task Execute(IServiceProvider serviceProvider, object request, string expected, IReadOnlyList<string>? expectedSql)
+        private async Task Execute(IServiceProvider serviceProvider, string? setup, object request, string expected, IReadOnlyList<string>? expectedSql)
         {   
-            using var memoryStream = new MemoryStream();
-            await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
-            memoryStream.Position = 0;
-
-            using var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
             var messageResolver = serviceProvider.GetRequiredService<IMessageResolver>();
 
-            var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
+            if (setup != null)
+            {
+                using var memoryStream = new MemoryStream();
+                await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, new { query = setup });
+                memoryStream.Position = 0;
+
+                using var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
+                await executor.ExecuteQuery(memoryStream, messageResolver);
+            }
+
 
             try
             {
+
+                using var memoryStream = new MemoryStream();
+                await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
+                memoryStream.Position = 0;
+
+                using var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
+                var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
                 var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
                 var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
@@ -133,14 +148,12 @@ namespace GraphLinqQL
             }
             finally
             {
-                var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
-
             }
         }
 
         private string CleanSql(string originalSql)
         {
-            return Regex.Replace(originalSql, "\\s+", " ");
+            return Regex.Replace(originalSql, "\\s+", " ").Trim();
         }
 
         public void Dispose()

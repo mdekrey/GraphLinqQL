@@ -61,7 +61,8 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
         {
-            throw new NotImplementedException();
+            return Original.Resolve(dbContext.Reviews.Where(review => review.Episode == InterfaceToDomain.ConvertEpisode(episode)))
+                .List(_ => _.AsContract<Review>());
         }
 
         public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)

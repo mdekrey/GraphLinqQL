@@ -1,0 +1,85 @@
+﻿scenario: Reviews
+tests:
+  - name: Search empty reviews
+    given:
+      query: |
+        {
+          reviews(episode: NEWHOPE) {
+            episode
+            stars
+            commentary
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "reviews": []
+          }
+        }
+      sqlite:
+        - SELECT "r"."Episode", "r"."Stars", "r"."Commentary" FROM "Reviews" AS "r" WHERE ("r"."Episode" = @__ConvertEpisode_0) AND @__ConvertEpisode_0 IS NOT NULL
+        
+  - name: Add a review and get it back
+    given:
+      query: |
+        mutation {
+          createReview(episode: JEDI, review: { stars: 4, commentary: "You don't need Luke Skywalker." }) {
+            episode
+            stars
+            commentary
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "createReview": {
+                "episode": "JEDI",
+                "stars" : 4,
+                "commentary": "You don't need Luke Skywalker."
+            }
+          }
+        }
+      sqlite:
+        - INSERT INTO "Reviews" ("Commentary", "Episode", "Stars") VALUES (@p0, @p1, @p2); SELECT "ReviewId" FROM "Reviews" WHERE changes() = 1 AND "ReviewId" = last_insert_rowid(); 
+        
+  - name: Add a review and get it back on subsequent requests
+    given:
+      setup-query: |
+        mutation {
+          createReview(episode: EMPIRE, review: { stars: 1, commentary: "No disintegrations." }) {
+            episode
+            stars
+            commentary
+          }
+        }
+      query: |
+        {
+          reviews(episode: EMPIRE) {
+            episode
+            stars
+            commentary
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "reviews": [
+              {
+                "episode": "EMPIRE",
+                "stars" : 1,
+                "commentary": "No disintegrations."
+              }
+            ]
+          }
+        }
+      sqlite:
+        - SELECT "r"."Episode", "r"."Stars", "r"."Commentary" FROM "Reviews" AS "r" WHERE ("r"."Episode" = @__ConvertEpisode_0) AND @__ConvertEpisode_0 IS NOT NULL

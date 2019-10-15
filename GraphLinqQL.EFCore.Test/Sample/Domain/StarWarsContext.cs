@@ -21,6 +21,7 @@ namespace GraphLinqQL.Sample.Domain
         public DbSet<Appearance> Appearances { get; set; }
         public DbSet<Starship> Starships { get; set; }
         public DbSet<Pilot> Pilots { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -196,6 +197,13 @@ namespace GraphLinqQL.Sample.Domain
                             }
                            from starship in character.starships
                            select new Pilot { CharacterId = character.id, StarshipId = starship }).ToArray());
+            });
+
+            modelBuilder.Entity<Review>(b =>
+            {
+                b.HasKey(r => r.ReviewId);
+                b.Property(r => r.ReviewId).ValueGeneratedOnAdd();
+                b.HasIndex(r => new { r.Episode, r.Stars });
             });
 
             base.OnModelCreating(modelBuilder);

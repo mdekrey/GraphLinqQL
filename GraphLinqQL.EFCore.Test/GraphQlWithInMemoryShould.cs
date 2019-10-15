@@ -27,7 +27,11 @@ namespace GraphLinqQL
         {
             var services = new ServiceCollection();
             services.AddDbContext<StarWarsContext>(options => options.UseInMemoryDatabase(nameof(GraphQlWithInMemoryShould)));
-            services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options => options.AddIntrospection());
+            services.AddGraphQl<Sample.Interfaces.TypeResolver>(typeof(Sample.Implementations.Query), options =>
+            {
+                options.Mutation = typeof(Sample.Implementations.Mutation);
+                options.AddIntrospection();
+            });
             services.AddLogging();
             serviceProvider = services.BuildServiceProvider();
 
@@ -48,17 +52,17 @@ namespace GraphLinqQL
                 case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: false } }:
                     await DetectParsingErrors(scope.ServiceProvider, query);
                     return;
-                case { Given: { Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, new { query }, expected);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, setup, new { query }, expected);
                     return;
-                case { Given: { Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, new { query, variables }, expected);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, variables }, expected);
                     return;
-                case { Given: { Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, new { query, operationName }, expected);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, operationName }, expected);
                     return;
-                case { Given: { Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, new { query, operationName, variables }, expected);
+                case { Given: { SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
+                    await Execute(scope.ServiceProvider, setup, new { query, operationName, variables }, expected);
                     return;
                 default:
                     throw new NotSupportedException();
@@ -80,20 +84,37 @@ namespace GraphLinqQL
             Assert.Throws<GraphqlParseException>(() => astFactory.ParseDocument(query));
         }
 
-        private async Task Execute(IServiceProvider serviceProvider, object request, string expected)
-        {   
-            using var memoryStream = new MemoryStream();
-            await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
-            memoryStream.Position = 0;
-
-            var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
+        private async Task Execute(IServiceProvider serviceProvider, string? setup, object request, string expected)
+        {
             var messageResolver = serviceProvider.GetRequiredService<IMessageResolver>();
 
-            var result = await executor.ExecuteQuery(memoryStream, messageResolver);
+            if (setup != null)
+            {
+                using var memoryStream = new MemoryStream();
+                await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, new { query = setup });
+                memoryStream.Position = 0;
 
-            var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+                using var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
+                await executor.ExecuteQuery(memoryStream, messageResolver);
+            }
 
-            Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
+            try
+            {
+                using var memoryStream = new MemoryStream();
+                await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
+                memoryStream.Position = 0;
+
+                var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create();
+
+                var result = await executor.ExecuteQuery(memoryStream, messageResolver);
+
+                var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+
+                Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
+            }
+            finally
+            {
+            }
         }
 
         public void Dispose()
