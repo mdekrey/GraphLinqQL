@@ -33,8 +33,28 @@ namespace GraphLinqQL.Sample.Implementations
 
         public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
         {
-            throw new NotImplementedException();
+            var actualFirst = first ?? 3;
+            var actualAfter = after != null ? int.Parse(after) : 0;
+            var result = Original.Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
+            {
+                AllData = GetFriendships(humanId),
+                SkippedData = GetFriendshipsPaginated(humanId, actualAfter),
+                Take = actualFirst
+            }).AsContract<FriendsConnection>());
+            return result;
         }
+
+        private IQueryable<Domain.Friendship> GetFriendships(int humanId) =>
+            from friendship in dbContext.Friendships
+            where friendship.FromId == humanId
+            orderby friendship.ToId
+            select friendship;
+
+        private IQueryable<Domain.Friendship> GetFriendshipsPaginated(int humanId, int after) =>
+            (from friendship in dbContext.Friendships
+             where friendship.FromId == humanId && friendship.ToId > after
+             orderby friendship.ToId
+             select friendship);
 
         public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
             Original.Resolve(droid => droid.Id.ToString());
