@@ -1,7 +1,8 @@
 ﻿scenario: Query Execution
 tests:
-  - name: Unnamed simple query
+  - name: Star Wars - Unnamed simple query
     given:
+      schema: star-wars
       query: |
         {
           hero {
@@ -20,8 +21,9 @@ tests:
             }
         }
         
-  - name: Unnamed simple query with operation type
+  - name: Star Wars - Unnamed simple query with operation type
     given:
+      schema: star-wars
       query: |
         query {
           hero {
@@ -40,8 +42,9 @@ tests:
             }
         }
         
-  - name: Named simple query
+  - name: Star Wars - Named simple query
     given:
+      schema: star-wars
       query: |
         query OverallHero {
           hero {
@@ -60,8 +63,9 @@ tests:
             }
         }
 
-  - name: Named multiple queries
+  - name: Star Wars - Named multiple queries
     given:
+      schema: star-wars
       query: |
         query SpecificDroid ($id: ID!) {
           droid(id: $id) {
@@ -85,3 +89,4 @@ tests:
                 }
             }
         }
+        

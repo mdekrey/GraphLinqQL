@@ -1,7 +1,8 @@
 ﻿scenario: Reviews
 tests:
-  - name: Search empty reviews
+  - name: Star Wars - Search empty reviews
     given:
+      schema: star-wars
       query: |
         {
           reviews(episode: NEWHOPE) {
@@ -22,8 +23,9 @@ tests:
       sqlite:
         - SELECT "r"."Episode", "r"."Stars", "r"."Commentary" FROM "Reviews" AS "r" WHERE ("r"."Episode" = @__ConvertEpisode_0) AND @__ConvertEpisode_0 IS NOT NULL
         
-  - name: Add a review and get it back
+  - name: Star Wars - Add a review and get it back
     given:
+      schema: star-wars
       query: |
         mutation {
           createReview(episode: JEDI, review: { stars: 4, commentary: "You don't need Luke Skywalker." }) {
@@ -48,8 +50,9 @@ tests:
       sqlite:
         - INSERT INTO "Reviews" ("Commentary", "Episode", "Stars") VALUES (@p0, @p1, @p2); SELECT "ReviewId" FROM "Reviews" WHERE changes() = 1 AND "ReviewId" = last_insert_rowid(); 
         
-  - name: Add a review and get it back on subsequent requests
+  - name: Star Wars - Add a review and get it back on subsequent requests
     given:
+      schema: star-wars
       setup-query: |
         mutation {
           createReview(episode: EMPIRE, review: { stars: 1, commentary: "No disintegrations." }) {

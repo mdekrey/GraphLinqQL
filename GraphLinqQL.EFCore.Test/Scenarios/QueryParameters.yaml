@@ -1,7 +1,8 @@
 ﻿scenario: Query Parameters
 tests:
-  - name: Parameterized Query on a Droid
+  - name: Star Wars - Parameterized Query on a Droid
     given:
+      schema: star-wars
       query: |
         {
           droid(id: "2000") {
@@ -20,8 +21,9 @@ tests:
             }
         }
         
-  - name: Parameterized Query on a Human
+  - name: Star Wars - Parameterized Query on a Human
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -42,8 +44,9 @@ tests:
       sqlite:
         - SELECT "c"."Name" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
         
-  - name: Renaming field on a Droid
+  - name: Star Wars - Renaming field on a Droid
     given:
+      schema: star-wars
       query: |
         {
           droid(id: "2000") {
@@ -64,8 +67,9 @@ tests:
             }
         }
 
-  - name: Missing parameter on Droid
+  - name: Star Wars - Missing parameter on Droid
     given:
+      schema: star-wars
       query: |
         {
           droid {
@@ -95,8 +99,9 @@ tests:
           ]
         }
 
-  - name: Parameterized Query with Variables on a Droid
+  - name: Star Wars - Parameterized Query with Variables on a Droid
     given:
+      schema: star-wars
       query: |
         query ($id: ID!) {
           droid(id: $id) {
@@ -117,8 +122,9 @@ tests:
             }
         }
         
-  - name: Default parameter on a Human
+  - name: Star Wars - Default parameter on a Human
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -139,8 +145,9 @@ tests:
             }
         }
         
-  - name: Inline enum parameter on a Human
+  - name: Star Wars - Inline enum parameter on a Human
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -161,8 +168,9 @@ tests:
             }
         }
         
-  - name: Variable enum parameter on a Human
+  - name: Star Wars - Variable enum parameter on a Human
     given:
+      schema: star-wars
       query: |
         query ($unit: LengthUnit!) {
           human(id: "1000") {
@@ -185,8 +193,9 @@ tests:
             }
         }
         
-  - name: More details on a Human
+  - name: Star Wars - More details on a Human
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -213,8 +222,9 @@ tests:
             }
         }
         
-  - name: More details on a Human via the Character interface
+  - name: Star Wars - More details on a Human via the Character interface
     given:
+      schema: star-wars
       query: |
         {
           character(id: "1000") {
@@ -248,8 +258,9 @@ tests:
           ]
         }
         
-  - name: Get friends of a human via the character interface
+  - name: Star Wars - Get friends of a human via the character interface
     given:
+      schema: star-wars
       query: |
         {
           character(id: "1000") {
@@ -297,8 +308,9 @@ tests:
           }
         }
         
-  - name: Get friends of a human and their appearances
+  - name: Star Wars - Get friends of a human and their appearances
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1001") {
@@ -343,8 +355,9 @@ tests:
       sqlite:
         - SELECT "c"."Id", "c"."Name", "a"."EpisodeId", "a"."CharacterId", "t0"."c", "t0"."Id", "t0"."Name", "t0"."FromId", "t0"."ToId", "t0"."EpisodeId", "t0"."CharacterId", "t0"."EpisodeId0", "t0"."CharacterId0" FROM "Characters" AS "c" LEFT JOIN "Appearances" AS "a" ON "c"."Id" = "a"."CharacterId" LEFT JOIN ( SELECT "t"."Discriminator" = 'Human' AS "c", "t"."Id", "t"."Name", "f"."FromId", "f"."ToId", "a0"."EpisodeId", "a0"."CharacterId", "a1"."EpisodeId" AS "EpisodeId0", "a1"."CharacterId" AS "CharacterId0" FROM "Friendships" AS "f" INNER JOIN ( SELECT "c0"."Id", "c0"."Discriminator", "c0"."Name", "c0"."PrimaryFunction", "c0"."Height", "c0"."HomePlanet", "c0"."Mass" FROM "Characters" AS "c0" WHERE "c0"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t" ON "f"."ToId" = "t"."Id" LEFT JOIN "Appearances" AS "a0" ON "t"."Id" = "a0"."CharacterId" LEFT JOIN "Appearances" AS "a1" ON "t"."Id" = "a1"."CharacterId" ) AS "t0" ON "c"."Id" = "t0"."FromId" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL) ORDER BY "c"."Id", "a"."EpisodeId", "a"."CharacterId", "t0"."FromId", "t0"."ToId", "t0"."Id", "t0"."EpisodeId", "t0"."CharacterId", "t0"."EpisodeId0", "t0"."CharacterId0"
         
-  - name: Hero by film
+  - name: Star Wars - Hero by film
     given:
+      schema: star-wars
       query: |
         {
           hero(episode: EMPIRE) {

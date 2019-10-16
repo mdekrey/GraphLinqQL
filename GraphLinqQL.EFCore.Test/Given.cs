@@ -8,6 +8,7 @@ namespace GraphLinqQL
     {
 
 #nullable disable warnings
+        public string Schema { get; set; }
         public string? SetupQuery { get; set; }
         public string Query { get; set; }
         public string? Operation { get; set; }

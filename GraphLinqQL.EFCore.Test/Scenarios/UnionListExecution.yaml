@@ -1,7 +1,8 @@
 ﻿scenario: Union List Execution
 tests:
-  - name: Search list results
+  - name: Star Wars - Search list results
     given:
+      schema: star-wars
       query: |
         {
           search(text: "Luke") {
@@ -20,8 +21,9 @@ tests:
             }
         }
         
-  - name: Search list results with multiple matches
+  - name: Star Wars - Search list results with multiple matches
     given:
+      schema: star-wars
       query: |
         {
           search(text: "L") {
@@ -42,8 +44,9 @@ tests:
             }
         }
         
-  - name: Search list results with multiple types
+  - name: Star Wars - Search list results with multiple types
     given:
+      schema: star-wars
       query: |
         {
           search(text: "D") {
@@ -67,8 +70,9 @@ tests:
             }
         }
         
-  - name: Search list results with multiple types and fragments
+  - name: Star Wars - Search list results with multiple types and fragments
     given:
+      schema: star-wars
       query: |
         {
           search(text: "D") {

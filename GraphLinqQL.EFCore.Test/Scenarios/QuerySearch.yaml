@@ -1,7 +1,8 @@
 ﻿scenario: Query Search
 tests:
-  - name: Search for All 3
+  - name: Star Wars - Search for All 3
     given:
+      schema: star-wars
       query: |
         {
           search(text: "S") {

@@ -1,7 +1,8 @@
 ﻿scenario: Query Pagination
 tests:
-  - name: Get a human's friend count
+  - name: Star Wars - Get a human's friend count
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -30,8 +31,9 @@ tests:
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
     
 
-  - name: Get a human's friend count when paging
+  - name: Star Wars - Get a human's friend count when paging
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -59,8 +61,9 @@ tests:
         - SELECT COUNT(*) FROM "Friendships" AS "f" WHERE ("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
         
-  - name: Get a human's friends when paging
+  - name: Star Wars - Get a human's friends when paging
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -94,8 +97,9 @@ tests:
         - SELECT "t0"."Discriminator" = 'Droid', "t0"."Name" FROM ( SELECT "f"."FromId", "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t0" ON "t"."ToId" = "t0"."Id" ORDER BY "t"."ToId"
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
         
-  - name: Get a page's cursor start info
+  - name: Star Wars - Get a page's cursor start info
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -127,8 +131,9 @@ tests:
         - SELECT "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT 1
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
 
-  - name: Get a page's cursor end info
+  - name: Star Wars - Get a page's cursor end info
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -160,8 +165,9 @@ tests:
         - SELECT "t"."ToId" FROM ( SELECT "f"."ToId", "f"."FromId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" ORDER BY "t"."ToId" DESC LIMIT 1
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
       
-  - name: Get a page's has-next-page info, when it does
+  - name: Star Wars - Get a page's has-next-page info, when it does
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -194,8 +200,9 @@ tests:
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
 
       
-  - name: "Get a page's has-next-page info, when it doesn't"
+  - name: Star Wars - "Get a page's has-next-page info, when it doesn't"
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -227,8 +234,9 @@ tests:
         - SELECT EXISTS ( SELECT 1 FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT -1 OFFSET @__p_2)
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
         
-  - name: Show page edge data
+  - name: Star Wars - Show page edge data
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
@@ -280,8 +288,9 @@ tests:
         - SELECT "t"."ToId", "t0"."Discriminator" = 'Droid', "t0"."Name" FROM ( SELECT "f"."FromId", "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t0" ON "t"."ToId" = "t0"."Id" ORDER BY "t"."ToId"
         - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
         
-  - name: Show page edge data 
+  - name: Star Wars - Show page edge data 
     given:
+      schema: star-wars
       query: |
         {
           human(id: "1000") {
