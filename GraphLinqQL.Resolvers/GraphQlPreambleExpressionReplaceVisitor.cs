@@ -32,11 +32,7 @@ namespace GraphLinqQL
                 if (node.Method == PreamblePlaceholders.BodyInvocationPlaceholderMethod)
                 {
                     Exchanged = true;
-                    var argument = node.Arguments[0] switch
-                    {
-                        UnaryExpression { Operand: var actual, NodeType: ExpressionType.Convert } => actual,
-                        var original => original
-                    };
+                    var argument = node.Arguments[0].Unbox();
                     return body.Inline(argument.Box());
                 }
                 return base.VisitMethodCall(node);

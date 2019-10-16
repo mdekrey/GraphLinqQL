@@ -52,6 +52,15 @@ namespace GraphLinqQL
             return body.Type.IsValueType ? Expression.Convert(body, typeof(object)) : body;
         }
 
+        public static Expression Unbox(this Expression expression)
+        {
+            return expression switch
+            {
+                UnaryExpression { Operand: var actual, NodeType: ExpressionType.Convert, Type: var t } when t == typeof(object) => actual,
+                var original => original
+            };
+    }
+
         internal static MethodCallExpression CallSelect(this Expression list, LambdaExpression selector)
         {
             return list.IsQueryable()

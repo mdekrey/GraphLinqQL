@@ -25,3 +25,28 @@ tests:
             }
         }
         
+  - name: Plain integer query with value domain object
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            plain {
+              integer
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromValue": {
+                    "plain": {
+                        "integer": 0
+                    }
+                }
+            }
+        }
+        

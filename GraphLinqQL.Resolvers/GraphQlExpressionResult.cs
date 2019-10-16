@@ -74,7 +74,7 @@ namespace GraphLinqQL
 
         private IContract SafeContract(Type contractType)
         {
-            var currentReturnType = Body.ReturnType;
+            var currentReturnType = Body.Body.Unbox().Type;
             var acceptsInterface = contractType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
                 .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
                 .FirstOrDefault();
