@@ -32,6 +32,10 @@ namespace GraphLinqQL
                 options.Mutation = typeof(StarWars.Implementations.Mutation);
                 options.AddIntrospection();
             });
+            services.AddGraphQl<Edgy.Interfaces.TypeResolver>("edgy", typeof(Edgy.Implementations.Query), options =>
+            {
+                options.AddIntrospection();
+            });
             services.AddLogging();
             serviceProvider = services.BuildServiceProvider();
 

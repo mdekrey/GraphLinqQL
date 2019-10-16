@@ -9,12 +9,17 @@
     <EmbeddedResource Include="**/*.yaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Scenarios\QueryPagination.yaml" />
-    <None Remove="Scenarios\QueryParameters.yaml" />
-    <None Remove="Scenarios\QueryParsing.yaml" />
-    <None Remove="Scenarios\QuerySearch.yaml" />
-    <None Remove="Scenarios\Reviews.yaml" />
-    <None Remove="Scenarios\UnionListExecution.yaml" />
+    <None Remove="Edgy\Interfaces\edgy.graphql" />
+    <None Remove="Scenarios\BasicQueryParsing.yaml" />
+    <None Remove="Scenarios\Edgy.yaml" />
+    <None Remove="Scenarios\EfCoreQueryPagination.yaml" />
+    <None Remove="Scenarios\EfCoreQueryParameters.yaml" />
+    <None Remove="Scenarios\EfCoreQuerySearch.yaml" />
+    <None Remove="Scenarios\EfCoreReviews.yaml" />
+    <None Remove="Scenarios\EfCoreUnionListExecution.yaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <GraphLinqQlSchema Include="Edgy\Interfaces\edgy.graphql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,5 +35,7 @@
     <ProjectReference Include="..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
     <ProjectReference Include="..\GraphLinqQL.StarWars.EFCore\GraphLinqQL.StarWars.EFCore.csproj" />
   </ItemGroup>
+
+  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
 </Project>

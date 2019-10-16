@@ -56,7 +56,7 @@ namespace GraphLinqQL
 
 
         [Theory]
-        [YamlScenarios("GraphLinqQL.Scenarios.")]
+        [YamlScenarios("GraphLinqQL.Scenarios.EfCore")]
         public async Task Handle(ScenarioDataNode<Given, When, Then> scenario)
         {
             using var scope = serviceProvider.CreateScope();
