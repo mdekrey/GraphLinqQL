@@ -11,7 +11,8 @@
   <ItemGroup>
     <None Remove="Edgy\Interfaces\edgy.graphql" />
     <None Remove="Scenarios\BasicQueryParsing.yaml" />
-    <None Remove="Scenarios\Edgy.yaml" />
+    <None Remove="Scenarios\Edgy-Ref.yaml" />
+    <None Remove="Scenarios\Edgy-Value.yaml" />
     <None Remove="Scenarios\EfCoreQueryPagination.yaml" />
     <None Remove="Scenarios\EfCoreQueryParameters.yaml" />
     <None Remove="Scenarios\EfCoreQuerySearch.yaml" />

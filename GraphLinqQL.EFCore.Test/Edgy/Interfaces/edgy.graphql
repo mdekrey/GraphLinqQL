@@ -35,4 +35,6 @@ type Complex {
 
 type Inner {
 	value: String
+	throws: String!
+	nullableThrows: String
 }

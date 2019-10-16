@@ -1,0 +1,27 @@
+﻿scenario: Edge-cases
+tests:
+  - name: Reference domain object to plain integer query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromRef {
+            plain {
+              integer
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromRef": {
+                    "plain": {
+                        "integer": 0
+                    }
+                }
+            }
+        }
+        

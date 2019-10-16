@@ -98,21 +98,18 @@ namespace GraphLinqQL
                 expressions, 
                 (old, inlined) =>
                 {
-                    if (old.Type.IsValueType)
+                    inlined = inlined.Unbox();
+                    if (!old.Type.IsAssignableFrom(inlined.Type))
                     {
-                        inlined = inlined switch
-                        {
-                            UnaryExpression { Type: var type, NodeType: ExpressionType.Convert, Operand: var expression } when type == typeof(object) => expression,
-                            _ => inlined
-                        };
+                        throw new ArgumentException("Parameters did not match types");
+                    }
+                    if (inlined.Type.IsValueType && inlined.Type != old.Type)
+                    {
+                        inlined = Expression.Convert(inlined, old.Type);
                     }
                     return new { old, inlined };
                 }
-            ).ToDictionary(kvp => (Expression)kvp.old, kvp => kvp.inlined);
-            if (parameters.Any(kvp => !kvp.Key.Type.IsAssignableFrom(kvp.Value.Type)))
-            {
-                throw new ArgumentException("Parameters did not match types");
-            }
+            ).ToDictionary(kvp => (Expression)kvp.old, kvp => (Expression)kvp.inlined);
             return newOperation.Body.Replace(parameters);
         }
     }
