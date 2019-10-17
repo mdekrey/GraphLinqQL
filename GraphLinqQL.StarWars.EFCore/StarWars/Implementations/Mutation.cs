@@ -14,7 +14,7 @@ namespace GraphLinqQL.StarWars.Implementations
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlObjectResult<Interfaces.Review?> createReview(FieldContext fieldContext, Interfaces.Episode? episode, Interfaces.ReviewInput review)
+        public override IGraphQlObjectResult<Interfaces.Review?> createReview(Interfaces.Episode? episode, Interfaces.ReviewInput review)
         {
             return Original.ResolveTask(async _ =>
             {

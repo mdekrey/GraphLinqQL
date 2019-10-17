@@ -30,7 +30,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("hero", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "hero")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("hero", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("hero")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -53,7 +53,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("hero", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "hero")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Add("renown", queryContext).Add("faction", queryContext).Build())
+                root.Add("hero", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("hero")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Add("renown", queryContext.Locations).Add("faction", queryContext.Locations).Build())
                     .Build());
 
             //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
@@ -88,7 +88,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("hero", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroFinalized")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Add("renown", queryContext).Add("faction", queryContext).Build())
+                root.Add("hero", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroFinalized")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Add("renown", queryContext.Locations).Add("faction", queryContext.Locations).Build())
                     .Build());
 
             //var query = from q in new[] { new GraphQlRoot() }.AsQueryable()
@@ -121,7 +121,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("nohero", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "nohero")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("nohero", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("nohero")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -142,7 +142,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("nulls", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "nulls")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("nulls", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("nulls")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -164,8 +164,8 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
-                    .Add("rand", queryContext)
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
+                    .Add("rand", queryContext.Locations)
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -187,8 +187,8 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
-                    .Add("rand", queryContext)
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
+                    .Add("rand", queryContext.Locations)
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -206,7 +206,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("rand", queryContext)
+                root.Add("rand", queryContext.Locations)
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);
@@ -232,10 +232,10 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext)
-                                                                .Add("id", queryContext)
-                                                                .Add("name", queryContext)
-                                                                .Add("friends", queryContext, hero => ((IGraphQlObjectResult)hero.ResolveQuery(queryContext, "friends")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp)
+                                                                .Add("id", queryContext.Locations)
+                                                                .Add("name", queryContext.Locations)
+                                                                .Add("friends", queryContext.Locations, hero => ((IGraphQlObjectResult)hero.ResolveQuery("friends")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                                                                 .Build())
                     .Build());
 
@@ -262,10 +262,10 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext)
-                                                                .Add("id", queryContext)
-                                                                .Add("name", queryContext)
-                                                                .Add("friends", queryContext, hero => ((IGraphQlObjectResult)hero.ResolveQuery(queryContext, "friendsDeferred")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp)
+                                                                .Add("id", queryContext.Locations)
+                                                                .Add("name", queryContext.Locations)
+                                                                .Add("friends", queryContext.Locations, hero => ((IGraphQlObjectResult)hero.ResolveQuery("friendsDeferred")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                                                                 .Build())
                     .Build());
 
@@ -292,10 +292,10 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext)
-                                                                .Add("id", queryContext)
-                                                                .Add("name", queryContext)
-                                                                .Add("friends", queryContext, hero => ((IGraphQlObjectResult)hero.ResolveQuery(queryContext, "friendsTask")).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp)
+                                                                .Add("id", queryContext.Locations)
+                                                                .Add("name", queryContext.Locations)
+                                                                .Add("friends", queryContext.Locations, hero => ((IGraphQlObjectResult)hero.ResolveQuery("friendsTask")).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                                                                 .Build())
                     .Build());
 
@@ -320,11 +320,11 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext)
-                                                                .Add("id", queryContext)
-                                                                .Add("name", queryContext)
-                                                                .Add("renown", queryContext)
-                                                                .Add("faction", queryContext)
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp)
+                                                                .Add("id", queryContext.Locations)
+                                                                .Add("name", queryContext.Locations)
+                                                                .Add("renown", queryContext.Locations)
+                                                                .Add("faction", queryContext.Locations)
                                                                 .Build())
                     .Build());
 
@@ -349,11 +349,11 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroes", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery(queryContext, "heroes")).ResolveComplex(sp, queryContext)
-                                                                .Add("id", queryContext)
-                                                                .Add("name", queryContext)
-                                                                .Add("location", queryContext)
-                                                                .Add("oldLocation", "location", queryContext, new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } }))
+                root.Add("heroes", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroes")).ResolveComplex(sp)
+                                                                .Add("id", queryContext.Locations)
+                                                                .Add("name", queryContext.Locations)
+                                                                .Add("location", queryContext.Locations)
+                                                                .Add("oldLocation", "location", queryContext.Locations, new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo> { { "date", new NewtonsoftJsonParameterInfo("\"2008-05-02\"") } }))
                                                                 .Build())
                     .Build());
 
@@ -375,7 +375,7 @@ namespace GraphLinqQL
             using var sp = new SimpleServiceProvider();
             var queryContext = FieldContext.Empty;
             var result = await sp.GraphQlRootAsync(typeof(Implementations.QueryContract), root =>
-                root.Add("heroById", queryContext, q => ((IGraphQlObjectResult)q.ResolveQuery("heroById", queryContext, new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo>() { { "id", new NewtonsoftJsonParameterInfo("\"GUARDIANS-1\"") } }))).ResolveComplex(sp, queryContext).Add("id", queryContext).Add("name", queryContext).Build())
+                root.Add("heroById", queryContext.Locations, q => ((IGraphQlObjectResult)q.ResolveQuery("heroById", new BasicParameterResolver(new Dictionary<string, IGraphQlParameterInfo>() { { "id", new NewtonsoftJsonParameterInfo("\"GUARDIANS-1\"") } }))).ResolveComplex(sp).Add("id", queryContext.Locations).Add("name", queryContext.Locations).Build())
                     .Build());
 
             var json = System.Text.Json.JsonSerializer.Serialize(result.Data, JsonOptions);

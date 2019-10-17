@@ -23,20 +23,20 @@ namespace GraphLinqQL.StarWars.Implementations
                                                                                                    select appearance);
         }
 
-        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn(FieldContext fieldContext)
+        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn()
         {
             // using a Join instead of inline Linq to show how reuse could be done
             return Original.Join(appearancesJoin).Resolve((human, appearances) => appearances.Select(appearance => (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId)));
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends()
         {
             return Original.Resolve(human => from friendship in dbContext.Friendships
                                              where friendship.FromId == human.Id
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
         {
             var actualFirst = first ?? 3;
             var actualAfter = after != null ? int.Parse(after) : 0;
@@ -61,7 +61,7 @@ namespace GraphLinqQL.StarWars.Implementations
              orderby friendship.ToId
              select friendship);
 
-        public override IGraphQlScalarResult<double?> height(FieldContext fieldContext, Interfaces.LengthUnit? unit)
+        public override IGraphQlScalarResult<double?> height(Interfaces.LengthUnit? unit)
         {
             if (unit == Interfaces.LengthUnit.FOOT)
             {
@@ -73,20 +73,20 @@ namespace GraphLinqQL.StarWars.Implementations
             }
         }
 
-        public override IGraphQlScalarResult<string?> homePlanet(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> homePlanet() =>
             Original.Resolve(human => human.HomePlanet);
 
 
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(human => human.Id.ToString());
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(human => human.Name);
 
-        public override IGraphQlScalarResult<double?> mass(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<double?> mass() =>
             Original.Resolve(human => (double?)human.Mass);
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> starships(FieldContext fieldContext)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> starships()
         {
             return Original.Resolve(human => from pilot in dbContext.Pilots
                                              where pilot.CharacterId == human.Id

@@ -6,7 +6,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
 {
     public class Mutation : Interfaces.Mutation.GraphQlContract<GraphQlRoot>
     {
-        public override IGraphQlObjectResult<Interfaces.Review?> createReview(FieldContext fieldContext, Episode? episode, ReviewInput review)
+        public override IGraphQlObjectResult<Interfaces.Review?> createReview(Episode? episode, ReviewInput review)
         {
             if (episode == null)
             {

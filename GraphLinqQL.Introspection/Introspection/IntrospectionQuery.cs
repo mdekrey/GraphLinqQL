@@ -21,6 +21,12 @@ namespace GraphLinqQL.Introspection
             this.introspectionTypeListing = new Interfaces.Introspection.TypeListing();
         }
 
+        public FieldContext FieldContext
+        {
+            get { return originalQuery.FieldContext; }
+            set { originalQuery.FieldContext = value; }
+        }
+
         public IGraphQlResultFactory<GraphQlRoot> Original
         {
             get { return original!; }
@@ -36,18 +42,18 @@ namespace GraphLinqQL.Introspection
 
         public bool IsType(string value) => originalQuery.IsType(value);
 
-        internal IGraphQlObjectResult<Schema> schema(FieldContext fieldContext) =>
+        internal IGraphQlObjectResult<Schema> schema() =>
             original!.Resolve(_ => typeListing).AsContract<Schema>();
 
-        internal IGraphQlObjectResult<GraphQlType?> type(FieldContext fieldContext, string name) =>
+        internal IGraphQlObjectResult<GraphQlType?> type(string name) =>
             original!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public IGraphQlResult ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters) =>
+        public IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch
             {
-                "__schema" => this.schema(fieldContext),
-                "__type" => this.type(fieldContext, name: parameters.GetParameter<string>("name", fieldContext)),
-                _ => originalQuery.ResolveQuery(name, fieldContext, parameters)
+                "__schema" => this.schema(),
+                "__type" => this.type(name: parameters.GetParameter<string>("name")),
+                _ => originalQuery.ResolveQuery(name, parameters)
             };
     }
 }

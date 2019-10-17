@@ -8,27 +8,57 @@ using System.Threading.Tasks;
 
 namespace GraphLinqQL
 {
-    public class TaskFinalizer : IFinalizer
+    public class TaskFinalizerFactory
     {
-        public static readonly ConstructorInfo ConstructorInfo = typeof(TaskFinalizer).GetConstructors().Single();
+        private readonly FieldContext fieldContext;
 
-        private readonly Task task;
-
-        public TaskFinalizer(Task task)
+        public TaskFinalizerFactory(FieldContext fieldContext)
         {
-            this.task = task;
+            this.fieldContext = fieldContext;
+        }
+
+        public IFinalizer Invoke(Func<Task> taskFactory)
+        {
+            return new TaskFinalizer(fieldContext, taskFactory);
+        }
+    }
+
+    internal class TaskFinalizer : IFinalizer
+    {
+        private readonly FieldContext fieldContext;
+        private readonly Func<Task> taskFactory;
+
+        internal TaskFinalizer(FieldContext fieldContext, Func<Task> taskFactory)
+        {
+            this.fieldContext = fieldContext;
+            this.taskFactory = taskFactory;
         }
 
         public async Task<object?> GetValue(FinalizerContext context)
         {
-            await task.ConfigureAwait(false);
-
-            var type = GetTaskType(task.GetType());
-            if (type != null)
+            try
             {
-                return GetResultFrom(task, type);
+                var task = taskFactory();
+                await task.ConfigureAwait(false);
+
+                var type = GetTaskType(task.GetType());
+                if (type != null)
+                {
+                    var result = GetResultFrom(task, type);
+                    return await context.UnrollResults(result, context).ConfigureAwait(false);
+                }
+                return null;
             }
-            return null;
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex)
+            {
+                var errors = ex.HasGraphQlErrors(out var e) ? e : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError) };
+                foreach (var error in errors)
+                {
+                    error.Fixup(fieldContext);
+                }
+                throw new InvalidOperationException("Caught error in task", ex).AddGraphQlErrors(errors);
+            }
         }
 
         private static Type? GetTaskType(Type type)
@@ -73,29 +103,34 @@ namespace GraphLinqQL
         }
     }
 
-    public class CatchFinalizer : IFinalizer
+    internal class CatchFinalizer : IFinalizer
     {
         private readonly FieldContext fieldContext;
         private readonly Func<object> valueAccessor;
 
-        public CatchFinalizer(FieldContext fieldContext, Func<object> valueAccessor)
+        internal CatchFinalizer(FieldContext fieldContext, Func<object> valueAccessor)
         {
             this.fieldContext = fieldContext;
             this.valueAccessor = valueAccessor;
         }
 
-        public Task<object?> GetValue(FinalizerContext context)
+        public async Task<object?> GetValue(FinalizerContext context)
         {
             try
             {
-                return Task.FromResult<object?>(valueAccessor());
+                return await context.UnrollResults(valueAccessor(), context).ConfigureAwait(false);
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
             {
-                var errors = ex.HasGraphQlErrors(out var error) ? (IReadOnlyList<GraphQlError>)error : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError, ExceptionExtensions.GetArguments(new { fieldName = fieldContext.Name, type = fieldContext.TypeName }), fieldContext.Locations) };
+                var errors = ex.HasGraphQlErrors(out var e) ? e : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError) };
+                foreach (var error in errors)
+                {
+                    error.Fixup(fieldContext);
+                }
+                // TODO - log the exception
                 context.Errors.AddRange(errors);
-                return Task.FromResult<object?>(null);
+                return null;
             }
         }
     }

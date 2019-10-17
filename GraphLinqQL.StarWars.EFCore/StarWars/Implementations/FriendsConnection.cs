@@ -10,19 +10,19 @@ namespace GraphLinqQL.StarWars.Implementations
 {
     class FriendsConnection : Interfaces.FriendsConnection.GraphQlContract<PaginatedSelection<Domain.Friendship>>
     {
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.FriendsEdge?>?> edges(FieldContext fieldContext)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.FriendsEdge?>?> edges()
         {
             return Original.Resolve(_ => _.SkippedData.Take(_.Take)).List(_ => _.AsContract<FriendsEdge>());
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends()
         {
             return Original.Resolve(_ => from friendship in _.SkippedData.Take(_.Take)
                                          select friendship.To!)
                 .List(_ => _.AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()));
         }
 
-        public override IGraphQlObjectResult<Interfaces.PageInfo> pageInfo(FieldContext fieldContext)
+        public override IGraphQlObjectResult<Interfaces.PageInfo> pageInfo()
         {
             return Original.ResolveTask(selection => Task.FromResult(new PageInfoValues
             {
@@ -32,7 +32,7 @@ namespace GraphLinqQL.StarWars.Implementations
             })).Defer(_ => _.AsContract<PageInfo>());
         }
 
-        public override IGraphQlScalarResult<int?> totalCount(FieldContext fieldContext)
+        public override IGraphQlScalarResult<int?> totalCount()
         {
             return Original.Resolve(_ => (int?)_.AllData.Count());
         }

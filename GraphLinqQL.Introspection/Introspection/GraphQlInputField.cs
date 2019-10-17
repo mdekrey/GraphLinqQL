@@ -4,16 +4,16 @@ namespace GraphLinqQL.Introspection
 {
     internal class GraphQlInputField : Interfaces.__InputValue.GraphQlContract<GraphQlInputFieldInformation>
     {
-        public override IGraphQlScalarResult<string?> defaultValue(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> defaultValue() =>
             Original.Resolve(field => field.DefaultValue);
 
-        public override IGraphQlScalarResult<string?> description(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> description() =>
             Original.Resolve(field => field.Description);
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(field => field.Name);
 
-        public override IGraphQlObjectResult<__Type> type(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<__Type> type() =>
             Original.Resolve(field => field.FieldType).AsContract<GraphQlType>();
     }
 }

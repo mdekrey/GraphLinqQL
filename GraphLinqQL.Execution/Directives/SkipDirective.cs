@@ -10,8 +10,8 @@ namespace GraphLinqQL.Directives
     {
         public string Name => "skip";
 
-        public TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, FieldContext fieldContext, GraphQLExecutionContext context)
+        public TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context)
             where TNode : class, INode =>
-            arguments.GetParameter<bool>("if", fieldContext) == false ? node : null;
+            arguments.GetParameter<bool>("if") == false ? node : null;
     }
 }

@@ -7,15 +7,15 @@ namespace GraphLinqQL.StarWars.Implementations
 {
     class Starship : Interfaces.Starship.GraphQlContract<Domain.Starship>
     {
-        public override IGraphQlScalarResult<IEnumerable<IEnumerable<double>>?> coordinates(FieldContext fieldContext)
+        public override IGraphQlScalarResult<IEnumerable<IEnumerable<double>>?> coordinates()
         {
             return Original.Resolve(new[] { new[] { 1.0, 2.0 }, new[] { 3.0, 4.0 } });
         }
 
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(starship => starship.Id.ToString());
 
-        public override IGraphQlScalarResult<double?> length(FieldContext fieldContext, LengthUnit? unit)
+        public override IGraphQlScalarResult<double?> length(LengthUnit? unit)
         {
             if (unit == LengthUnit.FOOT)
             {
@@ -27,7 +27,7 @@ namespace GraphLinqQL.StarWars.Implementations
             }
         }
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(starship => starship.Name);
     }
 }

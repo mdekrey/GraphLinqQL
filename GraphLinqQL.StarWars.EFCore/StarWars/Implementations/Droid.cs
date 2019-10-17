@@ -16,7 +16,7 @@ namespace GraphLinqQL.StarWars.Implementations
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn(FieldContext fieldContext)
+        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn()
         {
             return Original.Resolve(droid => from appearance in dbContext.Appearances
                                              where appearance.CharacterId == droid.Id
@@ -24,14 +24,14 @@ namespace GraphLinqQL.StarWars.Implementations
                                              select (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId));
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends(FieldContext fieldContext)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends()
         {
             return Original.Resolve(droid => from friendship in dbContext.Friendships
                                              where friendship.FromId == droid.Id
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
         {
             var actualFirst = first ?? 3;
             var actualAfter = after != null ? int.Parse(after) : 0;
@@ -56,13 +56,13 @@ namespace GraphLinqQL.StarWars.Implementations
              orderby friendship.ToId
              select friendship);
 
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(droid => droid.Id.ToString());
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(droid => droid.Name);
 
-        public override IGraphQlScalarResult<string?> primaryFunction(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> primaryFunction() =>
             Original.Resolve(droid => droid.PrimaryFunction);
     }
 }

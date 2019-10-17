@@ -45,7 +45,7 @@ namespace GraphLinqQL
         IContract Contract { get; }
 
         IGraphQlObjectResult<T> AdjustResolution<T>(Func<IGraphQlScalarResult, IGraphQlScalarResult> p);
-        IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext);
+        IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider);
     }
 
     public interface IGraphQlObjectResult<out TContract> : IGraphQlObjectResult, IGraphQlResult

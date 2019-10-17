@@ -93,7 +93,8 @@ tests:
               ],
               "arguments": {
                 "fieldName": "droid",
-                "argument": "id"
+                "argument": "id",
+                "type": "Query"
               }
             }
           ]

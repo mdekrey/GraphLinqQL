@@ -5,7 +5,7 @@ schema {
 
 type Query {
 	fromValue: WithInput!
-	fromRef: WithInput!
+	fromReference: WithInput!
 }
 
 type WithInput {

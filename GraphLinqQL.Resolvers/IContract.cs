@@ -5,7 +5,6 @@ namespace GraphLinqQL
 {
     public interface IContract
     {
-        string TypeName { get; }
         IReadOnlyList<ContractEntry> Resolvables { get; }
     }
 

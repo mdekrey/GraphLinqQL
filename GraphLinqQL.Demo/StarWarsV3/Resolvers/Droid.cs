@@ -9,25 +9,25 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
 {
     class Droid : Interfaces.Droid.GraphQlContract<Domain.Droid>
     {
-        public override IGraphQlScalarResult<IEnumerable<Episode?>> appearsIn(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<IEnumerable<Episode?>> appearsIn() =>
             Original.Resolve(droid => droid.AppearsIn.Select(DomainToInterface.ConvertEpisode).Select(ep => (Episode?)ep));
 
-        public override IGraphQlObjectResult<IEnumerable<Character?>?> friends(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Character?>?> friends() =>
             Original.Resolve(droid => from id in droid.Friends
                                       select Domain.Data.humanLookup.ContainsKey(id) 
                                         ? (object)Domain.Data.humanLookup[id] 
                                         : Domain.Data.droidLookup[id]).List(_ => _.AsUnion<Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()));
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(FieldContext fieldContext, int? first, string? after) =>
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after) =>
             Original.Resolve(droid => new FriendsConnection.Data(droid.Friends, first, after)).AsContract<FriendsConnection>();
 
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(droid => droid.Id);
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(droid => droid.Name);
 
-        public override IGraphQlScalarResult<string?> primaryFunction(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> primaryFunction() =>
             Original.Resolve(droid => droid.PrimaryFunction);
     }
 }

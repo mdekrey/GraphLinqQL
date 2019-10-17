@@ -85,7 +85,7 @@ namespace GraphLinqQL
             {
                 throw new InvalidOperationException($"Given contract {contractType.FullName} does not accept type {currentReturnType.FullName}");
             }
-            return new ContractMapping(ContractMapping.GetTypeName(contractType), contractType, currentReturnType);
+            return new ContractMapping(contractType, currentReturnType);
         }
 
         public LambdaExpression ConstructResult()
@@ -164,14 +164,13 @@ namespace GraphLinqQL
             return new GraphQlExpressionObjectResult<T>(p(Resolution), Contract);
         }
 
-        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider, FieldContext fieldContext)
+        public IComplexResolverBuilder ResolveComplex(IGraphQlServiceProvider serviceProvider)
         {
             return new ComplexResolverBuilder(
                 Contract!,
                 serviceProvider,
                 ToResult,
-                visitor.ModelType!,
-                fieldContext
+                visitor.ModelType!
             );
         }
 

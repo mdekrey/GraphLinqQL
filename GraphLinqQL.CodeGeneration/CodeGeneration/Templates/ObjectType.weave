@@ -11,6 +11,8 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 {
 	private {{= model.TypeName }}() { }
 
+	public FieldContext FieldContext { get; set; }
+
 	public string GraphQlTypeName { get { return "{{= model.Label }}"; } }
 
 	{{each field in model.Fields}}
@@ -22,21 +24,21 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
 		{{/if}}
-		public abstract IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}(FieldContext fieldContext{{each arg in field.Arguments}}, {{= arg.TypeName}} {{= arg.FieldName }}{{/each}});
+		public abstract IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
 		{{=""}}
 	{{/each}}
 
-	IGraphQlResult IGraphQlResolvable.ResolveQuery(string fieldName, FieldContext fieldContext, IGraphQlParameterResolver parameters)
+	IGraphQlResult IGraphQlResolvable.ResolveQuery(string fieldName, IGraphQlParameterResolver parameters)
 	{
 		switch (fieldName)
 		{
-			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}", fieldContext);
+			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}", FieldContext);
 			{{each field in model.Fields}}
 				case "{{= field.Label }}":
-					return this.{{= field.Name }}(fieldContext{{each arg in field.Arguments}},
-						{{= arg.GetParameterWithDefault() }}{{/each}});
+					return this.{{= field.Name }}({{each arg in field.Arguments}}
+						{{= arg.GetParameterWithDefault() }}{{delimit}},{{/each}});
 			{{/each}}
-			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, fieldContext.Locations, new { fieldName, type = GraphQlTypeName });
+			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, FieldContext.Locations, new { fieldName, type = GraphQlTypeName });
 		};
 	}
 

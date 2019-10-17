@@ -8,30 +8,30 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
 {
     public class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
-        public override IGraphQlObjectResult<Character?> character(FieldContext fieldContext, string id) => 
+        public override IGraphQlObjectResult<Character?> character(string id) => 
             Original.Union(
                 _ => _.Resolve(_ => Domain.Data.humans.Where(human => human.Id == id)).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Character>),
                 _ => _.Resolve(_ => Domain.Data.droids.Where(droid => droid.Id == id)).List(_ => _.AsContract<Droid>())
             ).Only();
 
-        public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id) =>
+        public override IGraphQlObjectResult<Interfaces.Droid?> droid(string id) =>
             Original.Resolve(_ => Domain.Data.droidLookup[id]).Nullable(_ => _.AsContract<Droid>());
 
-        public override IGraphQlObjectResult<Character?> hero(FieldContext fieldContext, Episode? episode) =>
+        public override IGraphQlObjectResult<Character?> hero(Episode? episode) =>
             episode == Episode.EMPIRE
-                ? character(fieldContext, "1000")
-                : character(fieldContext, "2001");
+                ? character("1000")
+                : character("2001");
 
-        public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id) =>
+        public override IGraphQlObjectResult<Interfaces.Human?> human(string id) =>
             Original.Resolve(_ => Domain.Data.humanLookup[id]).Nullable(_ => _.AsContract<Human>());
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(Interfaces.Episode episode)
         {
             var domainEpisode = InterfaceToDomain.ConvertEpisode(episode);
             return Original.Resolve(_ => Domain.Data.reviews[domainEpisode]).List(_ => _.AsContract<Review>());
         }
 
-        public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(FieldContext fieldContext, string? text)
+        public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(string? text)
         {
             return Original.Union(
                 _ => _.Resolve(from human in Domain.Data.humans where human.Name.Contains(text!) select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<SearchResult?>),
@@ -40,7 +40,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
             );
         }
 
-        public override IGraphQlObjectResult<Interfaces.Starship?> starship(FieldContext fieldContext, string id) =>
+        public override IGraphQlObjectResult<Interfaces.Starship?> starship(string id) =>
             Original.Resolve(_ => Domain.Data.starshipLookup[id]).AsContract<Starship>();
     }
 }
