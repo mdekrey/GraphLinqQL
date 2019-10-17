@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -54,5 +55,48 @@ namespace GraphLinqQL
             return task.Result;
         }
 
+    }
+
+    public class CatchFinalizerFactory
+    {
+        public static readonly MethodInfo CatchMethodInfo = typeof(CatchFinalizerFactory).GetMethod(nameof(Catch));
+        private readonly FieldContext fieldContext;
+
+        public CatchFinalizerFactory(FieldContext fieldContext)
+        {
+            this.fieldContext = fieldContext;
+        }
+
+        public IFinalizer Catch(Func<object> valueAccessor)
+        {
+            return new CatchFinalizer(fieldContext, valueAccessor);
+        }
+    }
+
+    public class CatchFinalizer : IFinalizer
+    {
+        private readonly FieldContext fieldContext;
+        private readonly Func<object> valueAccessor;
+
+        public CatchFinalizer(FieldContext fieldContext, Func<object> valueAccessor)
+        {
+            this.fieldContext = fieldContext;
+            this.valueAccessor = valueAccessor;
+        }
+
+        public Task<object?> GetValue(FinalizerContext context)
+        {
+            try
+            {
+                return Task.FromResult<object?>(valueAccessor());
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex)
+            {
+                var errors = ex.HasGraphQlErrors(out var error) ? (IReadOnlyList<GraphQlError>)error : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError, ExceptionExtensions.GetArguments(new { fieldName = fieldContext.Name }), fieldContext.Locations) };
+                context.Errors.AddRange(errors);
+                return Task.FromResult<object?>(null);
+            }
+        }
     }
 }

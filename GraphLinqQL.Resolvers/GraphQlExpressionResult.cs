@@ -141,12 +141,8 @@ namespace GraphLinqQL
             IGraphQlScalarResult resolution,
             IContract contract)
         {
-            if (contract == null)
-            {
-                throw new ArgumentException("Expected a contract but had none.", nameof(resolution));
-            }
             this.Resolution = resolution;
-            this.Contract = contract;
+            this.Contract = contract ?? throw new ArgumentException("Expected a contract but had none.", nameof(resolution));
 
             visitor = new GraphQlContractExpressionReplaceVisitor();
             visitor.Visit(resolution.Body);
@@ -176,7 +172,7 @@ namespace GraphLinqQL
             );
         }
 
-        private IGraphQlScalarResult ToResult(IReadOnlyList<LambdaExpression> joinedSelector)
+        private IGraphQlScalarResult<object> ToResult(IReadOnlyList<LambdaExpression> joinedSelector)
         {
             visitor.NewOperations = joinedSelector;
             return Resolution.UpdateBody<object>(body =>

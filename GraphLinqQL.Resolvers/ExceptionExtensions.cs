@@ -49,7 +49,7 @@ namespace GraphLinqQL
             }
         }
 
-        private static IDictionary<string, object> GetArguments(object arguments)
+        public static IDictionary<string, object> GetArguments(object arguments)
         {
             var type = arguments.GetType();
             var props = type.GetProperties();

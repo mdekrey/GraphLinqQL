@@ -306,3 +306,303 @@ tests:
           }
         }
         
+  - name: Value domain object to plain nullable object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            plain {
+              nullableObj {
+                value
+                throws
+              }
+              nullableObjs {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromValue": {
+              "plain": {
+                "nullableObj": null,
+                "nullableObjs": [null,null,null,null,null]
+              }
+            }
+          },
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObj\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 4, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObj"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            }
+          ]
+        }
+        
+  - name: Value domain object to deferred nullable object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              nullableObj {
+                value
+                throws
+              }
+              nullableObjs {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromValue": {
+              "deferred": {
+                "nullableObj": null,
+                "nullableObjs": [null,null,null,null,null]
+              }
+            }
+          },
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObj\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 4, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObj"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            }
+          ]
+        }
+        
+  - name: Value domain object to task nullable object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            task {
+              nullableObj {
+                value
+                throws
+              }
+              nullableObjs {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromValue": {
+              "task": {
+                "nullableObj": null,
+                "nullableObjs": [null,null,null,null,null]
+              }
+            }
+          },
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObj\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 4, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObj"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022nullableObjs\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 8, "Column": 6 } ],
+              "arguments": {
+                "fieldName": "nullableObjs"
+              }
+            }
+          ]
+        }
+
+        
+  - name: Value domain object to plain object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            plain {
+              obj {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022Query\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 1, "Column": 0 } ],
+              "arguments": {
+                "fieldName": "Query"
+              }
+            }
+          ]
+        }
+        
+        
+  - name: Value domain object to deferred object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              obj {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022Query\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 1, "Column": 0 } ],
+              "arguments": {
+                "fieldName": "Query"
+              }
+            }
+          ]
+        }
+        
+        
+  - name: Value domain object to task object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            task {
+              obj {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022Query\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 1, "Column": 0 } ],
+              "arguments": {
+                "fieldName": "Query"
+              }
+            }
+          ]
+        }
+        

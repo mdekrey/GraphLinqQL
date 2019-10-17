@@ -5,27 +5,18 @@ namespace GraphLinqQL
 {
     public static class ResolveNullabilityExtensions
     {
-        public static IGraphQlScalarResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
-            where TInput : class
-            where TContract : class
-        {
-            throw new NotImplementedException();
-            //var newResult = func(new GraphQlResultFactory<TInput>());
-
-            //return new GraphQlExpressionScalarResult<TContract?>(NullableCheck(newResult.UntypedResolver, original.UntypedResolver), newResult.Joins);
-        }
-
         public static IGraphQlObjectResult<TContract?> Nullable<TInput, TContract>(this IGraphQlScalarResult<TInput?> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
             where TInput : class
             where TContract : class
         {
-
             var newResult = func(new GraphQlResultFactory<TInput>());
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
-            var newScalar = original.UpdateBody<object>(getListLamba =>
+            var newScalar = original.UpdateBody<object>(
+                getListLamba =>
             {
-                return NullableCheck(constructedDeferred, getListLamba);
+                var withNullCheck = NullableCheck(constructedDeferred, getListLamba);
+                return withNullCheck;
             });
             return newResult.AdjustResolution<TContract?>(_ => newScalar);
         }

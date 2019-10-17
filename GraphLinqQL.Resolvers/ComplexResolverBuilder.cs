@@ -22,14 +22,14 @@ namespace GraphLinqQL
     internal class ComplexResolverBuilder : IComplexResolverBuilder
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod(nameof(IDictionary<string, object>.Add))!;
-        private readonly Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult> resolve;
+        private readonly Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve;
         private readonly Type modelType;
         private readonly FieldContext fieldContext;
         private readonly IReadOnlyList<ComplexResolutionEntry> resolvers;
 
         protected ComplexResolverBuilder(
             IReadOnlyList<ComplexResolutionEntry> resolvers,
-            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult> resolve,
+            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
             Type modelType,
             FieldContext fieldContext)
         {
@@ -42,7 +42,7 @@ namespace GraphLinqQL
         internal ComplexResolverBuilder(
             IContract contractMappings,
             IGraphQlServiceProvider serviceProvider,
-            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult> resolve,
+            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
             Type modelType,
             FieldContext fieldContext)
             : this(contractMappings.Resolvables.Select(e => new ComplexResolutionEntry(CreateContract(e.Contract, serviceProvider), e.DomainType)).ToArray(), resolve, modelType, fieldContext)
@@ -62,7 +62,7 @@ namespace GraphLinqQL
             return contract;
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult> resolve)
+        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult<object>> resolve)
         {
             foreach (var r in resolvers)
             {
@@ -71,7 +71,7 @@ namespace GraphLinqQL
             return this;
         }
 
-        public IGraphQlScalarResult Build()
+        public IGraphQlScalarResult<object> Build()
         {
             var mainSelectors = resolvers.Select(r =>
             {

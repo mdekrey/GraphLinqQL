@@ -18,6 +18,7 @@ namespace GraphLinqQL
         public const string ParseError = "parseError";
         public const string ErrorInResolver = "errorInResolver";
         public const string MissingArgument = "missingArgument";
+        public const string UnhandledError = "unhandledError";
 
         private static readonly IReadOnlyDictionary<string, MessageResolver> messages = ConstructMessages();
 
@@ -31,6 +32,7 @@ namespace GraphLinqQL
             builder.Add(ParseError, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.parseError, args["innerMessage"]));
             builder.Add(ErrorInResolver, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.errorInResolver, args["fieldName"], args["type"]));
             builder.Add(MissingArgument, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.missingArgument, args["fieldName"], args["argument"]));
+            builder.Add(UnhandledError, args => string.Format(CultureInfo.InvariantCulture, ErrorMessages.ErrorMessages.unhandledError, args["fieldName"]));
             return builder.ToImmutable();
         }
 

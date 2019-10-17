@@ -21,7 +21,7 @@ namespace GraphLinqQL.Execution
             var result = InvokeExpression(input, constructedResult);
             var finalizerContext = new FinalizerContext(cancellationToken);
             var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
-            return new ExecutionResult(false, finalizedResult, /*finalizedResult.Errors*/ EmptyArrayHelper.Empty<GraphQlError>());
+            return new ExecutionResult(false, finalizedResult, finalizerContext.Errors.ToArray());
         }
 
         private static async Task<object?> UnrollResults(object? data, FinalizerContext finalizerContext)

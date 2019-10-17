@@ -10,12 +10,12 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
     {
         public override IGraphQlObjectResult<Character?> character(FieldContext fieldContext, string id) => 
             Original.Union(
-                _ => _.Resolve(_ => Domain.Data.humans.Where(human => human.Id == id)).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Character?>),
+                _ => _.Resolve(_ => Domain.Data.humans.Where(human => human.Id == id)).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<Character>),
                 _ => _.Resolve(_ => Domain.Data.droids.Where(droid => droid.Id == id)).List(_ => _.AsContract<Droid>())
             ).Only();
 
         public override IGraphQlObjectResult<Interfaces.Droid?> droid(FieldContext fieldContext, string id) =>
-            Original.Resolve(_ => Domain.Data.droidLookup[id]).AsContract<Droid>();
+            Original.Resolve(_ => Domain.Data.droidLookup[id]).Nullable(_ => _.AsContract<Droid>());
 
         public override IGraphQlObjectResult<Character?> hero(FieldContext fieldContext, Episode? episode) =>
             episode == Episode.EMPIRE
@@ -23,7 +23,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
                 : character(fieldContext, "2001");
 
         public override IGraphQlObjectResult<Interfaces.Human?> human(FieldContext fieldContext, string id) =>
-            Original.Resolve(_ => Domain.Data.humanLookup[id]).AsContract<Human>();
+            Original.Resolve(_ => Domain.Data.humanLookup[id]).Nullable(_ => _.AsContract<Human>());
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(FieldContext fieldContext, Interfaces.Episode episode)
         {
