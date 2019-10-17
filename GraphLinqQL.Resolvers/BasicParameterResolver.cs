@@ -15,9 +15,9 @@ namespace GraphLinqQL
             this.parameters = parameters.ToImmutableDictionary();
         }
 
-        public T GetParameter<T>(string parameter, FieldContext fieldContext) => parameters.ContainsKey(parameter)
+        public T GetParameter<T>(string parameter) => parameters.ContainsKey(parameter)
             ? (T)parameters[parameter].BindTo(typeof(T))!
-            : throw new ArgumentException("Missing argument on GraphQL query").AddGraphQlError(WellKnownErrorCodes.MissingArgument, fieldContext.Locations, new { fieldName = fieldContext.Name, argument = parameter });
+            : throw new ArgumentException("Missing argument on GraphQL query").AddGraphQlError(WellKnownErrorCodes.MissingArgument, EmptyArrayHelper.Empty<QueryLocation>(), new { argument = parameter });
 
         public bool HasParameter(string parameter) => parameters.ContainsKey(parameter);
     }

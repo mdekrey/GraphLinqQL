@@ -1,0 +1,380 @@
+﻿scenario: Query Parameters
+tests:
+  - name: Star Wars - Parameterized Query on a Droid
+    given:
+      schema: star-wars
+      query: |
+        {
+          droid(id: "2000") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "droid": {
+                    "name": "C-3PO"
+                }
+            }
+        }
+        
+  - name: Star Wars - Parameterized Query on a Human
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker"
+                }
+            }
+        }
+      sqlite:
+        - SELECT "c"."Name" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+        
+  - name: Star Wars - Renaming field on a Droid
+    given:
+      schema: star-wars
+      query: |
+        {
+          droid(id: "2000") {
+            id
+            droidName: name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "droid": {
+                    "id": "2000",
+                    "droidName": "C-3PO"
+                }
+            }
+        }
+
+  - name: Star Wars - Missing parameter on Droid
+    given:
+      schema: star-wars
+      query: |
+        {
+          droid {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "errors": [
+            {
+              "message": "Missing argument \u0022id\u0022 for field \u0022droid\u0022.",
+              "errorCode": "missingArgument",
+              "locations": [
+                {
+                  "Line": 2,
+                  "Column": 2
+                }
+              ],
+              "arguments": {
+                "fieldName": "droid",
+                "argument": "id",
+                "type": "Query"
+              }
+            }
+          ]
+        }
+
+  - name: Star Wars - Parameterized Query with Variables on a Droid
+    given:
+      schema: star-wars
+      query: |
+        query ($id: ID!) {
+          droid(id: $id) {
+            name
+          }
+        }
+      variables:
+        id: "2000"
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "droid": {
+                    "name": "C-3PO"
+                }
+            }
+        }
+        
+  - name: Star Wars - Default parameter on a Human
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            height
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 1.72
+                }
+            }
+        }
+        
+  - name: Star Wars - Inline enum parameter on a Human
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            height(unit: FOOT)
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 5.6430448
+                }
+            }
+        }
+        
+  - name: Star Wars - Variable enum parameter on a Human
+    given:
+      schema: star-wars
+      query: |
+        query ($unit: LengthUnit!) {
+          human(id: "1000") {
+            name
+            height(unit: $unit)
+          }
+        }
+      variables:
+        unit: "FOOT"
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "name": "Luke Skywalker",
+                    "height": 5.6430448
+                }
+            }
+        }
+        
+  - name: Star Wars - More details on a Human
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            id
+            name
+            height
+            homePlanet
+            mass
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "human": {
+                    "id": "1000",
+                    "name": "Luke Skywalker",
+                    "height": 1.72,
+                    "homePlanet": "Tatooine",
+                    "mass": 77
+                }
+            }
+        }
+        
+  - name: Star Wars - More details on a Human via the Character interface
+    given:
+      schema: star-wars
+      query: |
+        {
+          character(id: "1000") {
+            id
+            name
+            height
+            homePlanet
+            mass
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "errors": [
+            {
+              "message": "An unhandled error occurred within resolve method for field \u0022height\u0022 on type \u0022Droid\u0022. See server logs for details.",
+              "errorCode": "errorInResolver",
+              "locations": [
+                {
+                  "Line": 5,
+                  "Column": 4
+                }
+              ],
+              "arguments": {
+                "fieldName": "height",
+                "type": "Droid"
+              }
+            }
+          ]
+        }
+        
+  - name: Star Wars - Get friends of a human via the character interface
+    given:
+      schema: star-wars
+      query: |
+        {
+          character(id: "1000") {
+            id
+            name
+            friends {
+                __typename
+                id
+                name
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "character": {
+              "id": "1000",
+              "name": "Luke Skywalker",
+              "friends": [
+                {
+                  "__typename": "Human",
+                  "id": "1002",
+                  "name": "Han Solo"
+                },
+                {
+                  "__typename": "Human",
+                  "id": "1003",
+                  "name": "Leia Organa"
+                },
+                {
+                  "__typename": "Droid",
+                  "id": "2000",
+                  "name": "C-3PO"
+                },
+                {
+                  "__typename": "Droid",
+                  "id": "2001",
+                  "name": "R2-D2"
+                }
+              ]
+            }
+          }
+        }
+        
+  - name: Star Wars - Get friends of a human and their appearances
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1001") {
+            id
+            name
+            appearsIn
+            friends {
+                __typename
+                id
+                name
+                appearsIn
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "id": "1001",
+              "name": "Darth Vader",
+              "appearsIn": [
+                "NEWHOPE",
+                "EMPIRE",
+                "JEDI"
+              ],
+              "friends": [
+                {
+                  "__typename": "Human",
+                  "id": "1004",
+                  "name": "Wilhuff Tarkin",
+                  "appearsIn": [
+                    "NEWHOPE"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      sqlite:
+        - SELECT "c"."Id", "c"."Name", "a"."EpisodeId", "a"."CharacterId", "t0"."c", "t0"."Id", "t0"."Name", "t0"."FromId", "t0"."ToId", "t0"."EpisodeId", "t0"."CharacterId", "t0"."EpisodeId0", "t0"."CharacterId0" FROM "Characters" AS "c" LEFT JOIN "Appearances" AS "a" ON "c"."Id" = "a"."CharacterId" LEFT JOIN ( SELECT "t"."Discriminator" = 'Human' AS "c", "t"."Id", "t"."Name", "f"."FromId", "f"."ToId", "a0"."EpisodeId", "a0"."CharacterId", "a1"."EpisodeId" AS "EpisodeId0", "a1"."CharacterId" AS "CharacterId0" FROM "Friendships" AS "f" INNER JOIN ( SELECT "c0"."Id", "c0"."Discriminator", "c0"."Name", "c0"."PrimaryFunction", "c0"."Height", "c0"."HomePlanet", "c0"."Mass" FROM "Characters" AS "c0" WHERE "c0"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t" ON "f"."ToId" = "t"."Id" LEFT JOIN "Appearances" AS "a0" ON "t"."Id" = "a0"."CharacterId" LEFT JOIN "Appearances" AS "a1" ON "t"."Id" = "a1"."CharacterId" ) AS "t0" ON "c"."Id" = "t0"."FromId" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL) ORDER BY "c"."Id", "a"."EpisodeId", "a"."CharacterId", "t0"."FromId", "t0"."ToId", "t0"."Id", "t0"."EpisodeId", "t0"."CharacterId", "t0"."EpisodeId0", "t0"."CharacterId0"
+        
+  - name: Star Wars - Hero by film
+    given:
+      schema: star-wars
+      query: |
+        {
+          hero(episode: EMPIRE) {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "Luke Skywalker"
+                }
+            }
+        }
+      sqlite:
+        - SELECT "t"."Discriminator" = 'Droid', "t"."Name" FROM "Films" AS "f" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t" ON "f"."HeroId" = "t"."Id" WHERE ("f"."EpisodeId" = @__ConvertEpisode_0) AND @__ConvertEpisode_0 IS NOT NULL

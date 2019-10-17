@@ -52,6 +52,28 @@ namespace GraphLinqQL
             return body.Type.IsValueType ? Expression.Convert(body, typeof(object)) : body;
         }
 
+        public static Expression Unbox(this Expression expression)
+        {
+            return expression switch
+            {
+                UnaryExpression { Operand: var actual, NodeType: ExpressionType.Convert, Type: var t } when t == typeof(object) => actual,
+                var original => original
+            };
+    }
+
+        internal static MethodCallExpression CallSelect(this Expression list, LambdaExpression selector)
+        {
+            return list.IsQueryable()
+                ? list.CallQueryableSelect(selector)
+                : list.CallEnumerableSelect(selector);
+        }
+
+        internal static bool IsQueryable(this Expression list)
+        {
+            var elementType = TypeSystem.GetElementType(list.Type);
+            return typeof(IQueryable<>).MakeGenericType(elementType).IsAssignableFrom(list.Type);
+        }
+
         internal static MethodCallExpression CallQueryableSelect(this Expression list, LambdaExpression selector)
         {
             var queryableSelect = GenericQueryableSelect.MakeGenericMethod(new[] { TypeSystem.GetElementType(list.Type), selector.ReturnType });
@@ -71,11 +93,23 @@ namespace GraphLinqQL
         
         internal static Expression Inline(this LambdaExpression newOperation, params Expression[] expressions)
         {
-            var parameters = newOperation.Parameters.Zip(expressions, (old, inlined) => new { old, inlined }).ToDictionary(kvp => (Expression)kvp.old, kvp => kvp.inlined);
-            if (parameters.Any(kvp => !kvp.Key.Type.IsAssignableFrom(kvp.Value.Type)))
-            {
-                throw new ArgumentException("Parameters did not match types");
-            }
+            var parameters = Enumerable.Zip(
+                newOperation.Parameters,
+                expressions, 
+                (old, inlined) =>
+                {
+                    inlined = inlined.Unbox();
+                    if (!old.Type.IsAssignableFrom(inlined.Type))
+                    {
+                        throw new ArgumentException("Parameters did not match types");
+                    }
+                    if (inlined.Type.IsValueType && inlined.Type != old.Type)
+                    {
+                        inlined = Expression.Convert(inlined, old.Type);
+                    }
+                    return new { old, inlined };
+                }
+            ).ToDictionary(kvp => (Expression)kvp.old, kvp => (Expression)kvp.inlined);
             return newOperation.Body.Replace(parameters);
         }
     }

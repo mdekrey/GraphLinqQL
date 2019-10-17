@@ -8,13 +8,13 @@ namespace GraphLinqQL.Introspection
 {
     public class DirectiveDefinition : __Directive.GraphQlContract<DirectiveInformation>
     {
-        public override IGraphQlObjectResult<IEnumerable<__InputValue>> args(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__InputValue>> args() =>
             Original.Resolve(d => d.Arguments).List(_ => _.AsContract<GraphQlInputField>());
 
-        public override IGraphQlScalarResult<string?> description(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> description() =>
             Original.Resolve(v => v.Description);
 
-        public override IGraphQlScalarResult<IEnumerable<__DirectiveLocation>> locations(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<IEnumerable<__DirectiveLocation>> locations() =>
             Original.Resolve(v => v.Locations.Select(ToInterfaceLocation));
 
         private __DirectiveLocation ToInterfaceLocation(DirectiveLocation arg)
@@ -44,7 +44,7 @@ namespace GraphLinqQL.Introspection
             };
         }
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(v => v.Name);
     }
 }

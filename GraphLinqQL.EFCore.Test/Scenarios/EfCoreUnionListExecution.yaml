@@ -1,0 +1,103 @@
+﻿scenario: Union List Execution
+tests:
+  - name: Star Wars - Search list results
+    given:
+      schema: star-wars
+      query: |
+        {
+          search(text: "Luke") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Luke Skywalker"
+                }]
+            }
+        }
+        
+  - name: Star Wars - Search list results with multiple matches
+    given:
+      schema: star-wars
+      query: |
+        {
+          search(text: "L") {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Luke Skywalker"
+                }, {
+                    "name": "Leia Organa"
+                }]
+            }
+        }
+        
+  - name: Star Wars - Search list results with multiple types
+    given:
+      schema: star-wars
+      query: |
+        {
+          search(text: "D") {
+            __typename
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "__typename": "Human",
+                    "name": "Darth Vader"
+                }, {
+                    "__typename": "Droid",
+                    "name": "R2-D2"
+                }]
+            }
+        }
+        
+  - name: Star Wars - Search list results with multiple types and fragments
+    given:
+      schema: star-wars
+      query: |
+        {
+          search(text: "D") {
+            name
+            ... on Droid {
+              primaryFunction
+            }
+            ... on Human {
+              mass
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "search": [{
+                    "name": "Darth Vader",
+                    "mass": 136
+                }, {
+                    "name": "R2-D2",
+                    "primaryFunction": "Astromech"
+                }]
+            }
+        }
+        

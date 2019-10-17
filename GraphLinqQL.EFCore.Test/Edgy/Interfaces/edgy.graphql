@@ -1,0 +1,40 @@
+﻿
+schema {
+    query: Query
+}
+
+type Query {
+	fromValue: WithInput!
+	fromReference: WithInput!
+}
+
+type WithInput {
+	plain: Complex!
+	task: Complex!
+	deferred: Complex!
+}
+
+type Complex {
+
+	integer: Int!
+	nullableInteger: Int
+	integers: [Int!]!
+	nullableIntegers: [Int]
+	
+	text: String!
+	nullableText: String
+	texts: [String!]!
+	nullableTexts: [String]
+	
+	obj: Inner!
+	nullableObj: Inner
+	objs: [Inner!]!
+	nullableObjs: [Inner]
+
+}
+
+type Inner {
+	value: String
+	throws: String!
+	nullableThrows: String
+}

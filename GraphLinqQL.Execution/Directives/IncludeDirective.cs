@@ -10,8 +10,8 @@ namespace GraphLinqQL.Directives
     {
         public string Name => "include";
 
-        public TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, FieldContext fieldContext, GraphQLExecutionContext context)
+        public TNode? HandleDirective<TNode>(TNode node, IGraphQlParameterResolver arguments, GraphQLExecutionContext context)
             where TNode : class, INode =>
-            arguments.GetParameter<bool>("if", fieldContext) == true ? node : null;
+            arguments.GetParameter<bool>("if") == true ? node : null;
     }
 }

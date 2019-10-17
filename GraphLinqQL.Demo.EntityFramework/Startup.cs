@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using GraphLinqQL.Execution;
-using GraphLinqQL.StarWarsV4.Resolvers;
+using GraphLinqQL.StarWars.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,15 +31,22 @@ namespace GraphLinqQL
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<StarWarsV4.Domain.StarWarsContext>(op =>
-            {
-                op.UseSqlServer(Configuration["DefaultConnection"]);
+#pragma warning disable CA2000 // Dispose objects before losing scope - this gets added to the DbContext and used for the duration of the app
+            var inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            inMemorySqlite.Open();
+
+            services.AddDbContext<StarWarsContext>(options => {
+                options.UseSqlite(inMemorySqlite);
             });
 
-            services.AddGraphQl<StarWarsV4.Interfaces.TypeResolver>(typeof(Query), options =>
+            services.AddGraphQl<StarWars.Interfaces.TypeResolver>(typeof(StarWars.Implementations.Query), options =>
             {
+                options.Mutation = typeof(StarWars.Implementations.Mutation);
                 options.AddIntrospection();
             });
+
+            services.AddHostedService<DbContextInitializingHostedService>();
         }
 
 
@@ -57,10 +64,10 @@ namespace GraphLinqQL
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!").ConfigureAwait(false);
+                    await context.Response.WriteAsync("Try out the /star-wars-v3/graphql endpoint!").ConfigureAwait(false);
                 });
 
-                endpoints.UseGraphQl("/star-wars-v4/graphql");
+                endpoints.UseGraphQl("/star-wars-v3/graphql");
             });
         }
     }

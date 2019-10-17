@@ -10,129 +10,149 @@ namespace GraphLinqQL
     {
         public IGraphQlResolvable GraphQlResolvable { get; }
         public Type DomainType { get; }
+        public Action<FieldContext> FieldContextSetup { get; }
         public Dictionary<string, IGraphQlScalarResult> Results { get; } = new Dictionary<string, IGraphQlScalarResult>();
 
-        public ComplexResolutionEntry(IGraphQlResolvable graphQlResolvable, Type domainType)
+        public ComplexResolutionEntry(IGraphQlResolvable graphQlResolvable, Type domainType, Action<FieldContext> fieldContextSetup)
         {
             this.GraphQlResolvable = graphQlResolvable;
-            this.DomainType = domainType;
+            DomainType = domainType;
+            FieldContextSetup = fieldContextSetup;
         }
     }
 
     internal class ComplexResolverBuilder : IComplexResolverBuilder
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod(nameof(IDictionary<string, object>.Add))!;
-        private readonly Func<LambdaExpression, IGraphQlScalarResult> resolve;
+        private readonly Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve;
         private readonly Type modelType;
-        private readonly FieldContext fieldContext;
         private readonly IReadOnlyList<ComplexResolutionEntry> resolvers;
 
         protected ComplexResolverBuilder(
             IReadOnlyList<ComplexResolutionEntry> resolvers,
-            Func<LambdaExpression, IGraphQlScalarResult> resolve,
-            Type modelType,
-            FieldContext fieldContext)
+            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
+            Type modelType)
         {
             this.resolvers = resolvers;
             this.resolve = resolve;
             this.modelType = modelType;
-            this.fieldContext = fieldContext;
         }
 
         internal ComplexResolverBuilder(
             IContract contractMappings,
             IGraphQlServiceProvider serviceProvider,
-            Func<LambdaExpression, IGraphQlScalarResult> resolve,
-            Type modelType,
-            FieldContext fieldContext)
-            : this(contractMappings.ContractMappingCondition.Select(c => new ComplexResolutionEntry(CreateContract(c.ContractType, serviceProvider), c.DomainType)).ToArray(), resolve, modelType, fieldContext)
+            Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
+            Type modelType)
+            : this(contractMappings.Resolvables.Select(e => CreateComplexResolution(serviceProvider, e)).ToArray(), resolve, modelType)
         {
         }
 
-        private static IGraphQlResolvable CreateContract(Type contractType, IGraphQlServiceProvider serviceProvider)
+        private static ComplexResolutionEntry CreateComplexResolution(IGraphQlServiceProvider serviceProvider, ContractEntry entry)
         {
-            var contract = serviceProvider.GetResolverContract(contractType);
+            var modelType = entry.Contract.GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).First().GetGenericArguments()[0];
+            var contract = CreateContract(entry.Contract, serviceProvider);
             var accepts = contract as IGraphQlAccepts;
             if (accepts == null)
             {
                 throw new ArgumentException("Contract does not accept an input type");
             }
-            var modelType = accepts.GetType().GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).First().GetGenericArguments()[0];
-            accepts.Original = GraphQlResultFactory.Construct(modelType);
+            return new ComplexResolutionEntry(
+                contract, 
+                entry.DomainType, 
+                (fieldContext) =>
+                {
+                    contract.FieldContext = fieldContext;
+                    accepts.Original = GraphQlResultFactory.Construct(fieldContext, modelType);
+                }
+            );
+        }
+
+        private static IGraphQlResolvable CreateContract(Type contractType, IGraphQlServiceProvider serviceProvider)
+        {
+            var contract = serviceProvider.GetResolverContract(contractType);
+            
             return contract;
         }
 
-        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, FieldContext context, Func<IGraphQlResolvable, IGraphQlScalarResult> resolve)
+        IComplexResolverBuilder IComplexResolverBuilder.Add(string displayName, IReadOnlyList<QueryLocation> locations, Func<IGraphQlResolvable, IGraphQlScalarResult<object>> resolve)
         {
             foreach (var r in resolvers)
             {
-                r.Results.Add(displayName, resolve(r.GraphQlResolvable));
+                var fieldContext = CreateFieldContext(r.GraphQlResolvable.GraphQlTypeName, displayName, locations);
+                try
+                {
+                    r.FieldContextSetup(fieldContext);
+                    r.Results.Add(displayName, resolve(r.GraphQlResolvable));
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HasGraphQlErrors(out var errors))
+                    {
+                        foreach (var error in errors)
+                        {
+                            error.Fixup(fieldContext);
+                        }
+                    }
+                    else
+                    {
+                        ex.AddGraphQlError(WellKnownErrorCodes.UnhandledError, fieldContext);
+                    }
+                    throw;
+                }
             }
             return this;
         }
 
-        public IGraphQlScalarResult Build()
+        private static FieldContext CreateFieldContext(string graphQlTypeName, string displayName, IReadOnlyList<QueryLocation> locations)
         {
-            var modelParameter = Expression.Parameter(modelType, "ComplexResolverBuilder " + modelType.FullName);
-
-            var temp = resolvers.ToDictionary(r => r.DomainType, r =>
-            {
-                var expressions = r.Results;
-                var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
-                {
-                    var inputResolver = result.Value.ConstructResult();
-                    var resolveBody = inputResolver.Inline(r.DomainType == typeof(void) ? (Expression)modelParameter : Expression.Convert(modelParameter, r.DomainType));
-                    return Expression.ElementInit(addMethod, Expression.Constant(result.Key), resolveBody.Box());
-                }));
-                return resultDictionary;
-            });
-            // TODO - should log an error instead of just adding a null to the array - what if it is a not-null array?
-            var resultDictionary = temp.Count == 1 ? temp.First().Value :
-                temp.Aggregate((Expression)Expression.Constant(null, typeof(Dictionary<string, object>)),
-                    (prev, next) => Expression.Condition(Expression.TypeIs(modelParameter, next.Key), next.Value, prev));
-
-            if (resolvers.SelectMany(r => r.Results.Values).SelectMany(v => v.Joins).Any() && temp.Count > 1)
-            {
-                throw new NotImplementedException("GraphLinqQL does not currently support joins within unions");
-            }
-
-            var allJoins = resolvers.SelectMany(r => r.Results.Values).SelectMany(v => v.Joins).ToImmutableHashSet();
-
-            var resultSelector = Expression.Lambda(resultDictionary, modelParameter);
-
-            var originalParameter = Expression.Parameter(modelType, "Original " + modelType.FullName);
-
-            var mainBody = resultSelector.Inline(originalParameter)
-                .Replace(allJoins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(originalParameter)));
-            var mainSelector = Expression.Lambda(mainBody, originalParameter);
-            return resolve(mainSelector);
+            return new FieldContext(graphQlTypeName, displayName, locations);
         }
 
-        public IComplexResolverBuilder Add(string property, FieldContext context, IGraphQlParameterResolver? parameters) =>
-            Add(property, property, context, parameters);
+        public IGraphQlScalarResult<object> Build()
+        {
+            var mainSelectors = resolvers.Select(r =>
+            {
+                var allJoins = r.Results.Values.SelectMany(v => v.Joins).ToImmutableHashSet();
+                var expressions = r.Results.ToDictionary(result => result.Key, result => result.Value.ConstructResult());
+                var inputParam = Expression.Parameter(r.DomainType);
+                var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
+                {
+                    var inputResolver = result.Value.Inline(inputParam);
+                    return Expression.ElementInit(addMethod, Expression.Constant(result.Key), inputResolver.Box());
+                }));
+                var resultLambda = Expression.Lambda(resultDictionary, inputParam);
+                return Expression.Lambda(resultLambda.Body.Replace(allJoins.ToDictionary(join => join.Placeholder as Expression, join => join.Conversion.Inline(resultLambda.Parameters[0]))), resultLambda.Parameters);
+            }).ToArray();
+            return resolve(mainSelectors);
+        }
 
-        public IComplexResolverBuilder Add(string displayName, string property, FieldContext context, IGraphQlParameterResolver? parameters)
+        public IComplexResolverBuilder Add(string property, IReadOnlyList<QueryLocation> locations, IGraphQlParameterResolver? parameters) =>
+            Add(property, property, locations, parameters);
+
+        public IComplexResolverBuilder Add(string displayName, string property, IReadOnlyList<QueryLocation> locations, IGraphQlParameterResolver? parameters)
         {
             foreach (var r in resolvers)
             {
-                var result = SafeResolve(r.GraphQlResolvable, property, context, parameters);
+                var fieldContext = CreateFieldContext(r.GraphQlResolvable.GraphQlTypeName, property, locations);
+                r.FieldContextSetup(fieldContext);
+                var result = SafeResolve(r.GraphQlResolvable, property, parameters, fieldContext);
 
                 r.Results.Add(displayName, result is IGraphQlScalarResult scalarResult
                         ? scalarResult
-                        : throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = r.GraphQlResolvable }));
+                        : throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, fieldContext));
             }
             return this;
         }
 
-        private IGraphQlResult SafeResolve(IGraphQlResolvable contract, string property, FieldContext context, IGraphQlParameterResolver? parameters)
+        private IGraphQlResult SafeResolve(IGraphQlResolvable contract, string property, IGraphQlParameterResolver? parameters, FieldContext fieldContext)
         {
             try
             {
-                return contract.ResolveQuery(property, context, parameters: parameters ?? BasicParameterResolver.Empty);
+                return contract.ResolveQuery(property, parameters: parameters ?? BasicParameterResolver.Empty);
             }
             catch (Exception ex)
             {
-                ex.AddGraphQlError(WellKnownErrorCodes.ErrorInResolver, context.Locations, new { fieldName = property, type = contract.GraphQlTypeName });
+                ex.AddGraphQlError(WellKnownErrorCodes.ErrorInResolver, contract.FieldContext);
                 throw;
             }
         }
@@ -144,7 +164,7 @@ namespace GraphLinqQL
                 throw new ArgumentNullException(nameof(typedBuilder));
             }
 
-            typedBuilder(new ComplexResolverBuilder(this.resolvers.Where(r => r.GraphQlResolvable.IsType(value)).ToArray(), resolve, modelType, fieldContext));
+            typedBuilder(new ComplexResolverBuilder(this.resolvers.Where(r => r.GraphQlResolvable.IsType(value)).ToArray(), resolve, modelType));
 
             return this;
         }

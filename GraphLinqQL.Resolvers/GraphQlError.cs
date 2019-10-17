@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Linq;
 
 namespace GraphLinqQL
 {
     public class GraphQlError
     {
-        public GraphQlError(string errorCode, IDictionary<string, object> arguments, IReadOnlyList<QueryLocation> locations)
+        public GraphQlError(string errorCode, Dictionary<string, object>? arguments = null, IReadOnlyList<QueryLocation>? locations = null)
         {
             ErrorCode = errorCode;
-            Arguments = arguments.ToImmutableDictionary();
-            Locations = locations;
+            Arguments = arguments ?? new Dictionary<string, object>();
+            Locations = locations?.ToList() ?? new List<QueryLocation>();
         }
 
         public string ErrorCode { get; }
-        public IDictionary<string, object> Arguments { get; }
-        public IReadOnlyList<QueryLocation> Locations { get; }
+        public Dictionary<string, object> Arguments { get; }
+        public List<QueryLocation> Locations { get; }
     }
 }

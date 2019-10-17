@@ -10,30 +10,30 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
 {
     public class QueryContract : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> heroes(FieldContext fieldContext, int? first) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> heroes(int? first) =>
             first == null 
                 ? Original.Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>())
                 : Original.Resolve(root => Domain.DomainData.heroes.Take(first.Value)).List(item => item.AsContract<Hero>());
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>?> nulls(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>?> nulls() =>
             Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.AsContract<Hero>()));
 
-        public override IGraphQlObjectResult<Interfaces.Hero?> nohero(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<Interfaces.Hero?> nohero() =>
             Original.Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.AsContract<Hero>());
 
-        public override IGraphQlObjectResult<Interfaces.Hero> hero(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<Interfaces.Hero> hero() =>
             Original.Resolve(root => Domain.DomainData.heroes[0]).AsContract<Hero>();
 
-        public override IGraphQlObjectResult<Interfaces.Hero> heroFinalized(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<Interfaces.Hero> heroFinalized() =>
             Original.Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>()).Only();
 
-        public override IGraphQlObjectResult<Interfaces.Hero> heroById(FieldContext fieldContext, string id) =>
+        public override IGraphQlObjectResult<Interfaces.Hero> heroById(string id) =>
             Original.Resolve(root => id).AsContract<HeroById>();
 
-        public override IGraphQlScalarResult<double> rand(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<double> rand() =>
             Original.Resolve(root => 5.0);
 
-        public override IGraphQlObjectResult<IEnumerable<Character>> characters(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Character>> characters() =>
             Original.Union(
                 _ => _.Resolve(Domain.DomainData.heroes).List(_ => _.AsContract<Hero>() as IGraphQlObjectResult<Character>),
                 _ => _.Resolve(Domain.DomainData.villains).List(_ => _.AsContract<Villain>())
@@ -59,13 +59,13 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         //                                                                                       select friend)
         //                                                                        select GraphQlJoin.BuildPlaceholder(t, friends));
 
-        public override IGraphQlScalarResult<string> faction(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> faction() =>
             Original.Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends() =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred() =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask() =>
             Original.ResolveTask(async hero =>
             {
                 await Task.Yield();
@@ -74,13 +74,13 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
                         join friend in Domain.DomainData.heroes on friendId.Id2 equals friend.Id
                         select friend).ToArray();
             }).List(item => item.AsContract<Hero>());
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(hero => hero.Id);
-        public override IGraphQlScalarResult<string> location(FieldContext fieldContext, string? date) =>
+        public override IGraphQlScalarResult<string> location(string? date) =>
             Original.Resolve(hero => $"Unknown ({date})");
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(hero => hero.Name);
-        public override IGraphQlScalarResult<double> renown(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<double> renown() =>
             Original.Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
     }
 
@@ -108,33 +108,33 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         //                                                                                  select friend)
         //                                                                   select GraphQlJoin.BuildPlaceholder(t, friends));
 
-        public override IGraphQlScalarResult<string> faction(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> faction() =>
             Original.Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends() =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred() =>
             Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask() =>
             throw new NotImplementedException();
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Join(heroJoin).Resolve((_, hero) => hero.Id);
-        public override IGraphQlScalarResult<string> location(FieldContext fieldContext, string? date) =>
+        public override IGraphQlScalarResult<string> location(string? date) =>
             Original.Resolve(hero => $"Unknown ({date})");
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Join(heroJoin).Resolve((_, hero) => hero.Name);
-        public override IGraphQlScalarResult<double> renown(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<double> renown() =>
             Original.Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
     }
 
     public class Villain : Interfaces.Villain.GraphQlContract<Domain.Villain>
     {
-        public override IGraphQlScalarResult<string> goal(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> goal() =>
             Original.Resolve(villain => villain.Goal);
 
-        public override IGraphQlScalarResult<string> id(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> id() =>
             Original.Resolve(villain => villain.Id);
 
-        public override IGraphQlScalarResult<string> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string> name() =>
             Original.Resolve(villain => villain.Name);
     }
 }

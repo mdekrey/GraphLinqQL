@@ -7,14 +7,6 @@
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
-    <None Remove="StarWarsV4\sw-schema.4.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <GraphLinqQlSchema Include="StarWarsV4\sw-schema.4.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -27,6 +19,7 @@
     <ProjectReference Include="..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.StarWars.EFCore\GraphLinqQL.StarWars.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

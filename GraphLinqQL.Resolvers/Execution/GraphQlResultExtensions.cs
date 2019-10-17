@@ -19,9 +19,9 @@ namespace GraphLinqQL.Execution
             }
             var constructedResult = resolved.ConstructResult();
             var result = InvokeExpression(input, constructedResult);
-            var finalizerContext = new FinalizerContext(cancellationToken);
+            var finalizerContext = new FinalizerContext(cancellationToken, UnrollResults);
             var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
-            return new ExecutionResult(false, finalizedResult, /*finalizedResult.Errors*/ EmptyArrayHelper.Empty<GraphQlError>());
+            return new ExecutionResult(false, finalizedResult, finalizerContext.Errors.ToArray());
         }
 
         private static async Task<object?> UnrollResults(object? data, FinalizerContext finalizerContext)
@@ -29,8 +29,8 @@ namespace GraphLinqQL.Execution
             switch (data)
             {
                 case IFinalizer finalizer:
-                    var value = await finalizer.GetValue(finalizerContext).ConfigureAwait(false);
-                    return await UnrollResults(value, finalizerContext).ConfigureAwait(false);
+                    var result = await finalizer.GetValue(finalizerContext).ConfigureAwait(false);
+                    return result;
                 case IDictionary<string, object?> complex:
                     foreach (var entry in complex.Keys.ToArray())
                     {

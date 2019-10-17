@@ -1,0 +1,331 @@
+﻿scenario: Query Pagination
+tests:
+  - name: Star Wars - Get a human's friend count
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection {
+              totalCount
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "totalCount": 4
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT COUNT(*) FROM "Friendships" AS "f" WHERE ("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+    
+
+  - name: Star Wars - Get a human's friend count when paging
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              totalCount
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "totalCount": 4
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT COUNT(*) FROM "Friendships" AS "f" WHERE ("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+        
+  - name: Star Wars - Get a human's friends when paging
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              friends {
+                name
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "friends": [
+                  {
+                    "name": "R2-D2"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT "t0"."Discriminator" = 'Droid', "t0"."Name" FROM ( SELECT "f"."FromId", "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t0" ON "t"."ToId" = "t0"."Id" ORDER BY "t"."ToId"
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+        
+  - name: Star Wars - Get a page's cursor start info
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              pageInfo {
+                startCursor
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "pageInfo": {
+                  "startCursor": "2001"
+                }
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT 1
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+
+  - name: Star Wars - Get a page's cursor end info
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              pageInfo {
+                endCursor
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "pageInfo": {
+                  "endCursor": "2001"
+                }
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT "t"."ToId" FROM ( SELECT "f"."ToId", "f"."FromId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" ORDER BY "t"."ToId" DESC LIMIT 1
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+      
+  - name: Star Wars - Get a page's has-next-page info, when it does
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection {
+              pageInfo {
+                hasNextPage
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "pageInfo": {
+                  "hasNextPage": true
+                }
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT EXISTS ( SELECT 1 FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT -1 OFFSET @__p_2)
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+
+      
+  - name: Star Wars - "Get a page's has-next-page info, when it doesn't"
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              pageInfo {
+                hasNextPage
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT EXISTS ( SELECT 1 FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT -1 OFFSET @__p_2)
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+        
+  - name: Star Wars - Show page edge data
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection {
+              edges {
+                cursor
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "edges": [
+                  {
+                    "cursor": "1002",
+                    "node": {
+                      "name": "Han Solo"
+                    }
+                  },
+                  {
+                    "cursor": "1003",
+                    "node": {
+                      "name": "Leia Organa"
+                    }
+                  },
+                  {
+                    "cursor": "2000",
+                    "node": {
+                      "name": "C-3PO"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT "t"."ToId", "t0"."Discriminator" = 'Droid', "t0"."Name" FROM ( SELECT "f"."FromId", "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t0" ON "t"."ToId" = "t0"."Id" ORDER BY "t"."ToId"
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)
+        
+  - name: Star Wars - Show page edge data 
+    given:
+      schema: star-wars
+      query: |
+        {
+          human(id: "1000") {
+            name
+            friendsConnection(after: "2000") {
+              edges {
+                cursor
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "human": {
+              "name": "Luke Skywalker",
+              "friendsConnection": {
+                "edges": [
+                  {
+                    "cursor": "2001",
+                    "node": {
+                      "name": "R2-D2"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      sqlite:
+        - SELECT "t"."ToId", "t0"."Discriminator" = 'Droid', "t0"."Name" FROM ( SELECT "f"."FromId", "f"."ToId" FROM "Friendships" AS "f" WHERE (("f"."FromId" = @__humanId_0) AND @__humanId_0 IS NOT NULL) AND ("f"."ToId" > @__after_1) ORDER BY "f"."ToId" LIMIT @__p_2 ) AS "t" INNER JOIN ( SELECT "c"."Id", "c"."Discriminator", "c"."Name", "c"."PrimaryFunction", "c"."Height", "c"."HomePlanet", "c"."Mass" FROM "Characters" AS "c" WHERE "c"."Discriminator" IN ('Character', 'Droid', 'Human') ) AS "t0" ON "t"."ToId" = "t0"."Id" ORDER BY "t"."ToId"
+        - SELECT "c"."Name", "c"."Id" FROM "Characters" AS "c" WHERE ("c"."Discriminator" = 'Human') AND (("c"."Id" = @__intId_0) AND @__intId_0 IS NOT NULL)

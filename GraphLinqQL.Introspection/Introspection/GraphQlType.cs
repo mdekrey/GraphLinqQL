@@ -15,31 +15,31 @@ namespace GraphLinqQL.Introspection
         private readonly GraphQlJoin<Type, IGraphQlTypeInformation> typeInformation; 
 
 
-        public override IGraphQlScalarResult<string?> description(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> description() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Description);
 
-        public override IGraphQlObjectResult<IEnumerable<__EnumValue>?> enumValues(FieldContext fieldContext, bool? includeDeprecated) =>
+        public override IGraphQlObjectResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated) =>
             Original.Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<EnumValue>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__Field>?> fields(FieldContext fieldContext, bool? includeDeprecated) =>
+        public override IGraphQlObjectResult<IEnumerable<__Field>?> fields(bool? includeDeprecated) =>
             Original.Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<GraphQlField>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__InputValue>?> inputFields(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__InputValue>?> inputFields() =>
             Original.Join(typeInformation).Resolve((_, info) => info.InputFields).Nullable(_ => _.List(_ => _.AsContract<GraphQlInputField>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__Type>?> interfaces(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__Type>?> interfaces() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
 
-        public override IGraphQlScalarResult<__TypeKind> kind(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<__TypeKind> kind() =>
             Original.Join(typeInformation).Resolve((_, info) => ToInterfaceKind(info.Kind));
 
-        public override IGraphQlScalarResult<string?> name(FieldContext fieldContext) =>
+        public override IGraphQlScalarResult<string?> name() =>
             Original.Join(typeInformation).Resolve((_, info) => info.Name);
 
-        public override IGraphQlObjectResult<__Type?> ofType(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<__Type?> ofType() =>
             Original.Join(typeInformation).Resolve((_, info) => info.OfType).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlObjectResult<IEnumerable<__Type>?> possibleTypes(FieldContext fieldContext) =>
+        public override IGraphQlObjectResult<IEnumerable<__Type>?> possibleTypes() =>
             Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
 
         private __TypeKind ToInterfaceKind(TypeKind kind)

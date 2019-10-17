@@ -10,20 +10,19 @@ namespace GraphLinqQL
 {
     public static class ResolveExtensions
     {
-        internal static MethodInfo asQueryable = typeof(Queryable).GetMethods()
-            .Where(m => m.Name == nameof(Queryable.AsQueryable) && m.IsGenericMethodDefinition)
-            .Single();
-
-        public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver, CancellationToken cancellationToken = default)
+        public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver, CancellationToken cancellationToken = default)
         {
-            var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver);
+            var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver).Catch();
             return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot(), cancellationToken);
         }
 
-        public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
+        public static IGraphQlScalarResult<object> GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver)
         {
-            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
-            var resolved = resolver(resultFactory.Resolve(a => a).AsContract<object>(new ContractMapping(contract)).ResolveComplex(serviceProvider, FieldContext.Empty));
+            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(FieldContext.Empty);
+            var contractBuilder = resultFactory
+                .Resolve(a => a).AsContract<object>(new ContractMapping(contract, typeof(TRoot)), body => GraphQlContractExpression.ResolveContract(body, 0))
+                .ResolveComplex(serviceProvider);
+            var resolved = resolver(contractBuilder);
             return resolved;
         }
 
@@ -33,9 +32,28 @@ namespace GraphLinqQL
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContractResult>> Union<TInputType, TContractResult>(this IGraphQlResultFactory<TInputType> source, params Func<IGraphQlResultFactory<TInputType>, IGraphQlObjectResult<IEnumerable<TContractResult>>>[] funcs)
+            where TContractResult : IGraphQlResolvable?
         {
             var objectResults = funcs.Select(f => f(source)).ToArray();
-            return new MultiObjectResult<IEnumerable<TContractResult>>(objectResults, ConcatAll);
+            var aggregate = objectResults.Aggregate(new 
+            { 
+                Resolvables = EmptyArrayHelper.Empty<ContractEntry>(), 
+                Resolvers = EmptyArrayHelper.Empty<LambdaExpression>(),
+            }, (prev, next) =>
+            {
+                var lambda = next.Resolution.ConstructResult();
+
+                var visitor = new GraphQlContractExpressionReplaceVisitor();
+                var param = Expression.Parameter(typeof(object));
+                visitor.NewOperations = next.Contract.Resolvables.Select((_, index) => Expression.Lambda(GraphQlContractExpression.ResolveContract(param, index + prev.Resolvables.Length), param)).ToArray();
+                var resultLambda = (LambdaExpression)visitor.Visit(lambda);
+
+                return new { Resolvables = prev.Resolvables.Concat(next.Contract.Resolvables).ToArray(), Resolvers = prev.Resolvers.Concat(new[] { resultLambda }).ToArray() };
+            });
+            return source.AsContract<IEnumerable<TContractResult>>(
+                    new ContractMapping(aggregate.Resolvables),
+                    _ => ConcatAll(aggregate.Resolvers).Inline(_)
+                );
         }
 
         private static LambdaExpression ConcatAll(IReadOnlyList<LambdaExpression> resolvers)
@@ -54,56 +72,29 @@ namespace GraphLinqQL
         {
             var builder = contractOptions(new UnionContractBuilder<T>());
 
-            return graphQlResult.AsContract<T>(builder.CreateContractMapping());
+            var temp = builder.Conditions.Select((e, index) => new { index, e.DomainType }).ToArray();
+            return graphQlResult.AsContract<T>(builder.CreateContractMapping(), body =>
+                temp.Length == 1 ? GraphQlContractExpression.ResolveContract(body, 0) :
+                    temp.Skip(1).Aggregate(GraphQlContractExpression.ResolveContract(Expression.Convert(body, temp[0].DomainType), 0),
+                        (prev, next) => Expression.Condition(Expression.TypeIs(body, next.DomainType), GraphQlContractExpression.ResolveContract(Expression.Convert(body, next.DomainType), next.index), prev))
+            );
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)
         {
-            var newResult = func(new GraphQlResultFactory<TInput>());
+            var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
             var newScalar = original.UpdateBody<object>(getListLamba =>
             {
                 var getList = getListLamba.Body;
-                if (!typeof(IQueryable<>).MakeGenericType(typeof(TInput)).IsAssignableFrom(getList.Type))
-                {
-                    getList = Expression.Call(asQueryable.MakeGenericMethod(typeof(TInput)), getList);
-                }
-
                 var newResolver = Expression.Lambda(
-                    getList.CallQueryableSelect(constructedDeferred),
+                    getList.CallSelect(constructedDeferred),
                     getListLamba.Parameters
                 );
                 return newResolver;
             });
             return newResult.AdjustResolution<IEnumerable<TContract>>(_ => newScalar);
-        }
-
-        public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-            var constructedDeferred = newResult.ConstructResult();
-
-            return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
-            {
-                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
-            }, deferredLambda => constructedDeferred);
-        }
-
-        public static IGraphQlObjectResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
-        {
-            var newResult = func(new GraphQlResultFactory<TInput>());
-            var constructedDeferred = newResult.Resolution.ConstructResult();
-
-            var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
-            {
-                // FIXME - this probably shouldn't use InvokeExpression, as the errors that are gathered should be propagated.
-                Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Execution.GraphQlResultExtensions.InvokeExpression(input, deferFunction);
-                return Expression.Lambda(newPreamble.Inline(preambleLambda.Body, PreamblePlaceholders.BodyPlaceholderExpression), preambleLambda.Parameters);
-            }, deferredLambda => constructedDeferred);
-            return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
 
         public static IGraphQlObjectResult<TContract> Only<TContract>(this IGraphQlObjectResult<IEnumerable<TContract>> original)
@@ -113,14 +104,16 @@ namespace GraphLinqQL
 
         public static IGraphQlScalarResult<TDomainResult> ResolveTask<TInputType, TDomainResult>(this IGraphQlResultFactory<TInputType> original, Func<TInputType, Task<TDomainResult>> resolveAsync)
         {
+            var taskFinalizerFactory = new TaskFinalizerFactory(original.FieldContext);
+
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
-            Expression<Func<Task<TDomainResult>, Task>> temp = task => task.ContinueWith(t => PreamblePlaceholders.BodyInvocationPlaceholder(t.Result));
+            Expression<Func<Task<TDomainResult>, IFinalizer>> temp = task => taskFinalizerFactory.Invoke(() => task.ContinueWith(t => PreamblePlaceholders.BodyInvocationPlaceholder(t.Result)));
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
             return original.Resolve(value => resolveAsync(value))
-                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(Expression.New(TaskFinalizer.ConstructorInfo, temp.Inline(preamble.Body)), preamble.Parameters));
+                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(temp.Inline(preamble.Body), preamble.Parameters));
         }
 
-        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, FieldContext fieldContext, string name) =>
-            target.ResolveQuery(name, fieldContext, BasicParameterResolver.Empty);
+        public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
+            target.ResolveQuery(name, BasicParameterResolver.Empty);
     }
 }

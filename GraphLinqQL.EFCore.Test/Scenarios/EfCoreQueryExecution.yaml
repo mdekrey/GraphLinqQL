@@ -1,0 +1,92 @@
+﻿scenario: Query Execution
+tests:
+  - name: Star Wars - Unnamed simple query
+    given:
+      schema: star-wars
+      query: |
+        {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+        
+  - name: Star Wars - Unnamed simple query with operation type
+    given:
+      schema: star-wars
+      query: |
+        query {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+        
+  - name: Star Wars - Named simple query
+    given:
+      schema: star-wars
+      query: |
+        query OverallHero {
+          hero {
+            name
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+
+  - name: Star Wars - Named multiple queries
+    given:
+      schema: star-wars
+      query: |
+        query SpecificDroid ($id: ID!) {
+          droid(id: $id) {
+            name
+          }
+        }
+        query OverallHero {
+          hero {
+            name
+          }
+        }
+      operation: OverallHero
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "hero": {
+                    "name": "R2-D2"
+                }
+            }
+        }
+        

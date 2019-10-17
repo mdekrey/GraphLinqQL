@@ -1,0 +1,241 @@
+﻿scenario: Edge-cases Reference domain object, task query
+tests:
+  - name: Integers query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              integer
+              nullableInteger
+              integers
+              nullableIntegers
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromReference": {
+                    "task": {
+                        "integer": 0,
+                        "nullableInteger": 0,
+                        "integers": [ 0, 0, 0, 0, 0 ],
+                        "nullableIntegers": [ 0, 0, 0, null, null ]
+                    }
+                }
+            }
+        }
+ 
+  - name: Texts query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              text
+              nullableText
+              texts
+              nullableTexts
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromReference": {
+                    "task": {
+                        "text": "foo",
+                        "nullableText": "foo",
+                        "texts": [ "foo", "foo", "foo", "foo", "foo" ],
+                        "nullableTexts": [ "foo", "foo", "foo", null, null ]
+                    }
+                }
+            }
+        }
+        
+  - name: Object query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              obj {
+                value
+              }
+              nullableObj {
+                value
+              }
+              objs {
+                value
+              }
+              nullableObjs {
+                value
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromReference": {
+              "task": {
+                "obj": { "value": "foo" },
+                "nullableObj": { "value": "foo" },
+                "objs": [ { "value": "foo" }, { "value": "foo" }, { "value": "foo" }, { "value": "foo" }, { "value": "foo" } ],
+                "nullableObjs": [ { "value": "foo" }, { "value": "foo" }, { "value": "foo" }, null, null ]
+              }
+            }
+          }
+        }
+        
+  - name: Nullable object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              nullableObj {
+                value
+                throws
+              }
+              nullableObjs {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromReference": {
+              "task": {
+                "nullableObj": null,
+                "nullableObjs": [null,null,null,null,null]
+              }
+            }
+          },
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+  - name: Object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              obj {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+  - name: Object that has a bad nullable prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromReference {
+            task {
+              obj {
+                value
+                nullableThrows
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022nullableThrows\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "nullableThrows",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+        

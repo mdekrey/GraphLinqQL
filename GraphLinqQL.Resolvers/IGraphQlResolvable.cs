@@ -6,8 +6,9 @@ namespace GraphLinqQL
 {
     public interface IGraphQlResolvable
     {
+        FieldContext FieldContext { get; set; }
         string GraphQlTypeName { get; }
-        IGraphQlResult ResolveQuery(string name, FieldContext fieldContext, IGraphQlParameterResolver parameters);
+        IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters);
         bool IsType(string value);
     }
 
@@ -19,6 +20,6 @@ namespace GraphLinqQL
     public interface IGraphQlParameterResolver
     {
         bool HasParameter(string parameter);
-        T GetParameter<T>(string parameter, FieldContext fieldContext);
+        T GetParameter<T>(string parameter);
     }
 }

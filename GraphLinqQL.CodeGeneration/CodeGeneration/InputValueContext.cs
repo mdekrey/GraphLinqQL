@@ -36,8 +36,8 @@ namespace GraphLinqQL.CodeGeneration
             var nullable = options.TypeResolver.IsNullable(arg.TypeNode, options, document);
 
             var getValue = nullable
-                ? $"(parameters.HasParameter(\"{fieldName}\") ? parameters.GetParameter<{inputTypeName}>(\"{fieldName}\", fieldContext) : null)"
-                : $"parameters.GetParameter<{inputTypeName}>(\"{fieldName}\", fieldContext)";
+                ? $"(parameters.HasParameter(\"{fieldName}\") ? parameters.GetParameter<{inputTypeName}>(\"{fieldName}\") : null)"
+                : $"parameters.GetParameter<{inputTypeName}>(\"{fieldName}\")";
             var defaultValueExpression = arg.DefaultValue != null ? $" ?? {options.Resolve(arg.DefaultValue, arg.TypeNode, document)}" : "";
             return $"{fieldName}: {getValue}{defaultValueExpression}";
         }

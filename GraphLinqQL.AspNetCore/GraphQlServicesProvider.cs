@@ -13,6 +13,8 @@ namespace GraphLinqQL
         private readonly IServiceProvider serviceProvider;
         private readonly GraphQlOptions options;
 
+        public IServiceProvider ExecutionServices => serviceProvider;
+
         public GraphQlServiceProvider(IServiceProvider serviceProvider, GraphQlOptions options)
         {
             scope = serviceProvider.CreateScope();

@@ -122,5 +122,14 @@ namespace GraphLinqQL.ErrorMessages {
                 return ResourceManager.GetString("undefinedField", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unhandled error occurred in field &quot;{0}&quot;. See server logs for details..
+        /// </summary>
+        internal static string unhandledError {
+            get {
+                return ResourceManager.GetString("unhandledError", resourceCulture);
+            }
+        }
     }
 }

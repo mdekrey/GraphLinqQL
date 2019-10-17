@@ -4,31 +4,19 @@ using System.Text;
 
 namespace GraphLinqQL
 {
-    public class ContractMappingCondition
+    public class ContractMapping : IContract
     {
-        public ContractMappingCondition(Type domainType, Type contractType)
-        {
-            DomainType = domainType;
-            ContractType = contractType;
-        }
+        public IReadOnlyList<ContractEntry> Resolvables { get; }
 
-        public Type DomainType { get; }
-        public Type ContractType { get; }
-    }
-
-    class ContractMapping : IContract
-    {
-        public IReadOnlyList<ContractMappingCondition> ContractMappingCondition { get; }
-
-        public ContractMapping(Type contractType)
-            : this(new[] { new ContractMappingCondition(typeof(void), contractType) })
+        public ContractMapping(Type contractType, Type domainType)
+            : this(new[] { new ContractEntry(contractType, domainType) })
         {
 
         }
 
-        public ContractMapping(ContractMappingCondition[] contractMappingCondition)
+        public ContractMapping(ContractEntry[] resolvables)
         {
-            this.ContractMappingCondition = contractMappingCondition;
+            this.Resolvables = resolvables;
         }
     }
 }

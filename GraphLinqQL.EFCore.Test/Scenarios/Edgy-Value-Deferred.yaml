@@ -1,0 +1,241 @@
+﻿scenario: Edge-cases Value domain object, deferred query
+tests:
+  - name: Integers query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              integer
+              nullableInteger
+              integers
+              nullableIntegers
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromValue": {
+                    "deferred": {
+                        "integer": 0,
+                        "nullableInteger": 0,
+                        "integers": [ 0, 0, 0, 0, 0 ],
+                        "nullableIntegers": [ 0, 0, 0, null, null ]
+                    }
+                }
+            }
+        }
+ 
+  - name: Texts query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              text
+              nullableText
+              texts
+              nullableTexts
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "fromValue": {
+                    "deferred": {
+                        "text": "0",
+                        "nullableText": "0",
+                        "texts": [ "0", "0", "0", "0", "0" ],
+                        "nullableTexts": [ "0", "0", "0", null, null ]
+                    }
+                }
+            }
+        }
+        
+  - name: Object query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              obj {
+                value
+              }
+              nullableObj {
+                value
+              }
+              objs {
+                value
+              }
+              nullableObjs {
+                value
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromValue": {
+              "deferred": {
+                "obj": { "value": "0" },
+                "nullableObj": { "value": "0" },
+                "objs": [ { "value": "0" }, { "value": "0" }, { "value": "0" }, { "value": "0" }, { "value": "0" } ],
+                "nullableObjs": [ { "value": "0" }, { "value": "0" }, { "value": "0" }, null, null ]
+              }
+            }
+          }
+        }
+        
+  - name: Nullable object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              nullableObj {
+                value
+                throws
+              }
+              nullableObjs {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": {
+            "fromValue": {
+              "deferred": {
+                "nullableObj": null,
+                "nullableObjs": [null,null,null,null,null]
+              }
+            }
+          },
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            },
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 10, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+  - name: Object that has a bad prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              obj {
+                value
+                throws
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022throws\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "throws",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+  - name: Object that has a bad nullable prop query
+    given:
+      schema: edgy
+      query: |
+        {
+          fromValue {
+            deferred {
+              obj {
+                value
+                nullableThrows
+              }
+            }
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+          "data": null,
+          "errors": [
+            {
+              "message": "An unhandled error occurred in field \u0022nullableThrows\u0022. See server logs for details.",
+              "errorCode": "unhandledError",
+              "locations": [ { "Line": 6, "Column": 8 } ],
+              "arguments": {
+                "fieldName": "nullableThrows",
+                "type": "Inner"
+              }
+            }
+          ]
+        }
+        
+        

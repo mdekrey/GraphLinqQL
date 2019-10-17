@@ -144,4 +144,8 @@
     <value>Cannot query field "{0}" on type "{1}".</value>
     <comment>[fieldName, type]</comment>
   </data>
+  <data name="unhandledError" xml:space="preserve">
+    <value>An unhandled error occurred in field "{0}". See server logs for details.</value>
+    <comment>[fieldName]</comment>
+  </data>
 </root>
