@@ -37,7 +37,6 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
-        projects: '**/*Tests/*.csproj'
         arguments: '/nodeReuse:false --configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
 
     - task: CopyFiles@2
