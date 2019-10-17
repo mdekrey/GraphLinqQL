@@ -18,9 +18,9 @@ namespace GraphLinqQL
 
         public static IGraphQlScalarResult GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult> resolver)
         {
-            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>();
+            IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(FieldContext.Empty);
             var contractBuilder = resultFactory
-                .Resolve(a => a).AsContract<object>(new ContractMapping(contract, typeof(TRoot)), body => GraphQlContractExpression.ResolveContract(body, 0))
+                .Resolve(a => a).AsContract<object>(new ContractMapping(ContractMapping.GetTypeName(contract), contract, typeof(TRoot)), body => GraphQlContractExpression.ResolveContract(body, 0))
                 .ResolveComplex(serviceProvider, FieldContext.Empty);
             var resolved = resolver(contractBuilder);
             return resolved;
@@ -32,6 +32,7 @@ namespace GraphLinqQL
         }
 
         public static IGraphQlObjectResult<IEnumerable<TContractResult>> Union<TInputType, TContractResult>(this IGraphQlResultFactory<TInputType> source, params Func<IGraphQlResultFactory<TInputType>, IGraphQlObjectResult<IEnumerable<TContractResult>>>[] funcs)
+            where TContractResult : IGraphQlResolvable?
         {
             var objectResults = funcs.Select(f => f(source)).ToArray();
             var aggregate = objectResults.Aggregate(new 
@@ -50,7 +51,7 @@ namespace GraphLinqQL
                 return new { Resolvables = prev.Resolvables.Concat(next.Contract.Resolvables).ToArray(), Resolvers = prev.Resolvers.Concat(new[] { resultLambda }).ToArray() };
             });
             return source.AsContract<IEnumerable<TContractResult>>(
-                    new ContractMapping(aggregate.Resolvables),
+                    new ContractMapping(ContractMapping.GetTypeName(typeof(TContractResult)), aggregate.Resolvables),
                     _ => ConcatAll(aggregate.Resolvers).Inline(_)
                 );
         }
@@ -81,7 +82,7 @@ namespace GraphLinqQL
 
         public static IGraphQlObjectResult<IEnumerable<TContract>> List<TInput, TContract>(this IGraphQlScalarResult<IEnumerable<TInput>> original, Func<IGraphQlScalarResult<TInput>, IGraphQlObjectResult<TContract>> func)
         {
-            var newResult = func(new GraphQlResultFactory<TInput>());
+            var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
             var newScalar = original.UpdateBody<object>(getListLamba =>

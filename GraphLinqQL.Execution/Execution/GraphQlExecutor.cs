@@ -132,7 +132,7 @@ namespace GraphLinqQL.Execution
             switch (resultNode)
             {
                 case Field field:
-                    var queryContext = new FieldContext(field.Name, node.Location.ToQueryLocations());
+                    var queryContext = new FieldContext(builder.TypeName, field.Name, node.Location.ToQueryLocations());
                     var arguments = ResolveArguments(field.Arguments, context);
                     if (field.SelectionSet != null)
                     {
@@ -144,7 +144,7 @@ namespace GraphLinqQL.Execution
                                 var result = b.ResolveQuery(field.Name, queryContext, new BasicParameterResolver(arguments));
                                 if (!(result is IGraphQlObjectResult objectResult))
                                 {
-                                    throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = b.GraphQlTypeName });
+                                    throw new InvalidOperationException("Result does not have a contract assigned to resolve complex objects").AddGraphQlError(WellKnownErrorCodes.NoSubselectionAllowed, queryContext.Locations, new { fieldName = queryContext.Name, type = queryContext.TypeName });
                                 }
                                 return Build(objectResult.ResolveComplex(ServiceProvider, queryContext), field.SelectionSet.Selections, context
                                     ).Build();
@@ -191,7 +191,7 @@ namespace GraphLinqQL.Execution
         {
             var arguments = ResolveArguments(directive.Arguments, context);
             var actualDirective = options.Directives.FirstOrDefault(d => d.Name == directive.Name);
-            var fieldContext = new FieldContext(directive.Name, node.Location.ToQueryLocations());
+            var fieldContext = new FieldContext(null, directive.Name, node.Location.ToQueryLocations());
             return actualDirective == null
                 ? node
                 : actualDirective.HandleDirective(node, new BasicParameterResolver(arguments), fieldContext, context);

@@ -9,7 +9,7 @@ namespace GraphLinqQL
             where TInput : class
             where TContract : class
         {
-            var newResult = func(new GraphQlResultFactory<TInput>());
+            var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
             var newScalar = original.UpdateBody<object>(

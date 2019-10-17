@@ -36,6 +36,7 @@ namespace GraphLinqQL
     /// </summary>
     class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
+        public FieldContext FieldContext { get; }
         private readonly IReadOnlyList<Func<LambdaExpression, LambdaExpression>> postprocessBuild;
 
         public LambdaExpression Preamble { get; }
@@ -44,11 +45,13 @@ namespace GraphLinqQL
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         internal protected GraphQlExpressionScalarResult(
+            FieldContext fieldContext,
             LambdaExpression preamble,
             LambdaExpression body,
             IReadOnlyList<Func<LambdaExpression, LambdaExpression>> postprocessBuild,
             IReadOnlyCollection<IGraphQlJoin> joins)
         {
+            this.FieldContext = fieldContext;
             this.Preamble = preamble;
             this.Body = Expression.Lambda(body.Body.Box(), body.Parameters);
             this.postprocessBuild = postprocessBuild;
@@ -66,7 +69,7 @@ namespace GraphLinqQL
         public IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper)
         {
             var newResolver = Expression.Lambda(bodyWrapper(Body.Body), Body.Parameters);
-            return new GraphQlExpressionObjectResult<T>(new GraphQlExpressionScalarResult<object>(Preamble, newResolver, postprocessBuild, Joins), contract);
+            return new GraphQlExpressionObjectResult<T>(new GraphQlExpressionScalarResult<object>(FieldContext, Preamble, newResolver, postprocessBuild, Joins), contract);
         }
 
         public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
@@ -82,7 +85,7 @@ namespace GraphLinqQL
             {
                 throw new InvalidOperationException($"Given contract {contractType.FullName} does not accept type {currentReturnType.FullName}");
             }
-            return new ContractMapping(contractType, currentReturnType);
+            return new ContractMapping(ContractMapping.GetTypeName(contractType), contractType, currentReturnType);
         }
 
         public LambdaExpression ConstructResult()
@@ -99,37 +102,37 @@ namespace GraphLinqQL
 
         public IGraphQlScalarResult AddPostBuild(Func<LambdaExpression, LambdaExpression> postBuild)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(Preamble, Body, postprocessBuild.Concat(new[] { postBuild }).ToArray(), this.Joins);
+            return new GraphQlExpressionScalarResult<TReturnType>(FieldContext, Preamble, Body, postprocessBuild.Concat(new[] { postBuild }).ToArray(), this.Joins);
         }
 
         public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)
         {
-            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), postprocessBuild, this.Joins);
+            return new GraphQlExpressionScalarResult<T>(FieldContext, preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), postprocessBuild, this.Joins);
         }
 
         public IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust)
         {
-            return new GraphQlExpressionScalarResult<T>(Preamble, bodyAdjust(Body), postprocessBuild, this.Joins);
+            return new GraphQlExpressionScalarResult<T>(FieldContext, Preamble, bodyAdjust(Body), postprocessBuild, this.Joins);
         }
 
         public IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust)
         {
-            return new GraphQlExpressionScalarResult<T>(preambleAdjust(Preamble), bodyAdjust(Body), postprocessBuild, this.Joins);
+            return new GraphQlExpressionScalarResult<T>(FieldContext, preambleAdjust(Preamble), bodyAdjust(Body), postprocessBuild, this.Joins);
         }
 
-        internal static IGraphQlScalarResult<TReturnType> Constant(TReturnType result)
+        internal static IGraphQlScalarResult<TReturnType> Constant(TReturnType result, FieldContext fieldContext)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>((Expression<Func<object?, TReturnType>>)(_ => result), (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty< Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, (Expression<Func<object?, TReturnType>>)(_ => result), (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty< Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
         }
 
-        internal static IGraphQlScalarResult<TReturnType> Simple(LambdaExpression newFunc)
+        internal static IGraphQlScalarResult<TReturnType> Simple(FieldContext fieldContext, LambdaExpression newFunc)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
         }
 
-        internal static IGraphQlScalarResult<TReturnType> CreateJoin(LambdaExpression newFunc, IGraphQlJoin join)
+        internal static IGraphQlScalarResult<TReturnType> CreateJoin(FieldContext fieldContext, LambdaExpression newFunc, IGraphQlJoin join)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet.Create(join));
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet.Create(join));
         }
     }
 

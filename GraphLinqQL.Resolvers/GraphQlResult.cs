@@ -15,6 +15,7 @@ namespace GraphLinqQL
 
     public interface IGraphQlScalarResult : IGraphQlResult
     {
+        FieldContext FieldContext { get; }
         LambdaExpression ConstructResult();
 
         // FIXME - if we can not expose these as interface members it would be better

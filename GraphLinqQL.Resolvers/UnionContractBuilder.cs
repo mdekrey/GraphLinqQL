@@ -29,7 +29,7 @@ namespace GraphLinqQL
 
         internal ContractMapping CreateContractMapping()
         {
-            return new ContractMapping(conditions.Select(c => new ContractEntry(c.ContractType, c.DomainType)).ToArray());
+            return new ContractMapping(ContractMapping.GetTypeName(typeof(T)), conditions.Select(c => new ContractEntry(c.ContractType, c.DomainType)).ToArray());
         }
 
         public IReadOnlyList<ContractMappingCondition> Conditions => conditions.AsReadOnly();

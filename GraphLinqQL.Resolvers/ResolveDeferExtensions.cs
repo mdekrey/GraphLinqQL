@@ -10,7 +10,7 @@ namespace GraphLinqQL
 
         public static IGraphQlScalarResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlScalarResult<TContract>> func)
         {
-            var newResult = func(new GraphQlResultFactory<TInput>());
+            var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.ConstructResult();
 
             return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
@@ -23,7 +23,7 @@ namespace GraphLinqQL
 
         public static IGraphQlObjectResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
         {
-            var newResult = func(new GraphQlResultFactory<TInput>());
+            var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
             var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>

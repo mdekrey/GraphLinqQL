@@ -93,7 +93,7 @@ namespace GraphLinqQL
 #pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
             {
-                var errors = ex.HasGraphQlErrors(out var error) ? (IReadOnlyList<GraphQlError>)error : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError, ExceptionExtensions.GetArguments(new { fieldName = fieldContext.Name }), fieldContext.Locations) };
+                var errors = ex.HasGraphQlErrors(out var error) ? (IReadOnlyList<GraphQlError>)error : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError, ExceptionExtensions.GetArguments(new { fieldName = fieldContext.Name, type = fieldContext.TypeName }), fieldContext.Locations) };
                 context.Errors.AddRange(errors);
                 return Task.FromResult<object?>(null);
             }

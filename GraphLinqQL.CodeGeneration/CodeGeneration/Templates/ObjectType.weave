@@ -30,7 +30,7 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 	{
 		switch (fieldName)
 		{
-			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}");
+			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}", fieldContext);
 			{{each field in model.Fields}}
 				case "{{= field.Label }}":
 					return this.{{= field.Name }}(fieldContext{{each arg in field.Arguments}},

@@ -27,12 +27,16 @@ namespace GraphLinqQL
         private readonly FieldContext fieldContext;
         private readonly IReadOnlyList<ComplexResolutionEntry> resolvers;
 
+        public string TypeName { get; }
+
         protected ComplexResolverBuilder(
+            string typeName,
             IReadOnlyList<ComplexResolutionEntry> resolvers,
             Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
             Type modelType,
             FieldContext fieldContext)
         {
+            TypeName = typeName;
             this.resolvers = resolvers;
             this.resolve = resolve;
             this.modelType = modelType;
@@ -45,11 +49,11 @@ namespace GraphLinqQL
             Func<IReadOnlyList<LambdaExpression>, IGraphQlScalarResult<object>> resolve,
             Type modelType,
             FieldContext fieldContext)
-            : this(contractMappings.Resolvables.Select(e => new ComplexResolutionEntry(CreateContract(e.Contract, serviceProvider), e.DomainType)).ToArray(), resolve, modelType, fieldContext)
+            : this(contractMappings.TypeName, contractMappings.Resolvables.Select(e => new ComplexResolutionEntry(CreateContract(fieldContext, e.Contract, serviceProvider), e.DomainType)).ToArray(), resolve, modelType, fieldContext)
         {
         }
 
-        private static IGraphQlResolvable CreateContract(Type contractType, IGraphQlServiceProvider serviceProvider)
+        private static IGraphQlResolvable CreateContract(FieldContext fieldContext, Type contractType, IGraphQlServiceProvider serviceProvider)
         {
             var contract = serviceProvider.GetResolverContract(contractType);
             var accepts = contract as IGraphQlAccepts;
@@ -58,7 +62,7 @@ namespace GraphLinqQL
                 throw new ArgumentException("Contract does not accept an input type");
             }
             var modelType = accepts.GetType().GetInterfaces().Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>)).First().GetGenericArguments()[0];
-            accepts.Original = GraphQlResultFactory.Construct(modelType);
+            accepts.Original = GraphQlResultFactory.Construct(fieldContext, modelType);
             return contract;
         }
 
@@ -100,7 +104,7 @@ namespace GraphLinqQL
 
                 r.Results.Add(displayName, result is IGraphQlScalarResult scalarResult
                         ? scalarResult
-                        : throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = r.GraphQlResolvable }));
+                        : throw new InvalidOperationException("Cannot use simple resolution for complex type").AddGraphQlError(WellKnownErrorCodes.RequiredSubselection, context.Locations, new { fieldName = property, type = context.TypeName }));
             }
             return this;
         }
@@ -125,7 +129,7 @@ namespace GraphLinqQL
                 throw new ArgumentNullException(nameof(typedBuilder));
             }
 
-            typedBuilder(new ComplexResolverBuilder(this.resolvers.Where(r => r.GraphQlResolvable.IsType(value)).ToArray(), resolve, modelType, fieldContext));
+            typedBuilder(new ComplexResolverBuilder(value, this.resolvers.Where(r => r.GraphQlResolvable.IsType(value)).ToArray(), resolve, modelType, fieldContext));
 
             return this;
         }
