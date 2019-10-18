@@ -22,6 +22,16 @@ and run Antlr. This has been moved out to a separate target, with the generated
 file checked-in to reduce difficulties for most developers as well as build
 times.
 
+
+# Code Coverage
+
+Code coverage is included with the dotnet cli, but you need a report generator
+to view it. This is good for local testing:
+
+	dotnet test /nodeReuse:false --collect:"XPlat Code Coverage"
+	dotnet tool install -g dotnet-reportgenerator-globaltool
+    reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml" -targetdir:.\TestResults -reporttypes:"HTMLInline;HTMLChart" -assemblyfilters:+GraphLinqQL.*
+
 # Releases
 
 To release, we use Azure DevOps [GraphLinqQL build pipeline](https://dev.azure.com/graphlinqql/GraphLinqQl/_build) and release pipelines. Releases should be built from tagged versions. After the tag, the version in `Directory.Build.props` should be updated immediately for a patch version, even if that patch is unreleased and a minor version is used later. This also ensures the prerelease feed has correct version numbers.

@@ -4,3 +4,4 @@
 *.generated.*
 *.user
 *.local.*
+**/TestResults/
