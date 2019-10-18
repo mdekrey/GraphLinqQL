@@ -37,6 +37,8 @@ stages:
       displayName: 'Build rest of solution'
     - script: dotnet build /nodeReuse:false --configuration $(buildConfiguration) -p:RepositoryBranch=$(Build.SourceBranchName) -p:RepositoryCommit=$(Build.SourceVersion)
       displayName: 'Build release versions for solution'
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
