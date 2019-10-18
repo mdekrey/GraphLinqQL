@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="Edgy\Interfaces\edgy.graphql" />
     <None Remove="Scenarios\BasicQueryParsing.yaml" />
+    <None Remove="Scenarios\CodeGeneration.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Deferred.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Plain.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Task.yaml" />
@@ -28,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -38,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
+    <ProjectReference Include="..\GraphLinqQL.CodeGeneration\GraphLinqQL.CodeGeneration.csproj" />
     <ProjectReference Include="..\GraphLinqQL.StarWars.EFCore\GraphLinqQL.StarWars.EFCore.csproj" />
   </ItemGroup>
 

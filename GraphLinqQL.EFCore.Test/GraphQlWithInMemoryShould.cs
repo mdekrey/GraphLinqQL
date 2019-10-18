@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Ast;
+using GraphLinqQL.CodeGeneration;
 using GraphLinqQL.ErrorMessages;
 using GraphLinqQL.Execution;
 using GraphLinqQL.StarWars.Domain;
@@ -10,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
@@ -56,21 +58,46 @@ namespace GraphLinqQL
                 case { Given: { Query: var query }, When: { Parse: true }, Then: { Passes: false } }:
                     await DetectParsingErrors(scope.ServiceProvider, query);
                     return;
+                case { Given: { Query: var query }, When: { CodeGeneration: true, LanguageVersion: var languageVersion, Namespace: var ns }, Then: { Passes: var passes, CompilePasses: var compilePasses } }:
+                    await MatchCodeGeneration(query, languageVersion, ns, passes, compilePasses);
+                    return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query }, expected);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query }, expected!);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, variables }, expected);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, variables }, expected!);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName }, expected);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName }, expected!);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName, variables }, expected);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName, variables }, expected!);
                     return;
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        private async Task MatchCodeGeneration(string query, float languageVersion, string ns, bool passes, bool? compilePasses)
+        {
+            await Task.Yield();
+            var compileResult = CompileManager.CompileString(query, "in-memory.graphql", new GraphQLGenerationOptions { LanguageVersion = languageVersion, Namespace = ns });
+
+            if (passes)
+            {
+                Assert.Empty(compileResult.Errors);
+
+                if (compilePasses != null)
+                {
+                    var result = RoslynServices.Compile(compileResult.Code, languageVersion);
+                    Assert.Empty(result);
+                }
+            }
+            else
+            {
+                Assert.NotEmpty(compileResult.Errors);
+            }
+
         }
 
         private async Task ParseSuccess(IServiceProvider serviceProvider, string query)

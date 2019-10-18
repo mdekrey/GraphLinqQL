@@ -1,0 +1,38 @@
+﻿scenario: Code Generation
+tests:
+  - name: Simple type
+    given:
+      query: |
+        type Hello {
+          world: String
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      
+  - name: Simple input type
+    given:
+      query: |
+        input Hello {
+          world: String
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      
+  - name: Simple enum type
+    given:
+      query: |
+        enum Hello {
+          WORLD
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      

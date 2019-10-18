@@ -7,9 +7,10 @@ namespace GraphLinqQL
     {
 
 #nullable disable warnings
-        public string MatchResult { get; set; }
+        public string? MatchResult { get; set; }
         public string[]? Sqlite { get; set; }
         public bool Passes { get; set; }
+        public bool? CompilePasses { get; set; }
 #nullable restore
     }
 }
