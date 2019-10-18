@@ -7,6 +7,7 @@
 /// {{= model.Description.Docblock(indentation) }}
 /// </summary>
 {{/if}}
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class {{= model.TypeName }}
 {
 	{{each field in model.Fields()}}

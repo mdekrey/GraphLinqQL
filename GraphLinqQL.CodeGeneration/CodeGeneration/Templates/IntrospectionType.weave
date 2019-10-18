@@ -3,6 +3,7 @@
 @namespace GraphLinqQL.CodeGeneration.Templates
 
 {{= "" }}
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class {{= model.TypeName }} : IGraphQlTypeInformation
 {
     public string Name { get { return "{{= model.Label }}"; } }

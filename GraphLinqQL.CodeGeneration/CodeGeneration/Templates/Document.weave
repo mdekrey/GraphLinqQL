@@ -12,6 +12,7 @@ using {{= ns }};
 
 namespace {{= model.Namespace}}
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class TypeResolver : IGraphQlTypeResolver
 	{
 		public Type ResolveForInput(string name)

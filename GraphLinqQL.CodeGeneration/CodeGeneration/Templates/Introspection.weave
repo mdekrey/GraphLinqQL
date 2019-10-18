@@ -5,6 +5,7 @@
 
 namespace Introspection
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class TypeListing : IGraphQlTypeListing
 	{
 		private static readonly Dictionary<string, Type> types = new Dictionary<string, Type>

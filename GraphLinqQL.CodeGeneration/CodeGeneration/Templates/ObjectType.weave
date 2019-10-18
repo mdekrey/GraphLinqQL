@@ -7,6 +7,7 @@
 /// {{= model.Description.Docblock(indentation) }}
 /// </summary>
 {{/if}}
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
 {
 	private {{= model.TypeName }}() { }
@@ -47,6 +48,7 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 		return {{each validType in model.ValidTypes}}value == "{{= validType }}"{{delimit}} || {{/each}};
 	}
 
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public abstract class GraphQlContract<T> : {{= model.TypeName }}, IGraphQlAccepts<T>
 	{
 		public IGraphQlResultFactory<T> Original { get; set; }
