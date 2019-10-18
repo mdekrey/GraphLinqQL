@@ -5,7 +5,7 @@
 
 namespace Introspection
 {
-	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
 	public class TypeListing : IGraphQlTypeListing
 	{
 		private static readonly Dictionary<string, Type> types = new Dictionary<string, Type>

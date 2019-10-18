@@ -28,7 +28,7 @@ times.
 Code coverage is included with the dotnet cli, but you need a report generator
 to view it. This is good for local testing:
 
-	dotnet test /nodeReuse:false --collect:"XPlat Code Coverage"
+	dotnet test /nodeReuse:false --settings coverletArgs.runsettings
 	dotnet tool install -g dotnet-reportgenerator-globaltool
     reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml" -targetdir:.\TestResults -reporttypes:"HTMLInline;HTMLChart" -assemblyfilters:+GraphLinqQL.*
 
