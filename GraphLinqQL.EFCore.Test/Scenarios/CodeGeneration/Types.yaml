@@ -12,6 +12,18 @@ tests:
       passes: true
       # compile-passes: true
       
+  - name: Simple type with parameters
+    given:
+      query: |
+        type Hello {
+          to(name: String): String
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      
   - name: Simple input type
     given:
       query: |
@@ -29,6 +41,29 @@ tests:
       query: |
         enum Hello {
           WORLD
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      
+  - name: Simple complete
+    given:
+      query: |
+        schema {
+          query: Query
+        }
+        type Query {
+          greeting(name: GreetingDetails = { language: ENGLISH }): String
+        }
+        input GreetingDetails {
+          name: String
+          language: Language!
+        }
+        enum Language {
+          ENGLISH
+          SPANISH
         }
     when:
       code-generation: true
