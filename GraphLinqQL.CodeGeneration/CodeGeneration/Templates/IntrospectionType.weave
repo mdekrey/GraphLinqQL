@@ -6,7 +6,7 @@
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
 public class {{= model.TypeName }} : IGraphQlTypeInformation
 {
-    public string Name { get { return "{{= model.Label }}"; } }
+	public string Name { get { return "{{= model.Label }}"; } }
 	public string{{= model.NullabilityIndicator() }} Description { get { return {{if model.Description != null}}@"{{= model.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}}; } }
 	public TypeKind Kind { get { return TypeKind.{{= model.TypeKind }}; } }
 	public Type{{= model.NullabilityIndicator() }} OfType { get { return null; } }

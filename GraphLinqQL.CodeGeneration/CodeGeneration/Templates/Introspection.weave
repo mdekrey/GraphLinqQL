@@ -14,26 +14,28 @@ namespace Introspection
 				{ "{{= declaration.Label }}", typeof(Introspection.{{= declaration.TypeName}}) },
 			{{/each}}
 		};
-	    private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
+		private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
 			{{each directive in model.Directives}}
-				new DirectiveInformation(name: "{{= directive.Label }}",
-                                         locations: new[] { 
+				new DirectiveInformation(
+										name: "{{= directive.Label }}",
+										locations: new[] {
 											{{each location in directive.Locations}}
-												DirectiveLocation.{{= location }}, 
-											{{/each}} 
-										 },
-                                         args: new GraphQlInputFieldInformation[] {
-											{{each arg in directive.Arguments}}
-												new GraphQlInputFieldInformation(name: "{{=arg.Label}}", 
-																				 type: typeof({{=arg.TypeNameNonNull}}), 
-																				 description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}}, 
-																				 defaultValue: {{= arg.JsonDefaultValue}}),
+												DirectiveLocation.{{= location }},
 											{{/each}}
-                                         },
-                                         description: @"{{= directive.Description.Replace("\"", "\"\"") }}"),
+										},
+										args: new GraphQlInputFieldInformation[] {
+											{{each arg in directive.Arguments}}
+												new GraphQlInputFieldInformation(
+																				name: "{{=arg.Label}}",
+																				type: typeof({{=arg.TypeNameNonNull}}),
+																				description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
+																				defaultValue: {{= arg.JsonDefaultValue}}),
+											{{/each}}
+										},
+										description: @"{{= directive.Description.Replace("\"", "\"\"") }}"),
 			{{/each}}
 		};
-		
+
 		public Type Query { get { return {{= model.QueryTypeName }}; } }
 		public Type{{= model.Nullability ? "?" : ""}} Mutation { get { return {{= model.MutationTypeName }}; } }
 		public Type{{= model.Nullability ? "?" : ""}} Subscription { get { return {{= model.SubscriptionTypeName }}; } }
