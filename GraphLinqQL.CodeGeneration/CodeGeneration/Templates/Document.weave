@@ -12,6 +12,7 @@ using {{= ns }};
 
 namespace {{= model.Namespace}}
 {
+	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
 	public class TypeResolver : IGraphQlTypeResolver
 	{
 		public Type ResolveForInput(string name)

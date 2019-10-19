@@ -5,8 +5,7 @@ using System.Text;
 
 namespace GraphLinqQL
 {
-    public abstract class JoinPlaceholder { }
-    public class JoinPlaceholder<TOriginal> : JoinPlaceholder
+    public class JoinPlaceholder<TOriginal>
     {
         public TOriginal Original { get; }
         public ImmutableDictionary<IGraphQlJoin, object?> Joins { get; }
@@ -31,15 +30,7 @@ namespace GraphLinqQL
 
         public JoinPlaceholder<TOriginal> Add<TNewValue>(GraphQlJoin<TOriginal, TNewValue> join, TNewValue newValue)
         {
-            return new JoinPlaceholder<TOriginal, TNewValue>(Original, Joins.Add(join, newValue));
-        }
-    }
-
-    public class JoinPlaceholder<TOriginal, TNewValue> : JoinPlaceholder<TOriginal>
-    {
-        public JoinPlaceholder(TOriginal original, ImmutableDictionary<IGraphQlJoin, object?> immutableDictionary)
-            : base(original, immutableDictionary)
-        {
+            return new JoinPlaceholder<TOriginal>(Original, Joins.Add(join, newValue));
         }
     }
 }

@@ -42,7 +42,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
-        arguments: '/nodeReuse:false --configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
+        arguments: '/nodeReuse:false --configuration $(buildConfiguration) --settings coverletArgs.runsettings'
         nobuild: true
       displayName: Run tests
 
