@@ -8,11 +8,12 @@ namespace GraphLinqQL.CodeGeneration
         private readonly GraphQLGenerationOptions options;
         private readonly Document document;
 
-        public InputValueContext(InputValueDefinition arg, GraphQLGenerationOptions options, Document document)
+        public InputValueContext(InputValueDefinition arg, GraphQLGenerationOptions options, Document document, string propertyName)
         {
             this.arg = arg;
             this.options = options;
             this.document = document;
+            this.PropertyName = propertyName;
         }
 
         public string Label => arg.Name;
@@ -22,7 +23,7 @@ namespace GraphLinqQL.CodeGeneration
         public string TypeNameNonNull => options.Resolve(arg.TypeNode, document, nullable: false);
 
         public string FieldName => CSharpNaming.GetFieldName(arg.Name);
-        public string PropertyName => CSharpNaming.GetPropertyName(arg.Name);
+        public string PropertyName { get; }
 
         public string? DefaultValue => arg.DefaultValue != null ? options.Resolve(arg.DefaultValue, arg.TypeNode, document) : null;
         public string JsonDefaultValue => arg.DefaultValue != null ? options.ResolveJson(arg.DefaultValue, arg.TypeNode, document) : "null";

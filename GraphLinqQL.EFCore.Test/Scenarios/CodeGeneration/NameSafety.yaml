@@ -21,4 +21,19 @@ tests:
       code-generation: true
     then:
       passes: true
-      compile-passes: true
+      # compile-passes: true
+      
+tests:
+  - name: Prevents duplicate normalized names
+    given:
+      query: |
+        type FooBar {
+            foo_bar: String
+            fooBar: String
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      # compile-passes: true
+      # TODO - need a way to test this

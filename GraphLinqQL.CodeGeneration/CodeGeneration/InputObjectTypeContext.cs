@@ -46,7 +46,7 @@ namespace GraphLinqQL.CodeGeneration
         {
             foreach (var field in declaration.InputValues)
             {
-                yield return new InputValueContext(field, options, document);
+                yield return new InputValueContext(field, options, document, declaration.GetPropertyName(field.Name));
             }
         }
     }

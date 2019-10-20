@@ -95,9 +95,6 @@ namespace GraphLinqQL.CodeGeneration
         public static string GetTypeName(string name) =>
             ToPascalCase(FromUnknownStyle(name));
 
-        internal static string GetPropertyName(string name) =>
-            ToPascalCase(FromUnknownStyle(name)); // TODO - guard this C# name
-
         internal static string GetFieldName(string name)
         {
             var result = ToMedialCapitals(FromUnknownStyle(name));
@@ -124,6 +121,58 @@ namespace GraphLinqQL.CodeGeneration
             }).Split(' ').Where(s => !string.IsNullOrEmpty(s)).ToArray();
         }
 
+        public static string GetPropertyName(this Ast.Nodes.EnumTypeDefinition definition, string name)
+        {
+            var original = definition.EnumValues.Select(ev => ev.EnumValue.TokenValue);
+            return ConvertIfSafe(name, original);
+        }
 
+        private static string ConvertIfSafe(string name, IEnumerable<string> names, string? disallowed = null)
+        {
+            Func<string, string> normalize = Convert;
+            var normalized = names.Select(v => Convert(v)).ToArray();
+            if (normalized.Length != normalized.Distinct().Count())
+            {
+                normalize = _ => _;
+            }
+            normalized = names.Where(n => n != name).ToArray();
+            var resultName = normalize(name);
+            while (normalized.Contains(resultName) || disallowed == resultName)
+            {
+                resultName = "_" + resultName;
+            }
+            return resultName;
+            string Convert(string name) => ToPascalCase(FromUnknownStyle(name));
+        }
+
+        public static string GetPropertyName(this Ast.Nodes.FieldDefinition definition, string name)
+        {
+            var original = definition.Arguments.Select(ev => ev.Name);
+            return ConvertIfSafe(name, original);
+        }
+
+        public static string GetPropertyName(this Ast.Nodes.ObjectTypeDefinition definition, string name)
+        {
+            var original = definition.Fields.Select(ev => ev.Name);
+            return ConvertIfSafe(name, original, definition.Name);
+        }
+
+        public static string GetPropertyName(this Ast.Nodes.InputObjectTypeDefinition definition, string name)
+        {
+            var original = definition.InputValues.Select(ev => ev.Name);
+            return ConvertIfSafe(name, original, definition.Name);
+        }
+
+        public static string GetPropertyName(this Ast.Nodes.DirectiveDefinition definition, string name)
+        {
+            var original = definition.Arguments.Select(ev => ev.Name);
+            return ConvertIfSafe(name, original);
+        }
+
+        public static string GetPropertyName(this Ast.Nodes.InterfaceTypeDefinition definition, string name)
+        {
+            var original = definition.Fields.Select(ev => ev.Name);
+            return ConvertIfSafe(name, original);
+        }
     }
 }

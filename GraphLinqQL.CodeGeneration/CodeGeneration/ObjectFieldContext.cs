@@ -11,17 +11,18 @@ namespace GraphLinqQL.CodeGeneration
         private readonly GraphQLGenerationOptions options;
         private readonly Document document;
 
-        public ObjectFieldContext(FieldDefinition field, GraphQLGenerationOptions options, Document document)
+        public ObjectFieldContext(FieldDefinition field, GraphQLGenerationOptions options, Document document, string propertyName)
         {
             this.field = field;
             this.options = options;
             this.document = document;
+            this.Name = propertyName;
         }
         public string? Description => field.Description;
 
         public string Label => field.Name;
 
-        public string Name => CSharpNaming.GetPropertyName(field.Name);
+        public string Name { get; }
 
         public bool IsDeprecated => field.Directives.FindObsoleteDirective() != null;
         public string? DeprecationReason => field.Directives.FindObsoleteDirective()?.ObsoleteReason(options, document);
@@ -60,7 +61,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var arg in field.Arguments)
                 {
-                    yield return new InputValueContext(arg, options, document);
+                    yield return new InputValueContext(arg, options, document, field.GetPropertyName(arg.Name));
                 }
             }
         }

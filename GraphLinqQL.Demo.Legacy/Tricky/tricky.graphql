@@ -18,3 +18,25 @@ type Type {
         double: Float,
         object: String): String
 }
+
+type FooBar {
+	foo_bar: String
+	fooBar: String
+}
+
+type Foo {
+	foo: String
+}
+
+interface Bar {
+	bar: String
+}
+
+enum Baz {
+	BAZ
+}
+
+type Safer {
+	badValue: String
+	bad_value: String
+}

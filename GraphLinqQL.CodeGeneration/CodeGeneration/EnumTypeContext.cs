@@ -38,7 +38,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var entry in enumTypeDefinition.EnumValues)
                 {
-                    yield return new EnumValueContext(entry, options, document);
+                    yield return new EnumValueContext(entry, options, document, enumTypeDefinition.GetPropertyName(entry.EnumValue.TokenValue));
                 }
             }
         }

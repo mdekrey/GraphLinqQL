@@ -10,16 +10,5 @@
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
 public interface {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable
 {
-	{{each field in model.Fields}}
-		{{if field.DeprecationReason != null}}
-		[Obsolete({{=field.DeprecationReason}})]
-		{{/if}}
-		{{if !string.IsNullOrEmpty(field.Description)}}
-			/// <summary>
-			/// {{= field.Description.Docblock(indentation) }}
-			/// </summary>
-		{{/if}}
-		global::GraphLinqQL.IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
-		{{=""}}
-	{{/each}}
+	// The interface will implement the fields, but it doesn't end up here because the actual methods aren't used that way!
 }

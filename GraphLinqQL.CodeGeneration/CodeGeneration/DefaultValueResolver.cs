@@ -21,8 +21,7 @@ namespace GraphLinqQL.CodeGeneration
                     $"new {options.Resolve(list.ElementType, document)} [] {{ {string.Join(", ", array.Values.Select(v => Resolve(v, list.ElementType, options, document)))} }}",
                 BooleanValue booleanValue =>
                     booleanValue.TokenValue == true ? "true" : "false",
-                EnumValue enumValue when typeNode is TypeName typeName =>
-                    $"{options.Namespace}.{options.Resolve(typeName, document, nullable: false)}.{CSharpNaming.GetPropertyName(enumValue.TokenValue)}",
+                EnumValue enumValue when typeNode is TypeName typeName => RenderEnumValue(enumValue, typeName, document, options),
                 FloatValue floatValue =>
                     floatValue.TokenValue,
                 IntValue intValue =>
@@ -35,6 +34,12 @@ namespace GraphLinqQL.CodeGeneration
             };
         }
 
+        private string RenderEnumValue(EnumValue enumValue, TypeName typeName, Document document, GraphQLGenerationOptions options)
+        {
+            var enumType = document.Children.OfType<EnumTypeDefinition>().Single(e => e.Name == typeName.Name);
+            return $"{options.Namespace}.{options.Resolve(typeName, document, nullable: false)}.{enumType.GetPropertyName(enumValue.TokenValue)}";
+        }
+
         private string RenderObjectInstantiation(ObjectValue objectValue, TypeName typeName, GraphQLGenerationOptions options, Document document)
         {
             var typeDefinition = document.Children.OfType<InputObjectTypeDefinition>().Single(def => def.Name == typeName.Name);
@@ -44,7 +49,7 @@ namespace GraphLinqQL.CodeGeneration
             }
             return $@"new {options.Resolve(typeName, document, nullable: false)}
                     {{
-                        {objectValue.Fields.Select(field => @$"{CSharpNaming.GetPropertyName(field.Key)} = {GetValue(field)}, ")}
+                        {objectValue.Fields.Select(field => @$"{typeDefinition.GetPropertyName(field.Key)} = {GetValue(field)}, ")}
                     }}";
         }
 
@@ -82,7 +87,7 @@ namespace GraphLinqQL.CodeGeneration
                 return InternalResolveJson(field.Value, typeDefinition.InputValues.First(iv => iv.Name == field.Key).TypeNode, options, document);
             }
             return $@"{{
-                        {objectValue.Fields.Select(field => $"\"{CSharpNaming.GetPropertyName(field.Key)}\" {GetValue(field)},")}
+                        {objectValue.Fields.Select(field => $"\"{typeDefinition.GetPropertyName(field.Key)}\" {GetValue(field)},")}
                     }}";
         }
 
