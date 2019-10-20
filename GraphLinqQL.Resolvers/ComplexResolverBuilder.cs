@@ -135,7 +135,7 @@ namespace GraphLinqQL
             {
                 var fieldContext = CreateFieldContext(r.GraphQlResolvable.GraphQlTypeName, property, locations);
                 r.FieldContextSetup(fieldContext);
-                var result = SafeResolve(r.GraphQlResolvable, property, parameters, fieldContext);
+                var result = SafeResolve(r.GraphQlResolvable, property, parameters);
 
                 r.Results.Add(displayName, result is IGraphQlScalarResult scalarResult
                         ? scalarResult
@@ -144,7 +144,7 @@ namespace GraphLinqQL
             return this;
         }
 
-        private IGraphQlResult SafeResolve(IGraphQlResolvable contract, string property, IGraphQlParameterResolver? parameters, FieldContext fieldContext)
+        private IGraphQlResult SafeResolve(IGraphQlResolvable contract, string property, IGraphQlParameterResolver? parameters)
         {
             try
             {

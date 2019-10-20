@@ -8,7 +8,7 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public interface {{= model.TypeName }} : IGraphQlResolvable
+public interface {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable
 {
 	{{each field in model.Fields}}
 		{{if field.DeprecationReason != null}}
@@ -19,7 +19,7 @@ public interface {{= model.TypeName }} : IGraphQlResolvable
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
 		{{/if}}
-		IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
+		global::GraphLinqQL.IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
 		{{=""}}
 	{{/each}}
 }

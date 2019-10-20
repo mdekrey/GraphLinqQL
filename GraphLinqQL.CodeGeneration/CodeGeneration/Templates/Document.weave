@@ -13,9 +13,9 @@ using {{= ns }};
 namespace {{= model.Namespace}}
 {
 	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-	public class TypeResolver : IGraphQlTypeResolver
+	public class TypeResolver : global::GraphLinqQL.IGraphQlTypeResolver
 	{
-		public Type ResolveForInput(string name)
+		public global::System.Type ResolveForInput(string name)
 		{
 			switch (name)
 			{
@@ -28,11 +28,11 @@ namespace {{= model.Namespace}}
 						return typeof({{= inputObjectType.TypeName }});
 				{{/each}}
 				default:
-					throw new ArgumentException("Unknown type " + name, "name");
+					throw new global::System.ArgumentException("Unknown type " + name, "name");
 			}
 		}
 
-		public Type IntrospectionTypeListing { get { return typeof(Introspection.TypeListing); } }
+		public global::System.Type IntrospectionTypeListing { get { return typeof(Introspection.TypeListing); } }
 	}
 
 	{{each declaration in model.GetTypeDeclarations()}}

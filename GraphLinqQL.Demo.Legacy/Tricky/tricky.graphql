@@ -1,0 +1,20 @@
+﻿
+type _ {
+    __: String
+    ___: Boolean
+}
+
+# type Type {
+#     string: String
+#     bool: Boolean
+#     int: Int
+#     float: Float
+#     double: Double
+#     object: Type
+#     # calculate(string: String,
+#     #     bool: Boolean,
+#     #     int: Int,
+#     #     float: Float,
+#     #     double: Double,
+#     #     object: String): String
+# }

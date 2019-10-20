@@ -12,6 +12,7 @@
     <None Remove="Edgy\Interfaces\edgy.graphql" />
     <None Remove="Scenarios\BasicQueryParsing.yaml" />
     <None Remove="Scenarios\CodeGeneration.yaml" />
+    <None Remove="Scenarios\CodeGeneration\NameSafety.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Deferred.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Plain.yaml" />
     <None Remove="Scenarios\Edgy-Ref-Task.yaml" />

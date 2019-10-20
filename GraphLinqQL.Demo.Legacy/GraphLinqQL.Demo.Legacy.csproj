@@ -4,16 +4,19 @@
     <TargetFramework>$(SupportedFrameworkVersion)</TargetFramework>
     <LangVersion>5.0</LangVersion>
     <Nullable>disable</Nullable>
+    <RootNamespace>LegacyTesting</RootNamespace>
   </PropertyGroup>
 
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
     <None Remove="sw-schema.3.graphql" />
+    <None Remove="tricky.graphql" />
   </ItemGroup>
 
   <ItemGroup>
-    <GraphLinqQlSchema Include="sw-schema.3.graphql" />
+    <GraphLinqQlSchema Include="StarWars\sw-schema.3.graphql" />
+    <GraphLinqQlSchema Include="Tricky\tricky.graphql" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,24 @@
+﻿scenario: Code Generation Name Safety
+tests:
+  - name: Simple type
+    given:
+      query: |
+        type Type {
+          string: String
+          bool: Boolean
+          int: Integer
+          float: Float
+          double: Double
+          object: Type
+          # calculate(string: String,
+          #     bool: Boolean,
+          #     int: Integer,
+          #     float: Float,
+          #     double: Double,
+          #     object: String): String
+        }
+    when:
+      code-generation: true
+    then:
+      passes: true
+      compile-passes: true

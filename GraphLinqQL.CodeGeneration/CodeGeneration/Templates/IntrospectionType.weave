@@ -4,41 +4,41 @@
 
 {{= "" }}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public class {{= model.TypeName }} : IGraphQlTypeInformation
+public class {{= model.TypeName }} : global::GraphLinqQL.Introspection.IGraphQlTypeInformation
 {
 	public string Name { get { return "{{= model.Label }}"; } }
 	public string{{= model.NullabilityIndicator() }} Description { get { return {{if model.Description != null}}@"{{= model.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}}; } }
-	public TypeKind Kind { get { return TypeKind.{{= model.TypeKind }}; } }
-	public Type{{= model.NullabilityIndicator() }} OfType { get { return null; } }
+	public global::GraphLinqQL.Introspection.TypeKind Kind { get { return global::GraphLinqQL.Introspection.TypeKind.{{= model.TypeKind }}; } }
+	public global::System.Type{{= model.NullabilityIndicator() }} OfType { get { return null; } }
 	{{if model.ImplementedInterfaces == null}}
-		public IReadOnlyList<Type>{{= model.NullabilityIndicator() }} Interfaces { get { return null; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::System.Type>{{= model.NullabilityIndicator() }} Interfaces { get { return null; } }
 	{{else}}
-		private IReadOnlyList<Type> implementedInterfaces = new Type[]
+		private global::System.Collections.Generic.IReadOnlyList<global::System.Type> implementedInterfaces = new System.Type[]
 		{
 			{{each iface in model.ImplementedInterfaces}}
 				typeof({{= iface }}),
 			{{/each}}
 		};
-		public IReadOnlyList<Type>{{= model.NullabilityIndicator() }} Interfaces { get { return implementedInterfaces; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::System.Type>{{= model.NullabilityIndicator() }} Interfaces { get { return implementedInterfaces; } }
 	{{/if}}
 	{{if model.PossibleTypes == null}}
-		public IReadOnlyList<Type>{{= model.NullabilityIndicator() }} PossibleTypes { get { return null; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::System.Type>{{= model.NullabilityIndicator() }} PossibleTypes { get { return null; } }
 	{{else}}
-		private IReadOnlyList<Type> possibleTypes = new Type[]
+		private global::System.Collections.Generic.IReadOnlyList<global::System.Type> possibleTypes = new System.Type[]
 		{
 			{{each possibleType in model.PossibleTypes}}
 				typeof({{= possibleType }}),
 			{{/each}}
 		};
-		public IReadOnlyList<Type>{{= model.NullabilityIndicator() }} PossibleTypes { get { return possibleTypes; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::System.Type>{{= model.NullabilityIndicator() }} PossibleTypes { get { return possibleTypes; } }
 	{{/if}}
 	{{if model.EnumValues == null}}
-		public IEnumerable<GraphQlEnumValueInformation>{{= model.NullabilityIndicator() }} EnumValues(bool? includeDeprecated) { return null; }
+		public global::System.Collections.Generic.IEnumerable<global::GraphLinqQL.Introspection.GraphQlEnumValueInformation>{{= model.NullabilityIndicator() }} EnumValues(bool? includeDeprecated) { return null; }
 	{{else}}
-		private IReadOnlyList<GraphQlEnumValueInformation> enumValues = new GraphQlEnumValueInformation[]
+		private global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.GraphQlEnumValueInformation> enumValues = new global::GraphLinqQL.Introspection.GraphQlEnumValueInformation[]
 		{
 			{{each enumValue in model.EnumValues}}
-				new GraphQlEnumValueInformation(
+				new global::GraphLinqQL.Introspection.GraphQlEnumValueInformation(
 					name: "{{= enumValue.Label }}",
 					description: {{if enumValue.Description != null}}@"{{= enumValue.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
 					isDeprecated: {{= enumValue.IsDeprecated ? "true" : "false" }},
@@ -46,16 +46,16 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 				),
 			{{/each}}
 		};
-		public IEnumerable<GraphQlEnumValueInformation>{{= model.NullabilityIndicator() }} EnumValues(bool? includeDeprecated) { return enumValues.Where(v => !v.IsDeprecated || (includeDeprecated ?? false)); }
+		public global::System.Collections.Generic.IEnumerable<global::GraphLinqQL.Introspection.GraphQlEnumValueInformation>{{= model.NullabilityIndicator() }} EnumValues(bool? includeDeprecated) { return enumValues.Where(v => !v.IsDeprecated || (includeDeprecated ?? false)); }
 
 		public class Converter : System.ComponentModel.TypeConverter
         {
-            public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, Type sourceType)
+            public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, global::System.Type sourceType)
             {
                 return sourceType == typeof(string) || sourceType == typeof({{= ((EnumTypeContext)model).FullTypeName }});
             }
 
-            public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, Type destinationType)
+            public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, global::System.Type destinationType)
             {
                 return destinationType == typeof(string) || destinationType == typeof({{= ((EnumTypeContext)model).FullTypeName }});
             }
@@ -73,7 +73,7 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
                 return base.ConvertFrom(context, culture, value);
             }
 
-            public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+            public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, global::System.Type destinationType)
             {
                 if (destinationType == typeof({{= ((EnumTypeContext)model).FullTypeName }}))
                 {
@@ -93,7 +93,7 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 					{{each enumValue in model.EnumValues}}
 						case "{{= enumValue.Label}}": return {{= ((EnumTypeContext)model).FullTypeName }}.{{= enumValue.Name}};
 					{{/each}}
-                    default: throw new ArgumentException("Invalid value", "value");
+                    default: throw new global::System.ArgumentException("Invalid value", "value");
                 }
             }
 
@@ -104,24 +104,24 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 					{{each enumValue in model.EnumValues}}
 						case {{= ((EnumTypeContext)model).FullTypeName }}.{{= enumValue.Name}}: return "{{= enumValue.Label}}";
 					{{/each}}
-                    default: throw new ArgumentException("Invalid value", "value");
+                    default: throw new global::System.ArgumentException("Invalid value", "value");
                 }
             }
         }
 	{{/if}}
 	{{if model.Fields == null}}
-		public IEnumerable<GraphQlFieldInformation>{{= model.NullabilityIndicator() }} Fields(bool? includeDeprecated) { return null; }
+		public global::System.Collections.Generic.IEnumerable<global::GraphLinqQL.Introspection.GraphQlFieldInformation>{{= model.NullabilityIndicator() }} Fields(bool? includeDeprecated) { return null; }
 	{{else}}
-		private IReadOnlyList<GraphQlFieldInformation> fields = new GraphQlFieldInformation[]
+		private global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.GraphQlFieldInformation> fields = new global::GraphLinqQL.Introspection.GraphQlFieldInformation[]
 		{
 			{{each field in model.Fields}}
-				new GraphQlFieldInformation(
+				new global::GraphLinqQL.Introspection.GraphQlFieldInformation(
 					type: typeof({{= field.IntrospectionType }}),
 					name: "{{= field.Label }}",
 					description: {{if field.Description != null}}@"{{= field.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
-					args: new GraphQlInputFieldInformation[] {
+					args: new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation[] {
 						{{each arg in field.Arguments}}
-							new GraphQlInputFieldInformation(
+							new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation(
 								name: "{{= arg.Label }}",
 								type: typeof({{= arg.IntrospectionType }}),
 								description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
@@ -134,15 +134,15 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 				),
 			{{/each}}
 		};
-		public IEnumerable<GraphQlFieldInformation>{{= model.NullabilityIndicator() }} Fields(bool? includeDeprecated) { return fields.Where(v => !v.IsDeprecated || (includeDeprecated ?? false)); }
+		public global::System.Collections.Generic.IEnumerable<global::GraphLinqQL.Introspection.GraphQlFieldInformation>{{= model.NullabilityIndicator() }} Fields(bool? includeDeprecated) { return fields.Where(v => !v.IsDeprecated || (includeDeprecated ?? false)); }
 	{{/if}}
 	{{if model.InputFields == null}}
-		public IReadOnlyList<GraphQlInputFieldInformation>{{= model.NullabilityIndicator() }} InputFields { get { return null; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.GraphQlInputFieldInformation>{{= model.NullabilityIndicator() }} InputFields { get { return null; } }
 	{{else}}
-		private IReadOnlyList<GraphQlInputFieldInformation> inputFields = new GraphQlInputFieldInformation[]
+		private global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.GraphQlInputFieldInformation> inputFields = new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation[]
 		{
 			{{each field in model.InputFields}}
-				new GraphQlInputFieldInformation(
+				new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation(
 					name: "{{= field.Label }}",
 					type: typeof({{= field.IntrospectionType }}),
 					description: {{if field.Description != null}}@"{{= field.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
@@ -150,6 +150,6 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 				),
 			{{/each}}
 		};
-		public IReadOnlyList<GraphQlInputFieldInformation>{{= model.NullabilityIndicator() }} InputFields { get { return inputFields; } }
+		public global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.GraphQlInputFieldInformation>{{= model.NullabilityIndicator() }} InputFields { get { return inputFields; } }
 	{{/if}}
 }

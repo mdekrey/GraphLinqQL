@@ -7,7 +7,7 @@ namespace GraphLinqQL
 {
     public class FinalizerContext
     {
-        public FinalizerContext(CancellationToken cancellationToken, Func<object?, FinalizerContext, Task<object?>> unrollResults)
+        public FinalizerContext(Func<object?, FinalizerContext, Task<object?>> unrollResults, CancellationToken cancellationToken)
         {
             CancellationToken = cancellationToken;
             UnrollResults = unrollResults;

@@ -6,26 +6,26 @@
 namespace Introspection
 {
 	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-	public class TypeListing : IGraphQlTypeListing
+	public class TypeListing : global::GraphLinqQL.Introspection.IGraphQlTypeListing
 	{
-		private static readonly Dictionary<string, Type> types = new Dictionary<string, Type>
+		private static readonly global::System.Collections.Generic.Dictionary<string, global::System.Type> types = new global::System.Collections.Generic.Dictionary<string, global::System.Type>
 		{
 			{{each declaration in model.GetTypeDeclarations()}}
 				{ "{{= declaration.Label }}", typeof(Introspection.{{= declaration.TypeName}}) },
 			{{/each}}
 		};
-		private static readonly IReadOnlyList<DirectiveInformation> directives = new DirectiveInformation[] {
+		private static readonly global::System.Collections.Generic.IReadOnlyList<global::GraphLinqQL.Introspection.DirectiveInformation> directives = new global::GraphLinqQL.Introspection.DirectiveInformation[] {
 			{{each directive in model.Directives}}
-				new DirectiveInformation(
+				new global::GraphLinqQL.Introspection.DirectiveInformation(
 										name: "{{= directive.Label }}",
 										locations: new[] {
 											{{each location in directive.Locations}}
 												DirectiveLocation.{{= location }},
 											{{/each}}
 										},
-										args: new GraphQlInputFieldInformation[] {
+										args: new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation[] {
 											{{each arg in directive.Arguments}}
-												new GraphQlInputFieldInformation(
+												new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation(
 																				name: "{{=arg.Label}}",
 																				type: typeof({{=arg.TypeNameNonNull}}),
 																				description: {{if arg.Description != null}}@"{{= arg.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
@@ -36,16 +36,16 @@ namespace Introspection
 			{{/each}}
 		};
 
-		public Type Query { get { return {{= model.QueryTypeName }}; } }
-		public Type{{= model.Nullability ? "?" : ""}} Mutation { get { return {{= model.MutationTypeName }}; } }
-		public Type{{= model.Nullability ? "?" : ""}} Subscription { get { return {{= model.SubscriptionTypeName }}; } }
+		public global::System.Type Query { get { return {{= model.QueryTypeName }}; } }
+		public global::System.Type{{= model.Nullability ? "?" : ""}} Mutation { get { return {{= model.MutationTypeName }}; } }
+		public global::System.Type{{= model.Nullability ? "?" : ""}} Subscription { get { return {{= model.SubscriptionTypeName }}; } }
 
-		public IEnumerable<Type> TypeInformation { get { return types.Values; } }
-		public IEnumerable<DirectiveInformation> DirectiveInformation { get { return directives; } }
+		public global::System.Collections.Generic.IEnumerable<global::System.Type> TypeInformation { get { return types.Values; } }
+		public global::System.Collections.Generic.IEnumerable<global::GraphLinqQL.Introspection.DirectiveInformation> DirectiveInformation { get { return directives; } }
 
-		public Type{{= model.Nullability ? "?" : ""}} Type(string name)
+		public global::System.Type{{= model.Nullability ? "?" : ""}} Type(string name)
 		{
-			Type type;
+			global::System.Type type;
 			return types.TryGetValue(name, out type) ? type : null;
 		}
 	}

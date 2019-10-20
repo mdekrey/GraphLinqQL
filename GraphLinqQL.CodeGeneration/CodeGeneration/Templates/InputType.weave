@@ -8,7 +8,7 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public class {{= model.TypeName }} : IInputType
+public class {{= model.TypeName }} : global::GraphLinqQL.IInputType
 {
 	{{each field in model.Fields()}}
 		{{if !string.IsNullOrEmpty(field.Description)}}
@@ -19,7 +19,7 @@ public class {{= model.TypeName }} : IInputType
 		public {{= field.TypeName ?? "object"}} {{= field.PropertyName}} { get; set; }{{if !string.IsNullOrEmpty(field.DefaultValue)}}= {{= field.DefaultValue}};{{/if}}
 	{{/each}}
 
-	public void SetValue(string fieldName, Func<Type, object> getValue)
+	public void SetValue(string fieldName, global::System.Func<global::System.Type, object> getValue)
 	{
 		switch (fieldName)
 		{
