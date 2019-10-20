@@ -21,7 +21,7 @@ namespace GraphLinqQL.StarWars.Implementations
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlObjectResult<Interfaces.Character?> character(string id)
+        public override IGraphQlObjectResult<Interfaces.Character?> Character(string id)
         {
             var intId = int.Parse(id);
             return Original.Union(
@@ -30,7 +30,7 @@ namespace GraphLinqQL.StarWars.Implementations
             ).Only();
         }
 
-        public override IGraphQlObjectResult<Interfaces.Droid?> droid(string id)
+        public override IGraphQlObjectResult<Interfaces.Droid?> Droid(string id)
         {
             var intId = int.Parse(id);
             // This intentionally has a different implementation from the human/starship for various implementations
@@ -44,29 +44,29 @@ namespace GraphLinqQL.StarWars.Implementations
             return await dbContext.Droids.FindAsync(intId);
         }
 
-        public override IGraphQlObjectResult<Interfaces.Character?> hero(Interfaces.Episode? episode) =>
+        public override IGraphQlObjectResult<Interfaces.Character?> Hero(Interfaces.Episode? episode) =>
             episode switch
             {
-                null => character("2001"),
+                null => Character("2001"),
                 Interfaces.Episode ep => Original
                     .Resolve(_ => dbContext.Films.Where(f => f.EpisodeId == InterfaceToDomain.ConvertEpisode(ep)).Select(f => f.Hero))
                     .List(_ => _.AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()))
                     .Only()
             };
 
-        public override IGraphQlObjectResult<Interfaces.Human?> human(string id)
+        public override IGraphQlObjectResult<Interfaces.Human?> Human(string id)
         {
             var intId = int.Parse(id);
             return Original.Resolve(dbContext.Humans.Where(human => human.Id == intId)).List(_ => _.AsContract<Human>()).Only();
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> reviews(Interfaces.Episode episode)
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Review?>?> Reviews(Interfaces.Episode episode)
         {
             return Original.Resolve(dbContext.Reviews.Where(review => review.Episode == InterfaceToDomain.ConvertEpisode(episode)))
                 .List(_ => _.AsContract<Review>());
         }
 
-        public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> search(string? text)
+        public override IGraphQlObjectResult<IEnumerable<SearchResult?>?> Search(string? text)
         {
             return Original.Union(
                 _ => _.Resolve(from human in dbContext.Humans where human.Name.Contains(text!) select human).List(_ => _.AsContract<Human>() as IGraphQlObjectResult<SearchResult?>),
@@ -75,7 +75,7 @@ namespace GraphLinqQL.StarWars.Implementations
             );
         }
 
-        public override IGraphQlObjectResult<Interfaces.Starship?> starship(string id)
+        public override IGraphQlObjectResult<Interfaces.Starship?> Starship(string id)
         {
             var intId = int.Parse(id);
             return Original.Resolve(dbContext.Starships.Where(starship => starship.Id == intId)).List(_ => _.AsContract<Starship>()).Only();

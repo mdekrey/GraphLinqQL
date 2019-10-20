@@ -7,17 +7,17 @@ namespace GraphLinqQL.StarWars.Implementations
 {
     class PageInfo : Interfaces.PageInfo.GraphQlContract<PageInfoValues>
     {
-        public override IGraphQlScalarResult<string?> endCursor()
+        public override IGraphQlScalarResult<string?> EndCursor()
         {
             return Original.ResolveTask(_ => _.EndCursor());
         }
 
-        public override IGraphQlScalarResult<bool> hasNextPage()
+        public override IGraphQlScalarResult<bool> HasNextPage()
         {
             return Original.ResolveTask(_ => _.HasNextPage());
         }
 
-        public override IGraphQlScalarResult<string?> startCursor()
+        public override IGraphQlScalarResult<string?> StartCursor()
         {
             return Original.ResolveTask(_ => _.StartCursor());
         }

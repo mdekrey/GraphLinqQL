@@ -16,6 +16,7 @@ namespace GraphLinqQL.CodeGeneration
         }
 
         public string Name => CSharpNaming.GetPropertyName(entry.EnumValue.TokenValue);
+        public string Label => entry.EnumValue.TokenValue;
         public string? Description => entry.Description;
 
         public bool IsDeprecated => entry.Directives.FindObsoleteDirective() != null;

@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+#pragma warning disable CA1308 // Normalize strings to uppercase
 
 namespace GraphLinqQL.CodeGeneration
 {
@@ -8,9 +13,23 @@ namespace GraphLinqQL.CodeGeneration
             name; // TODO - guard this C# name
 
         internal static string GetPropertyName(string name) =>
-            name; // TODO - guard this C# name
+            ToPascalCase(FromUnknownStyle(name)); // TODO - guard this C# name
 
         internal static string GetFieldName(string name) =>
             name; // TODO - guard this C# name
+
+
+        private static string ToPascalCase(string[] words) =>
+            string.Join("", words.Select(word => word.Substring(0, 1).ToUpperInvariant() + word.Substring(1).ToLowerInvariant()));
+
+        private static readonly Regex Pattern = new Regex("_+|(?<first>[a-z0-9])(?<second>[A-Z])|(?<first>[a-zA-Z])(?<second>[0-9])", RegexOptions.Compiled);
+        private static string[] FromUnknownStyle(string name)
+        {
+            return Pattern.Replace(name, match =>
+            {
+                return match.Groups["first"].Value + " " + match.Groups["second"].Value;
+            }).Split(' ');
+        }
+
     }
 }

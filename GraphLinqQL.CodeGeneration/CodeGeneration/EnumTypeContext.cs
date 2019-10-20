@@ -20,6 +20,7 @@ namespace GraphLinqQL.CodeGeneration
 
         public string Label => enumTypeDefinition.Name;
         public string TypeName => CSharpNaming.GetTypeName(enumTypeDefinition.Name);
+        public string FullTypeName => $"{options.Namespace}.{TypeName}";
 
         public string? Description => enumTypeDefinition.Description;
 

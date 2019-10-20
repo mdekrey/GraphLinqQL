@@ -9,10 +9,6 @@ namespace GraphLinqQL.Execution
 {
     internal readonly struct SystemJsonGraphQlParameterInfo : IGraphQlParameterInfo
     {
-        static readonly JsonSerializerOptions GraphQlJsonSerializerOptions = new JsonSerializerOptions 
-        { 
-            Converters = { new JsonStringEnumConverter() }
-        };
         static readonly FieldInfo? JsonDocumentField = typeof(JsonElement).GetField("_parent", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo? JsonDocumentUtf8JsonField = typeof(JsonDocument).GetField("_utf8Json", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -28,7 +24,7 @@ namespace GraphLinqQL.Execution
 
         public object? BindTo(Type t)
         {
-            return JsonSerializer.Deserialize(Value, t, GraphQlJsonSerializerOptions);
+            return JsonSerializer.Deserialize(Value, t, JsonOptions.GraphQlJsonSerializerOptions);
         }
     }
 }

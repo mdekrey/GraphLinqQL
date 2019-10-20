@@ -20,19 +20,19 @@ namespace GraphLinqQL.Introspection
                     typeof(Introspection.Interfaces.Introspection.__DirectiveLocation),
                 };
 
-        public override IGraphQlObjectResult<IEnumerable<__Directive>> directives() =>
+        public override IGraphQlObjectResult<IEnumerable<__Directive>> Directives() =>
             Original.Resolve(types => types.DirectiveInformation).List(_ => _.AsContract<DirectiveDefinition>());
 
-        public override IGraphQlObjectResult<__Type?> mutationType() =>
+        public override IGraphQlObjectResult<__Type?> MutationType() =>
             Original.Resolve(types => types.Mutation).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlObjectResult<__Type> queryType() =>
+        public override IGraphQlObjectResult<__Type> QueryType() =>
             Original.Resolve(types => types.Query).AsContract<GraphQlType>();
 
-        public override IGraphQlObjectResult<__Type?> subscriptionType() =>
+        public override IGraphQlObjectResult<__Type?> SubscriptionType() =>
             Original.Resolve(types => types.Subscription).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlObjectResult<IEnumerable<__Type>> types() =>
+        public override IGraphQlObjectResult<IEnumerable<__Type>> Types() =>
             Original.Resolve(types => introspectionTypes.Union(types.TypeInformation)).List(_ => _.AsContract<GraphQlType>());
 
     }

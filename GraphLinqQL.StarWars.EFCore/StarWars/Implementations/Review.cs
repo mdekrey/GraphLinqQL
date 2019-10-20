@@ -7,13 +7,13 @@ namespace GraphLinqQL.StarWars.Implementations
 {
     class Review : Interfaces.Review.GraphQlContract<Domain.Review>
     {
-        public override IGraphQlScalarResult<string?> commentary() =>
+        public override IGraphQlScalarResult<string?> Commentary() =>
             Original.Resolve(_ => _.Commentary);
 
-        public override IGraphQlScalarResult<Episode?> episode() =>
+        public override IGraphQlScalarResult<Episode?> Episode() =>
             Original.Resolve(_ => (Episode?)DomainToInterface.ConvertEpisode(_.Episode));
 
-        public override IGraphQlScalarResult<int> stars() =>
+        public override IGraphQlScalarResult<int> Stars() =>
             Original.Resolve(_ => _.Stars);
     }
 }

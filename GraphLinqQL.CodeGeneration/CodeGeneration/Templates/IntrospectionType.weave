@@ -39,7 +39,7 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 		{
 			{{each enumValue in model.EnumValues}}
 				new GraphQlEnumValueInformation(
-					name: "{{= enumValue.Name }}",
+					name: "{{= enumValue.Label }}",
 					description: {{if enumValue.Description != null}}@"{{= enumValue.Description.Replace("\"", "\"\"") }}"{{else}}null{{/if}},
 					isDeprecated: {{= enumValue.IsDeprecated ? "true" : "false" }},
 					deprecationReason: {{if enumValue.DeprecationReason != null}}@"{{= enumValue.DeprecationReason.Replace("\"", "\"\"") }}"{{else}}null{{/if}}
@@ -47,6 +47,67 @@ public class {{= model.TypeName }} : IGraphQlTypeInformation
 			{{/each}}
 		};
 		public IEnumerable<GraphQlEnumValueInformation>{{= model.NullabilityIndicator() }} EnumValues(bool? includeDeprecated) { return enumValues.Where(v => !v.IsDeprecated || (includeDeprecated ?? false)); }
+
+		public class Converter : System.ComponentModel.TypeConverter
+        {
+            public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, Type sourceType)
+            {
+                return sourceType == typeof(string) || sourceType == typeof({{= ((EnumTypeContext)model).FullTypeName }});
+            }
+
+            public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, Type destinationType)
+            {
+                return destinationType == typeof(string) || destinationType == typeof({{= ((EnumTypeContext)model).FullTypeName }});
+            }
+
+            public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+            {
+                if (value.GetType() == typeof(string))
+                {
+                    return ToEnum((string)value);
+                }
+                else if (value.GetType() == typeof({{= ((EnumTypeContext)model).FullTypeName }}))
+                {
+                    return ToString(({{= ((EnumTypeContext)model).FullTypeName }})value);
+                }
+                return base.ConvertFrom(context, culture, value);
+            }
+
+            public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+            {
+                if (destinationType == typeof({{= ((EnumTypeContext)model).FullTypeName }}))
+                {
+                    return ToEnum((string)value);
+                }
+                else if (destinationType == typeof(string))
+                {
+                    return ToString(({{= ((EnumTypeContext)model).FullTypeName }})value);
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+
+            private {{= ((EnumTypeContext)model).FullTypeName }} ToEnum(string value)
+            {
+                switch (value)
+                {
+					{{each enumValue in model.EnumValues}}
+						case "{{= enumValue.Label}}": return {{= ((EnumTypeContext)model).FullTypeName }}.{{= enumValue.Name}};
+					{{/each}}
+                    default: throw new ArgumentException("Invalid value", "value");
+                }
+            }
+
+            private string ToString({{= ((EnumTypeContext)model).FullTypeName }} value)
+            {
+                switch (value)
+                {
+					{{each enumValue in model.EnumValues}}
+						case {{= ((EnumTypeContext)model).FullTypeName }}.{{= enumValue.Name}}: return "{{= enumValue.Label}}";
+					{{/each}}
+                    default: throw new ArgumentException("Invalid value", "value");
+                }
+            }
+        }
 	{{/if}}
 	{{if model.Fields == null}}
 		public IEnumerable<GraphQlFieldInformation>{{= model.NullabilityIndicator() }} Fields(bool? includeDeprecated) { return null; }

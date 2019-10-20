@@ -15,11 +15,6 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class EndpointRouteBuilderExtensions
     {
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-        {
-            Converters = { new JsonStringEnumConverter() }
-        };
-
         public static IEndpointConventionBuilder UseGraphQl(this IEndpointRouteBuilder endpoints, string pattern)
         {
             return endpoints.UseGraphQl(pattern, Options.DefaultName);
@@ -36,7 +31,7 @@ namespace Microsoft.AspNetCore.Builder
                 var bodyStream = context.Request.Body;
                 context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("application/json");
                 var responseObj = await executor.ExecuteQuery(bodyStream, messageResolver, context.RequestAborted).ConfigureAwait(false);
-                await JsonSerializer.SerializeAsync(context.Response.Body, responseObj, JsonOptions, context.RequestAborted).ConfigureAwait(false);
+                await JsonSerializer.SerializeAsync(context.Response.Body, responseObj, JsonOptions.GraphQlJsonSerializerOptions, context.RequestAborted).ConfigureAwait(false);
 
             });
         }

@@ -5,22 +5,22 @@ namespace GraphLinqQL.Introspection
 {
     internal class GraphQlField : Interfaces.__Field.GraphQlContract<GraphQlFieldInformation>
     {
-        public override IGraphQlObjectResult<IEnumerable<__InputValue>> args() =>
+        public override IGraphQlObjectResult<IEnumerable<__InputValue>> Args() =>
             Original.Resolve(field => field.Arguments).List(_ => _.AsContract<GraphQlInputField>());
 
-        public override IGraphQlScalarResult<string?> deprecationReason() =>
+        public override IGraphQlScalarResult<string?> DeprecationReason() =>
             Original.Resolve(v => v.DeprecationReason);
 
-        public override IGraphQlScalarResult<string?> description() =>
+        public override IGraphQlScalarResult<string?> Description() =>
             Original.Resolve(v => v.Description);
 
-        public override IGraphQlScalarResult<bool> isDeprecated() =>
+        public override IGraphQlScalarResult<bool> IsDeprecated() =>
             Original.Resolve(v => v.IsDeprecated);
 
-        public override IGraphQlScalarResult<string> name() =>
+        public override IGraphQlScalarResult<string> Name() =>
             Original.Resolve(v => v.Name);
 
-        public override IGraphQlObjectResult<__Type> type() =>
+        public override IGraphQlObjectResult<__Type> Type() =>
             Original.Resolve(v => v.FieldType).AsContract<GraphQlType>();
     }
 }

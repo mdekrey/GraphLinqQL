@@ -8,6 +8,7 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
+[System.ComponentModel.TypeConverter(typeof(Introspection.{{= model.TypeName }}.Converter))]
 public enum {{= model.TypeName }}
 {
 	{{each value in model.EnumValues}}

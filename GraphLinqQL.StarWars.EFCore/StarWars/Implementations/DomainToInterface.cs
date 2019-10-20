@@ -7,9 +7,9 @@ namespace GraphLinqQL.StarWars.Implementations
         internal static Interfaces.Episode ConvertEpisode(Domain.Episode arg) =>
             arg switch
             {
-                Domain.Episode.NewHope => Interfaces.Episode.NEWHOPE,
-                Domain.Episode.Empire => Interfaces.Episode.EMPIRE,
-                Domain.Episode.Jedi => Interfaces.Episode.JEDI,
+                Domain.Episode.NewHope => Interfaces.Episode.Newhope,
+                Domain.Episode.Empire => Interfaces.Episode.Empire,
+                Domain.Episode.Jedi => Interfaces.Episode.Jedi,
                 _ => throw new NotSupportedException()
             };
     }
