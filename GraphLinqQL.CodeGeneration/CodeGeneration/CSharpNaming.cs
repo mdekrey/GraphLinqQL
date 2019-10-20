@@ -9,14 +9,104 @@ namespace GraphLinqQL.CodeGeneration
 {
     public static class CSharpNaming
     {
+        private static IReadOnlyList<string> CSharpKeywords = new[]
+        {
+            "abstract",
+            "as",
+            "base",
+            "bool",
+            "break",
+            "byte",
+            "case",
+            "catch",
+            "char",
+            "checked",
+            "clas",
+            "const",
+            "continue",
+            "decimal",
+            "default",
+            "delegate",
+            "do",
+            "double",
+            "else",
+            "enum",
+            "event",
+            "explicit",
+            "extern",
+            "false",
+            "finally",
+            "fixed",
+            "float",
+            "for",
+            "foreach",
+            "goto",
+            "if",
+            "implicit",
+            "in",
+            "int",
+            "interface",
+            "internal",
+            "is",
+            "lock",
+            "long",
+            "namespace",
+            "new",
+            "null",
+            "object",
+            "operator",
+            "out",
+            "override",
+            "params",
+            "private",
+            "protected",
+            "public",
+            "readonly",
+            "ref",
+            "return",
+            "sbyte",
+            "sealed",
+            "short",
+            "sizeof",
+            "stackalloc",
+            "static",
+            "string",
+            "struct",
+            "switch",
+            "this",
+            "throw",
+            "true",
+            "try",
+            "typeof",
+            "uint",
+            "ulong",
+            "unchecked",
+            "unsafe",
+            "ushort",
+            "using",
+            "using",
+            "static",
+            "virtual",
+            "void",
+            "volatile",
+            "while",
+        };
+
         public static string GetTypeName(string name) =>
             ToPascalCase(FromUnknownStyle(name));
 
         internal static string GetPropertyName(string name) =>
             ToPascalCase(FromUnknownStyle(name)); // TODO - guard this C# name
 
-        internal static string GetFieldName(string name) =>
-            ToMedialCapitals(FromUnknownStyle(name)); // TODO - guard this C# name
+        internal static string GetFieldName(string name)
+        {
+            var result = ToMedialCapitals(FromUnknownStyle(name));
+            if (CSharpKeywords.Contains(result))
+            {
+                return "_" + result;
+            }
+            return result;
+        }
 
 
         private static string ToMedialCapitals(string[] words) =>

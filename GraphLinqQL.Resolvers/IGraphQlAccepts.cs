@@ -5,7 +5,7 @@ namespace GraphLinqQL
 {
     public interface IGraphQlAccepts
     {
-        IGraphQlResultFactory Original { set; }
+        IGraphQlResultFactory Original { get; set; }
     }
 
     public interface IGraphQlAccepts<in T> : IGraphQlAccepts

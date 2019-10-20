@@ -12,7 +12,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
             {
                 throw new ArgumentNullException(nameof(episode));
             }
-            return Original.ResolveTask(async _ =>
+            return this.Original().ResolveTask(async _ =>
             {
                 await Task.Yield();
                 var ep = InterfaceToDomain.ConvertEpisode(episode.Value);

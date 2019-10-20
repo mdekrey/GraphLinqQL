@@ -51,7 +51,6 @@ public abstract class {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolv
 	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
 	public abstract class GraphQlContract<T> : {{= model.TypeName }}, global::GraphLinqQL.IGraphQlAccepts<T>
 	{
-		public global::GraphLinqQL.IGraphQlResultFactory<T> Original { get; set; }
-		global::GraphLinqQL.IGraphQlResultFactory global::GraphLinqQL.IGraphQlAccepts.Original { set { Original = (global::GraphLinqQL.IGraphQlResultFactory<T>)value; } }
+		global::GraphLinqQL.IGraphQlResultFactory global::GraphLinqQL.IGraphQlAccepts.Original { get; set; }
 	}
 }

@@ -9,12 +9,12 @@ namespace GraphLinqQL.StarWars.Implementations
     {
         public override IGraphQlScalarResult<string> Cursor()
         {
-            return Original.Resolve(_ => _.ToId.ToString());
+            return this.Original().Resolve(_ => _.ToId.ToString());
         }
 
         public override IGraphQlObjectResult<Character?> Node()
         {
-            return Original.Resolve(_ => _.To).AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>());
+            return this.Original().Resolve(_ => _.To).AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>());
         }
     }
 }

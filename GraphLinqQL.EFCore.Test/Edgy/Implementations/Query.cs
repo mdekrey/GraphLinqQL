@@ -6,9 +6,9 @@ namespace GraphLinqQL.Edgy.Implementations
     class Query : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
         public override IGraphQlObjectResult<WithInput> FromReference() =>
-            Original.Resolve(_ => "foo").AsContract<WithInputFromRef>();
+            this.Original().Resolve(_ => "foo").AsContract<WithInputFromRef>();
 
         public override IGraphQlObjectResult<WithInput> FromValue() =>
-            Original.Resolve(_ => 0).AsContract<WithInputFromValue>();
+            this.Original().Resolve(_ => 0).AsContract<WithInputFromValue>();
     }
 }
