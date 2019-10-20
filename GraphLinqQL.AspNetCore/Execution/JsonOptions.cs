@@ -9,9 +9,12 @@ namespace GraphLinqQL.Execution
 {
     public static class JsonOptions
     {
-        public static readonly JsonSerializerOptions GraphQlJsonSerializerOptions = new JsonSerializerOptions
+        public static readonly JsonSerializerOptions GraphQlJsonSerializerOptions = Setup(new JsonSerializerOptions());
+
+        public static JsonSerializerOptions Setup(JsonSerializerOptions jsonSerializerOptions)
         {
-            Converters = { new TypeConverterEnumConverter() }
-        };
+            jsonSerializerOptions.Converters.Add(new TypeConverterEnumConverter());
+            return jsonSerializerOptions;
+        }
     }
 }

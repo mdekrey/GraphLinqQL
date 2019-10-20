@@ -1,6 +1,7 @@
 ﻿using GraphLinqQL.Ast.Nodes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -51,14 +52,14 @@ namespace GraphLinqQL.Execution
         {
             if (expectedType.IsEnum)
             {
-                return Enum.Parse(expectedType, enumValue.TokenValue);
+                return TypeDescriptor.GetConverter(expectedType).ConvertTo(enumValue.TokenValue, expectedType);
             }
             else if (expectedType.IsConstructedGenericType && expectedType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var t = Nullable.GetUnderlyingType(expectedType);
                 if (t.IsEnum)
                 {
-                    return Activator.CreateInstance(expectedType, Enum.Parse(t, enumValue.TokenValue));
+                    return Activator.CreateInstance(expectedType, TypeDescriptor.GetConverter(t).ConvertTo(enumValue.TokenValue, t));
                 }
             }
             return Convert.ChangeType(enumValue.TokenValue, expectedType, CultureInfo.InvariantCulture);
@@ -103,11 +104,10 @@ namespace GraphLinqQL.Execution
 
         public object? VisitObject(ObjectValue objectValue, Type expectedType)
         {
-            var result = Activator.CreateInstance(expectedType);
+            var result = (IInputType)Activator.CreateInstance(expectedType);
             foreach (var field in objectValue.Fields)
             {
-                var property = expectedType.GetProperty(field.Key);
-                property.SetValue(result, Visit(field.Value, property.PropertyType));
+                result.SetValue(field.Key, type => Visit(field.Value, type));
             }
             return result;
         }

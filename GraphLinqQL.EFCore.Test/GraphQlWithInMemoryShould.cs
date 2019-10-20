@@ -139,7 +139,8 @@ namespace GraphLinqQL
 
                 var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
-                var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+                var options = JsonOptions.GraphQlJsonSerializerOptions;
+                var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions.Setup(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
                 Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
             }

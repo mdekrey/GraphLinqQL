@@ -126,7 +126,7 @@ namespace GraphLinqQL
                 var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
                 var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
-                var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+                var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions.Setup(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
                 var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
 

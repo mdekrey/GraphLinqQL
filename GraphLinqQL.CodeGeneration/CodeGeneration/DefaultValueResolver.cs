@@ -22,7 +22,7 @@ namespace GraphLinqQL.CodeGeneration
                 BooleanValue booleanValue =>
                     booleanValue.TokenValue == true ? "true" : "false",
                 EnumValue enumValue when typeNode is TypeName typeName =>
-                    $"{options.Namespace}.{options.Resolve(typeName, document, nullable: false)}.{enumValue.TokenValue}",
+                    $"{options.Namespace}.{options.Resolve(typeName, document, nullable: false)}.{CSharpNaming.GetPropertyName(enumValue.TokenValue)}",
                 FloatValue floatValue =>
                     floatValue.TokenValue,
                 IntValue intValue =>
