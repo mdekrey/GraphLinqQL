@@ -12,7 +12,6 @@ namespace GraphLinqQL.Introspection
         private readonly TQuery originalQuery;
         private readonly IGraphQlTypeListing typeListing;
         private readonly TypeListing introspectionTypeListing;
-        private IGraphQlResultFactory<GraphQlRoot>? original;
 
         public IntrospectionQuery(IGraphQlServiceProvider servicesProvider)
         {
@@ -27,26 +26,17 @@ namespace GraphLinqQL.Introspection
             set { originalQuery.FieldContext = value; }
         }
 
-        public IGraphQlResultFactory<GraphQlRoot> Original
-        {
-            get { return original!; }
-            set
-            {
-                original = value;
-                originalQuery.Original = value;
-            }
-        }
-        IGraphQlResultFactory IGraphQlAccepts.Original { set => Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
+        IGraphQlResultFactory IGraphQlAccepts.Original { get => originalQuery.Original; set => originalQuery.Original = (IGraphQlResultFactory<GraphQlRoot>)value; }
 
         public string GraphQlTypeName => originalQuery.GraphQlTypeName;
 
         public bool IsType(string value) => originalQuery.IsType(value);
 
         internal IGraphQlObjectResult<Schema> schema() =>
-            original!.Resolve(_ => typeListing).AsContract<Schema>();
+            this.Original()!.Resolve(_ => typeListing).AsContract<Schema>();
 
         internal IGraphQlObjectResult<GraphQlType?> type(string name) =>
-            original!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.AsContract<GraphQlType>());
+            this.Original()!.Resolve(_ => typeListing.Type(name) ?? introspectionTypeListing.Type(name)).Nullable(_ => _.AsContract<GraphQlType>());
 
         public IGraphQlResult ResolveQuery(string name, IGraphQlParameterResolver parameters) =>
             name switch

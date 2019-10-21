@@ -15,53 +15,53 @@ namespace GraphLinqQL.Introspection
         private readonly GraphQlJoin<Type, IGraphQlTypeInformation> typeInformation; 
 
 
-        public override IGraphQlScalarResult<string?> description() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Description);
+        public override IGraphQlScalarResult<string?> Description() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.Description);
 
-        public override IGraphQlObjectResult<IEnumerable<__EnumValue>?> enumValues(bool? includeDeprecated) =>
-            Original.Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<EnumValue>()));
+        public override IGraphQlObjectResult<IEnumerable<__EnumValue>?> EnumValues(bool? includeDeprecated) =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.EnumValues(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<EnumValue>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__Field>?> fields(bool? includeDeprecated) =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<GraphQlField>()));
+        public override IGraphQlObjectResult<IEnumerable<__Field>?> Fields(bool? includeDeprecated) =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.Fields(includeDeprecated)).Nullable(_ => _.List(_ => _.AsContract<GraphQlField>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__InputValue>?> inputFields() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.InputFields).Nullable(_ => _.List(_ => _.AsContract<GraphQlInputField>()));
+        public override IGraphQlObjectResult<IEnumerable<__InputValue>?> InputFields() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.InputFields).Nullable(_ => _.List(_ => _.AsContract<GraphQlInputField>()));
 
-        public override IGraphQlObjectResult<IEnumerable<__Type>?> interfaces() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Interfaces).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
+        public override IGraphQlObjectResult<IEnumerable<__Type>?> Interfaces() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.Interfaces).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
 
-        public override IGraphQlScalarResult<__TypeKind> kind() =>
-            Original.Join(typeInformation).Resolve((_, info) => ToInterfaceKind(info.Kind));
+        public override IGraphQlScalarResult<__TypeKind> Kind() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => ToInterfaceKind(info.Kind));
 
-        public override IGraphQlScalarResult<string?> name() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.Name);
+        public override IGraphQlScalarResult<string?> Name() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.Name);
 
-        public override IGraphQlObjectResult<__Type?> ofType() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.OfType).Nullable(_ => _.AsContract<GraphQlType>());
+        public override IGraphQlObjectResult<__Type?> OfType() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.OfType).Nullable(_ => _.AsContract<GraphQlType>());
 
-        public override IGraphQlObjectResult<IEnumerable<__Type>?> possibleTypes() =>
-            Original.Join(typeInformation).Resolve((_, info) => info.PossibleTypes).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
+        public override IGraphQlObjectResult<IEnumerable<__Type>?> PossibleTypes() =>
+            this.Original().Join(typeInformation).Resolve((_, info) => info.PossibleTypes).Nullable(_ => _.List(_ => _.AsContract<GraphQlType>()));
 
         private __TypeKind ToInterfaceKind(TypeKind kind)
         {
             switch (kind)
             {
                 case TypeKind.Scalar:
-                    return __TypeKind.SCALAR;
+                    return __TypeKind.Scalar;
                 case TypeKind.Object:
-                    return __TypeKind.OBJECT;
+                    return __TypeKind.Object;
                 case TypeKind.Interface:
-                    return __TypeKind.INTERFACE;
+                    return __TypeKind.Interface;
                 case TypeKind.Union:
-                    return __TypeKind.UNION;
+                    return __TypeKind.Union;
                 case TypeKind.Enum:
-                    return __TypeKind.ENUM;
+                    return __TypeKind.Enum;
                 case TypeKind.InputObject:
-                    return __TypeKind.INPUT_OBJECT;
+                    return __TypeKind.InputObject;
                 case TypeKind.List:
-                    return __TypeKind.LIST;
+                    return __TypeKind.List;
                 case TypeKind.NonNull:
-                    return __TypeKind.NON_NULL;
+                    return __TypeKind.NonNull;
                 default:
                     throw new NotSupportedException();
             }

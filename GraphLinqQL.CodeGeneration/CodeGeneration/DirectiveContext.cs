@@ -33,7 +33,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var arg in directive.Arguments)
                 {
-                    yield return new InputValueContext(arg, options, document);
+                    yield return new InputValueContext(arg, options, document, directive.GetPropertyName(arg.Name));
                 }
             }
         }

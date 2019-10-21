@@ -8,14 +8,16 @@ namespace GraphLinqQL.CodeGeneration
         private readonly GraphQLGenerationOptions options;
         private readonly Document document;
 
-        public EnumValueContext(EnumValueDefinition entry, GraphQLGenerationOptions options, Document document)
+        public EnumValueContext(EnumValueDefinition entry, GraphQLGenerationOptions options, Document document, string propertyName)
         {
+            this.Name = propertyName;
             this.entry = entry;
             this.options = options;
             this.document = document;
         }
 
-        public string Name => CSharpNaming.GetPropertyName(entry.EnumValue.TokenValue);
+        public string Name { get; }
+        public string Label => entry.EnumValue.TokenValue;
         public string? Description => entry.Description;
 
         public bool IsDeprecated => entry.Directives.FindObsoleteDirective() != null;

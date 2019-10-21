@@ -20,6 +20,7 @@ namespace GraphLinqQL.CodeGeneration
 
         public string Label => enumTypeDefinition.Name;
         public string TypeName => CSharpNaming.GetTypeName(enumTypeDefinition.Name);
+        public string FullTypeName => $"{options.Namespace}.{TypeName}";
 
         public string? Description => enumTypeDefinition.Description;
 
@@ -37,7 +38,7 @@ namespace GraphLinqQL.CodeGeneration
             {
                 foreach (var entry in enumTypeDefinition.EnumValues)
                 {
-                    yield return new EnumValueContext(entry, options, document);
+                    yield return new EnumValueContext(entry, options, document, enumTypeDefinition.GetPropertyName(entry.EnumValue.TokenValue));
                 }
             }
         }

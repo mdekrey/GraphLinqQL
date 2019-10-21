@@ -43,8 +43,8 @@ namespace GraphLinqQL.CodeGeneration
         {
             return typeNode switch
             {
-                NonNullType { BaseType: var baseType } => $"NonNullTypeInformation<{options.ResolveIntrospection(baseType)}>",
-                ListType { ElementType: var elementType } => $"ListTypeInformation<{options.ResolveIntrospection(elementType)}>",
+                NonNullType { BaseType: var baseType } => $"global::GraphLinqQL.Introspection.NonNullTypeInformation<{options.ResolveIntrospection(baseType)}>",
+                ListType { ElementType: var elementType } => $"global::GraphLinqQL.Introspection.ListTypeInformation<{options.ResolveIntrospection(elementType)}>",
                 TypeName { Name: var name } => $"Introspection.{CSharpNaming.GetTypeName(name)}",
                 _ => throw new InvalidOperationException($"Expected known type node, got {typeNode.GetType().FullName}"),
             };

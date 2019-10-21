@@ -8,43 +8,43 @@ namespace GraphLinqQL.Introspection
 {
     public class DirectiveDefinition : __Directive.GraphQlContract<DirectiveInformation>
     {
-        public override IGraphQlObjectResult<IEnumerable<__InputValue>> args() =>
-            Original.Resolve(d => d.Arguments).List(_ => _.AsContract<GraphQlInputField>());
+        public override IGraphQlObjectResult<IEnumerable<__InputValue>> Args() =>
+            this.Original().Resolve(d => d.Arguments).List(_ => _.AsContract<GraphQlInputField>());
 
-        public override IGraphQlScalarResult<string?> description() =>
-            Original.Resolve(v => v.Description);
+        public override IGraphQlScalarResult<string?> Description() =>
+            this.Original().Resolve(v => v.Description);
 
-        public override IGraphQlScalarResult<IEnumerable<__DirectiveLocation>> locations() =>
-            Original.Resolve(v => v.Locations.Select(ToInterfaceLocation));
+        public override IGraphQlScalarResult<IEnumerable<__DirectiveLocation>> Locations() =>
+            this.Original().Resolve(v => v.Locations.Select(ToInterfaceLocation));
 
         private __DirectiveLocation ToInterfaceLocation(DirectiveLocation arg)
         {
             return arg switch
             {
-                DirectiveLocation.Query => __DirectiveLocation.QUERY,
-                DirectiveLocation.Mutation => __DirectiveLocation.MUTATION,
-                DirectiveLocation.Subscription => __DirectiveLocation.SUBSCRIPTION,
-                DirectiveLocation.Field => __DirectiveLocation.FIELD,
-                DirectiveLocation.FragmentDefinition => __DirectiveLocation.FRAGMENT_DEFINITION,
-                DirectiveLocation.FragmentSpread => __DirectiveLocation.FRAGMENT_SPREAD,
-                DirectiveLocation.InlineFragment => __DirectiveLocation.INLINE_FRAGMENT,
-                DirectiveLocation.VariableDefinition => __DirectiveLocation.VARIABLE_DEFINITION,
-                DirectiveLocation.Schema => __DirectiveLocation.SCHEMA,
-                DirectiveLocation.Scalar => __DirectiveLocation.SCALAR,
-                DirectiveLocation.Object => __DirectiveLocation.OBJECT,
-                DirectiveLocation.FieldDefinition => __DirectiveLocation.FIELD_DEFINITION,
-                DirectiveLocation.ArgumentDefinition => __DirectiveLocation.ARGUMENT_DEFINITION,
-                DirectiveLocation.Interface => __DirectiveLocation.INTERFACE,
-                DirectiveLocation.Union => __DirectiveLocation.UNION,
-                DirectiveLocation.Enum => __DirectiveLocation.ENUM,
-                DirectiveLocation.EnumValue => __DirectiveLocation.ENUM_VALUE,
-                DirectiveLocation.InputObject => __DirectiveLocation.INPUT_OBJECT,
-                DirectiveLocation.InputFieldDefinition => __DirectiveLocation.INPUT_FIELD_DEFINITION,
+                DirectiveLocation.Query => __DirectiveLocation.Query,
+                DirectiveLocation.Mutation => __DirectiveLocation.Mutation,
+                DirectiveLocation.Subscription => __DirectiveLocation.Subscription,
+                DirectiveLocation.Field => __DirectiveLocation.Field,
+                DirectiveLocation.FragmentDefinition => __DirectiveLocation.FragmentDefinition,
+                DirectiveLocation.FragmentSpread => __DirectiveLocation.FragmentSpread,
+                DirectiveLocation.InlineFragment => __DirectiveLocation.InlineFragment,
+                DirectiveLocation.VariableDefinition => __DirectiveLocation.VariableDefinition,
+                DirectiveLocation.Schema => __DirectiveLocation.Schema,
+                DirectiveLocation.Scalar => __DirectiveLocation.Scalar,
+                DirectiveLocation.Object => __DirectiveLocation.Object,
+                DirectiveLocation.FieldDefinition => __DirectiveLocation.FieldDefinition,
+                DirectiveLocation.ArgumentDefinition => __DirectiveLocation.ArgumentDefinition,
+                DirectiveLocation.Interface => __DirectiveLocation.Interface,
+                DirectiveLocation.Union => __DirectiveLocation.Union,
+                DirectiveLocation.Enum => __DirectiveLocation.Enum,
+                DirectiveLocation.EnumValue => __DirectiveLocation.EnumValue,
+                DirectiveLocation.InputObject => __DirectiveLocation.InputObject,
+                DirectiveLocation.InputFieldDefinition => __DirectiveLocation.InputFieldDefinition,
                 _ => throw new NotSupportedException()
             };
         }
 
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(v => v.Name);
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(v => v.Name);
     }
 }

@@ -16,26 +16,26 @@ namespace GraphLinqQL.StarWars.Implementations
             this.dbContext = dbContext;
         }
 
-        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn()
+        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> AppearsIn()
         {
-            return Original.Resolve(droid => from appearance in dbContext.Appearances
+            return this.Original().Resolve(droid => from appearance in dbContext.Appearances
                                              where appearance.CharacterId == droid.Id
                                              orderby appearance.EpisodeId
                                              select (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId));
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends()
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> Friends()
         {
-            return Original.Resolve(droid => from friendship in dbContext.Friendships
+            return this.Original().Resolve(droid => from friendship in dbContext.Friendships
                                              where friendship.FromId == droid.Id
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> FriendsConnection(int? first, string? after)
         {
             var actualFirst = first ?? 3;
             var actualAfter = after != null ? int.Parse(after) : 0;
-            var result = Original.Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
+            var result = this.Original().Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
             {
                 AllData = GetFriendships(humanId),
                 SkippedData = GetFriendshipsPaginated(humanId, actualAfter),
@@ -56,13 +56,13 @@ namespace GraphLinqQL.StarWars.Implementations
              orderby friendship.ToId
              select friendship);
 
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Resolve(droid => droid.Id.ToString());
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Resolve(droid => droid.Id.ToString());
 
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(droid => droid.Name);
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(droid => droid.Name);
 
-        public override IGraphQlScalarResult<string?> primaryFunction() =>
-            Original.Resolve(droid => droid.PrimaryFunction);
+        public override IGraphQlScalarResult<string?> PrimaryFunction() =>
+            this.Original().Resolve(droid => droid.PrimaryFunction);
     }
 }

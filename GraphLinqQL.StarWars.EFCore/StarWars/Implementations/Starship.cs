@@ -7,27 +7,27 @@ namespace GraphLinqQL.StarWars.Implementations
 {
     class Starship : Interfaces.Starship.GraphQlContract<Domain.Starship>
     {
-        public override IGraphQlScalarResult<IEnumerable<IEnumerable<double>>?> coordinates()
+        public override IGraphQlScalarResult<IEnumerable<IEnumerable<double>>?> Coordinates()
         {
-            return Original.Resolve(new[] { new[] { 1.0, 2.0 }, new[] { 3.0, 4.0 } });
+            return this.Original().Resolve(new[] { new[] { 1.0, 2.0 }, new[] { 3.0, 4.0 } });
         }
 
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Resolve(starship => starship.Id.ToString());
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Resolve(starship => starship.Id.ToString());
 
-        public override IGraphQlScalarResult<double?> length(LengthUnit? unit)
+        public override IGraphQlScalarResult<double?> Length(LengthUnit? unit)
         {
-            if (unit == LengthUnit.FOOT)
+            if (unit == LengthUnit.Foot)
             {
-                return Original.Resolve(starship => (double?)Conversions.MetersToFeet(starship.Length));
+                return this.Original().Resolve(starship => (double?)Conversions.MetersToFeet(starship.Length));
             }
             else
             {
-                return Original.Resolve(starship => (double?)starship.Length);
+                return this.Original().Resolve(starship => (double?)starship.Length);
             }
         }
 
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(starship => starship.Name);
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(starship => starship.Name);
     }
 }

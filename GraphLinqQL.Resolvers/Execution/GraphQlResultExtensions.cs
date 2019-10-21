@@ -19,7 +19,7 @@ namespace GraphLinqQL.Execution
             }
             var constructedResult = resolved.ConstructResult();
             var result = InvokeExpression(input, constructedResult);
-            var finalizerContext = new FinalizerContext(cancellationToken, UnrollResults);
+            var finalizerContext = new FinalizerContext(UnrollResults, cancellationToken);
             var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
             return new ExecutionResult(false, finalizedResult, finalizerContext.Errors.ToArray());
         }

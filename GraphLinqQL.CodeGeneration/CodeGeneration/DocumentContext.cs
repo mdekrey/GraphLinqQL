@@ -62,7 +62,8 @@ namespace GraphLinqQL.CodeGeneration
                 EnumTypeDefinition enumTypeDefinition => new EnumTypeContext(enumTypeDefinition, options, document) as ITypeDeclaration,
                 UnionTypeDefinition unionTypeDefinition => new UnionTypeContext(unionTypeDefinition, options) as ITypeDeclaration,
                 ScalarTypeDefinition scalarTypeDefinition => new ScalarTypeContext(scalarTypeDefinition, options) as ITypeDeclaration,
-                _ => null
+                SchemaDefinition _ => null,
+                _ => throw new InvalidOperationException("Unhandled definition type " + def.Kind.ToString("g"))
             })
                 .Where(v => v != null)!;
         }

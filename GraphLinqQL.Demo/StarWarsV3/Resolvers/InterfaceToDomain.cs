@@ -8,9 +8,9 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
         internal static Domain.Episode ConvertEpisode(Interfaces.Episode arg) =>
             arg switch
             {
-                Interfaces.Episode.NEWHOPE => Domain.Episode.NewHope,
-                Interfaces.Episode.EMPIRE => Domain.Episode.Empire,
-                Interfaces.Episode.JEDI => Domain.Episode.Jedi,
+                Interfaces.Episode.Newhope => Domain.Episode.NewHope,
+                Interfaces.Episode.Empire => Domain.Episode.Empire,
+                Interfaces.Episode.Jedi => Domain.Episode.Jedi,
                 _ => throw new NotSupportedException()
             };
     }

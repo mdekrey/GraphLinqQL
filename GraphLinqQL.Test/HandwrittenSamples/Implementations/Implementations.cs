@@ -10,31 +10,31 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
 {
     public class QueryContract : Interfaces.Query.GraphQlContract<GraphQlRoot>
     {
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> heroes(int? first) =>
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> Heroes(int? first) =>
             first == null 
-                ? Original.Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>())
-                : Original.Resolve(root => Domain.DomainData.heroes.Take(first.Value)).List(item => item.AsContract<Hero>());
+                ? this.Original().Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>())
+                : this.Original().Resolve(root => Domain.DomainData.heroes.Take(first.Value)).List(item => item.AsContract<Hero>());
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>?> nulls() =>
-            Original.Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.AsContract<Hero>()));
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>?> Nulls() =>
+            this.Original().Resolve(root => (IEnumerable<Domain.Hero>?)null).Nullable(nullable => nullable.List(item => item.AsContract<Hero>()));
 
-        public override IGraphQlObjectResult<Interfaces.Hero?> nohero() =>
-            Original.Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.AsContract<Hero>());
+        public override IGraphQlObjectResult<Interfaces.Hero?> Nohero() =>
+            this.Original().Resolve(root => (Domain.Hero?)null).Nullable(nullable => nullable.AsContract<Hero>());
 
-        public override IGraphQlObjectResult<Interfaces.Hero> hero() =>
-            Original.Resolve(root => Domain.DomainData.heroes[0]).AsContract<Hero>();
+        public override IGraphQlObjectResult<Interfaces.Hero> Hero() =>
+            this.Original().Resolve(root => Domain.DomainData.heroes[0]).AsContract<Hero>();
 
-        public override IGraphQlObjectResult<Interfaces.Hero> heroFinalized() =>
-            Original.Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>()).Only();
+        public override IGraphQlObjectResult<Interfaces.Hero> HeroFinalized() =>
+            this.Original().Resolve(root => Domain.DomainData.heroes).List(item => item.AsContract<Hero>()).Only();
 
-        public override IGraphQlObjectResult<Interfaces.Hero> heroById(string id) =>
-            Original.Resolve(root => id).AsContract<HeroById>();
+        public override IGraphQlObjectResult<Interfaces.Hero> HeroById(string id) =>
+            this.Original().Resolve(root => id).AsContract<HeroById>();
 
-        public override IGraphQlScalarResult<double> rand() =>
-            Original.Resolve(root => 5.0);
+        public override IGraphQlScalarResult<double> Rand() =>
+            this.Original().Resolve(root => 5.0);
 
-        public override IGraphQlObjectResult<IEnumerable<Character>> characters() =>
-            Original.Union(
+        public override IGraphQlObjectResult<IEnumerable<Character>> Characters() =>
+            this.Original().Union(
                 _ => _.Resolve(Domain.DomainData.heroes).List(_ => _.AsContract<Hero>() as IGraphQlObjectResult<Character>),
                 _ => _.Resolve(Domain.DomainData.villains).List(_ => _.AsContract<Villain>())
             );
@@ -59,14 +59,14 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         //                                                                                       select friend)
         //                                                                        select GraphQlJoin.BuildPlaceholder(t, friends));
 
-        public override IGraphQlScalarResult<string> faction() =>
-            Original.Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends() =>
-            Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred() =>
-            Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask() =>
-            Original.ResolveTask(async hero =>
+        public override IGraphQlScalarResult<string> Faction() =>
+            this.Original().Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> Friends() =>
+            this.Original().Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
+            this.Original().Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> FriendsTask() =>
+            this.Original().ResolveTask(async hero =>
             {
                 await Task.Yield();
                 return (from friendId in Domain.DomainData.friends
@@ -74,14 +74,14 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
                         join friend in Domain.DomainData.heroes on friendId.Id2 equals friend.Id
                         select friend).ToArray();
             }).List(item => item.AsContract<Hero>());
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Resolve(hero => hero.Id);
-        public override IGraphQlScalarResult<string> location(string? date) =>
-            Original.Resolve(hero => $"Unknown ({date})");
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(hero => hero.Name);
-        public override IGraphQlScalarResult<double> renown() =>
-            Original.Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Resolve(hero => hero.Id);
+        public override IGraphQlScalarResult<string> Location(string? date) =>
+            this.Original().Resolve(hero => $"Unknown ({date})");
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(hero => hero.Name);
+        public override IGraphQlScalarResult<double> Renown() =>
+            this.Original().Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
     }
 
     public class HeroById : Interfaces.Hero.GraphQlContract<string>
@@ -108,33 +108,33 @@ namespace GraphLinqQL.HandwrittenSamples.Implementations
         //                                                                                  select friend)
         //                                                                   select GraphQlJoin.BuildPlaceholder(t, friends));
 
-        public override IGraphQlScalarResult<string> faction() =>
-            Original.Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friends() =>
-            Original.Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsDeferred() =>
-            Original.Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> friendsTask() =>
+        public override IGraphQlScalarResult<string> Faction() =>
+            this.Original().Join(reputationJoin).Resolve((hero, reputation) => reputation.Faction);
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> Friends() =>
+            this.Original().Join(friendsJoin).Resolve((hero, friends) => friends).List(item => item.AsContract<Hero>());
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> FriendsDeferred() =>
+            this.Original().Join(friendsJoin).Resolve((hero, friends) => friends).Defer(deferred => deferred.List(item => item.AsContract<Hero>()));
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Hero>> FriendsTask() =>
             throw new NotImplementedException();
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Join(heroJoin).Resolve((_, hero) => hero.Id);
-        public override IGraphQlScalarResult<string> location(string? date) =>
-            Original.Resolve(hero => $"Unknown ({date})");
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Join(heroJoin).Resolve((_, hero) => hero.Name);
-        public override IGraphQlScalarResult<double> renown() =>
-            Original.Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Join(heroJoin).Resolve((_, hero) => hero.Id);
+        public override IGraphQlScalarResult<string> Location(string? date) =>
+            this.Original().Resolve(hero => $"Unknown ({date})");
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Join(heroJoin).Resolve((_, hero) => hero.Name);
+        public override IGraphQlScalarResult<double> Renown() =>
+            this.Original().Join(reputationJoin).Resolve((hero, reputation) => (double)reputation.Renown);
     }
 
     public class Villain : Interfaces.Villain.GraphQlContract<Domain.Villain>
     {
-        public override IGraphQlScalarResult<string> goal() =>
-            Original.Resolve(villain => villain.Goal);
+        public override IGraphQlScalarResult<string> Goal() =>
+            this.Original().Resolve(villain => villain.Goal);
 
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Resolve(villain => villain.Id);
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Resolve(villain => villain.Id);
 
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(villain => villain.Name);
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(villain => villain.Name);
     }
 }

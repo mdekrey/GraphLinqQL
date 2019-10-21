@@ -8,11 +8,11 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
+public abstract class {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
 {
 	private {{= model.TypeName }}() { }
 
-	public FieldContext FieldContext { get; set; }
+	public global::GraphLinqQL.FieldContext FieldContext { get; set; }
 
 	public string GraphQlTypeName { get { return "{{= model.Label }}"; } }
 
@@ -25,33 +25,32 @@ public abstract class {{= model.TypeName }} : IGraphQlResolvable{{each i in mode
 			/// {{= field.Description.Docblock(indentation) }}
 			/// </summary>
 		{{/if}}
-		public abstract IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
+		public abstract global::GraphLinqQL.IGraphQl{{= field.IsScalar ? "Scalar" : "Object" }}Result{{wrapif !string.IsNullOrEmpty(field.TypeName)}}<{{body}}{{= field.TypeName }}{{/body}}>{{/wrapif}} {{=field.Name}}({{each arg in field.Arguments}}{{= arg.TypeName}} {{= arg.FieldName }}{{delimit}}, {{/each}});
 		{{=""}}
 	{{/each}}
 
-	IGraphQlResult IGraphQlResolvable.ResolveQuery(string fieldName, IGraphQlParameterResolver parameters)
+	global::GraphLinqQL.IGraphQlResult global::GraphLinqQL.IGraphQlResolvable.ResolveQuery(string fieldName, global::GraphLinqQL.IGraphQlParameterResolver parameters)
 	{
 		switch (fieldName)
 		{
-			case "__typename": return GraphQlConstantResult.Construct("{{= model.Label }}", FieldContext);
+			case "__typename": return global::GraphLinqQL.GraphQlConstantResult.Construct("{{= model.Label }}", FieldContext);
 			{{each field in model.Fields}}
 				case "{{= field.Label }}":
 					return this.{{= field.Name }}({{each arg in field.Arguments}}
 						{{= arg.GetParameterWithDefault() }}{{delimit}},{{/each}});
 			{{/each}}
-			default: throw new ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(WellKnownErrorCodes.UndefinedField, FieldContext.Locations, new { fieldName, type = GraphQlTypeName });
+			default: throw new System.ArgumentException("Unknown field " + fieldName, "fieldName").AddGraphQlError(global::GraphLinqQL.WellKnownErrorCodes.UndefinedField, FieldContext.Locations, new { fieldName, type = GraphQlTypeName });
 		};
 	}
 
-	bool IGraphQlResolvable.IsType(string value)
+	bool global::GraphLinqQL.IGraphQlResolvable.IsType(string value)
 	{
 		return {{each validType in model.ValidTypes}}value == "{{= validType }}"{{delimit}} || {{/each}};
 	}
 
 	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-	public abstract class GraphQlContract<T> : {{= model.TypeName }}, IGraphQlAccepts<T>
+	public abstract class GraphQlContract<T> : {{= model.TypeName }}, global::GraphLinqQL.IGraphQlAccepts<T>
 	{
-		public IGraphQlResultFactory<T> Original { get; set; }
-		IGraphQlResultFactory IGraphQlAccepts.Original { set { Original = (IGraphQlResultFactory<T>)value; } }
+		global::GraphLinqQL.IGraphQlResultFactory global::GraphLinqQL.IGraphQlAccepts.Original { get; set; }
 	}
 }

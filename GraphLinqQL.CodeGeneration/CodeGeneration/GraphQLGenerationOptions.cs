@@ -17,11 +17,6 @@ namespace GraphLinqQL.CodeGeneration
         public IList<string> UsingStatements { get; set; } = new List<string>
         {
             "GraphLinqQL",
-            "GraphLinqQL.Introspection",
-            "System",
-            "System.Collections",
-            "System.Collections.Generic",
-            "System.Collections.Immutable",
             "System.Linq"
         };
 

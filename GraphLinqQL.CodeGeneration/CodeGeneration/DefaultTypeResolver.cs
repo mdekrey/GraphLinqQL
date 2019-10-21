@@ -19,8 +19,8 @@ namespace GraphLinqQL.CodeGeneration
                 NonNullType { BaseType: var baseType } => GetTypeName(baseType, options, document, nullable: false),
                 ListType { ElementType: var elementType } => GetTypeName(elementType, options, document: document) switch
                 {
-                    "" => $"IEnumerable{nullability}",
-                    var name => $"IEnumerable<{name}>{nullability}"
+                    "" => $"global::System.Collections.Generic.IEnumerable{nullability}",
+                    var name => $"global::System.Collections.Generic.IEnumerable<{name}>{nullability}"
                 },
                 TypeName { Name: var name } when options.ScalarTypeMappings.ContainsKey(name) => GetScalarName(options.ScalarTypeMappings[name], options, nullable),
                 TypeName { Name: var name } when document != null && document.Children.OfType<EnumTypeDefinition>().Any(u => u.Name == name) => CSharpNaming.GetTypeName(name) + (nullable ? "?" : ""),

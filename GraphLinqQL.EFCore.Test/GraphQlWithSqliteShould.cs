@@ -69,16 +69,16 @@ namespace GraphLinqQL
                     await DetectParsingErrors(scope.ServiceProvider, query);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: null, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query }, expected, sqlite);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query }, expected!, sqlite);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: null, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, variables }, expected, sqlite);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, variables }, expected!, sqlite);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: null }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName }, expected, sqlite);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName }, expected!, sqlite);
                     return;
                 case { Given: { Schema: var schema, SetupQuery: var setup, Query: var query, Operation: var operationName, Variables: var variables }, When: { Execute: true }, Then: { MatchResult: var expected, Sqlite: var sqlite } }:
-                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName, variables }, expected, sqlite);
+                    await Execute(scope.ServiceProvider, schema, setup, new { query, operationName, variables }, expected!, sqlite);
                     return;
                 default:
                     throw new NotSupportedException();
@@ -126,7 +126,7 @@ namespace GraphLinqQL
                 var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
                 var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
-                var json = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } });
+                var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions.Setup(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
                 var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
 

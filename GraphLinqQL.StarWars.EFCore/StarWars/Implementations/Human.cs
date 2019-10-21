@@ -23,24 +23,24 @@ namespace GraphLinqQL.StarWars.Implementations
                                                                                                    select appearance);
         }
 
-        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> appearsIn()
+        public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> AppearsIn()
         {
             // using a Join instead of inline Linq to show how reuse could be done
-            return Original.Join(appearancesJoin).Resolve((human, appearances) => appearances.Select(appearance => (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId)));
+            return this.Original().Join(appearancesJoin).Resolve((human, appearances) => appearances.Select(appearance => (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId)));
         }
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> friends()
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> Friends()
         {
-            return Original.Resolve(human => from friendship in dbContext.Friendships
+            return this.Original().Resolve(human => from friendship in dbContext.Friendships
                                              where friendship.FromId == human.Id
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
 
-        public override IGraphQlObjectResult<Interfaces.FriendsConnection> friendsConnection(int? first, string? after)
+        public override IGraphQlObjectResult<Interfaces.FriendsConnection> FriendsConnection(int? first, string? after)
         {
             var actualFirst = first ?? 3;
             var actualAfter = after != null ? int.Parse(after) : 0;
-            var result = Original.Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
+            var result = this.Original().Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
             {
                 AllData = GetFriendships(humanId),
                 SkippedData = GetFriendshipsPaginated(humanId, actualAfter),
@@ -61,34 +61,34 @@ namespace GraphLinqQL.StarWars.Implementations
              orderby friendship.ToId
              select friendship);
 
-        public override IGraphQlScalarResult<double?> height(Interfaces.LengthUnit? unit)
+        public override IGraphQlScalarResult<double?> Height(Interfaces.LengthUnit? unit)
         {
-            if (unit == Interfaces.LengthUnit.FOOT)
+            if (unit == Interfaces.LengthUnit.Foot)
             {
-                return Original.Resolve(human => (double?)Conversions.MetersToFeet(human.Height));
+                return this.Original().Resolve(human => (double?)Conversions.MetersToFeet(human.Height));
             }
             else
             {
-                return Original.Resolve(human => (double?)human.Height);
+                return this.Original().Resolve(human => (double?)human.Height);
             }
         }
 
-        public override IGraphQlScalarResult<string?> homePlanet() =>
-            Original.Resolve(human => human.HomePlanet);
+        public override IGraphQlScalarResult<string?> HomePlanet() =>
+            this.Original().Resolve(human => human.HomePlanet);
 
 
-        public override IGraphQlScalarResult<string> id() =>
-            Original.Resolve(human => human.Id.ToString());
+        public override IGraphQlScalarResult<string> Id() =>
+            this.Original().Resolve(human => human.Id.ToString());
 
-        public override IGraphQlScalarResult<string> name() =>
-            Original.Resolve(human => human.Name);
+        public override IGraphQlScalarResult<string> Name() =>
+            this.Original().Resolve(human => human.Name);
 
-        public override IGraphQlScalarResult<double?> mass() =>
-            Original.Resolve(human => (double?)human.Mass);
+        public override IGraphQlScalarResult<double?> Mass() =>
+            this.Original().Resolve(human => (double?)human.Mass);
 
-        public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> starships()
+        public override IGraphQlObjectResult<IEnumerable<Interfaces.Starship?>?> Starships()
         {
-            return Original.Resolve(human => from pilot in dbContext.Pilots
+            return this.Original().Resolve(human => from pilot in dbContext.Pilots
                                              where pilot.CharacterId == human.Id
                                              select pilot.Starship).List(_ => _.AsContract<Starship>());
         }
