@@ -11,10 +11,10 @@ namespace GraphLinqQL
 {
     public static class ResolveExtensions
     {
-        public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver, CancellationToken cancellationToken = default)
+        public static Task<ExecutionResult> GraphQlRootAsync(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver, Microsoft.Extensions.Logging.ILogger logger, CancellationToken cancellationToken = default)
         {
             var resolved = GetResult<GraphQlRoot>(serviceProvider, contract, resolver).Catch();
-            return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot(), cancellationToken);
+            return Execution.GraphQlResultExtensions.InvokeResult(resolved, new GraphQlRoot(), logger, cancellationToken);
         }
 
         public static IGraphQlScalarResult<object> GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver)

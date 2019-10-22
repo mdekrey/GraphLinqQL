@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Resolution;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace GraphLinqQL.Execution
 {
     public static class GraphQlResultExtensions
     {
-        public static async Task<ExecutionResult> InvokeResult(this IGraphQlScalarResult resolved, object input, CancellationToken cancellationToken)
+        public static async Task<ExecutionResult> InvokeResult(this IGraphQlScalarResult resolved, object input, ILogger logger, CancellationToken cancellationToken)
         {
             if (resolved.Joins.Any())
             {
@@ -20,7 +21,7 @@ namespace GraphLinqQL.Execution
             }
             var constructedResult = resolved.ConstructResult();
             var result = InvokeExpression(input, constructedResult);
-            var finalizerContext = new FinalizerContext(UnrollResults, cancellationToken);
+            var finalizerContext = new FinalizerContext(UnrollResults, logger, cancellationToken);
             var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
             return new ExecutionResult(false, finalizedResult, finalizerContext.Errors.ToArray());
         }

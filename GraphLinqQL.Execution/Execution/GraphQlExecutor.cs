@@ -60,7 +60,7 @@ namespace GraphLinqQL.Execution
             }
             try
             {
-                return result.InvokeResult(new GraphQlRoot(), cancellationToken);
+                return result.InvokeResult(new GraphQlRoot(), logger, cancellationToken);
             }
             catch (Exception ex)
             {

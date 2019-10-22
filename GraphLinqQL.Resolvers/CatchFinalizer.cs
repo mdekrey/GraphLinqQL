@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Resolution;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace GraphLinqQL
                 {
                     error.Fixup(fieldContext);
                 }
-                // TODO - log the exception
+                context.Logger.LogError(new EventId(10000, "FieldResolutionCaught"), ex, WellKnownErrorCodes.GetStaticMessage(WellKnownErrorCodes.UnhandledError, errors[0].Arguments));
                 context.Errors.AddRange(errors);
                 return null;
             }
