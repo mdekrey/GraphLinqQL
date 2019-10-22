@@ -1,0 +1,115 @@
+﻿scenario: Edge-cases Input values with various naming conventions
+tests:
+  - name: Inline input
+    given:
+      schema: edgy
+      query: |
+        {
+          input(value: { value: "foo" }) {
+            value
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: &standardInputResult |
+        {
+            "data": {
+                "input": {
+                    "value": "foo"
+                }
+            }
+        }
+ 
+  - name: Variable input
+    given:
+      schema: edgy
+      query: |
+        query($input: InputInner) {
+          input(value: $input) {
+            value
+          }
+        }
+      variables:
+        input: 
+          value: "foo"
+    when:
+      execute: true
+    then:
+      match-result: *standardInputResult
+      
+  - name: Inline input with underscores in name
+    given:
+      schema: edgy
+      query: |
+        {
+          input: inputWithUnderscores(value: { my_value: "foo" }) {
+            value
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: &standardInputResult |
+        {
+            "data": {
+                "input": {
+                    "value": "foo"
+                }
+            }
+        }
+ 
+  - name: Variable input with underscores in name
+    given:
+      schema: edgy
+      query: |
+        query($input: InputInner) {
+          input: inputWithUnderscores(value: $input) {
+            value
+          }
+        }
+      variables:
+        input: 
+          my_value: "foo"
+    when:
+      execute: true
+    then:
+      match-result: *standardInputResult
+      
+  - name: Inline input with camelCased name
+    given:
+      schema: edgy
+      query: |
+        {
+          input: inputWithCamelCase(value: { myValue: "foo" }) {
+            value
+          }
+        }
+    when:
+      execute: true
+    then:
+      match-result: &standardInputResult |
+        {
+            "data": {
+                "input": {
+                    "value": "foo"
+                }
+            }
+        }
+ 
+  - name: Variable input with camelCased name
+    given:
+      schema: edgy
+      query: |
+        query($input: InputInner) {
+          input: inputWithCamelCase(value: $input) {
+            value
+          }
+        }
+      variables:
+        input: 
+          myValue: "foo"
+    when:
+      execute: true
+    then:
+      match-result: *standardInputResult

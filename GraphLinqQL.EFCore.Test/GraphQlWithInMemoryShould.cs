@@ -131,9 +131,8 @@ namespace GraphLinqQL
 
             try
             {
-                using var memoryStream = new MemoryStream();
-                await System.Text.Json.JsonSerializer.SerializeAsync(memoryStream, request, request.GetType());
-                memoryStream.Position = 0;
+                var requestJson = Newtonsoft.Json.JsonConvert.SerializeObject(request);
+                using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(requestJson));
 
                 var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create(schema);
 

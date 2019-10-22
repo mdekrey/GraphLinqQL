@@ -36,6 +36,11 @@ namespace GraphLinqQL
             return builder.ToImmutable();
         }
 
+        public static string GetStaticMessage(string errorCode, IDictionary<string, object> arguments)
+        {
+            return messages[errorCode](arguments);
+        }
+
         public string GetMessage(string errorCode, IDictionary<string, object> arguments)
         {
             return messages[errorCode](arguments);
