@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphLinqQL.Resolution;
+using System;
 using System.Linq.Expressions;
 
 namespace GraphLinqQL

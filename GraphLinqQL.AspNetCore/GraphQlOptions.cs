@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Directives;
+using GraphLinqQL.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;

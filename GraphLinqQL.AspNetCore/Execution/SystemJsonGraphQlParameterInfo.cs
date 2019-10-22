@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL;
+using GraphLinqQL.Resolution;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;

@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Introspection;
+using GraphLinqQL.Resolution;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     class ReplaceConstantExpressions : ExpressionVisitor
     {
-        private IDictionary<Expression, Expression> replacements;
+        private readonly IDictionary<Expression, Expression> replacements;
 
         public ReplaceConstantExpressions(IDictionary<Expression, Expression> replacements)
         {

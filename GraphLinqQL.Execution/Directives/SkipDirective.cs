@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using GraphLinqQL.Ast.Nodes;
 using GraphLinqQL.Execution;
+using GraphLinqQL.Resolution;
 
 namespace GraphLinqQL.Directives
 {

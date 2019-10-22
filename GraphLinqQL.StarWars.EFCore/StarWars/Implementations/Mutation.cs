@@ -16,7 +16,7 @@ namespace GraphLinqQL.StarWars.Implementations
 
         public override IGraphQlObjectResult<Interfaces.Review?> CreateReview(Interfaces.Episode? episode, Interfaces.ReviewInput review)
         {
-            return this.Original().ResolveTask(async _ =>
+            return this.ResolveTask(async _ =>
             {
                 var newReview = new Domain.Review { Stars = review.Stars, Episode = InterfaceToDomain.ConvertEpisode(episode!.Value), Commentary = review.Commentary };
                 dbContext.Add(newReview);

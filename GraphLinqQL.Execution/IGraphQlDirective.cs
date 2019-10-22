@@ -1,5 +1,6 @@
 ﻿using GraphLinqQL.Ast.Nodes;
 using GraphLinqQL.Execution;
+using GraphLinqQL.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Text;

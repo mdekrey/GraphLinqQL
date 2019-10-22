@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public static class GraphQlConstantResult
     {

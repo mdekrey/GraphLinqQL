@@ -4,23 +4,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
-    class ComplexResolutionEntry
-    {
-        public IGraphQlResolvable GraphQlResolvable { get; }
-        public Type DomainType { get; }
-        public Action<FieldContext> FieldContextSetup { get; }
-        public Dictionary<string, IGraphQlScalarResult> Results { get; } = new Dictionary<string, IGraphQlScalarResult>();
-
-        public ComplexResolutionEntry(IGraphQlResolvable graphQlResolvable, Type domainType, Action<FieldContext> fieldContextSetup)
-        {
-            this.GraphQlResolvable = graphQlResolvable;
-            DomainType = domainType;
-            FieldContextSetup = fieldContextSetup;
-        }
-    }
-
     internal class ComplexResolverBuilder : IComplexResolverBuilder
     {
         private static readonly System.Reflection.MethodInfo addMethod = typeof(IDictionary<string, object>).GetMethod(nameof(IDictionary<string, object>.Add))!;

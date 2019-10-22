@@ -7,13 +7,13 @@ namespace GraphLinqQL.Edgy.Implementations
     class Inner : Interfaces.Inner.GraphQlContract<string>
     {
         public override IGraphQlScalarResult<string?> NullableThrows() =>
-            this.Original().ResolveTask<string, string?>(_ => throw new InvalidOperationException()).Nullable(_ => _);
+            this.ResolveTask<string, string?>(_ => throw new InvalidOperationException()).Nullable(_ => _);
 
         public override IGraphQlScalarResult<string> Throws() =>
-            this.Original().ResolveTask<string, string>(_ => throw new InvalidOperationException());
+            this.ResolveTask<string, string>(_ => throw new InvalidOperationException());
 
 
         public override IGraphQlScalarResult<string?> Value() =>
-            this.Original().Resolve(_ => _);
+            this.Resolve(_ => _);
     }
 }

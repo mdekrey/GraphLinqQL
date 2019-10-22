@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     class GraphQlExpressionObjectResult<TReturnType> : IGraphQlObjectResult<TReturnType>
     {

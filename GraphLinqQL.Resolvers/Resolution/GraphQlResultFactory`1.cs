@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
+using System.Text;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     internal class GraphQlResultFactory<TValue> : GraphQlExpressionScalarResult<TValue>, IGraphQlResultFactory<TValue>
     {
@@ -27,13 +26,4 @@ namespace GraphLinqQL
         }
 
     }
-
-    internal static class GraphQlResultFactory
-    {
-        public static IGraphQlResultFactory Construct(FieldContext fieldContext, Type modelType)
-        {
-            return (IGraphQlResultFactory)Activator.CreateInstance(typeof(GraphQlResultFactory<>).MakeGenericType(modelType), fieldContext)!;
-        }
-    }
-
 }

@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
+    <AssemblyName>GraphLinqQL.StarWars.EFCore</AssemblyName>
   </PropertyGroup>
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
   <ItemGroup>

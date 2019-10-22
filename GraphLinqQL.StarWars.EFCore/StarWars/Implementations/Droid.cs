@@ -18,7 +18,7 @@ namespace GraphLinqQL.StarWars.Implementations
 
         public override IGraphQlScalarResult<IEnumerable<Interfaces.Episode?>> AppearsIn()
         {
-            return this.Original().Resolve(droid => from appearance in dbContext.Appearances
+            return this.Resolve(droid => from appearance in dbContext.Appearances
                                              where appearance.CharacterId == droid.Id
                                              orderby appearance.EpisodeId
                                              select (Interfaces.Episode?)DomainToInterface.ConvertEpisode(appearance.EpisodeId));
@@ -26,7 +26,7 @@ namespace GraphLinqQL.StarWars.Implementations
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> Friends()
         {
-            return this.Original().Resolve(droid => from friendship in dbContext.Friendships
+            return this.Resolve(droid => from friendship in dbContext.Friendships
                                              where friendship.FromId == droid.Id
                                              select friendship.To).List(UnionMappings.AsCharacterUnion);
         }
@@ -35,7 +35,7 @@ namespace GraphLinqQL.StarWars.Implementations
         {
             var actualFirst = first ?? 3;
             var actualAfter = after != null ? int.Parse(after) : 0;
-            var result = this.Original().Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
+            var result = this.Resolve(human => human.Id).Defer(_ => _.Resolve(humanId => new PaginatedSelection<Domain.Friendship>
             {
                 AllData = GetFriendships(humanId),
                 SkippedData = GetFriendshipsPaginated(humanId, actualAfter),
@@ -57,12 +57,12 @@ namespace GraphLinqQL.StarWars.Implementations
              select friendship);
 
         public override IGraphQlScalarResult<string> Id() =>
-            this.Original().Resolve(droid => droid.Id.ToString());
+            this.Resolve(droid => droid.Id.ToString());
 
         public override IGraphQlScalarResult<string> Name() =>
-            this.Original().Resolve(droid => droid.Name);
+            this.Resolve(droid => droid.Name);
 
         public override IGraphQlScalarResult<string?> PrimaryFunction() =>
-            this.Original().Resolve(droid => droid.PrimaryFunction);
+            this.Resolve(droid => droid.PrimaryFunction);
     }
 }

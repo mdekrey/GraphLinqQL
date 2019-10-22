@@ -9,25 +9,25 @@ namespace GraphLinqQL.StarWars.Implementations
     {
         public override IGraphQlScalarResult<IEnumerable<IEnumerable<double>>?> Coordinates()
         {
-            return this.Original().Resolve(new[] { new[] { 1.0, 2.0 }, new[] { 3.0, 4.0 } });
+            return this.Resolve(new[] { new[] { 1.0, 2.0 }, new[] { 3.0, 4.0 } });
         }
 
         public override IGraphQlScalarResult<string> Id() =>
-            this.Original().Resolve(starship => starship.Id.ToString());
+            this.Resolve(starship => starship.Id.ToString());
 
         public override IGraphQlScalarResult<double?> Length(LengthUnit? unit)
         {
             if (unit == LengthUnit.Foot)
             {
-                return this.Original().Resolve(starship => (double?)Conversions.MetersToFeet(starship.Length));
+                return this.Resolve(starship => (double?)Conversions.MetersToFeet(starship.Length));
             }
             else
             {
-                return this.Original().Resolve(starship => (double?)starship.Length);
+                return this.Resolve(starship => (double?)starship.Length);
             }
         }
 
         public override IGraphQlScalarResult<string> Name() =>
-            this.Original().Resolve(starship => starship.Name);
+            this.Resolve(starship => starship.Name);
     }
 }

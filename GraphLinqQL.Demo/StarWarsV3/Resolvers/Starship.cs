@@ -9,7 +9,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
             this.Original().Resolve<IEnumerable<IEnumerable<double>> ? >(_ => new double[][] { new[] { 1.0, 2 }, new[] { 3.0, 4 } });
 
         public override IGraphQlScalarResult<string> Id() =>
-            this.Original().Resolve(starship => starship.Id);
+            this.Resolve(starship => starship.Id);
 
         public override IGraphQlScalarResult<double?> Length(LengthUnit? unit)
         {
@@ -18,7 +18,7 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
         }
 
         public override IGraphQlScalarResult<string> Name() =>
-            this.Original().Resolve(starship => starship.Name);
+            this.Resolve(starship => starship.Name);
     }
 
 }

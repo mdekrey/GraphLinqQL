@@ -20,18 +20,12 @@ namespace GraphLinqQL
 {
     public class Startup
     {
-        private IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration config)
-        {
-            Configuration = config;
-        }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope - this gets added to the DbContext and used for the duration of the app
+#pragma warning disable IDE0067
             var inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2000 // Dispose objects before losing scope
             inMemorySqlite.Open();
