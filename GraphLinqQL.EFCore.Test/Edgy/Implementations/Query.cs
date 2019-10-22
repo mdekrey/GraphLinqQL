@@ -10,5 +10,14 @@ namespace GraphLinqQL.Edgy.Implementations
 
         public override IGraphQlObjectResult<WithInput> FromValue() =>
             this.Resolve(_ => 0).AsContract<WithInputFromValue>();
+
+        public override IGraphQlObjectResult<Interfaces.Inner> Input(InputInner value) =>
+            this.Resolve(_ => value.Value).AsContract<Inner>();
+
+        public override IGraphQlObjectResult<Interfaces.Inner> InputWithCamelCase(WithCamelCase value) =>
+            this.Resolve(_ => value.MyValue).AsContract<Inner>();
+
+        public override IGraphQlObjectResult<Interfaces.Inner> InputWithUnderscores(WithUnderscores value) =>
+            this.Resolve(_ => value.MyValue).AsContract<Inner>();
     }
 }

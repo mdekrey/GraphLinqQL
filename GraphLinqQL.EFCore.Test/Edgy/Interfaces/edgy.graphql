@@ -6,6 +6,10 @@ schema {
 type Query {
 	fromValue: WithInput!
 	fromReference: WithInput!
+
+	input(value: InputInner!): Inner!
+	inputWithUnderscores(value: WithUnderscores!): Inner!
+	inputWithCamelCase(value: WithCamelCase!): Inner!
 }
 
 type WithInput {
@@ -37,4 +41,14 @@ type Inner {
 	value: String
 	throws: String!
 	nullableThrows: String
+}
+
+input InputInner {
+	value: String!
+}
+input WithUnderscores {
+	my_value: String!
+}
+input WithCamelCase {
+	myValue: String!
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 #pragma warning disable CA1819 // Properties should not return arrays
 #pragma warning disable CA2227 // Collection properties should be read only
 

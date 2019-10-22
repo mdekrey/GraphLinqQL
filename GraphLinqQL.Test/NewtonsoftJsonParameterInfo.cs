@@ -15,6 +15,7 @@ namespace GraphLinqQL
 
         public object? BindTo(Type t)
         {
+            // This is just a quick hack - it doesn't really handle Enums or InputTypes correctly
             return JsonConvert.DeserializeObject(json, t);
         }
     }

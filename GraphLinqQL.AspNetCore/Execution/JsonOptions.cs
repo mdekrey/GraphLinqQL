@@ -14,6 +14,7 @@ namespace GraphLinqQL.Execution
         public static JsonSerializerOptions Setup(JsonSerializerOptions jsonSerializerOptions)
         {
             jsonSerializerOptions.Converters.Add(new TypeConverterEnumConverter());
+            jsonSerializerOptions.Converters.Add(new TypeConverterInputTypeConverter());
             return jsonSerializerOptions;
         }
     }
