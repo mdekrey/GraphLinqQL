@@ -6,7 +6,7 @@ namespace GraphLinqQL
 {
     internal class NewtonsoftJsonParameterInfo : IGraphQlParameterInfo
     {
-        private string json;
+        private readonly string json;
 
         public NewtonsoftJsonParameterInfo(string json)
         {

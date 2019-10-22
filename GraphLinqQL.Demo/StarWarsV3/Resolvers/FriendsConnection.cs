@@ -9,17 +9,17 @@ namespace GraphLinqQL.StarWarsV3.Resolvers
     class FriendsConnection : Interfaces.FriendsConnection.GraphQlContract<FriendsConnection.Data>
     {
         public override IGraphQlObjectResult<IEnumerable<Interfaces.FriendsEdge?>?> Edges() =>
-            this.Original().Resolve(d => d.FilteredFriendIds).List(_ => _.AsContract<FriendsEdge>());
+            this.Resolve(d => d.FilteredFriendIds).List(_ => _.AsContract<FriendsEdge>());
 
         public override IGraphQlObjectResult<IEnumerable<Character?>?> Friends() =>
-            this.Original().Resolve(d => d.FilteredFriendIds.Select(id => Domain.Data.humanLookup.ContainsKey(id) ? (object)Domain.Data.humanLookup[id] : Domain.Data.droidLookup[id]))
+            this.Resolve(d => d.FilteredFriendIds.Select(id => Domain.Data.humanLookup.ContainsKey(id) ? (object)Domain.Data.humanLookup[id] : Domain.Data.droidLookup[id]))
                 .List(_ => _.AsUnion<Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()));
 
         public override IGraphQlObjectResult<Interfaces.PageInfo> PageInfo() =>
-            this.Original().Resolve(d => d.PageInfo).AsContract<PageInfo>();
+            this.Resolve(d => d.PageInfo).AsContract<PageInfo>();
 
         public override IGraphQlScalarResult<int?> TotalCount() =>
-            this.Original().Resolve(d => (int?)d.friendIds.Length);
+            this.Resolve(d => (int?)d.friendIds.Length);
 
         public class Data
         {

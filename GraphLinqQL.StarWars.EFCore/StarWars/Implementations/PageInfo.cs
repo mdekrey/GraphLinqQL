@@ -9,17 +9,17 @@ namespace GraphLinqQL.StarWars.Implementations
     {
         public override IGraphQlScalarResult<string?> EndCursor()
         {
-            return this.Original().ResolveTask(_ => _.EndCursor());
+            return this.ResolveTask(_ => _.EndCursor());
         }
 
         public override IGraphQlScalarResult<bool> HasNextPage()
         {
-            return this.Original().ResolveTask(_ => _.HasNextPage());
+            return this.ResolveTask(_ => _.HasNextPage());
         }
 
         public override IGraphQlScalarResult<string?> StartCursor()
         {
-            return this.Original().ResolveTask(_ => _.StartCursor());
+            return this.ResolveTask(_ => _.StartCursor());
         }
     }
 }

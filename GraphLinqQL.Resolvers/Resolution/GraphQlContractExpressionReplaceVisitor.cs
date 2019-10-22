@@ -35,7 +35,9 @@ namespace GraphLinqQL.Resolution
             Expression.Call(GraphQlContractExpression.ContractPlaceholderMethod, body, Expression.Constant(index));
 
 #pragma warning disable CA1801 // Remove unused parameter - this parameter is used in Expression manipulation
+#pragma warning disable IDE0060 // Remove unused parameter
         private static object? ContractPlaceholder(object input, int index) => null;
+#pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1801 // Remove unused parameter
 
     }

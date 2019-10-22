@@ -12,19 +12,19 @@ namespace GraphLinqQL.StarWars.Implementations
     {
         public override IGraphQlObjectResult<IEnumerable<Interfaces.FriendsEdge?>?> Edges()
         {
-            return this.Original().Resolve(_ => _.SkippedData.Take(_.Take)).List(_ => _.AsContract<FriendsEdge>());
+            return this.Resolve(_ => _.SkippedData.Take(_.Take)).List(_ => _.AsContract<FriendsEdge>());
         }
 
         public override IGraphQlObjectResult<IEnumerable<Interfaces.Character?>?> Friends()
         {
-            return this.Original().Resolve(_ => from friendship in _.SkippedData.Take(_.Take)
+            return this.Resolve(_ => from friendship in _.SkippedData.Take(_.Take)
                                          select friendship.To!)
                 .List(_ => _.AsUnion<Interfaces.Character>(builder => builder.Add<Domain.Human, Human>().Add<Domain.Droid, Droid>()));
         }
 
         public override IGraphQlObjectResult<Interfaces.PageInfo> PageInfo()
         {
-            return this.Original().ResolveTask(selection => Task.FromResult(new PageInfoValues
+            return this.ResolveTask(selection => Task.FromResult(new PageInfoValues
             {
                 StartCursor = () => selection.SkippedData.Select(d => d.ToId.ToString()).FirstOrDefaultAsync(),
                 EndCursor = () => selection.SkippedData.Select(d => d.ToId.ToString()).Take(selection.Take).LastOrDefaultAsync(),
@@ -34,7 +34,7 @@ namespace GraphLinqQL.StarWars.Implementations
 
         public override IGraphQlScalarResult<int?> TotalCount()
         {
-            return this.Original().Resolve(_ => (int?)_.AllData.Count());
+            return this.Resolve(_ => (int?)_.AllData.Count());
         }
     }
 }

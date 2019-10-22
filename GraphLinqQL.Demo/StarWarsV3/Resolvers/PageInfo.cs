@@ -3,13 +3,13 @@
     class PageInfo : Interfaces.PageInfo.GraphQlContract<PageInfo.Data>
     {
         public override IGraphQlScalarResult<string?> EndCursor() =>
-            this.Original().Resolve(d => d.endCursor);
+            this.Resolve(d => d.endCursor);
 
         public override IGraphQlScalarResult<bool> HasNextPage() =>
-            this.Original().Resolve(d => d.hasNextPage);
+            this.Resolve(d => d.hasNextPage);
 
         public override IGraphQlScalarResult<string?> StartCursor() =>
-            this.Original().Resolve(d => d.startCursor);
+            this.Resolve(d => d.startCursor);
 
         public class Data
         {
