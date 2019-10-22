@@ -9,21 +9,6 @@ using System.Threading.Tasks;
 
 namespace GraphLinqQL
 {
-    public class TaskFinalizerFactory
-    {
-        private readonly FieldContext fieldContext;
-
-        public TaskFinalizerFactory(FieldContext fieldContext)
-        {
-            this.fieldContext = fieldContext;
-        }
-
-        public IFinalizer Invoke(Func<Task> taskFactory)
-        {
-            return new TaskFinalizer(fieldContext, taskFactory);
-        }
-    }
-
     internal class TaskFinalizer : IFinalizer
     {
         private readonly FieldContext fieldContext;
@@ -86,53 +71,5 @@ namespace GraphLinqQL
             return task.Result;
         }
 
-    }
-
-    public class CatchFinalizerFactory
-    {
-        public static readonly MethodInfo CatchMethodInfo = typeof(CatchFinalizerFactory).GetMethod(nameof(Catch));
-        private readonly FieldContext fieldContext;
-
-        public CatchFinalizerFactory(FieldContext fieldContext)
-        {
-            this.fieldContext = fieldContext;
-        }
-
-        public IFinalizer Catch(Func<object> valueAccessor)
-        {
-            return new CatchFinalizer(fieldContext, valueAccessor);
-        }
-    }
-
-    internal class CatchFinalizer : IFinalizer
-    {
-        private readonly FieldContext fieldContext;
-        private readonly Func<object> valueAccessor;
-
-        internal CatchFinalizer(FieldContext fieldContext, Func<object> valueAccessor)
-        {
-            this.fieldContext = fieldContext;
-            this.valueAccessor = valueAccessor;
-        }
-
-        public async Task<object?> GetValue(FinalizerContext context)
-        {
-            try
-            {
-                return await context.UnrollResults(valueAccessor(), context).ConfigureAwait(false);
-            }
-#pragma warning disable CA1031 // Do not catch general exception types
-            catch (Exception ex)
-            {
-                var errors = ex.HasGraphQlErrors(out var e) ? e : new[] { new GraphQlError(WellKnownErrorCodes.UnhandledError) };
-                foreach (var error in errors)
-                {
-                    error.Fixup(fieldContext);
-                }
-                // TODO - log the exception
-                context.Errors.AddRange(errors);
-                return null;
-            }
-        }
     }
 }

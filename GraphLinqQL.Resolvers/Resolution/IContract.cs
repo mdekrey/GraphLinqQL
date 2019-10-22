@@ -7,17 +7,4 @@ namespace GraphLinqQL.Resolution
     {
         IReadOnlyList<ContractEntry> Resolvables { get; }
     }
-
-
-    public class ContractEntry
-    {
-        public Type Contract { get; }
-        public Type DomainType { get; }
-
-        public ContractEntry(Type contract, Type domainType)
-        {
-            Contract = contract;
-            DomainType = domainType;
-        }
-    }
 }

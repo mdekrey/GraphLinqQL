@@ -7,8 +7,4 @@ namespace GraphLinqQL.Resolution
     {
         IGraphQlResultFactory Original { get; set; }
     }
-
-    public interface IGraphQlAccepts<in T> : IGraphQlAccepts
-    {
-    }
 }
