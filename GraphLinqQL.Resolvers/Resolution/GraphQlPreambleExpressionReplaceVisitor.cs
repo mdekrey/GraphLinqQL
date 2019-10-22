@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     class PreambleReplacement
     {

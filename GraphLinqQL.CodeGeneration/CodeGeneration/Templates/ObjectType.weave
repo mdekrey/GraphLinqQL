@@ -8,11 +8,11 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public abstract class {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
+public abstract class {{= model.TypeName }} : global::GraphLinqQL.Resolution.IGraphQlResolvable{{each i in model.ImplementedInterfaces}}, {{= i }}{{/each}}
 {
 	private {{= model.TypeName }}() { }
 
-	public global::GraphLinqQL.FieldContext FieldContext { get; set; }
+	public global::GraphLinqQL.Resolution.FieldContext FieldContext { get; set; }
 
 	public string GraphQlTypeName { get { return "{{= model.Label }}"; } }
 
@@ -29,11 +29,11 @@ public abstract class {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolv
 		{{=""}}
 	{{/each}}
 
-	global::GraphLinqQL.IGraphQlResult global::GraphLinqQL.IGraphQlResolvable.ResolveQuery(string fieldName, global::GraphLinqQL.IGraphQlParameterResolver parameters)
+	global::GraphLinqQL.IGraphQlResult global::GraphLinqQL.Resolution.IGraphQlResolvable.ResolveQuery(string fieldName, global::GraphLinqQL.Resolution.IGraphQlParameterResolver parameters)
 	{
 		switch (fieldName)
 		{
-			case "__typename": return global::GraphLinqQL.GraphQlConstantResult.Construct("{{= model.Label }}", FieldContext);
+			case "__typename": return global::GraphLinqQL.Resolution.GraphQlConstantResult.Construct("{{= model.Label }}", FieldContext);
 			{{each field in model.Fields}}
 				case "{{= field.Label }}":
 					return this.{{= field.Name }}({{each arg in field.Arguments}}
@@ -43,14 +43,14 @@ public abstract class {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolv
 		};
 	}
 
-	bool global::GraphLinqQL.IGraphQlResolvable.IsType(string value)
+	bool global::GraphLinqQL.Resolution.IGraphQlResolvable.IsType(string value)
 	{
 		return {{each validType in model.ValidTypes}}value == "{{= validType }}"{{delimit}} || {{/each}};
 	}
 
 	[System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-	public abstract class GraphQlContract<T> : {{= model.TypeName }}, global::GraphLinqQL.IGraphQlAccepts<T>
+	public abstract class GraphQlContract<T> : {{= model.TypeName }}, global::GraphLinqQL.Resolution.IGraphQlAccepts<T>
 	{
-		global::GraphLinqQL.IGraphQlResultFactory global::GraphLinqQL.IGraphQlAccepts.Original { get; set; }
+		global::GraphLinqQL.IGraphQlResultFactory global::GraphLinqQL.Resolution.IGraphQlAccepts.Original { get; set; }
 	}
 }

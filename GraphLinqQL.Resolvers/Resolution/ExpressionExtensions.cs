@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public static class ExpressionExtensions
     {
@@ -30,21 +30,6 @@ namespace GraphLinqQL
             where T : Expression
         {
             return (T)new ReplaceConstantExpressions(replacements).Visit(body);
-        }
-
-        [ContractArgumentValidator]
-        public static Expression<Func<TInput, object>> CastAndBoxSingleInput<TInput>(this LambdaExpression expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-            else if (expression.Parameters.Count != 1 || expression.Parameters[0].Type != typeof(TInput))
-            {
-                throw new InvalidOperationException($"Expected single input parameter of type {typeof(TInput).FullName}, got {string.Join(", ", expression.Parameters.Select(p => p.Type.FullName))}");
-            }
-            
-            return Expression.Lambda<Func<TInput, object>>(expression.Body.Box(), expression.Parameters);
         }
 
         public static Expression Box(this Expression body)

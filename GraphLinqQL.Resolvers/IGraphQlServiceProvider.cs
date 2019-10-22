@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using GraphLinqQL.Introspection;
+using GraphLinqQL.Resolution;
 
 namespace GraphLinqQL
 {

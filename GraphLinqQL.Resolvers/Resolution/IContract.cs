@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public interface IContract
     {

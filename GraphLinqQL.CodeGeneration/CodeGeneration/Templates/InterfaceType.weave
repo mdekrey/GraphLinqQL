@@ -8,7 +8,7 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public interface {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable
+public interface {{= model.TypeName }} : global::GraphLinqQL.Resolution.IGraphQlResolvable
 {
 	// The interface will implement the fields, but it doesn't end up here because the actual methods aren't used that way!
 }

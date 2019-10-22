@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GraphLinqQL.Resolution;
+using Newtonsoft.Json;
 using System;
 
 namespace GraphLinqQL

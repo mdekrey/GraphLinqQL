@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public class ContractMapping : IContract
     {

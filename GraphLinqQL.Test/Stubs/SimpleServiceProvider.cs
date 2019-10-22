@@ -1,5 +1,6 @@
 ﻿using System;
 using GraphLinqQL.Introspection;
+using GraphLinqQL.Resolution;
 
 namespace GraphLinqQL.Stubs
 {

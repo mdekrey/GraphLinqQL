@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public interface IGraphQlAccepts
     {

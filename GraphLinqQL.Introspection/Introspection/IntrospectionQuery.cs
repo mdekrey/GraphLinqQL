@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.Introspection.Interfaces.Introspection;
+using GraphLinqQL.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace GraphLinqQL.Introspection
 {
-    public class IntrospectionQuery<TQuery> : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
+    public sealed class IntrospectionQuery<TQuery> : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
         where TQuery : IGraphQlAccepts<GraphQlRoot>, IGraphQlResolvable
     {
         private readonly TQuery originalQuery;

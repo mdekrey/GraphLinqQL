@@ -1,4 +1,5 @@
 ﻿using GraphLinqQL.ErrorMessages;
+using GraphLinqQL.Resolution;
 using Microsoft.AspNetCore.Builder;
 using System.Collections.Generic;
 using System.Linq;

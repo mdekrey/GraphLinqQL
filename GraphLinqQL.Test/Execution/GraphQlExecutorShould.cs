@@ -10,6 +10,7 @@ using GraphLinqQL.Stubs;
 using GraphLinqQL.Ast;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using GraphLinqQL.Resolution;
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
 
 namespace GraphLinqQL.Execution

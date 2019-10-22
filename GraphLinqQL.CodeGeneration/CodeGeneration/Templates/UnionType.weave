@@ -8,6 +8,6 @@
 /// </summary>
 {{/if}}
 [System.CodeDom.Compiler.GeneratedCode("GraphLinqQL", "{{= Generator.Version()}}")]
-public interface {{= model.TypeName }} : global::GraphLinqQL.IGraphQlResolvable
+public interface {{= model.TypeName }} : global::GraphLinqQL.Resolution.IGraphQlResolvable
 {
 }

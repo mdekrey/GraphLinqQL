@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace GraphLinqQL
+namespace GraphLinqQL.Resolution
 {
     public class BasicParameterResolver : IGraphQlParameterResolver
     {

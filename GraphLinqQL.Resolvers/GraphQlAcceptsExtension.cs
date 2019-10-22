@@ -1,4 +1,6 @@
-﻿namespace GraphLinqQL
+﻿using GraphLinqQL.Resolution;
+
+namespace GraphLinqQL
 {
     public static class GraphQlAcceptsExtension
     {
