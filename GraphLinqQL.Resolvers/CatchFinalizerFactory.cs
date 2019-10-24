@@ -1,5 +1,6 @@
 ﻿using GraphLinqQL.Resolution;
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace GraphLinqQL
@@ -14,7 +15,7 @@ namespace GraphLinqQL
             this.fieldContext = fieldContext;
         }
 
-        public IFinalizer Catch(Func<object> valueAccessor)
+        public IFinalizer Catch(Func<object?> valueAccessor)
         {
             return new CatchFinalizer(fieldContext, valueAccessor);
         }

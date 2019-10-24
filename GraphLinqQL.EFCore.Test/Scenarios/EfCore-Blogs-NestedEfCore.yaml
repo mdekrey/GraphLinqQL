@@ -23,3 +23,5 @@ tests:
                 "blogs": []
             }
         }
+      sqlite:
+        - SELECT "b"."BlogId", "b"."Url", 0, "p"."PostId", "p"."Title" FROM "Blogs" AS "b" LEFT JOIN "Posts" AS "p" ON "b"."BlogId" = "p"."BlogId" ORDER BY "b"."BlogId", "p"."PostId"

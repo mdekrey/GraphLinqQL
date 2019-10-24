@@ -48,6 +48,7 @@ namespace GraphLinqQL
 
             using var scope = serviceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<StarWarsContext>().Database.EnsureCreated();
+            scope.ServiceProvider.GetRequiredService<Blogs.Data.BloggingContext>().Database.EnsureCreated();
         }
 
         [Theory]
