@@ -1,0 +1,25 @@
+﻿scenario: Blog Schema
+tests:
+  - name: Simple type
+    given:
+      schema: blogs
+      query: |
+        {
+            blogs {
+                id
+                url
+                posts {
+                    id
+                    title
+                }
+            }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "blogs": []
+            }
+        }

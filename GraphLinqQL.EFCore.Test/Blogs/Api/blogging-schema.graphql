@@ -1,0 +1,30 @@
+﻿schema {
+	query: Query
+	mutation: Mutation
+}
+
+type Query {
+	blogs: [Blog!]
+}
+
+type Blog {
+	id: ID!
+	url: String
+	posts: [Post!]
+}
+
+type Post {
+	id: ID!
+	title: String
+	content: String
+}
+
+type Mutation {
+	addBlog(url: String!): Blog
+	addPost(blogId: ID!, post: NewPost!): Post
+}
+
+input NewPost {
+	title: String!
+	post_content: String!
+}

@@ -27,12 +27,16 @@ namespace GraphLinqQL
     {
         private readonly ServiceProvider serviceProvider;
         private readonly SqliteConnection inMemorySqlite;
+        private readonly SqliteConnection inMemorySqliteBlogs;
         private readonly PassiveReaderCommandInterceptor sqlLogs;
 
         public GraphQlWithSqliteShould()
         {
             inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
             inMemorySqlite.Open();
+
+            inMemorySqliteBlogs = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+            inMemorySqliteBlogs.Open();
 
             sqlLogs = new PassiveReaderCommandInterceptor();
 
@@ -41,9 +45,17 @@ namespace GraphLinqQL
                 options.UseSqlite(inMemorySqlite);
                 options.AddInterceptors(sqlLogs);
             });
+            services.AddDbContext<Blogs.Data.BloggingContext>(options => {
+                options.UseSqlite(inMemorySqliteBlogs);
+                options.AddInterceptors(sqlLogs);
+            });
             services.AddGraphQl<StarWars.Interfaces.TypeResolver>("star-wars", typeof(StarWars.Implementations.Query), options =>
             {
                 options.Mutation = typeof(StarWars.Implementations.Mutation);
+                options.AddIntrospection();
+            });
+            services.AddGraphQl<Blogs.Api.TypeResolver>("blogs", typeof(Blogs.Api.QueryResolver), options =>
+            {
                 options.AddIntrospection();
             });
             services.AddLogging();
