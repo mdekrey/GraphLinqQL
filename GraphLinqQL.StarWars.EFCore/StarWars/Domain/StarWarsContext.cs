@@ -9,7 +9,7 @@ namespace GraphLinqQL.StarWars.Domain
     public class StarWarsContext : DbContext
     {
 #nullable disable warnings
-        public StarWarsContext(DbContextOptions options) : base(options)
+        public StarWarsContext(DbContextOptions<StarWarsContext> options) : base(options)
         {
         }
 

@@ -1,0 +1,27 @@
+﻿scenario: Blog Schema
+tests:
+  - name: Simple type
+    given:
+      schema: blogs
+      query: |
+        {
+            blogs {
+                id
+                url
+                posts {
+                    id
+                    title
+                }
+            }
+        }
+    when:
+      execute: true
+    then:
+      match-result: |
+        {
+            "data": {
+                "blogs": []
+            }
+        }
+      sqlite:
+        - SELECT "b"."BlogId", "b"."Url", 0, "p"."PostId", "p"."Title" FROM "Blogs" AS "b" LEFT JOIN "Posts" AS "p" ON "b"."BlogId" = "p"."BlogId" ORDER BY "b"."BlogId", "p"."PostId"

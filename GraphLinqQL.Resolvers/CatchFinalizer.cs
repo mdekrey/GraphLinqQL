@@ -1,6 +1,7 @@
 ﻿using GraphLinqQL.Resolution;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GraphLinqQL
@@ -8,9 +9,9 @@ namespace GraphLinqQL
     internal class CatchFinalizer : IFinalizer
     {
         private readonly FieldContext fieldContext;
-        private readonly Func<object> valueAccessor;
+        private readonly Func<object?> valueAccessor;
 
-        internal CatchFinalizer(FieldContext fieldContext, Func<object> valueAccessor)
+        internal CatchFinalizer(FieldContext fieldContext, Func<object?> valueAccessor)
         {
             this.fieldContext = fieldContext;
             this.valueAccessor = valueAccessor;

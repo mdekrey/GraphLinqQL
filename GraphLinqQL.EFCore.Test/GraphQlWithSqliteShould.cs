@@ -27,12 +27,16 @@ namespace GraphLinqQL
     {
         private readonly ServiceProvider serviceProvider;
         private readonly SqliteConnection inMemorySqlite;
+        private readonly SqliteConnection inMemorySqliteBlogs;
         private readonly PassiveReaderCommandInterceptor sqlLogs;
 
         public GraphQlWithSqliteShould()
         {
             inMemorySqlite = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
             inMemorySqlite.Open();
+
+            inMemorySqliteBlogs = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+            inMemorySqliteBlogs.Open();
 
             sqlLogs = new PassiveReaderCommandInterceptor();
 
@@ -41,9 +45,17 @@ namespace GraphLinqQL
                 options.UseSqlite(inMemorySqlite);
                 options.AddInterceptors(sqlLogs);
             });
+            services.AddDbContext<Blogs.Data.BloggingContext>(options => {
+                options.UseSqlite(inMemorySqliteBlogs);
+                options.AddInterceptors(sqlLogs);
+            });
             services.AddGraphQl<StarWars.Interfaces.TypeResolver>("star-wars", typeof(StarWars.Implementations.Query), options =>
             {
                 options.Mutation = typeof(StarWars.Implementations.Mutation);
+                options.AddIntrospection();
+            });
+            services.AddGraphQl<Blogs.Api.TypeResolver>("blogs", typeof(Blogs.Api.QueryResolver), options =>
+            {
                 options.AddIntrospection();
             });
             services.AddLogging();
@@ -51,6 +63,7 @@ namespace GraphLinqQL
 
             using var scope = serviceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<StarWarsContext>().Database.EnsureCreated();
+            scope.ServiceProvider.GetRequiredService<Blogs.Data.BloggingContext>().Database.EnsureCreated();
         }
 
 
@@ -123,12 +136,14 @@ namespace GraphLinqQL
                 memoryStream.Position = 0;
 
                 using var executor = serviceProvider.GetRequiredService<IGraphQlExecutorFactory>().Create(schema);
-                var contextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
+                var swContextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<StarWarsContext>().ContextId.InstanceId;
+                var blogContextId = ((IGraphQlExecutionServiceProvider)executor.ServiceProvider).ExecutionServices.GetRequiredService<Blogs.Data.BloggingContext>().ContextId.InstanceId;
                 var result = await executor.ExecuteQuery(memoryStream, messageResolver);
 
                 var json = System.Text.Json.JsonSerializer.Serialize(result, JsonOptions.Setup(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
-                var allSql = sqlLogs.GetSql(contextId).Select(CleanSql);
+                var allSql = sqlLogs.GetSql(swContextId).Select(CleanSql)
+                    .Union(sqlLogs.GetSql(blogContextId).Select(CleanSql));
 
                 Assert.True(JToken.DeepEquals(JToken.Parse(json), JToken.Parse(expected)), $"Actual: {json}");
 

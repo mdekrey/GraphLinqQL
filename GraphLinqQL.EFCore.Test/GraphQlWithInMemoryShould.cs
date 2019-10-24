@@ -28,7 +28,8 @@ namespace GraphLinqQL
         public GraphQlWithInMemoryShould()
         {
             var services = new ServiceCollection();
-            services.AddDbContext<StarWarsContext>(options => options.UseInMemoryDatabase(nameof(GraphQlWithInMemoryShould)));
+            services.AddDbContext<StarWarsContext>(options => options.UseInMemoryDatabase(nameof(GraphQlWithInMemoryShould) + nameof(StarWarsContext)));
+            services.AddDbContext<Blogs.Data.BloggingContext>(options => options.UseInMemoryDatabase(nameof(GraphQlWithInMemoryShould) + nameof(Blogs.Data.BloggingContext)));
             services.AddGraphQl<StarWars.Interfaces.TypeResolver>("star-wars", typeof(StarWars.Implementations.Query), options =>
             {
                 options.Mutation = typeof(StarWars.Implementations.Mutation);
@@ -38,11 +39,16 @@ namespace GraphLinqQL
             {
                 options.AddIntrospection();
             });
+            services.AddGraphQl<Blogs.Api.TypeResolver>("blogs", typeof(Blogs.Api.QueryResolver), options =>
+            {
+                options.AddIntrospection();
+            });
             services.AddLogging();
             serviceProvider = services.BuildServiceProvider();
 
             using var scope = serviceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<StarWarsContext>().Database.EnsureCreated();
+            scope.ServiceProvider.GetRequiredService<Blogs.Data.BloggingContext>().Database.EnsureCreated();
         }
 
         [Theory]
