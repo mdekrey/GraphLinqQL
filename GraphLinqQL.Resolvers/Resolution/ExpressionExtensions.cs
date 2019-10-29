@@ -48,15 +48,15 @@ namespace GraphLinqQL.Resolution
 
         internal static MethodCallExpression CallSelect(this Expression list, LambdaExpression selector)
         {
-            return list.IsQueryable()
+            return list.Type.IsQueryable()
                 ? list.CallQueryableSelect(selector)
                 : list.CallEnumerableSelect(selector);
         }
 
-        internal static bool IsQueryable(this Expression list)
+        internal static bool IsQueryable(this Type listType)
         {
-            var elementType = TypeSystem.GetElementType(list.Type);
-            return typeof(IQueryable<>).MakeGenericType(elementType).IsAssignableFrom(list.Type);
+            var elementType = TypeSystem.GetElementType(listType);
+            return typeof(IQueryable<>).MakeGenericType(elementType).IsAssignableFrom(listType);
         }
 
         internal static MethodCallExpression CallQueryableSelect(this Expression list, LambdaExpression selector)

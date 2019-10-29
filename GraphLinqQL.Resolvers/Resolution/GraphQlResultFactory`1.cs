@@ -10,7 +10,7 @@ namespace GraphLinqQL.Resolution
         private static readonly Expression<Func<TValue, TValue>> identity = _ => _;
 
         public GraphQlResultFactory(FieldContext fieldContext)
-            : base(fieldContext, identity, identity, EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), EmptyArrayHelper.Empty<IGraphQlJoin>())
+            : base(fieldContext, new[] { identity }, EmptyArrayHelper.Empty<ExpressionVisitor>(), EmptyArrayHelper.Empty<IGraphQlJoin>())
         {
 
         }

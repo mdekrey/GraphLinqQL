@@ -33,7 +33,7 @@ namespace GraphLinqQL.Resolution
                 {
                     Exchanged = true;
                     var argument = node.Arguments[0].Unbox();
-                    return body.Inline(argument.Box());
+                    return body.Inline(argument.Box()).Box();
                 }
                 return base.VisitMethodCall(node);
             }
@@ -54,7 +54,41 @@ namespace GraphLinqQL.Resolution
             var result = (LambdaExpression)visitor.Visit(expression);
             return visitor.Exchanged
                 ? result
-                : Expression.Lambda(body.Inline(expression.Body), expression.Parameters);
+                : Expression.Lambda(body.Inline(expression.Body.Unbox()).Box(), expression.Parameters);
+        }
+
+
+        private class GraphQlPreambleExpressionTypeVisitor : ExpressionVisitor
+        {
+
+            public Type? InnerType { get; private set; }
+
+            public override Expression Visit(Expression node)
+            {
+                if (node == PreamblePlaceholders.BodyPlaceholderExpression)
+                {
+                    // TODO - is there a better way for this?
+                    InnerType = typeof(object);
+                }
+                return base.Visit(node);
+            }
+
+            protected override Expression VisitMethodCall(MethodCallExpression node)
+            {
+                if (node.Method == PreamblePlaceholders.BodyInvocationPlaceholderMethod)
+                {
+                    var argument = node.Arguments[0].Unbox();
+                    InnerType = argument.Type;
+                }
+                return base.VisitMethodCall(node);
+            }
+        }
+
+        public static Type GetExpectedReplacementType(LambdaExpression expression)
+        {
+            var visitor = new GraphQlPreambleExpressionTypeVisitor();
+            visitor.Visit(expression);
+            return visitor.InnerType ?? expression.ReturnType;
         }
     }
 }

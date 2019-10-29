@@ -1,9 +1,11 @@
-﻿using GraphLinqQL.StarWars.Domain;
+﻿using GraphLinqQL.Resolution;
+using GraphLinqQL.StarWars.Domain;
 using System;
 using System.Linq;
 
 namespace GraphLinqQL.StarWars.Implementations
 {
+    [InlinableClass]
     internal class PaginatedSelection<T>
     {
 #nullable disable warnings

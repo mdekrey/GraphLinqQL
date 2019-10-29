@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace GraphLinqQL.Resolution
@@ -7,8 +8,12 @@ namespace GraphLinqQL.Resolution
     {
         public static readonly MethodInfo ContractPlaceholderMethod = typeof(GraphQlContractExpression).GetMethod(nameof(ContractPlaceholder), BindingFlags.Static | BindingFlags.NonPublic)!;
 
-        public static Expression ResolveContract(Expression body, int index) =>
-            Expression.Call(GraphQlContractExpression.ContractPlaceholderMethod, body, Expression.Constant(index));
+        public static Expression<Func<object, object?>> ResolveContractIndexed(int index)
+        {
+            var bodyParam = Expression.Parameter(typeof(object), "contractBody");
+            return Expression.Lambda<Func<object, object?>>(Expression.Call(null, ContractPlaceholderMethod, bodyParam, Expression.Constant(index)), bodyParam);
+        }
+
 
 #pragma warning disable CA1801 // Remove unused parameter - this parameter is used in Expression manipulation
 #pragma warning disable IDE0060 // Remove unused parameter

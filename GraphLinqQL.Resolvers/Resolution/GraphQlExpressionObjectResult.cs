@@ -16,7 +16,7 @@ namespace GraphLinqQL.Resolution
             this.Contract = contract ?? throw new ArgumentException("Expected a contract but had none.", nameof(resolution));
 
             visitor = new GraphQlContractExpressionReplaceVisitor();
-            visitor.Visit(resolution.Body);
+            resolution.ApplyVisitor<object>(visitor);
             if (visitor.ModelType == null)
             {
                 throw new ArgumentException("The provided resolver did not have a contract.", nameof(resolution));
@@ -45,11 +45,8 @@ namespace GraphLinqQL.Resolution
         private IGraphQlScalarResult<object> ToResult(IReadOnlyList<LambdaExpression> joinedSelector)
         {
             visitor.NewOperations = joinedSelector;
-            return Resolution.UpdateBody<object>(body =>
-            {
-                var returnResult = visitor.Visit(body.Body);
-                return Expression.Lambda(returnResult, body.Parameters);
-            });
+            var result = Resolution.ApplyVisitor<object>(visitor);
+            return result;
         }
 
     }

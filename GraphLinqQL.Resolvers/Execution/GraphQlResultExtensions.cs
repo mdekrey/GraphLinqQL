@@ -20,7 +20,11 @@ namespace GraphLinqQL.Execution
                 throw new InvalidOperationException("Cannot join at the root level");
             }
             var constructedResult = resolved.ConstructResult();
-            var result = InvokeExpression(input, constructedResult);
+            var finalResult = new ExpressionVisitor[] {
+                new ExpressionSimplifier()
+            }.Aggregate(constructedResult, (prev, next) => next.VisitAndConvert(prev, nameof(InvokeResult)));
+
+            var result = InvokeExpression(input, finalResult);
             var finalizerContext = new FinalizerContext(UnrollResults, logger, cancellationToken);
             var finalizedResult = await UnrollResults(result, finalizerContext).ConfigureAwait(false);
             return new ExecutionResult(false, finalizedResult, finalizerContext.Errors.ToArray());

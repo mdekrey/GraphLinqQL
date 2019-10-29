@@ -10,11 +10,13 @@ namespace GraphLinqQL
     {
         private readonly FieldContext fieldContext;
         private readonly Func<object?> valueAccessor;
+        private readonly LambdaExpression? expression;
 
-        internal CatchFinalizer(FieldContext fieldContext, Func<object?> valueAccessor)
+        internal CatchFinalizer(FieldContext fieldContext, Func<object?> valueAccessor, LambdaExpression? expression)
         {
             this.fieldContext = fieldContext;
             this.valueAccessor = valueAccessor;
+            this.expression = expression;
         }
 
         public async Task<object?> GetValue(FinalizerContext context)

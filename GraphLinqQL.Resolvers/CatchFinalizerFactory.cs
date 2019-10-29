@@ -17,7 +17,12 @@ namespace GraphLinqQL
 
         public IFinalizer Catch(Func<object?> valueAccessor)
         {
-            return new CatchFinalizer(fieldContext, valueAccessor);
+            return new CatchFinalizer(fieldContext, valueAccessor, null);
+        }
+
+        public IFinalizer Catch(Func<object?> valueAccessor, LambdaExpression expression)
+        {
+            return new CatchFinalizer(fieldContext, valueAccessor, expression);
         }
     }
 }
