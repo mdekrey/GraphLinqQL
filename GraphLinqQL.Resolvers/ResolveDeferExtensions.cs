@@ -32,39 +32,22 @@ namespace GraphLinqQL
                 .AddResolve<object>(constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
-    }
-
-    class Deferred
-    {
-        public static readonly Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Invoke(new Deferred(deferFunction), input);
-        public static readonly ConstructorInfo constructor = typeof(Deferred).GetConstructors().Single();
-
-        private readonly LambdaExpression deferFunction;
-
-        public Deferred(LambdaExpression deferFunction)
+        class Deferred
         {
-            this.deferFunction = deferFunction;
-        }
+            public static readonly Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Invoke(new Deferred(deferFunction), input);
+            public static readonly ConstructorInfo constructor = typeof(Deferred).GetConstructors().Single();
 
-        public static object Invoke(Deferred deferred, object input)
-        {
-            return Execution.GraphQlResultExtensions.InvokeExpression(input, deferred.deferFunction);
-        }
-    }
+            private readonly LambdaExpression deferFunction;
 
-    class DeferredVisitor : ExpressionVisitor
-    {
-        protected override Expression VisitNew(NewExpression node)
-        {
-            if (node.Type == typeof(Deferred))
+            public Deferred([ExtractLambda] LambdaExpression deferFunction)
             {
-                var targetNode = base.VisitNew(node);
-                var deferred = Expression.Lambda<Func<Deferred>>(targetNode).Compile()();
-                Expression<Func<Deferred>> invoke = () => deferred;
-
-                return invoke.Body;
+                this.deferFunction = deferFunction;
             }
-            return base.VisitNew(node);
+
+            public static object Invoke(Deferred deferred, object input)
+            {
+                return Execution.GraphQlResultExtensions.InvokeExpression(input, deferred.deferFunction);
+            }
         }
     }
 }

@@ -22,7 +22,6 @@ namespace GraphLinqQL.Execution
             var constructedResult = resolved.ConstructResult();
             var finalResult = new ExpressionVisitor[] {
                 new ExpressionSimplifier(),
-                new DeferredVisitor(),
             }.Aggregate(constructedResult, (prev, next) => next.VisitAndConvert(prev, nameof(InvokeResult)));
 
             var result = InvokeExpression(input, finalResult);
