@@ -75,10 +75,22 @@ namespace GraphLinqQL
             var body = Expression.Parameter(typeof(object), "asUnionInput");
 
             var temp = builder.Conditions.Select((e, index) => new { index, e.DomainType }).ToArray();
+            var bodyWrapper = temp.Length == 1 
+                ? GraphQlContractExpression.ResolveContractIndexed(0)
+                : Expression.Lambda(
+                    temp.Skip(1).Aggregate(
+                        GraphQlContractExpression.ResolveContractIndexed(0).Inline(body),
+                        (prev, next) => 
+                            Expression.Condition(
+                                Expression.TypeIs(body, next.DomainType), 
+                                GraphQlContractExpression.ResolveContractIndexed(next.index).Inline(body), 
+                                prev
+                            )
+                    ), 
+                    body
+                );
             return graphQlResult.AsContract<T>(builder.CreateContractMapping(), 
-                temp.Length == 1 ? GraphQlContractExpression.ResolveContractIndexed(0) :
-                    Expression.Lambda(temp.Skip(1).Aggregate((Expression)GraphQlContractExpression.ResolveContractIndexed(0),
-                        (prev, next) => Expression.Condition(Expression.TypeIs(body, next.DomainType), GraphQlContractExpression.ResolveContractIndexed(next.index), prev)), body)
+                bodyWrapper
             );
         }
 

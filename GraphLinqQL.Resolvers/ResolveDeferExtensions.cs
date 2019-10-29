@@ -29,39 +29,42 @@ namespace GraphLinqQL
 
             var newScalar = original.AddResolve<object>(deferResolver)
                 .AddResolve<object>(Expression.Lambda(Expression.Convert(outParam, constructedDeferred.Parameters[0].Type), outParam))
-                .AddResolve<object>(constructedDeferred).AddConstructionVisitor<object>(new DeferredVisitor());
+                .AddResolve<object>(constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
+    }
 
-        class Deferred
+    class Deferred
+    {
+        public static readonly Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Invoke(new Deferred(deferFunction), input);
+        public static readonly ConstructorInfo constructor = typeof(Deferred).GetConstructors().Single();
+
+        private readonly LambdaExpression deferFunction;
+
+        public Deferred(LambdaExpression deferFunction)
         {
-            public static readonly Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Invoke(new Deferred(deferFunction), input);
-            public static readonly ConstructorInfo constructor = typeof(Deferred).GetConstructors().Single();
-
-            private readonly LambdaExpression deferFunction;
-
-            public Deferred(LambdaExpression deferFunction)
-            {
-                this.deferFunction = deferFunction;
-            }
-
-            public static object Invoke(Deferred deferred, object input)
-            {
-                return Execution.GraphQlResultExtensions.InvokeExpression(input, deferred.deferFunction);
-            }
+            this.deferFunction = deferFunction;
         }
 
-        class DeferredVisitor : ExpressionVisitor
+        public static object Invoke(Deferred deferred, object input)
         {
-            protected override Expression VisitNew(NewExpression node)
+            return Execution.GraphQlResultExtensions.InvokeExpression(input, deferred.deferFunction);
+        }
+    }
+
+    class DeferredVisitor : ExpressionVisitor
+    {
+        protected override Expression VisitNew(NewExpression node)
+        {
+            if (node.Type == typeof(Deferred))
             {
-                if (node.Type == typeof(Deferred))
-                {
-                    var deferred = Expression.Lambda<Func<object>>(node).Compile()();
-                    return Expression.Constant(deferred);
-                }
-                return base.VisitNew(node);
+                var targetNode = base.VisitNew(node);
+                var deferred = Expression.Lambda<Func<Deferred>>(targetNode).Compile()();
+                Expression<Func<Deferred>> invoke = () => deferred;
+
+                return invoke.Body;
             }
+            return base.VisitNew(node);
         }
     }
 }
