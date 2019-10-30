@@ -23,17 +23,6 @@ namespace GraphLinqQL.Resolution
             return base.VisitMember(node);
         }
 
-        //protected override Expression VisitMethodCall(MethodCallExpression node)
-        //{
-        //    var extracted = node.Method.GetParameters()
-        //        .Select((param, index) => param.GetCustomAttribute<ExtractLambdaAttribute>() != null
-        //            ? ExtractLambda(node.Arguments[index] as UnaryExpression)
-        //            : node.Arguments[index])
-        //        .ToArray();
-
-        //    return base.VisitMethodCall(Expression.Call(node.Object, node.Method, extracted));
-        //}
-
         protected override Expression VisitNew(NewExpression node)
         {
             var extracted = node.Constructor.GetParameters()
@@ -47,11 +36,12 @@ namespace GraphLinqQL.Resolution
 
         private Expression ExtractLambda(UnaryExpression? expression)
         {
-            var lambda = expression?.Operand as LambdaExpression;
-            if (lambda == null)
+            var operand = expression?.Operand as LambdaExpression;
+            if (operand == null)
             {
-                throw new InvalidOperationException();
+                return Expression.Constant(null, typeof(object));
             }
+            var lambda = this.VisitAndConvert(operand, nameof(ExtractLambda));
             Expression<Func<LambdaExpression?>> temp = () => lambda;
             return temp.Body;
         }

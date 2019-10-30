@@ -33,7 +33,7 @@ namespace GraphLinqQL
                 {
                     error.Fixup(fieldContext);
                 }
-                context.Logger.LogError(new EventId(10000, "FieldResolutionCaught"), ex, WellKnownErrorCodes.GetStaticMessage(WellKnownErrorCodes.UnhandledError, errors[0].Arguments));
+                context.Logger.LogError(new EventId(10000, "FieldResolutionCaught"), ex, WellKnownErrorCodes.GetStaticMessage(WellKnownErrorCodes.UnhandledError, errors[0].Arguments), expression);
                 context.Errors.AddRange(errors);
                 return null;
             }
