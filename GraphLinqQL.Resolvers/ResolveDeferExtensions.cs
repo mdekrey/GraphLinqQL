@@ -14,32 +14,24 @@ namespace GraphLinqQL
             var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.ConstructResult();
 
-            return original.UpdatePreambleAndBody<TContract>(preambleLambda =>
-            {
-                var replacement = new PreambleReplacement(Expression.Lambda(Deferred.newPreamble.Inline(original.Body.Parameters[0].Box(), PreamblePlaceholders.BodyPlaceholderExpression), original.Body.Parameters));
-                var result = replacement.Replace(preambleLambda);
-                return result;
-            }, deferredLambda => constructedDeferred);
+            return original.AddResolve<TContract>(constructedDeferred);
         }
 
         public static IGraphQlObjectResult<TContract> Defer<TInput, TContract>(this IGraphQlScalarResult<TInput> original, Func<IGraphQlResultFactory<TInput>, IGraphQlObjectResult<TContract>> func)
         {
             var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
-            var constructedDeferred = newResult.Resolution.ConstructResult();
+            var constructedDeferred = newResult.Resolution
+                .ConstructResult();
 
-            var newScalar = original.UpdatePreambleAndBody<object>(preambleLambda =>
-            {
-                var replacement = new PreambleReplacement(Expression.Lambda(Deferred.newPreamble.Inline(original.Body.Parameters[0].Box(), PreamblePlaceholders.BodyPlaceholderExpression), original.Body.Parameters));
-                var result = replacement.Replace(preambleLambda);
-                return result;
-            }, deferredLambda => constructedDeferred).AddPostBuild(built =>
-            {
-                var result = (LambdaExpression)new DeferredVisitor().Visit(built);
-                return result;
-            });
+            var param = Expression.Parameter(typeof(object), "inputForDeferred");
+            var deferResolver = Expression.Lambda(Deferred.newPreamble.Inline(param, PreamblePlaceholders.BodyPlaceholderExpression), param);
+            var outParam = Expression.Parameter(typeof(object), "outputForDeferred");
+
+            var newScalar = original.AddResolve<object>(deferResolver)
+                .AddResolve<object>(Expression.Lambda(Expression.Convert(outParam, constructedDeferred.Parameters[0].Type), outParam))
+                .AddResolve<object>(constructedDeferred);
             return newResult.AdjustResolution<TContract>(_ => newScalar);
         }
-
         class Deferred
         {
             public static readonly Expression<Func<object, LambdaExpression, object?>> newPreamble = (input, deferFunction) => Invoke(new Deferred(deferFunction), input);
@@ -47,7 +39,7 @@ namespace GraphLinqQL
 
             private readonly LambdaExpression deferFunction;
 
-            public Deferred(LambdaExpression deferFunction)
+            public Deferred([ExtractLambda] LambdaExpression deferFunction)
             {
                 this.deferFunction = deferFunction;
             }
@@ -55,19 +47,6 @@ namespace GraphLinqQL
             public static object Invoke(Deferred deferred, object input)
             {
                 return Execution.GraphQlResultExtensions.InvokeExpression(input, deferred.deferFunction);
-            }
-        }
-
-        class DeferredVisitor : ExpressionVisitor
-        {
-            protected override Expression VisitNew(NewExpression node)
-            {
-                if (node.Type == typeof(Deferred))
-                {
-                    var deferred = Expression.Lambda<Func<object>>(node).Compile()();
-                    return Expression.Constant(deferred);
-                }
-                return base.VisitNew(node);
             }
         }
     }

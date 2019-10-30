@@ -175,6 +175,7 @@ namespace GraphLinqQL
         {
             serviceProvider?.Dispose();
             inMemorySqlite?.Dispose();
+            inMemorySqliteBlogs?.Dispose();
         }
     }
 }

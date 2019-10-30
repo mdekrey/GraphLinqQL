@@ -99,7 +99,7 @@ namespace GraphLinqQL.Resolution
             {
                 var allJoins = r.Results.Values.SelectMany(v => v.Joins).ToImmutableHashSet();
                 var expressions = r.Results.ToDictionary(result => result.Key, result => result.Value.ConstructResult());
-                var inputParam = Expression.Parameter(r.DomainType);
+                var inputParam = Expression.Parameter(r.DomainType, "complexFrom" + r.DomainType.Name);
                 var resultDictionary = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), expressions.Select(result =>
                 {
                     var inputResolver = result.Value.Inline(inputParam);

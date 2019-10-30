@@ -20,7 +20,12 @@ namespace GraphLinqQL.Resolution
                 if (NewOperations != null)
                 {
                     var arg = node.Arguments[1];
-                    return NewOperations[(int)((ConstantExpression)arg).Value].Inline(arg0);
+                    var targetOp = NewOperations[(int)((ConstantExpression)arg).Value];
+                    if (targetOp.Parameters[0].Type != ModelType)
+                    {
+                        arg0 = Expression.Convert(arg0, targetOp.Parameters[0].Type);
+                    }
+                    return targetOp.Inline(arg0);
                 }
             }
             return base.VisitMethodCall(node);

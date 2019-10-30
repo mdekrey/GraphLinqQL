@@ -9,17 +9,10 @@ namespace GraphLinqQL.Resolution
 {
     /// <summary>
     /// <p>
-    /// GraphQL Results are assembled with 2 phases: preamble and body. Typically, the preamble and the
-    /// body are conjoined and flow from one into the next. That isn't always the case, however. We use 
-    /// placeholders in the Expressions to handle the dynamic swapping. Placeholders allow us to nest the final lambda
-    /// inside other expressions rather than needing to rely on the return result.
-    /// </p>
-    /// 
-    /// <p>
-    /// The preamble is not allowed to be modified after the link to the body is set. This allows us to
-    /// have a known type outgoing from the preamble into the body. The goal of the preamble is to have
-    /// simple enough Expressions that it can be handled by EF Core's SQL generation visitors, and allow us to move
-    /// any portions that cannot be handled by EF Core to the body.
+    /// GraphQL Results are assembled in layers of lambdas. Each lambda either returns a new value which
+    /// is used as the input for the next, or has one of a few "Preamble" placeholders to either inline the
+    /// following functionality (such as in a .ContinueWith for a task) or receive a callback for the
+    /// remaining functionality.
     /// </p>
     /// 
     /// <p>
@@ -37,47 +30,40 @@ namespace GraphLinqQL.Resolution
     class GraphQlExpressionScalarResult<TReturnType> : IGraphQlScalarResult<TReturnType>
     {
         public FieldContext FieldContext { get; }
-        private readonly IReadOnlyList<Func<LambdaExpression, LambdaExpression>> postprocessBuild;
-
-        public LambdaExpression Preamble { get; }
-        public LambdaExpression Body { get; }
+        private readonly IReadOnlyList<LambdaExpression> resolvers;
+        private readonly IReadOnlyList<ExpressionVisitor> constructionVisitors;
 
         public IReadOnlyCollection<IGraphQlJoin> Joins { get; }
 
         internal protected GraphQlExpressionScalarResult(
             FieldContext fieldContext,
-            LambdaExpression preamble,
-            LambdaExpression body,
-            IReadOnlyList<Func<LambdaExpression, LambdaExpression>> postprocessBuild,
+            IReadOnlyList<LambdaExpression> resolvers,
+            IReadOnlyList<ExpressionVisitor> constructionVisitors,
             IReadOnlyCollection<IGraphQlJoin> joins)
         {
             this.FieldContext = fieldContext;
-            this.Preamble = preamble;
-            this.Body = Expression.Lambda(body.Body.Box(), body.Parameters);
-            this.postprocessBuild = postprocessBuild;
+            this.resolvers = resolvers;
+            this.constructionVisitors = constructionVisitors;
             this.Joins = joins;
-
-            var visitor = new PreambleReplacement(Body);
-            var result = (LambdaExpression)visitor.Replace(Preamble);
-            // TODO - do some more type checking here
-            //if (!typeof(TReturnType).IsAssignableFrom(body.Parameters[0].Type))
-            //{
-            //    throw new InvalidOperationException($"ScalarResult claimed to return '{typeof(TReturnType).FullName}' but is returning '{result.ReturnType.FullName}'");
-            //}
         }
 
-        public IGraphQlObjectResult<T> AsContract<T>(IContract contract, Func<Expression, Expression> bodyWrapper)
+        private static LambdaExpression Identity(Type type)
         {
-            var newResolver = Expression.Lambda(bodyWrapper(Body.Body), Body.Parameters);
-            return new GraphQlExpressionObjectResult<T>(new GraphQlExpressionScalarResult<object>(FieldContext, Preamble, newResolver, postprocessBuild, Joins), contract);
+            var param = Expression.Parameter(type, "identityOf" + type.Name);
+            return Expression.Lambda(param, param);
+        }
+
+        public IGraphQlObjectResult<T> AsContract<T>(IContract contract, LambdaExpression bodyWrapper)
+        {
+            return new GraphQlExpressionObjectResult<T>(this.AddResolve<object>(bodyWrapper), contract);
         }
 
         public IGraphQlObjectResult<TContract> AsContract<TContract>() where TContract : IGraphQlAccepts<TReturnType> =>
-            AsContract<TContract>(SafeContract(typeof(TContract)), body => GraphQlContractExpression.ResolveContract(body, 0));
+            AsContract<TContract>(SafeContract(typeof(TContract)), GraphQlContractExpression.ResolveContractIndexed(0));
 
         private IContract SafeContract(Type contractType)
         {
-            var currentReturnType = Body.Body.Unbox().Type;
+            var currentReturnType = GetCurrentReturnType();
             var acceptsInterface = contractType.GetInterfaces().Where(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IGraphQlAccepts<>))
                 .Where(iface => iface.GetGenericArguments()[0].IsAssignableFrom(currentReturnType))
                 .FirstOrDefault();
@@ -88,51 +74,65 @@ namespace GraphLinqQL.Resolution
             return new ContractMapping(contractType, currentReturnType);
         }
 
+        private Type GetCurrentReturnType()
+        {
+            return PreambleReplacement.GetExpectedReplacementType(resolvers[resolvers.Count - 1]);
+        }
+
         public LambdaExpression ConstructResult()
         {
-            // Cases:
-            // 1. Nothing special, Preamble return is inlined into Body's parameter
-            // 2. Preamble has placeholder for "return" value that is passed to Body, which is inlined
-            // 3. Preamble has quoted lambda for full Body lambda expression
-
-            var initialBuild = new PreambleReplacement(Body).Replace(Preamble);
-            var result = this.postprocessBuild.Aggregate(initialBuild, (current, postBuild) => postBuild(current));
-            return result;
+            var composed = resolvers.Reverse().Aggregate(
+                Identity(GetCurrentReturnType()),
+                (current, prev) => new PreambleReplacement(current).Replace(prev)
+            );
+            var finalResult = constructionVisitors.Aggregate(composed, (prev, next) => next.VisitAndConvert(prev, nameof(ConstructResult)));
+            return finalResult;
         }
 
-        public IGraphQlScalarResult AddPostBuild(Func<LambdaExpression, LambdaExpression> postBuild)
+        public IGraphQlScalarResult<T> AddResolve<T>(Func<ParameterExpression, LambdaExpression> resolve)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(FieldContext, Preamble, Body, postprocessBuild.Concat(new[] { postBuild }).ToArray(), this.Joins);
+            var returnType = GetCurrentReturnType();
+            var param = Expression.Parameter(returnType, "resolve" + returnType.Name);
+            var next = resolve(param);
+            if (next.Parameters[0].Type != param.Type)
+            {
+                // some coersion needed...
+                if (!next.Parameters[0].Type.IsAssignableFrom(param.Type))
+                {
+                    throw new ArgumentException($"Unable to convert current resolved type of {param.Type.FullName} to {next.Parameters[0].Type.FullName}");
+                }
+
+                return new GraphQlExpressionScalarResult<T>(FieldContext, resolvers.Concat(new[] { Expression.Lambda(Expression.Convert(param, next.Parameters[0].Type), param), next }).ToArray(), constructionVisitors, Joins);
+            }
+            else
+            {
+                return new GraphQlExpressionScalarResult<T>(FieldContext, resolvers.Concat(new[] { next }).ToArray(), constructionVisitors, Joins);
+            }
         }
 
-        public IGraphQlScalarResult<T> UpdatePreamble<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust)
+        public IGraphQlScalarResult<T> ApplyVisitor<T>(ExpressionVisitor visitor)
         {
-            return new GraphQlExpressionScalarResult<T>(FieldContext, preambleAdjust(Preamble), (Expression<Func<T, T>>)(_ => _), postprocessBuild, this.Joins);
+            return new GraphQlExpressionScalarResult<T>(FieldContext, resolvers.Select(v => visitor.VisitAndConvert(v, nameof(ApplyVisitor))).ToArray(), constructionVisitors, Joins);
         }
 
-        public IGraphQlScalarResult<T> UpdateBody<T>(Func<LambdaExpression, LambdaExpression> bodyAdjust)
+        public IGraphQlScalarResult<T> AddConstructionVisitor<T>(ExpressionVisitor visitor)
         {
-            return new GraphQlExpressionScalarResult<T>(FieldContext, Preamble, bodyAdjust(Body), postprocessBuild, this.Joins);
-        }
-
-        public IGraphQlScalarResult<T> UpdatePreambleAndBody<T>(Func<LambdaExpression, LambdaExpression> preambleAdjust, Func<LambdaExpression, LambdaExpression> bodyAdjust)
-        {
-            return new GraphQlExpressionScalarResult<T>(FieldContext, preambleAdjust(Preamble), bodyAdjust(Body), postprocessBuild, this.Joins);
+            return new GraphQlExpressionScalarResult<T>(FieldContext, resolvers, constructionVisitors.Concat(new[] { visitor }).ToArray(), Joins);
         }
 
         internal static IGraphQlScalarResult<TReturnType> Constant(TReturnType result, FieldContext fieldContext)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, (Expression<Func<object?, TReturnType>>)(_ => result), (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty< Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, new[] { (Expression<Func<object?, TReturnType>>)(_ => result) }, EmptyArrayHelper.Empty<ExpressionVisitor>(), ImmutableHashSet<IGraphQlJoin>.Empty);
         }
 
         internal static IGraphQlScalarResult<TReturnType> Simple(FieldContext fieldContext, LambdaExpression newFunc)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet<IGraphQlJoin>.Empty);
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, new[] { newFunc }, EmptyArrayHelper.Empty<ExpressionVisitor>(), ImmutableHashSet<IGraphQlJoin>.Empty);
         }
 
         internal static IGraphQlScalarResult<TReturnType> CreateJoin(FieldContext fieldContext, LambdaExpression newFunc, IGraphQlJoin join)
         {
-            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, newFunc, (Expression<Func<TReturnType, TReturnType>>)(_ => _), EmptyArrayHelper.Empty<Func<LambdaExpression, LambdaExpression>>(), ImmutableHashSet.Create(join));
+            return new GraphQlExpressionScalarResult<TReturnType>(fieldContext, new[] { newFunc }, EmptyArrayHelper.Empty<ExpressionVisitor>(), ImmutableHashSet.Create(join));
         }
     }
 }

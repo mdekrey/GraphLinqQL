@@ -20,9 +20,9 @@ namespace GraphLinqQL
         public static IGraphQlScalarResult<object> GetResult<TRoot>(this IGraphQlServiceProvider serviceProvider, Type contract, Func<IComplexResolverBuilder, IGraphQlScalarResult<object>> resolver)
         {
             IGraphQlResultFactory<TRoot> resultFactory = new GraphQlResultFactory<TRoot>(FieldContext.Empty);
-            var contractBuilder = resultFactory
-                .Resolve(a => a).AsContract<object>(new ContractMapping(contract, typeof(TRoot)), body => GraphQlContractExpression.ResolveContract(body, 0))
-                .ResolveComplex(serviceProvider);
+            var scalar = resultFactory.Resolve(a => a);
+            var objectResult = scalar.AsContract<object>(new ContractMapping(contract, typeof(TRoot)), GraphQlContractExpression.ResolveContractIndexed(0));
+            var contractBuilder = objectResult.ResolveComplex(serviceProvider);
             var resolved = resolver(contractBuilder);
             return resolved;
         }
@@ -42,18 +42,17 @@ namespace GraphLinqQL
                 Resolvers = EmptyArrayHelper.Empty<LambdaExpression>(),
             }, (prev, next) =>
             {
-                var lambda = next.Resolution.ConstructResult();
-
                 var visitor = new GraphQlContractExpressionReplaceVisitor();
-                var param = Expression.Parameter(typeof(object));
-                visitor.NewOperations = next.Contract.Resolvables.Select((_, index) => Expression.Lambda(GraphQlContractExpression.ResolveContract(param, index + prev.Resolvables.Length), param)).ToArray();
-                var resultLambda = (LambdaExpression)visitor.Visit(lambda);
+                var param = Expression.Parameter(typeof(object), "unionInput");
+                visitor.NewOperations = next.Contract.Resolvables.Select((_, index) => GraphQlContractExpression.ResolveContractIndexed(index + prev.Resolvables.Length)).ToArray();
+
+                var resultLambda = next.Resolution.ApplyVisitor<object>(visitor).ConstructResult();
 
                 return new { Resolvables = prev.Resolvables.Concat(next.Contract.Resolvables).ToArray(), Resolvers = prev.Resolvers.Concat(new[] { resultLambda }).ToArray() };
             });
             return source.AsContract<IEnumerable<TContractResult>>(
                     new ContractMapping(aggregate.Resolvables),
-                    _ => ConcatAll(aggregate.Resolvers).Inline(_)
+                    ConcatAll(aggregate.Resolvers)
                 );
         }
 
@@ -73,11 +72,25 @@ namespace GraphLinqQL
         {
             var builder = contractOptions(new UnionContractBuilder<T>());
 
+            var body = Expression.Parameter(typeof(object), "asUnionInput");
+
             var temp = builder.Conditions.Select((e, index) => new { index, e.DomainType }).ToArray();
-            return graphQlResult.AsContract<T>(builder.CreateContractMapping(), body =>
-                temp.Length == 1 ? GraphQlContractExpression.ResolveContract(body, 0) :
-                    temp.Skip(1).Aggregate(GraphQlContractExpression.ResolveContract(Expression.Convert(body, temp[0].DomainType), 0),
-                        (prev, next) => Expression.Condition(Expression.TypeIs(body, next.DomainType), GraphQlContractExpression.ResolveContract(Expression.Convert(body, next.DomainType), next.index), prev))
+            var bodyWrapper = temp.Length == 1 
+                ? GraphQlContractExpression.ResolveContractIndexed(0)
+                : Expression.Lambda(
+                    temp.Skip(1).Aggregate(
+                        GraphQlContractExpression.ResolveContractIndexed(0).Inline(body),
+                        (prev, next) => 
+                            Expression.Condition(
+                                Expression.TypeIs(body, next.DomainType), 
+                                GraphQlContractExpression.ResolveContractIndexed(next.index).Inline(body), 
+                                prev
+                            )
+                    ), 
+                    body
+                );
+            return graphQlResult.AsContract<T>(builder.CreateContractMapping(), 
+                bodyWrapper
             );
         }
 
@@ -86,12 +99,13 @@ namespace GraphLinqQL
             var newResult = func(new GraphQlResultFactory<TInput>(original.FieldContext));
             var constructedDeferred = newResult.Resolution.ConstructResult();
 
-            var newScalar = original.UpdateBody<object>(getListLamba =>
+            
+
+            var newScalar = original.AddResolve<object>(listExpression =>
             {
-                var getList = getListLamba.Body;
                 var newResolver = Expression.Lambda(
-                    getList.CallSelect(constructedDeferred),
-                    getListLamba.Parameters
+                    listExpression.CallSelect(constructedDeferred),
+                    listExpression
                 );
                 return newResolver;
             });
@@ -110,11 +124,15 @@ namespace GraphLinqQL
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
             Expression<Func<Task<TDomainResult>, IFinalizer>> temp = task => taskFinalizerFactory.Invoke(() => task.ContinueWith(t => PreamblePlaceholders.BodyInvocationPlaceholder(t.Result)));
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
-            return original.Resolve(value => resolveAsync(value))
-                .UpdatePreamble<TDomainResult>(preamble => Expression.Lambda(temp.Inline(preamble.Body), preamble.Parameters));
+            return original.Resolve(value => resolveAsync(value)).AddResolve<TDomainResult>(temp);
         }
 
         public static IGraphQlResult ResolveQuery(this IGraphQlResolvable target, string name) =>
             target.ResolveQuery(name, BasicParameterResolver.Empty);
+
+        public static IGraphQlScalarResult<T> AddResolve<T>(this IGraphQlScalarResult result, LambdaExpression resolve)
+        {
+            return result.AddResolve<T>(_ => resolve);
+        }
     }
 }

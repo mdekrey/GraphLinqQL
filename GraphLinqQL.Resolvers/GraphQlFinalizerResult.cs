@@ -14,7 +14,7 @@ namespace GraphLinqQL
 
         private static IGraphQlScalarResult Inline(IGraphQlScalarResult original, LambdaExpression expressionToInline)
         {
-            return original.UpdateBody<object>(body => Expression.Lambda(expressionToInline.Inline(body.Body), body.Parameters));
+            return original.AddResolve<object>(expressionToInline);
         }
     }
 }

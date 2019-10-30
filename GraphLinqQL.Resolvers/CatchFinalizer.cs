@@ -10,11 +10,13 @@ namespace GraphLinqQL
     {
         private readonly FieldContext fieldContext;
         private readonly Func<object?> valueAccessor;
+        private readonly LambdaExpression? expression;
 
-        internal CatchFinalizer(FieldContext fieldContext, Func<object?> valueAccessor)
+        internal CatchFinalizer(FieldContext fieldContext, Func<object?> valueAccessor, LambdaExpression? expression)
         {
             this.fieldContext = fieldContext;
             this.valueAccessor = valueAccessor;
+            this.expression = expression;
         }
 
         public async Task<object?> GetValue(FinalizerContext context)
@@ -31,7 +33,7 @@ namespace GraphLinqQL
                 {
                     error.Fixup(fieldContext);
                 }
-                context.Logger.LogError(new EventId(10000, "FieldResolutionCaught"), ex, WellKnownErrorCodes.GetStaticMessage(WellKnownErrorCodes.UnhandledError, errors[0].Arguments));
+                context.Logger.LogError(new EventId(10000, "FieldResolutionCaught"), ex, WellKnownErrorCodes.GetStaticMessage(WellKnownErrorCodes.UnhandledError, errors[0].Arguments), expression);
                 context.Errors.AddRange(errors);
                 return null;
             }
