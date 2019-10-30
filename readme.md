@@ -13,11 +13,15 @@ A schema-first C# GraphQL library.
 ![Code Coverge](https://img.shields.io/azure-devops/coverage/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1)](https://dev.azure.com/graphlinqql/GraphLinqQl/_build/latest?definitionId=1)
 
 ## Latest release
+
 * [`GraphLinqQL.Resolvers` ![GraphLinqQL.Resolvers](https://img.shields.io/nuget/v/GraphLinqQL.Resolvers)](https://www.nuget.org/packages/GraphLinqQL.Resolvers) - code generation and basic framework. Use in libraries that will be shared across projects to host GraphLinqQL!
-* [`GraphLinqQL.AspNetCore` ![GraphLinqQL.AspNetCore](https://img.shields.io/nuget/v/GraphLinqQL.AspNetCore)](https://www.nuget.org/packages/GraphLinqQL.AspNetCore) - extension methods to easily add ASP.Net Core 3 GraphQL endpoints. Use with GraphLinqQL.Resolvers for a complete solution!
+
+* [`GraphLinqQL.AspNetCore` ![GraphLinqQL.AspNetCore](https://img.shields.io/nuget/v/GraphLinqQL.AspNetCore)](https://www.nuget.org/packages/GraphLinqQL.AspNetCore) - extension methods to easily add ASP.NET Core 3 GraphQL endpoints. Use with GraphLinqQL.Resolvers for a complete solution!
 
 * [`GraphLinqQL.Execution` ![GraphLinqQL.Execution](https://img.shields.io/nuget/v/GraphLinqQL.Execution)](https://www.nuget.org/packages/GraphLinqQL.Execution) - framework for executing GraphQL queries with GraphLinqQL. Use if you're writing a new execution framework!
+
 * [`GraphLinqQL.Introspection` ![GraphLinqQL.Introspection](https://img.shields.io/nuget/v/GraphLinqQL.Introspection)](https://www.nuget.org/packages/GraphLinqQL.Introspection) - classes for providing introspection support. Use from your Execution project if you want to support full GraphQL introspection!
+
 * [`GraphLinqQL.Ast` ![GraphLinqQL.Ast](https://img.shields.io/nuget/v/GraphLinqQL.Ast)](https://www.nuget.org/packages/GraphLinqQL.Ast) - classes for parsing GraphQL. Use if you want to work with GraphQL but without all our other stuff!
 
 ## Our Approach
@@ -26,7 +30,7 @@ A schema-first C# GraphQL library.
 2. Generate C# interfaces for ideal type-checking
 3. Keep generated code out of your committed code for CI of schema changes.
 4. Rely on C#'s `Expression` infrastructure for better support of other C#
-    libraries.
+    libraries, such as EF Core.
 
 # How it works
 
@@ -41,8 +45,10 @@ A schema-first C# GraphQL library.
 3. Implement those interfaces.
 
     Connect them to your Domain model using the expressions that will be
-    converted into the IQueryable.
+    converted into the IQueryable. If you need to use APIs with .NET Tasks,
+    those are supported, too!
 
-4. Add GraphQL execution to your endpoint. If you are using ASP.NET Core, you can use [`GraphLinqQL.AspNetCore`. ![GraphLinqQL.AspNetCore](https://img.shields.io/nuget/v/GraphLinqQL.AspNetCore.svg)](https://www.nuget.org/packages/GraphLinqQL.AspNetCore)
+4. Add GraphQL execution to your endpoint. If you are using ASP.NET Core, you can use [`GraphLinqQL.AspNetCore` ![GraphLinqQL.AspNetCore](https://img.shields.io/nuget/v/GraphLinqQL.AspNetCore.svg)](https://www.nuget.org/packages/GraphLinqQL.AspNetCore).
 
-    More documentation coming soon.
+    With just a few lines added to your ASP.NET Core 3 Startup.cs, your GraphQL
+    API will be ready to go. Introspection is available, but also optional.
