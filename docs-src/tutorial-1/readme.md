@@ -24,7 +24,7 @@ Visual Studio or any other C# editor. You'll have a basic new website with a
 `Data` namespace underneath our root.
 
 ```csharp
-`[Model](src/GqlLinqGetStarted/Data/Model.cs)
+`[Model](src/GqlLinqGetStarted/Data/Model.cs#DataNamespace)
 ```
 
 As you can see, this is just using plain .Net objects and lists. GraphLinqQL

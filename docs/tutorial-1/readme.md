@@ -24,11 +24,6 @@ Visual Studio or any other C# editor. You'll have a basic new website with a
 `Data` namespace underneath our root.
 
 ```csharp
-using System;
-using System.Collections.Generic;
-#nullable disable warnings
-
-// ###DataNamespace
 namespace GqlLinqGetStarted.Data
 {
     public static class BloggingData
@@ -53,7 +48,6 @@ namespace GqlLinqGetStarted.Data
         public Blog Blog { get; set; }
     }
 }
-// DataNamespace###
 ```
 
 As you can see, this is just using plain .Net objects and lists. GraphLinqQL
