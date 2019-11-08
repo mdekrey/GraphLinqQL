@@ -1,20 +1,18 @@
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+#nullable disable warnings
 
+// ###DataNamespace
 namespace GqlLinqGetStarted.Data
 {
-    public class BloggingContext : DbContext
+    public static class BloggingData
     {
-        public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Post> Posts { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=blogging.db");
+        public static List<Blog> Blogs { get; } = new List<Blog>();
     }
 
     public class Blog
     {
-        public int BlogId { get; set; }
+        public Guid BlogId { get; set; }
         public string Url { get; set; }
 
         public List<Post> Posts { get; } = new List<Post>();
@@ -22,11 +20,11 @@ namespace GqlLinqGetStarted.Data
 
     public class Post
     {
-        public int PostId { get; set; }
+        public Guid PostId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
 
-        public int BlogId { get; set; }
         public Blog Blog { get; set; }
     }
 }
+// DataNamespace###

@@ -1,18 +1,7 @@
-# GraphLinqQL
+﻿# GraphLinqQL
 
 A schema-first C# GraphQL library.
 
-## Master branch
-[![Build Status](https://dev.azure.com/graphlinqql/GraphLinqQl/_apis/build/status/mdekrey.GraphLinqQL?branchName=master)
-![Test Status](https://img.shields.io/azure-devops/tests/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1/master)
-![Code Coverge](https://img.shields.io/azure-devops/coverage/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1/master)](https://dev.azure.com/graphlinqql/GraphLinqQl/_build/latest?definitionId=1&branchName=master)
-
-## Latest
-[![Build Status](https://dev.azure.com/graphlinqql/GraphLinqQl/_apis/build/status/mdekrey.GraphLinqQL)
-![Test Status](https://img.shields.io/azure-devops/tests/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1)
-![Code Coverge](https://img.shields.io/azure-devops/coverage/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1)](https://dev.azure.com/graphlinqql/GraphLinqQl/_build/latest?definitionId=1)
-
-[//]: #  ###MainGraphQLContent
 
 ## Latest release
 
@@ -63,4 +52,9 @@ A schema-first C# GraphQL library.
 
     Otherwise, [`GraphLinqQL.Execution` ![GraphLinqQL.Execution](https://img.shields.io/nuget/v/GraphLinqQL.Execution)](https://www.nuget.org/packages/GraphLinqQL.Execution) will put you well on your way.
 
-[//]: #  MainGraphQLContent###
+
+# Try it yourself!
+
+* [With POCO (Plain old CLR object) domain objects](./tutorial-1/)
+* [With EF Core domain](./tutorial-2/)
+

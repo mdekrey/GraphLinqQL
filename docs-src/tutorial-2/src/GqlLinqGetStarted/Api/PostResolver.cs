@@ -2,7 +2,6 @@
 
 namespace GqlLinqGetStarted.Api
 {
-    // ###PostResolver
     internal class PostResolver : Post.GraphQlContract<Data.Post>
     {
         public override IGraphQlScalarResult<string> Content() =>
@@ -14,5 +13,4 @@ namespace GqlLinqGetStarted.Api
         public override IGraphQlScalarResult<string> Title() =>
             this.Resolve(post => post.Title);
     }
-    // PostResolver###
 }
