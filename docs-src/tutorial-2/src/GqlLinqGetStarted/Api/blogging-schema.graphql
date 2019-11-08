@@ -20,8 +20,8 @@ type Post {
 }
 
 type Mutation {
-	addBlog(url: String!): Blog
-	addPost(blogId: ID!, post: NewPost!): Post
+	addBlog(url: String!): Blog!
+	addPost(blogId: ID!, post: NewPost!): Post!
 }
 
 input NewPost {
