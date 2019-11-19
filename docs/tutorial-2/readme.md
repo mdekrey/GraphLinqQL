@@ -328,17 +328,3 @@ Congratulations, you've done it! Now, you can run your application, use your
 favorite GraphQL client tool or library, and start executing mutations and
 queries against your objects!
 
-
-```csharp
-services.AddGraphQl<Api.TypeResolver>(typeof(Api.QueryResolver), options =>
-{
-    options.Mutation = typeof(Api.MutationResolver);
-    options.AddIntrospection();
-});
-```
-
-```csharp
-endpoints.UseGraphQl("/graphql");
-```
-
-
