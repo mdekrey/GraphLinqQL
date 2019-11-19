@@ -34,9 +34,9 @@ defining a GraphQL API.
 
 > API-Driven development is important for quality APIs. Thinking about how your
 > end-user developers will invoke the API is much more important than making the
-> implementation easy, because your end-users are often customers! Even when
-> they aren't directly paying for your API, having a schema separate from the
-> code makes it easier to maintain, easier to prevent breaking changes, and more
+> implementation easy, because your end-users are often customers! Even when API
+> consumers are internal to your company, having a schema separate from the code
+> makes it easier to maintain, easier to prevent breaking changes, and more
 > straightforward to document - or even rewrite if you want to change your
 > underlying implementation, such as changes from domain objects to accessing EF
 > Core directly!
@@ -123,15 +123,15 @@ new `PostResolver`.
 
 Our final type is the `Mutation`, though not all schemas provide them. We could
 only partially implement our schema by not implementing this base class, but
-that would be poor form. Again, we'll use the `GraphQlRoot` for the generic
-parameter, resulting in this declaration:
+that would be contrary to our Schema document. Again, we'll use the
+`GraphQlRoot` for the generic parameter, resulting in this declaration:
 
 ```csharp
 `[MutationResolverDeclaration](src/GqlLinqGetStarted/Api/MutationResolver.cs#Declaration)
 ```
 
-Implementing this class gives us two additional methods, one for each field in
-our GraphQL schema. We'll start with `AddBlog`.
+Implementing this class using our IDE gives us two additional methods, one for
+each field in our GraphQL schema. We'll start with `AddBlog`.
 
 ```csharp
 `[MutationResolverDeclaration](src/GqlLinqGetStarted/Api/MutationResolver.cs#AddBlogImplementation)
