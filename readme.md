@@ -12,7 +12,7 @@ A schema-first C# GraphQL library.
 ![Test Status](https://img.shields.io/azure-devops/tests/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1)
 ![Code Coverge](https://img.shields.io/azure-devops/coverage/graphlinqql/1c4b2672-6b36-4a02-9a78-30a8fac1b66f/1)](https://dev.azure.com/graphlinqql/GraphLinqQl/_build/latest?definitionId=1)
 
-[//]: #  ###MainGraphQLContent
+<!--- ###MainGraphQLContent -->
 
 ## Latest release
 
@@ -63,4 +63,4 @@ A schema-first C# GraphQL library.
 
     Otherwise, [`GraphLinqQL.Execution` ![GraphLinqQL.Execution](https://img.shields.io/nuget/v/GraphLinqQL.Execution)](https://www.nuget.org/packages/GraphLinqQL.Execution) will put you well on your way.
 
-[//]: #  MainGraphQLContent###
+<!--- MainGraphQLContent### -->
