@@ -198,13 +198,3 @@ file:
 Congratulations, you've done it! Now, you can run your application, use your
 favorite GraphQL client tool or library, and start executing mutations and
 queries against your objects!
-
-
-```csharp
-`[GraphLinqQL Services](src/GqlLinqGetStarted/Startup.cs#GraphLinqQL Services)
-```
-
-```csharp
-`[GraphLinqQL Services](src/GqlLinqGetStarted/Startup.cs#GraphLinqQL Endpoint)
-```
-
