@@ -6,16 +6,22 @@ using GraphLinqQL;
 
 namespace GqlLinqGetStarted.Api
 {
+    // ###Declaration
     public class QueryResolver : Query.GraphQlContract<GraphQlRoot>
+    // Declaration###
     {
+        // ###DependencyInjection
         private readonly Data.BloggingContext context;
 
         public QueryResolver(Data.BloggingContext context)
         {
             this.context = context;
         }
+        // DependencyInjection###
 
-        public override IGraphQlObjectResult<IEnumerable<Blog>> Blogs() =>
+        // ###BlogsImplementation
+        public override IGraphQlObjectResult<IEnumerable<Blog>?> Blogs() =>
             this.Resolve(_ => context.Blogs).Nullable(_ => _.List(blog => blog.AsContract<BlogResolver>()));
+        // BlogsImplementation###
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace GqlLinqGetStarted.Data
 {
+    // ###HostedService
     internal class DbContextInitializingHostedService : IHostedService
     {
         private readonly IServiceProvider serviceProvider;
@@ -27,4 +28,5 @@ namespace GqlLinqGetStarted.Data
             return Task.CompletedTask;
         }
     }
+    // HostedService###
 }

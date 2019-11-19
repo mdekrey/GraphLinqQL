@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+#nullable disable warnings
 
+// ###DataNamespace
 namespace GqlLinqGetStarted.Data
 {
     public class BloggingContext : DbContext
@@ -30,3 +32,4 @@ namespace GqlLinqGetStarted.Data
         public Blog Blog { get; set; }
     }
 }
+// DataNamespace###
