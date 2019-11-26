@@ -90,7 +90,7 @@ dependency injection. Include the following lines for our constructor.
 We can now implement the method as follows:
 
 ```csharp
-`[QueryResolverDeclaration](src/GqlLinqGetStarted/Api/QueryResolver.cs#Declaration)
+`[QueryResolverDeclaration](src/GqlLinqGetStarted/Api/QueryResolver.cs#BlogsImplementation)
 ```
 
 Because this returns an `IQueryable<T>`, GraphLinqQL automatically uses this to

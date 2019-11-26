@@ -25,7 +25,7 @@ namespace GraphLinqQL.CodeGeneration
 
         public static Directive? FindObsoleteDirective(this IReadOnlyList<Directive> directives)
         {
-            return directives.FirstOrDefault(d => d.Name == "Obsolete")!;
+            return directives.FirstOrDefault(d => d.Name == "deprecated")!;
         }
 
         public static string? ObsoleteReason(this Directive obsoleteDirective, GraphQLGenerationOptions options, Document document)

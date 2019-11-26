@@ -15,11 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <GraphLinqQlSchema Include="StarWars\sw-schema.3.graphql" />
-    <GraphLinqQlSchema Include="Tricky\tricky.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GraphLinqQL.Execution\GraphLinqQL.Execution.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />

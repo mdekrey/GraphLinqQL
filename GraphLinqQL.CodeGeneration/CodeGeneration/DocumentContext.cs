@@ -72,26 +72,26 @@ namespace GraphLinqQL.CodeGeneration
         {
             get
             {
-                //yield return new DirectiveContext(new DirectiveDefinition("skip", @"Directs the executor to skip this field or fragment when the `if` argument is true.", 
-                //    new[] { "FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT" }, 
-                //    new[] { new InputValueDefinition("if", "Skipped when true.", new NonNullType(new TypeName("Boolean", new LocationRange()), new LocationRange()), null, null, new LocationRange()) }, 
-                //    new LocationRange()), options);
-                //yield return new DirectiveContext(new DirectiveDefinition("include", @"Directs the executor to include this field or fragment only when the `if` argument is true.",
-                //    new[] { "FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT" },
-                //    new[] { new InputValueDefinition("if", @"Included when true.", new NonNullType(new TypeName("Boolean", new LocationRange()), new LocationRange()), null, null, new LocationRange()) },
-                //    new LocationRange()), options);
+                yield return new DirectiveContext(new DirectiveDefinition("skip", @"Directs the executor to skip this field or fragment when the `if` argument is true.",
+                    new[] { "FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT" },
+                    new[] { new InputValueDefinition("if", "Skipped when true.", new NonNullType(new TypeName("Boolean", new LocationRange()), new LocationRange()), null, null, new LocationRange()) },
+                    new LocationRange()), options, document);
+                yield return new DirectiveContext(new DirectiveDefinition("include", @"Directs the executor to include this field or fragment only when the `if` argument is true.",
+                    new[] { "FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT" },
+                    new[] { new InputValueDefinition("if", @"Included when true.", new NonNullType(new TypeName("Boolean", new LocationRange()), new LocationRange()), null, null, new LocationRange()) },
+                    new LocationRange()), options, document);
                 //yield return new DirectiveContext(new DirectiveDefinition("deprecated", @"Marks an element of a GraphQL schema as no longer supported.",
                 //    new[] { "FIELD_DEFINITION", "ENUM_VALUE" },
                 //    new[] {
                 //        new InputValueDefinition(
-                //            "reason", 
-                //            @"Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/).", 
-                //            new TypeName("String", new LocationRange()), 
+                //            "reason",
+                //            @"Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/).",
+                //            new TypeName("String", new LocationRange()),
                 //            new StringValue(@"""No longer supported""", new LocationRange()),
-                //            null, 
-                //            new LocationRange()) 
+                //            null,
+                //            new LocationRange())
                 //    },
-                //    new LocationRange()), options);
+                //    new LocationRange()), options, document);
 
                 foreach (var directive in document.Children.OfType<DirectiveDefinition>())
                 {
