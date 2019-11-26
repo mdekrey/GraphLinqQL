@@ -1,0 +1,14 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+    <Target Name="Clean"/>
+    <Target Name="Build">
+        <Exec Command="powershell -NonInteractive -executionpolicy Unrestricted $(MSBuildProjectDirectory)/processor/process.ps1"  EchoOff="true"/>
+        <Exec Command="git rm --cached -rf ." WorkingDirectory="$(MSBuildProjectDirectory)/../docs" IgnoreStandardErrorWarningFormat="true" StandardOutputImportance="low" StandardErrorImportance="low" />
+        <Exec Command="git add ." WorkingDirectory="$(MSBuildProjectDirectory)/../docs" IgnoreStandardErrorWarningFormat="true" StandardOutputImportance="low" StandardErrorImportance="low" />
+        <Exec Command="git diff --name-only --staged" WorkingDirectory="$(MSBuildProjectDirectory)/../docs" ConsoleToMSBuild="true" IgnoreStandardErrorWarningFormat="true" StandardOutputImportance="low" StandardErrorImportance="low">
+            <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
+        </Exec>
+        <Exec Condition=" '' != '$(OutputOfExec)' " Command="git diff --staged" WorkingDirectory="$(MSBuildProjectDirectory)/../docs" EchoOff="true" IgnoreStandardErrorWarningFormat="true" />
+        <Error Condition=" '' != '$(OutputOfExec)' " Text="Uncommitted docs changes: $(OutputOfExec)"/>
+    </Target>
+    <Target Name="VSTest"/>
+</Project>

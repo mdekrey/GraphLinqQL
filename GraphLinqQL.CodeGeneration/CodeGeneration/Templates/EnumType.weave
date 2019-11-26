@@ -13,7 +13,7 @@ public enum {{= model.TypeName }}
 {
 	{{each value in model.EnumValues}}
 		{{if value.IsDeprecated}}
-			[Obsolete({{=value.DeprecationReason}})]
+			[System.Obsolete({{=value.DeprecationReason}})]
 		{{/if}}
 		{{if !string.IsNullOrEmpty(value.Description)}}
 			/// <summary>

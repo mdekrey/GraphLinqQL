@@ -8,10 +8,6 @@
   <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
 
   <ItemGroup>
-    <GraphLinqQlSchema Include="Api\blogging-schema.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />
   </ItemGroup>
 

@@ -20,7 +20,7 @@ namespace Introspection
 										name: "{{= directive.Label }}",
 										locations: new[] {
 											{{each location in directive.Locations}}
-												DirectiveLocation.{{= location }},
+												GraphLinqQL.Introspection.DirectiveLocation.{{= location }},
 											{{/each}}
 										},
 										args: new global::GraphLinqQL.Introspection.GraphQlInputFieldInformation[] {

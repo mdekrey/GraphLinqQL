@@ -28,10 +28,6 @@
     <None Remove="Scenarios\EfCoreReviews.yaml" />
     <None Remove="Scenarios\EfCoreUnionListExecution.yaml" />
   </ItemGroup>
-  <ItemGroup>
-    <GraphLinqQlSchema Include="Blogs\Api\blogging-schema.graphql" />
-    <GraphLinqQlSchema Include="Edgy\Interfaces\edgy.graphql" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />

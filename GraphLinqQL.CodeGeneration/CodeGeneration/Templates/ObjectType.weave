@@ -18,7 +18,7 @@ public abstract class {{= model.TypeName }} : global::GraphLinqQL.Resolution.IGr
 
 	{{each field in model.Fields}}
 		{{if field.IsDeprecated}}
-			[Obsolete({{=field.DeprecationReason}})]
+			[System.Obsolete({{=field.DeprecationReason}})]
 		{{/if}}
 		{{if !string.IsNullOrEmpty(field.Description)}}
 			/// <summary>

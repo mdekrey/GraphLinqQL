@@ -153,7 +153,8 @@ public QueryResolver(Data.BloggingContext context)
 We can now implement the method as follows:
 
 ```csharp
-public class QueryResolver : Query.GraphQlContract<GraphQlRoot>
+public override IGraphQlObjectResult<IEnumerable<Blog>?> Blogs() =>
+    this.Resolve(_ => context.Blogs).Nullable(_ => _.List(blog => blog.AsContract<BlogResolver>()));
 ```
 
 Because this returns an `IQueryable<T>`, GraphLinqQL automatically uses this to
