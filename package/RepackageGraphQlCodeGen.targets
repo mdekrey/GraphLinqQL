@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="UpdatePackageOutput" BeforeTargets="_GetPackageFiles">
+    <PropertyGroup>
+      <CustomTaskPath>$(BuildRootDir)GraphLinqQL.MsBuildTask/$(OutputPath)</CustomTaskPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Content Include="$(CustomTaskPath)**/*.dll;$(CustomTaskPath)**/*.exe;$(CustomTaskPath)**/*.config;$(CustomTaskPath)**/*.json;$(CustomTaskPath)**/*.xml" Exclude="$(CustomTaskPath)**/Microsoft.Build.*">
+        <Pack>true</Pack>
+        <PackagePath>build/</PackagePath>
+      </Content>
+      <Content  Include="$(BuildRootDir)package/GraphQlCodeGen.targets">
+        <Pack>true</Pack>
+        <PackagePath>build/$(MSBuildProjectName).targets</PackagePath>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>

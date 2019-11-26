@@ -5,7 +5,7 @@
     <RootNamespace>GqlLinqGetStarted</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\GraphLinqQL.AspNetCore\GraphLinqQL.AspNetCore.csproj" />

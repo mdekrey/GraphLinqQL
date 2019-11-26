@@ -7,7 +7,7 @@
     <RootNamespace>LegacyTesting</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
 
   <ItemGroup>
     <None Remove="sw-schema.3.graphql" />

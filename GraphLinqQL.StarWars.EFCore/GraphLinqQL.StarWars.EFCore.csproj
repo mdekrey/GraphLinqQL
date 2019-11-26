@@ -7,7 +7,7 @@
     <StartupObject />
     <AssemblyName>GraphLinqQL.StarWars.EFCore</AssemblyName>
   </PropertyGroup>
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
   <ItemGroup>
     <None Remove=".editorconfig" />
   </ItemGroup>

@@ -14,7 +14,7 @@ $(Description)
     </Description>
   </PropertyGroup>
 
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[3.0.*,]" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
