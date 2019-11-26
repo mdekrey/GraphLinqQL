@@ -10,4 +10,5 @@
         <Exec Condition=" '' != '$(OutputOfExec)' " Command="git diff --staged" WorkingDirectory="$(MSBuildProjectDirectory)/../docs" EchoOff="true" IgnoreStandardErrorWarningFormat="true" />
         <Error Condition=" '' != '$(OutputOfExec)' " Text="Uncommitted docs changes: $(OutputOfExec)"/>
     </Target>
+    <Target Name="VSTest"/>
 </Project>
