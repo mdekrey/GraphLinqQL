@@ -20,10 +20,6 @@ $(Description)
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj" ReferenceOutputAssembly="false" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="ErrorMessages\ErrorMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -38,10 +34,5 @@ $(Description)
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="ExcludeReferences" BeforeTargets="GenerateNuspec">
-    <ItemGroup>
-      <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
-    </ItemGroup>
-  </Target>
   <Import Project="$(BuildRootDir)package/RepackageGraphQlCodeGen.targets" />
 </Project>

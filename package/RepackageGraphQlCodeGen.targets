@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphLinqQL.MsBuildTask\GraphLinqQL.MsBuildTask.csproj" ReferenceOutputAssembly="false" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="ExcludeReferences" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <IncludeContentInPack>true</IncludeContentInPack>
+  </PropertyGroup>
+
   <Target Name="UpdatePackageOutput" BeforeTargets="_GetPackageFiles">
     <PropertyGroup>
-      <CustomTaskPath>$(BuildRootDir)GraphLinqQL.MsBuildTask/$(OutputPath)</CustomTaskPath>
+      <MsBuildTaskOutput>$(BuildRootDir)GraphLinqQL.MsBuildTask/$(BaseOutputPath)$(Configuration)/</MsBuildTaskOutput>
     </PropertyGroup>
+    <Message Text="$(MsBuildTaskOutput)" Importance="high" />
     <ItemGroup>
-      <Content Include="$(CustomTaskPath)**/*.dll;$(CustomTaskPath)**/*.exe;$(CustomTaskPath)**/*.config;$(CustomTaskPath)**/*.json;$(CustomTaskPath)**/*.xml" Exclude="$(CustomTaskPath)**/Microsoft.Build.*">
+      <Content Include="$(MsBuildTaskOutput)**/*.dll;$(MsBuildTaskOutput)**/*.exe;$(MsBuildTaskOutput)**/*.config;$(MsBuildTaskOutput)**/*.json;$(MsBuildTaskOutput)**/*.xml" Exclude="$(MsBuildTaskOutput)**/Microsoft.Build.*">
         <Pack>true</Pack>
         <PackagePath>build/</PackagePath>
       </Content>
