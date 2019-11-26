@@ -111,7 +111,7 @@ mode is set to C# 8 or higher, GraphLinqQL will even generate nullability
 indicators on your API classes!
 
 ```powershell
-dotnet add package GraphLinqQL.Resolvers
+dotnet add package GraphLinqQL.AspNetCore
 dotnet build
 ```
 Each new `type` provided in your GraphQL schema now has a
@@ -251,15 +251,9 @@ public override IGraphQlObjectResult<Post?> AddPost(string blogId, NewPost newPo
 ```
 
 At this point, we've implemented our full GraphQL schema! However, we still
-don't have a server. Going back to your command line, add a new package, which
-includes GraphLinqQL's ASP.Net Core server implementation.
-
-```powershell
-dotnet add package GraphLinqQL.AspNetCore
-```
-
-Next, add and configure the services that GraphLinqQL needs. Add this to your
-`ConfigureServices` function in `Startup.cs`.
+don't have a server, so we need to  add and configure the services that
+GraphLinqQL needs. Add this to your `ConfigureServices` function in
+`Startup.cs`.
 
 ```csharp
 services.AddGraphQl<Api.TypeResolver>(typeof(Api.QueryResolver), options =>
