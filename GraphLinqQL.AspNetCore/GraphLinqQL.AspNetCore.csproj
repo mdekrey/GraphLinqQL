@@ -24,5 +24,6 @@ $(Description)
     <ProjectReference Include="..\GraphLinqQL.Introspection\GraphLinqQL.Introspection.csproj" />
     <ProjectReference Include="..\GraphLinqQL.Resolvers\GraphLinqQL.Resolvers.csproj" />
   </ItemGroup>
+  <Import Project="$(BuildRootDir)package/RepackageGraphQlCodeGen.targets" />
 
 </Project>

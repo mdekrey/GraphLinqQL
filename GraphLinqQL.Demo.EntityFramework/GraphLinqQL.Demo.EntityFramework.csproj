@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
 
   </PropertyGroup>
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />

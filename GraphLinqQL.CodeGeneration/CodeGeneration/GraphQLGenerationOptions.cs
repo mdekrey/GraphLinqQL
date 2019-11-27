@@ -1,6 +1,5 @@
 ﻿using GraphLinqQL.Ast.Nodes;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text;
 // Allowing people to override the list in Options is good practice
@@ -41,6 +40,6 @@ namespace GraphLinqQL.CodeGeneration
 
         public ITypeResolver TypeResolver { get; set; } = new DefaultTypeResolver();
         public IValueResolver ValueResolver { get; set; } = new DefaultValueResolver();
-    
+
     }
 }

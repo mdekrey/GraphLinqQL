@@ -45,6 +45,6 @@
     <ProjectReference Include="..\GraphLinqQL.StarWars.EFCore\GraphLinqQL.StarWars.EFCore.csproj" />
   </ItemGroup>
 
-  <Import Project="$(BuildRootDir)package/GraphLinqQL.Resolvers.targets" />
+  <Import Project="$(BuildRootDir)package/GraphQlCodeGen.targets" />
 
 </Project>

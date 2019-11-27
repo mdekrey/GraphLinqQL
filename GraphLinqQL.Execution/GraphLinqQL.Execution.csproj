@@ -21,5 +21,6 @@ $(Description)
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.2" Condition="'$(TargetFramework)' == '$(SupportedFrameworkVersion)'" />
   </ItemGroup>
+  <Import Project="$(BuildRootDir)package/RepackageGraphQlCodeGen.targets" />
 
 </Project>
