@@ -1,7 +1,6 @@
 ﻿using GraphLinqQL.CodeGeneration;
 using McMaster.Extensions.CommandLineUtils;
 using System;
-using System.CodeDom.Compiler;
 using System.Threading;
 using System.Threading.Tasks;
 #pragma warning disable CA1305 // Specify IFormatProvider
